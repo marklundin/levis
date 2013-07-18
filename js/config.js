@@ -11,6 +11,9 @@ requirejs.config( {
 	},
 
 	shim:{
+		"libs/build/three.js":{
+			exports: "THREE"
+		}
 	}
 
 
