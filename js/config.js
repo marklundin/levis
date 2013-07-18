@@ -8,7 +8,10 @@ requirejs.config( {
         "text": "loaders/text",
         "json": "loaders/json",
         "template": "loaders/template",
-        "image": "loaders/image"
+	},
+
+	shim:{
 	}
+
 
 });

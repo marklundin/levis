@@ -1,8 +1,11 @@
 define([
 	"utils/domReady!",
-	], function( DOM ) {
+	"utils/qwery"
+	], function( DOM, $ ) {
 
-		console.log( DOM );
+		// APP CONSTANTS
+		var DEBUG = ( $.params( "DEBUG" ) !== 'false' && $.params( "DEBUG" ) !== '' );
 		
+
 	}
 );
