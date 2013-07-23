@@ -35,7 +35,7 @@ define([
 		controls.userRotateSpeed = 0.4;
 
 		camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
-		camera.position.z = 2000;
+		camera.position.z = 3500;
 		controls.addEventListener( 'change', render );
 
 		$( document, "#main" ).appendChild( renderer.domElement );
@@ -100,7 +100,11 @@ define([
 			effect.renderToScreen = true;
 			composer.addPass( effect );
 
+
+
 		// SKYDOME
+
+
 
 				var uniforms = {
 					topColor: 	 { type: "c", value: new THREE.Color( 0x777777 ) },
@@ -109,7 +113,6 @@ define([
 					exponent:	 { type: "f", value: 0.5 }
 				}
 
-				console.log( planeUniforms.color );
 				uniforms.bottomColor.value.copy( planeUniforms.color.value );
 
 				// scene.fog.color.copy( uniforms.bottomColor.value );
@@ -124,29 +127,61 @@ define([
 				var sky = new THREE.Mesh( skyGeo, skyMat );
 				scene.add( sky );
 
+
+
 		// SUPPORT STUCTURE
 
 
+
+			var material,
+				obj 		= new THREE.Object3D(),
+				structGeom 	= new THREE.Geometry(),
+				DIMENSION 	= 20,
+				SCALE 		= 200,
+				x, y, z 	= DIMENSION;
+
+			
+		
+
+			function randomVec4InSphere( rad ){
+
+				var dist = Math.sin( Math.PI * Math.random() * 0.5 ) * rad;
+				var size = math.lerp( Math.pow( Math.random(), 2.0 ), rad * 0.1, rad * 0.5 );//math.cosineInterpolation( Math.random(), rad * 0.1, rad * 0.5 );//random( rad * 0.1, rad * 0.5 ) //size
+
+				var vec = new THREE.Vector4( 
+					math.random( -rad, rad ), //x
+					math.random( -rad, rad ), //y
+					math.random( -rad, rad ), //z
+					1.0
+				).normalize().multiplyScalar( dist - ( 2.0 * size )); 	
+
+				vec.w = size;
+
+				return vec;
+			}
+
+
 			var metaballs = [ 
-
-				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
-				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
-				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
-				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
-				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 )
-				// new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
-				// new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
-				// new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
-
+				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
+				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
+				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
+				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
+				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
+				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
+				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
+				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
             ] 
 
+
 			// shader params
-			var shaderParams = {
+
+			material = new THREE.ShaderMaterial({
 				uniforms: {
 					// "uInverseProjectionMatrix": { type: "m4", value: camera.projectionMatrixInverse },
 					// "tDepth": 					{ type: "t", value: depthTarget }
+					"uExponent" :  { type: "f", value:8.0 },
 					"uMetaballs" : { 
-						type: "v3v", 
+						type: "v4v", 
 						value: metaballs
                     }, // Vector3 array
 				},
@@ -155,17 +190,11 @@ define([
 				transparent:	true,
 				vertexShader: 	structureShader.vertexShader,
 				fragmentShader: structureShader.fragmentShader,
-			}
-
-			var material	= new THREE.ShaderMaterial( shaderParams ),
-				obj 		= new THREE.Object3D(),
-				structGeom 	= new THREE.Geometry(),
-				DIMENSION 	= 15,
-				SCALE 		= 100,
-				x, y, z 	= DIMENSION;
+			});
 
 			material.linewidth = 1;
-		
+
+			
 
 			while( z-- > 0 ){
 				y = DIMENSION;
