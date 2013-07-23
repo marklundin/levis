@@ -145,15 +145,16 @@ define([
 
 			function randomVec4InSphere( rad ){
 
-				var dist = Math.sin( Math.PI * Math.random() * 0.5 ) * rad;
+				
 				var size = math.lerp( Math.pow( Math.random(), 2.0 ), rad * 0.1, rad * 0.5 );//math.cosineInterpolation( Math.random(), rad * 0.1, rad * 0.5 );//random( rad * 0.1, rad * 0.5 ) //size
+				var dist = math.random( size , rad - ( 2.0 * size ));//Math.sin( Math.PI * Math.random() * 0.5 ) * rad;
 
 				var vec = new THREE.Vector4( 
 					math.random( -rad, rad ), //x
 					math.random( -rad, rad ), //y
 					math.random( -rad, rad ), //z
 					1.0
-				).normalize().multiplyScalar( dist - ( 2.0 * size )); 	
+				).normalize().multiplyScalar( dist ); 	
 
 				vec.w = size;
 

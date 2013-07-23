@@ -46,7 +46,7 @@ varying float vVolume;
 void main() {
 
 	// gl_FragColor = vec4( vec3( 1.0 ), vVolume );
-	gl_FragColor = vec4( vec3( 1.0 ), step( 0.5, vVolume ) );
+	gl_FragColor = vec4( vec3( 1.0 ), step( 0.5, vVolume ) + 0.05 );
 
 }
 
