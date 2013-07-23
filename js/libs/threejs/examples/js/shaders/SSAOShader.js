@@ -250,7 +250,7 @@ THREE.SSAOShader = {
 
 			"}",
 
-			"gl_FragColor = vec4( final, 1.0 );",
+			"gl_FragColor = vec4( vec3( ao ), 1.0 );",
 
 		"}"
 
