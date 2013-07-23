@@ -2,7 +2,7 @@ define([
 
 	"utils/domReady!",
 	"utils/qwery",
-	"glsl!shaders/default.glsl",
+	"glsl!shaders/structure.glsl",
 	"utils/math",
 	"structure",
 	"glsl!shaders/skydome.glsl",
@@ -10,7 +10,7 @@ define([
 	"libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer",
 
-	], function( DOM, $, shaderCode, math, structure, skydome, reflection ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection ) {
 
 		// APP CONSTANTS
 		var DEBUG = ( $.params( "DEBUG" ) !== 'false' && $.params( "DEBUG" ) !== '' );
@@ -124,102 +124,77 @@ define([
 				var sky = new THREE.Mesh( skyGeo, skyMat );
 				scene.add( sky );
 
-		// shader params
-		var shaderParams = {
-			// uniforms: {
-			// 	"uInverseProjectionMatrix": { type: "m4", value: camera.projectionMatrixInverse },
-			// 	"tDepth": 					{ type: "t", value: depthTarget }
-			// },
-			blending: 		THREE.AdditiveBlending,
-			depthTest:		false,
-			transparent:	true,
-			vertexShader: shaderCode.vertexShader,
-			fragmentShader: shaderCode.fragmentShader,
-		}
+		// SUPPORT STUCTURE
 
-		var geometry 	= new THREE.CubeGeometry( 500, 500, 500 ),
-			material	= new THREE.ShaderMaterial( shaderParams ),
-			mesh 		= new THREE.Mesh( geometry, material ),
-			obj 		= new THREE.Object3D();
 
-		material.linewidth = 1;
-		material.linecap = 'square';
-		material.linejoin = 'square';
+			var metaballs = [ 
 
-		//Support structure
-		// struct = new structure();
+				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
+				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
+				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
+				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
+				new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 )
+				// new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
+				// new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
+				// new THREE.Vector3( Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0 ), 
 
-		var struct = {};
-		struct.geometry = new THREE.Geometry();
-		struct.material = new THREE.MeshBasicMaterial( {wireframe:true, color:0xff0000});
+            ] 
+
+			// shader params
+			var shaderParams = {
+				uniforms: {
+					// "uInverseProjectionMatrix": { type: "m4", value: camera.projectionMatrixInverse },
+					// "tDepth": 					{ type: "t", value: depthTarget }
+					"uMetaballs" : { 
+						type: "v3v", 
+						value: metaballs
+                    }, // Vector3 array
+				},
+				blending: 		THREE.AdditiveBlending,
+				depthTest:		false,
+				transparent:	true,
+				vertexShader: 	structureShader.vertexShader,
+				fragmentShader: structureShader.fragmentShader,
+			}
+
+			var material	= new THREE.ShaderMaterial( shaderParams ),
+				obj 		= new THREE.Object3D(),
+				structGeom 	= new THREE.Geometry(),
+				DIMENSION 	= 15,
+				SCALE 		= 100,
+				x, y, z 	= DIMENSION;
+
+			material.linewidth = 1;
 		
 
-		var DIMENSION = 15,
-			SCALE = 100,
-			x, y, z = DIMENSION;
+			while( z-- > 0 ){
+				y = DIMENSION;
+				while( y-- > 0 ){
+					x = DIMENSION;
+					while( x-- > 0 ){
+						structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
+						structGeom.vertices.push( new THREE.Vector3( x+1, y, z ).multiplyScalar( SCALE ));
 
-		while( z-- > 0 ){
-			y = DIMENSION;
-			while( y-- > 0 ){
-				x = DIMENSION;
-				while( x-- > 0 ){
-					struct.geometry.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-					struct.geometry.vertices.push( new THREE.Vector3( x+1, y, z ).multiplyScalar( SCALE ));
+						structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
+						structGeom.vertices.push( new THREE.Vector3( x, y+1, z ).multiplyScalar( SCALE ));
 
-					struct.geometry.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-					struct.geometry.vertices.push( new THREE.Vector3( x, y+1, z ).multiplyScalar( SCALE ));
-
-					struct.geometry.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-					struct.geometry.vertices.push( new THREE.Vector3( x, y, z+1 ).multiplyScalar( SCALE ));
-					// struct.geometry.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-					// struct.geometry.vertices.push( new THREE.Vector3( y, z, x ).multiplyScalar( SCALE ));
-					// struct.geometry.vertices.push( new THREE.Vector3( z, x, y ).multiplyScalar( SCALE ));
+						structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
+						structGeom.vertices.push( new THREE.Vector3( x, y, z+1 ).multiplyScalar( SCALE ));
+						// struct.geometry.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
+						// struct.geometry.vertices.push( new THREE.Vector3( y, z, x ).multiplyScalar( SCALE ));
+						// struct.geometry.vertices.push( new THREE.Vector3( z, x, y ).multiplyScalar( SCALE ));
+					}
 				}
 			}
-		}
-
-		// z = DIMENSION;
-		// while( z-- > 0 ){
-		// 	y = DIMENSION;
-		// 	while( y-- > 0 ){
-		// 		x = DIMENSION;
-		// 		while( x-- > 0 ){
-		// 			struct.geometry.vertices.push( new THREE.Vector3( y,z,x ).multiplyScalar( SCALE ));
-		// 		}
-		// 	}
-		// }
 
 
-		THREE.GeometryUtils.center( struct.geometry );
 
-		struct.mesh = new THREE.Line( struct.geometry, material, THREE.LinePieces );
+		THREE.GeometryUtils.center( structGeom );
+		var structMesh = new THREE.Line( structGeom, material, THREE.LinePieces );
 		
-		obj.add( struct.mesh );
-
-
 		
-
-		
-
+		obj.add( structMesh );
 		scene.add( obj );
-
-		var n = 100;
-		while( n-- > 0 ){
-			mesh = new THREE.Mesh( geometry, material );
-			mesh.position.x = math.random( -400, 400 );
-			mesh.position.y = math.random( -400, 400 );
-			mesh.position.z = math.random( -400, 400 );
-
-			mesh.scale.x = math.random( 0.5, 3 );
-			mesh.scale.y = math.random( 0.5, 3 );
-			mesh.scale.z = math.random( 0.5, 3 );
-
-			mesh.rotation.x = math.random( -Math.PI, Math.PI );
-			mesh.rotation.y = math.random( -Math.PI, Math.PI );
-			// mesh.rotation.z = math.random( -Math.PI, Math.PI );
-
-			// obj.add( mesh );
-		}
 
 
 		function animate(){
