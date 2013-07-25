@@ -7,10 +7,11 @@ define([
 	"structure",
 	"glsl!shaders/skydome.glsl",
 	"glsl!shaders/reflection.glsl",
+	"utils/timer",
 	"libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer",
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer ) {
 
 		// APP CONSTANTS
 		var DEBUG = ( $.params( "DEBUG" ) !== 'false' && $.params( "DEBUG" ) !== '' );
@@ -27,16 +28,17 @@ define([
 
 		var renderer 	= new THREE.WebGLRenderer({ antialias:true}),
 			scene 		= new THREE.Scene(),
-			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT, 1, 100000 );
+			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT, 1, 100000 ),
 			controls 	= new THREE.OrbitControls( camera );
 			
 
+		scene.fog = new THREE.Fog( 0xFF0000, 100, 110 );
 		controls.maxPolarAngle = Math.PI / 1.62;
 		controls.userRotateSpeed = 0.4;
 
 		camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
 		camera.position.z = 3500;
-		controls.addEventListener( 'change', render );
+		// controls.addEventListener( 'change', render );
 
 		$( document, "#main" ).appendChild( renderer.domElement );
 
@@ -69,7 +71,7 @@ define([
 			var planeMat = new THREE.ShaderMaterial( { 
 				vertexShader: reflection.vertexShader, 
 				fragmentShader: reflection.fragmentShader, 
-				uniforms: planeUniforms
+				uniforms: planeUniforms,
 			});
 
 			var basePlane = new THREE.Mesh( new THREE.PlaneGeometry( 10000, 10000, 1, 1 ), planeMat );
@@ -136,56 +138,118 @@ define([
 			var material,
 				obj 		= new THREE.Object3D(),
 				structGeom 	= new THREE.Geometry(),
-				DIMENSION 	= 20,
-				SCALE 		= 200,
+				DIMENSION 	= 40,
+				SCALE 		= 100,
 				x, y, z 	= DIMENSION;
 
 			
 		
 
-			function randomVec4InSphere( rad ){
+			var tmpVec3 = new THREE.Vector3();
+			function randomVec4InSphere( rad, mag ){
 
-				
-				var size = math.lerp( Math.pow( Math.random(), 2.0 ), rad * 0.1, rad * 0.5 );//math.cosineInterpolation( Math.random(), rad * 0.1, rad * 0.5 );//random( rad * 0.1, rad * 0.5 ) //size
-				var dist = math.random( size , rad - ( 2.0 * size ));//Math.sin( Math.PI * Math.random() * 0.5 ) * rad;
-
-				var vec = new THREE.Vector4( 
+				tmpVec3.set(
 					math.random( -rad, rad ), //x
 					math.random( -rad, rad ), //y
-					math.random( -rad, rad ), //z
-					1.0
-				).normalize().multiplyScalar( dist ); 	
+					math.random( -rad, rad ) //z
+				);
 
-				vec.w = size;
+				tmpVec3.normalize().multiplyScalar( math.random( mag, rad - mag  ))
+
+				
+				var size = math.random( rad * 0.05, 300.0 );//math.cosineInterpolation( Math.random(), rad * 0.1, rad * 0.5 );//random( rad * 0.1, rad * 0.5 ) //size
+				// var dist = math.random( size , rad - ( 2.0 * size ));//Math.sin( Math.PI * Math.random() * 0.5 ) * rad;
+
+				var vec = new THREE.Vector4( 
+					tmpVec3.x,
+					tmpVec3.y, 
+					tmpVec3.z,
+					size
+				);
+
 
 				return vec;
 			}
 
 
+			var centerRadius  			= 800.0,
+				lacunarity 	  			= 0.7,
+				baseNode 	  			= new THREE.Vector4( 0.0, 0.0, 0.0, centerRadius ),
+				baseNode2 	  			= baseNode.clone();
+
+			baseNode.rot  			= new THREE.Matrix4().makeRotationX( Math.PI * math.random( 0.3, 0.7 ));
+			baseNode2.rot 			= new THREE.Matrix4().makeRotationX( Math.PI * math.random( 0.3, 0.7 ));
+			baseNode.direction 	 	= new THREE.Vector3( math.random( -1, 1 ), math.random( -1, 1 ), math.random( -1, 1 ));
+			baseNode2.direction 	= new THREE.Vector3( math.random( -1, 1 ), math.random( -1, 1 ), math.random( -1, 1 ));
+
 			var metaballs = [ 
-				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
-				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
-				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
-				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
-				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
-				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
-				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
-				randomVec4InSphere( DIMENSION * SCALE * 0.5 ),
+				baseNode
             ] 
 
 
+
+			var debugmesh = new THREE.Mesh( new THREE.SphereGeometry( baseNode.w ), new THREE.MeshNormalMaterial() )
+				debugmesh.position.copy( baseNode );
+				// scene.add( debugmesh );
+
+			// createSubNode( baseNode, 0, 4 );
+			// createSubNode( baseNode2, 0, 4 );
+			// var subNode1 = createSubNode( subNode0 );
+			// var subNode2 = createSubNode( subNode1 );
+
+
+
+
+			// var tmpVec3 = new THREE.Vector3();
+			
+
+			function createSubNode ( node, n, limit ){
+
+				if( n++ === limit ) return;
+
+				var position = tmpVec3.copy( node );
+				var size 	 = node.w * lacunarity  * math.random( 0.5, 1.0 ); // Add some variation
+
+
+
+				position.add ( node.direction.clone().normalize().transformDirection( node.rot ).multiplyScalar(   ( node.w + size ) * math.random( 0.8, 1.6 )  ));
+				
+				var result 		 = new THREE.Vector4( tmpVec3.x, tmpVec3.y, tmpVec3.z, size);
+				result.direction = node.direction;
+				result.rot 		 = node.rot.clone();
+
+				metaballs.push( result );
+
+				var debugmesh = new THREE.Mesh( new THREE.SphereGeometry( size ), new THREE.MeshNormalMaterial() )
+				debugmesh.position.copy( position );
+				scene.add( debugmesh );
+
+				createSubNode( result, n, limit );
+
+			}
+
+		
+            
+
+
 			// shader params
+			console.log( scene.fog.near, scene.fog.far );
 
 			material = new THREE.ShaderMaterial({
 				uniforms: {
 					// "uInverseProjectionMatrix": { type: "m4", value: camera.projectionMatrixInverse },
 					// "tDepth": 					{ type: "t", value: depthTarget }
-					"uExponent" :  { type: "f", value:8.0 },
-					"uMetaballs" : { 
+					uExponent :  { type: "f", value:40.0 },
+					uTime :  { type: "f", value:Math.random() * 30000 },
+					uMetaballs : { 
 						type: "v4v", 
 						value: metaballs
                     }, // Vector3 array
+                    fogColor:    { type: "c", value: scene.fog.color },
+				    fogNear:     { type: "f", value: scene.fog.near },
+				    fogFar:      { type: "f", value: scene.fog.far }
 				},
+				fog: true,
 				blending: 		THREE.AdditiveBlending,
 				depthTest:		false,
 				transparent:	true,
@@ -194,6 +258,9 @@ define([
 			});
 
 			material.linewidth = 1;
+			material.defines.NUM_METABALLS = metaballs.length;
+
+			console.log( material.defines.NUM_METABALLS );
 
 			
 
@@ -227,14 +294,15 @@ define([
 		scene.add( obj );
 
 
-		function animate(){
+		function animate( delta ){
 
-			
 			requestAnimationFrame( animate );
 			controls.update();
+			render( delta || 0 );
 		}
 
-		function render(){
+		console.log9 
+		function render( delta ){
 
 			//depth pass
 			// scene.overrideMaterial = depthMaterial;
@@ -243,7 +311,11 @@ define([
 
 			// //to screen
 			// composer.render()
+			// console.time('render')
+			// console.log( material.uniforms.uTime.value );
+			// material.uniforms.uTime.value = delta * 0.00005;
 			renderer.render( scene, camera );
+			// console.timeEnd('render')
 
 		}
 
