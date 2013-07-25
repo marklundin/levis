@@ -11,9 +11,9 @@
 varying float vVolume;
 
 uniform float uExponent;
-uniform float uTime;
+uniform float uSeed;
 
-uniform vec4 uMetaballs[ NUM_METABALLS ];
+// uniform vec4 uMetaballs[ NUM_METABALLS ];
 
 
 // float fbm( vec3 p )
@@ -36,12 +36,14 @@ uniform vec4 uMetaballs[ NUM_METABALLS ];
 //     return fractalNoise / maxSum;
 // }
 
-const float blobRadius 		= 0.5;
-const float blobExponent 	= 20.0;
-const float frequency 		= 0.53;
+uniform float radius;
+// uniform float exponent;
+uniform float frequency;
+uniform float noise;
+uniform float complexity;
 
 float fbm( vec3 p ){
-	return snoise( vec4( p * frequency , uTime ));
+	return snoise( vec4( p * frequency , uSeed ));
 }
 
 float volume( vec3 p ){
@@ -49,7 +51,7 @@ float volume( vec3 p ){
                    fbm( p * 2.0 + vec3(0.2, -2.0, 0.1) ), 
                    fbm( p * 2.0 + vec3(0.2, 0.3, 0.2) ) );
 
-      return fbm( p + 1.5 * q );
+      return fbm( p + complexity * q );
 	
 }
 
@@ -58,7 +60,7 @@ void main() {
 	vec3 p = position / 2000.00;
 	
 	float d = length( p );
-	d += volume( p ) * 0.8;
+	d += volume( p ) * noise;
 	// float edge = max( abs( p.x ), max( abs( p.y ), max( abs( p.z ), 0.0 )));
 
 
@@ -68,10 +70,10 @@ void main() {
 	// p.y += uTime;
 
 	
-	// float powCurve 		= max( 0.0, min( 1.0, pow( d / blobRadius , blobExponent )));
-	float powCurve 		= pow( d, blobExponent );// * -1.0;
-	float noise 		= volume( p );
-	vVolume 			= ( 1.0 - step( blobRadius, d)  );// + pow( noise, powCurve );//noise;// + noise;//pow( noise, powCurve );
+	// float powCurve 		= max( 0.0, min( 1.0, pow( d / radius , exponent )));
+	// float powCurve 		= pow( d, exponent );// * -1.0;
+	// float noise 		= volume( p * d );
+	vVolume 			= ( 1.0 - step( radius * ( 1.0 - fbm( p )), d ));// + pow( noise, powCurve );//noise;// + noise;//pow( noise, powCurve );
 
 
 	// vec3 newPosition = position + amplitude * displacement;
@@ -123,6 +125,7 @@ uniform float opacity;
 uniform float fogNear;
 uniform float fogFar;
 uniform vec3 fogColor;
+uniform float threshold;
 
 varying float vVolume;
 
@@ -133,7 +136,7 @@ void main() {
 	float fogFactor = smoothstep( fogNear, fogFar, depth );
 
 	// gl_FragColor = vec4( vec3( 1.0 ), max( vVolume, 0.02 ));
-	gl_FragColor = vec4( vec3( 1.0 ), max( step( 0.2, vVolume ) , 0.00 ) * 0.6 );
+	gl_FragColor = vec4( vec3( 1.0 ), max( step( threshold, vVolume ) , 0.00 )  );
 
 	// gl_FragColor = vec4( vec3( 1.0 ), fogFactor ) ;//mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );
 

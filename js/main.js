@@ -11,25 +11,25 @@ define([
 	"libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer",
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer) {
 
 		// APP CONSTANTS
 		var DEBUG = ( $.params( "DEBUG" ) !== 'false' && $.params( "DEBUG" ) !== '' );
+
+		var gui = new dat.GUI();
 
 
 		// APP VARIABLES
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight
+			STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
+
 
 		// Scene
-
-		var STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
-
-
 		var renderer 	= new THREE.WebGLRenderer({ antialias:true}),
 			scene 		= new THREE.Scene(),
 			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT, 1, 100000 ),
-			controls 	= new THREE.OrbitControls( camera );
+			controls 	= new THREE.OrbitControls( camera, $( document, "#main" ) );
 			
 
 		scene.fog = new THREE.Fog( 0xFF0000, 100, 110 );
@@ -230,25 +230,30 @@ define([
 
 		
             
-
+			var seed = ( Math.random() * 30000 )|0;
 
 			// shader params
 			console.log( scene.fog.near, scene.fog.far );
 
 			material = new THREE.ShaderMaterial({
+
 				uniforms: {
 					// "uInverseProjectionMatrix": { type: "m4", value: camera.projectionMatrixInverse },
 					// "tDepth": 					{ type: "t", value: depthTarget }
-					uExponent :  { type: "f", value:40.0 },
-					uTime :  { type: "f", value:Math.random() * 30000 },
-					uMetaballs : { 
-						type: "v4v", 
-						value: metaballs
-                    }, // Vector3 array
-                    fogColor:    { type: "c", value: scene.fog.color },
-				    fogNear:     { type: "f", value: scene.fog.near },
-				    fogFar:      { type: "f", value: scene.fog.far }
+					uExponent :  { type: "f", 	value:40.0 },
+					uSeed :  	 { type: "f", 	value:seed },
+					radius :  	 { type: "f", 	value:0.5 },
+					frequency :  { type: "f", 	value:0.53 },
+					exponent :   { type: "f", 	value:10.0 },
+					threshold :  { type: "f", 	value:0.99 },
+					noise :   	 { type: "f", 	value:0.7 },
+					complexity : { type: "f", 	value:0.5 },
+					// uMetaballs : { type: "v4v", value: metaballs },
+                    fogColor:    { type: "c", 	value: scene.fog.color },
+				    fogNear:     { type: "f", 	value: scene.fog.near },
+				    fogFar:      { type: "f", 	value: scene.fog.far }
 				},
+
 				fog: true,
 				blending: 		THREE.AdditiveBlending,
 				depthTest:		false,
@@ -257,10 +262,49 @@ define([
 				fragmentShader: structureShader.fragmentShader,
 			});
 
-			material.linewidth = 1;
-			material.defines.NUM_METABALLS = metaballs.length;
+			material.linewidth = 0.1;
+			material.seed = seed.toString();
 
-			console.log( material.defines.NUM_METABALLS );
+
+			material.generate_random = function (){
+				material.seed = String( (Math.random() * 30000)|0 );
+				material.generate();
+				// console.log( material.uniforms.uSeed.value );
+				// console.log( material.uniforms.complexity.value );
+			}
+
+			material.generate = function (){
+				material.uniforms.uSeed.value = Number( material.seed );
+				// console.log( material.uniforms.uSeed.value );
+				// console.log( material.uniforms.complexity.value );
+			}
+
+			var api = {
+				frequency 	: material.uniforms.frequency.value,
+				threshold 	: material.uniforms.threshold.value,
+				noiseAmount : material.uniforms.noise.value,
+				complexity 	: material.uniforms.complexity.value,
+			}
+
+			function updateMaterial()
+			{
+				material.uniforms.frequency.value 	= api.frequency;
+				material.uniforms.threshold.value 	= api.threshold;
+				material.uniforms.noise.value 		= api.noiseAmount;
+				material.uniforms.complexity.value 	= api.complexity;
+				
+			}
+
+			// gui.add( material.uniforms.radius, 		"value", 0, 1 );
+			gui.add( api, "frequency", 		0.01, 0.99 	).onChange( updateMaterial );
+			// gui.add( api, "threshold", 		0.01, 0.99 	).onChange( updateMaterial );
+			gui.add( api, "noiseAmount", 	0.0, 1.0 	).onChange( updateMaterial );
+			gui.add( api, "complexity", 	0.0, 1.0 	).onChange( updateMaterial );
+			
+
+			gui.add( material, 	"seed" ).listen();
+			gui.add( material, 	"generate_random" );
+			gui.add( material, 	"generate" );
 
 			
 
