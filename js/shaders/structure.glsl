@@ -43,13 +43,13 @@ uniform float noise;
 uniform float complexity;
 
 float fbm( vec3 p ){
-	return snoise( vec4( p * frequency , uSeed ));
+	return snoise( vec4( p * frequency , uSeed )) + ( snoise( vec4( p * frequency * 2.0, uSeed )) * 0.5 );
 }
 
 float volume( vec3 p ){
-	vec3 q = vec3( fbm( p * 2.0  + vec3(0.0, 0.0, 0.0) ),
-                   fbm( p * 2.0 + vec3(0.2, -2.0, 0.1) ), 
-                   fbm( p * 2.0 + vec3(0.2, 0.3, 0.2) ) );
+	vec3 q = vec3( fbm( p * 2.0  + vec3(0.0, 0.0, 0.0 )),
+                   fbm( p * 2.0 + vec3(0.2, -2.0, 0.1 )), 
+                   fbm( p * 2.0 + vec3(0.2, 0.3, 0.2 )));
 
       return fbm( p + complexity * q );
 	
@@ -58,21 +58,10 @@ float volume( vec3 p ){
 void main() {
 
 	vec3 p = position / 2000.00;
-	
 	float d = length( p );
-	d += volume( p ) * noise;
-	// float edge = max( abs( p.x ), max( abs( p.y ), max( abs( p.z ), 0.0 )));
 
-
-
-	// float edge = 100.0;
-	// vec3 p = position;
-	// p.y += uTime;
-
-	
-	// float powCurve 		= max( 0.0, min( 1.0, pow( d / radius , exponent )));
-	// float powCurve 		= pow( d, exponent );// * -1.0;
-	// float noise 		= volume( p * d );
+	// NOISE
+	// d += volume( p ) * noise;
 	vVolume 			= ( 1.0 - step( radius * ( 1.0 - fbm( p )), d ));// + pow( noise, powCurve );//noise;// + noise;//pow( noise, powCurve );
 
 
@@ -131,14 +120,15 @@ varying float vVolume;
 
 void main() {
 
+	gl_FragColor = vec4( 1.0 );
 
-	float depth = gl_FragCoord.z / gl_FragCoord.w;
-	float fogFactor = smoothstep( fogNear, fogFar, depth );
+	// float depth = gl_FragCoord.z / gl_FragCoord.w;
+	// float fogFactor = smoothstep( fogNear, fogFar, depth );
 
 	// gl_FragColor = vec4( vec3( 1.0 ), max( vVolume, 0.02 ));
-	gl_FragColor = vec4( vec3( 1.0 ), max( step( threshold, vVolume ) , 0.00 )  );
+	// gl_FragColor = vec4( vec3( 1.0 ), max( step( threshold, vVolume ) , 0.00 )  );
 
-	// gl_FragColor = vec4( vec3( 1.0 ), fogFactor ) ;//mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );
+	// gl_FragColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );
 
 	
 

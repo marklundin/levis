@@ -10,6 +10,7 @@ define([
 	"utils/timer",
 	"libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer",
+	"libs/threejs/examples/js/ImprovedNoise",
 
 	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer) {
 
@@ -233,7 +234,7 @@ define([
 			var seed = ( Math.random() * 30000 )|0;
 
 			// shader params
-			console.log( scene.fog.near, scene.fog.far );
+			
 
 			material = new THREE.ShaderMaterial({
 
@@ -253,7 +254,7 @@ define([
 				    fogNear:     { type: "f", 	value: scene.fog.near },
 				    fogFar:      { type: "f", 	value: scene.fog.far }
 				},
-
+				wireframe: 		true,
 				fog: true,
 				blending: 		THREE.AdditiveBlending,
 				depthTest:		false,
@@ -265,22 +266,9 @@ define([
 			material.linewidth = 0.1;
 			material.seed = seed.toString();
 
-
-			material.generate_random = function (){
-				material.seed = String( (Math.random() * 30000)|0 );
-				material.generate();
-				// console.log( material.uniforms.uSeed.value );
-				// console.log( material.uniforms.complexity.value );
-			}
-
-			material.generate = function (){
-				material.uniforms.uSeed.value = Number( material.seed );
-				// console.log( material.uniforms.uSeed.value );
-				// console.log( material.uniforms.complexity.value );
-			}
-
 			var api = {
 				frequency 	: material.uniforms.frequency.value,
+				seedRadius 	: 0.5,
 				threshold 	: material.uniforms.threshold.value,
 				noiseAmount : material.uniforms.noise.value,
 				complexity 	: material.uniforms.complexity.value,
@@ -295,47 +283,151 @@ define([
 				
 			}
 
+
+			material.generate_random = function (){
+				material.seed = String( (Math.random() * 30000)|0 );
+				material.generate();
+				// console.log( material.uniforms.uSeed.value );
+				// console.log( material.uniforms.complexity.value );
+			}
+
+			var baseGeom;
+			var cubeGeom = new THREE.CubeGeometry( SCALE, SCALE, SCALE, 1, 1, 1 );
+			var cubeMesh = new THREE.Mesh( cubeGeom );
+			var prng = new ImprovedNoise();
+			var noise;
+			var fbmV3 = new THREE.Vector3();
+			var fbmElevV3 = new THREE.Vector3();
+			var structMesh;
+			// var emptyGeom = new THREE.Geometry();
+
+			
+
+			function fbm( p ){
+
+				fbmV3.copy( p );
+
+				fbmV3.multiplyScalar( 1.0 / ( DIMENSION * 0.5 ) );
+				fbmV3.multiplyScalar( api.frequency );
+				
+				fbmV3.x += 1.0;
+				fbmV3.y += 1.0;
+				fbmV3.z += 1.0;
+
+
+
+				
+				//scale fbmV3 by frequency
+
+				var x, y, z;
+				// fbmElevV3.copy( fbm );
+				// fbmElevV3.x = prng.noise( fbmV3.x * 2.0 , 		fbmV3.y * 2.0, 			fbmV3.z * 2.0 );// * 0.5 + 0.5;
+				// fbmElevV3.y = prng.noise( fbmV3.x * 2.0 + 0.3 , fbmV3.y * 2.0 - 0.1 , 	fbmV3.z * 2.0 + 0.2 );// * 0.5 + 0.5;
+				// fbmElevV3.z = prng.noise( fbmV3.x * 2.0 + 0.2, 	fbmV3.y * 2.0 + 0.3, 	fbmV3.z * 2.0 + 0.2);// * 0.5 + 0.5;
+
+				// fbmElevV3.multiplyScalar( api.complexity );
+
+				// return prng.noise( fbmV3.x + fbmElevV3.x, fbmV3.y + fbmElevV3.y, fbmV3.z + fbmElevV3.z );// * 0.5 + 0.5;
+				return prng.noise( fbmV3.x , fbmV3.y, fbmV3.z );
+
+
+			}
+
+			function step( edge, x ){
+				return x < edge ? 0.0 : 1.0;
+			}
+
+			material.generate = function(){
+
+				console.time( 'generate' );
+
+				var d;
+				
+				if( structMesh ){
+					scene.remove( structMesh );
+					baseGeom.dispose();
+				}
+
+				baseGeom = new THREE.Geometry();
+				// baseGeom.dynamic = true;
+
+
+				x = y = z = DIMENSION;
+				var hDIM = DIMENSION * 0.5;
+
+				while( z-- > 0 ){
+					y = DIMENSION;
+					while( y-- > 0 ){
+						x = DIMENSION;
+						while( x-- > 0 ){
+
+							cubeMesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
+							
+
+							noise = fbm( cubeMesh.position );// * api.noiseAmount;//prng.noise( x / DIMENSION, y / DIMENSION, z / DIMENSION );// * 0.5 + 0.5;
+							d = ( 1.0 - step( api.seedRadius * ( 1.0 - noise ), cubeMesh.position.length() / hDIM  ));
+
+							// console.log( material.uniforms.radius.value * noise );
+
+							if( noise > 0 ){
+								cubeMesh.position.multiplyScalar( SCALE );
+								THREE.GeometryUtils.merge( baseGeom, cubeMesh );
+							}
+
+							// structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
+							// structGeom.vertices.push( new THREE.Vector3( x+1, y, z ).multiplyScalar( SCALE ));
+
+							// structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
+							// structGeom.vertices.push( new THREE.Vector3( x, y+1, z ).multiplyScalar( SCALE ));
+
+							// structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
+							// structGeom.vertices.push( new THREE.Vector3( x, y, z+1 ).multiplyScalar( SCALE ));
+							// struct.geometry.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
+							// struct.geometry.vertices.push( new THREE.Vector3( y, z, x ).multiplyScalar( SCALE ));
+							// struct.geometry.vertices.push( new THREE.Vector3( z, x, y ).multiplyScalar( SCALE ));
+
+
+						}
+					}
+				}
+
+				// THREE.GeometryUtils.center( baseGeom );
+
+				structMesh = new THREE.Mesh( baseGeom, material );
+				scene.add( structMesh );
+
+				console.timeEnd( 'generate' );
+
+			}
+
+			
+
 			// gui.add( material.uniforms.radius, 		"value", 0, 1 );
-			gui.add( api, "frequency", 		0.01, 0.99 	).onChange( updateMaterial );
+			gui.add( api, "frequency", 		0.00, 2.0 	).onChange( updateMaterial );
+			gui.add( api, "seedRadius", 		0.01, 1.0 	).onChange( updateMaterial );
 			// gui.add( api, "threshold", 		0.01, 0.99 	).onChange( updateMaterial );
 			gui.add( api, "noiseAmount", 	0.0, 1.0 	).onChange( updateMaterial );
 			gui.add( api, "complexity", 	0.0, 1.0 	).onChange( updateMaterial );
-			
 
+			gui.add( material, 	"wireframe" );
 			gui.add( material, 	"seed" ).listen();
 			gui.add( material, 	"generate_random" );
 			gui.add( material, 	"generate" );
 
+
 			
 
-			while( z-- > 0 ){
-				y = DIMENSION;
-				while( y-- > 0 ){
-					x = DIMENSION;
-					while( x-- > 0 ){
-						structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-						structGeom.vertices.push( new THREE.Vector3( x+1, y, z ).multiplyScalar( SCALE ));
-
-						structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-						structGeom.vertices.push( new THREE.Vector3( x, y+1, z ).multiplyScalar( SCALE ));
-
-						structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-						structGeom.vertices.push( new THREE.Vector3( x, y, z+1 ).multiplyScalar( SCALE ));
-						// struct.geometry.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-						// struct.geometry.vertices.push( new THREE.Vector3( y, z, x ).multiplyScalar( SCALE ));
-						// struct.geometry.vertices.push( new THREE.Vector3( z, x, y ).multiplyScalar( SCALE ));
-					}
-				}
-			}
+			
 
 
 
-		THREE.GeometryUtils.center( structGeom );
-		var structMesh = new THREE.Line( structGeom, material, THREE.LinePieces );
+		material.generate();
 		
 		
-		obj.add( structMesh );
-		scene.add( obj );
+		
+		
+		scene.add( structMesh );
+		// scene.add( obj );
 
 
 		function animate( delta ){
@@ -345,7 +437,6 @@ define([
 			render( delta || 0 );
 		}
 
-		console.log9 
 		function render( delta ){
 
 			//depth pass
