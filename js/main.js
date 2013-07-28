@@ -8,11 +8,13 @@ define([
 	"glsl!shaders/skydome.glsl",
 	"glsl!shaders/reflection.glsl",
 	"utils/timer",
+	"utils/noise",
 	"libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer",
 	"libs/threejs/examples/js/ImprovedNoise",
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, n ) {
+
 
 		// APP CONSTANTS
 		var DEBUG = ( $.params( "DEBUG" ) !== 'false' && $.params( "DEBUG" ) !== '' );
@@ -139,8 +141,8 @@ define([
 			var material,
 				obj 		= new THREE.Object3D(),
 				structGeom 	= new THREE.Geometry(),
-				DIMENSION 	= 40,
-				SCALE 		= 100,
+				DIMENSION 	= 30,
+				SCALE 		= 200,
 				x, y, z 	= DIMENSION;
 
 			
@@ -152,7 +154,7 @@ define([
 				tmpVec3.set(
 					math.random( -rad, rad ), //x
 					math.random( -rad, rad ), //y
-					math.random( -rad, rad ) //z
+					math.random( -rad, rad )  //z
 				);
 
 				tmpVec3.normalize().multiplyScalar( math.random( mag, rad - mag  ))
@@ -274,6 +276,7 @@ define([
 				complexity 	: material.uniforms.complexity.value,
 			}
 
+
 			function updateMaterial()
 			{
 				material.uniforms.frequency.value 	= api.frequency;
@@ -339,7 +342,7 @@ define([
 
 			material.generate = function(){
 
-				console.time( 'generate' );
+				
 
 				var d;
 				
@@ -351,6 +354,17 @@ define([
 				baseGeom = new THREE.Geometry();
 				// baseGeom.dynamic = true;
 
+				var noise3D;
+				// function noiseVolume( ){
+
+					console.time( 'gpu noise')
+					noise3D = n.noise3D( DIMENSION, DIMENSION, DIMENSION );
+					console.timeEnd( 'gpu noise')
+
+				// }
+
+				// noiseVolume()
+// console.time( 'generate' );
 
 				x = y = z = DIMENSION;
 				var hDIM = DIMENSION * 0.5;
@@ -363,13 +377,14 @@ define([
 
 							cubeMesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							
-
-							noise = fbm( cubeMesh.position );// * api.noiseAmount;//prng.noise( x / DIMENSION, y / DIMENSION, z / DIMENSION );// * 0.5 + 0.5;
-							d = ( 1.0 - step( api.seedRadius * ( 1.0 - noise ), cubeMesh.position.length() / hDIM  ));
+							// console.log( x, y, z, noise3D( x, y, z ));
+							noise = noise3D( x, y, z );//fbm( cubeMesh.position );// * api.noiseAmount;//prng.noise( x / DIMENSION, y / DIMENSION, z / DIMENSION );// * 0.5 + 0.5;
+							// d = ( 1.0 - step( api.seedRadius * ( 1.0 - noise ), cubeMesh.position.length() / hDIM  ));
 
 							// console.log( material.uniforms.radius.value * noise );
 
-							if( noise > 0 ){
+							if( noise > 0.5 ){
+								// console.log( 'here' );
 								cubeMesh.position.multiplyScalar( SCALE );
 								THREE.GeometryUtils.merge( baseGeom, cubeMesh );
 							}
@@ -396,7 +411,7 @@ define([
 				structMesh = new THREE.Mesh( baseGeom, material );
 				scene.add( structMesh );
 
-				console.timeEnd( 'generate' );
+				// console.timeEnd( 'generate' );
 
 			}
 
