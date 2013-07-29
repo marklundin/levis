@@ -13,12 +13,7 @@ define( function(){
 
 	].join("\n");
 
-	var vertices = new Float32Array([
-			-1.0, -1.0,
-			 1.0, -1.0,
-			 1.0,  1.0,
-			-1.0,  1.0,
-		]),
+	var vertices = new Float32Array( [ -1.0, -1.0,   1.0, -1.0,    -1.0,  1.0,     1.0, -1.0,    1.0,  1.0,    -1.0,  1.0] ),
 		indices = new Uint16Array([
 			0, 1, 3,
 			3, 1, 2
@@ -27,7 +22,7 @@ define( function(){
 	function create( width, height, fragmentSource, preserveDrawingBuffer ){
 
 		var canvas 	 = document.createElement( 'canvas' ),
-			pixRatio = window.devicePixelRatio || 1;
+			pixRatio = 1.0;//window.devicePixelRatio || 1;
 
 		// pixRatio = 1.0;
 		// canvas.style.width 	= width + 'px';
@@ -44,19 +39,23 @@ define( function(){
 			fShader  = gl.createShader( gl.FRAGMENT_SHADER ),
 			program  = gl.createProgram();
 
-		gl.pixelStorei( gl.UNPACK_FLIP_Y_WEBGL, true );
+		// gl.pixelStorei( gl.UNPACK_FLIP_Y_WEBGL, true );
 
 		function size( w, h ){
-			console.log( w, h )
+
+			width = w;
+			height = h;
+			
 			canvas.style.width 	= w + 'px';
 			canvas.style.height = h + 'px';
 			canvas.width  = w * pixRatio;
 			canvas.height = h * pixRatio;
-			gl.uniform2fv( program.uResolution, [ w * pixRatio, h * pixRatio] );
-			gl.viewport(0, 0, w * pixRatio, h * pixRatio );
+			gl.uniform2f( program.uResolution, w * pixRatio, h * pixRatio);
+			gl.viewport(0, 0, width  , height );
+
 		}
 
-		size( width, height );
+		// size( width, height );
 		
 		// Setup context params
 		
@@ -86,7 +85,7 @@ define( function(){
 			gl.useProgram(   program );
 
 	        program.aVertex = gl.getAttribLocation( program, "aVertex" );
-	        gl.enableVertexAttribArray( program.aVertex );
+	        // gl.enableVertexAttribArray( program.aVertex );
 
 	        program.uResolution   	= gl.getUniformLocation( program, "uResolution" );
 	        program.uTime 			= gl.getUniformLocation( program, "uTime" );
@@ -96,13 +95,15 @@ define( function(){
         // Buffers
 
         	//verts
-			gl.bindBuffer( gl.ARRAY_BUFFER, gl.createBuffer() );
+        	var vertBuffer = gl.createBuffer();
+			gl.bindBuffer( gl.ARRAY_BUFFER, vertBuffer );
 			gl.bufferData( gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW );
 			gl.vertexAttribPointer( program.aVertex, 2, gl.FLOAT, false, 0, 0 );
+			gl.enableVertexAttribArray( program.aVertex );
 
 			//indices
-			gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer() );
-			gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW );
+			// gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer() );
+			// gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW );
 
 		
 		//
@@ -110,8 +111,14 @@ define( function(){
 		return {
 			draw : function ( t ){
 
+				// gl.bindBuffer( gl.ARRAY_BUFFER, vertBuffer );
+			 //    gl.vertexAttribPointer( program.aVertex, 2, gl.FLOAT, false, 0, 0);
+			 //    gl.enableVertexAttribArray( program.aVertex );
+			 	gl.viewport(0, 0, width  , height );
 				gl.uniform1fv( program.uTime, [t||0.0] );
-				gl.drawElements( gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0 );
+				gl.drawArrays( gl.TRIANGLES, 0, 6 );
+
+				// gl.disableVertexAttribArray( program.aVertex );
 
 				
 			},

@@ -31,6 +31,8 @@ requirejs.config( {
 		"libs/threejs/examples/js/postprocessing/RenderPass": ['libs/threejs/build/three'] ,
 		"libs/threejs/examples/js/postprocessing/ShaderPass": ['libs/threejs/build/three'],
 		"libs/threejs/examples/js/postprocessing/MaskPass":['libs/threejs/build/three'],
+		"libs/threejs/examples/js/controls/TransformControls":['libs/threejs/build/three'],
+		
 		"libs/threejs/examples/js/ImprovedNoise": {
 			exports:"ImprovedNoise"
 		}

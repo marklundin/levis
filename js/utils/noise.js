@@ -63,32 +63,42 @@ define(
 				"uniform float uFrequency;",
 				"uniform float uOffset;",
 				"uniform float uDivisor;",
-				// "uniform float uTime;",
+				"uniform float uTime;",
+
+				// "uniform float frequency;",
+				// "uniform float noise;",
+				"uniform float uComplexity;",
+
+				"float fbm( vec3 p ){",
+					"return snoise( vec4( p * uFrequency , uTime )) + ( snoise( vec4( p * uFrequency * 2.0, uTime )) * 0.5 );",
+				"}",
+
+				"float volume( vec3 p ){",
+					"vec3 q = vec3( fbm( p * 2.0  + vec3(0.0, 0.0, 0.0 )),",
+				                   "fbm( p * 2.0 + vec3(0.2, -2.0, 0.1 )),",
+				                   "fbm( p * 2.0 + vec3(0.2, 0.3, 0.2 )));",
+
+				      "return fbm( p + uComplexity * q );",
+					
+				"}",
 		    
 		      	"void main(void) {",
 
-		      		"float DIVISOR = 5.0;",
-		      		"float step = 1.0 / uResolution.x;",
-		      		"vec2 uv = gl_FragCoord.xy * step * uDivisor;",
-		      		"float seed = 1.0;",
-		      		
-
-		        	// "gl_FragColor = vec4(",
-		        	// 	"snoise( vec4( uv, 0.0 * step + uOffset, seed )),",
-		        	// 	"snoise( vec4( uv, 1.0 * step + uOffset, seed )),",
-		        	// 	"snoise( vec4( uv, 2.0 * step + uOffset, seed )),",
-		        	// 	"1.0",
-		        	// ");",
-
-		
+		      		"vec3 origin = vec3( 0.5 );",
+		      		"vec2 uv = gl_FragCoord.xy / uResolution.xy * uDivisor;",
+		      			
 					"vec2 tile = floor( uv );",
 					"float z = tile.y * uDivisor + tile.x;",
 					"vec2 m = fract( uv );",
 					"z /= pow( uDivisor, 2.0 );",
-					"float noise = snoise( vec4( m, z, 1.0 ));",
+					"float noise = volume( vec3( m, z ));",
 
+					"float d = 1.0 - length( origin - vec3( m, z ));",
+					// "float vVolume = ( step( 0.5 * noise, d ));",
+					// "float t = pow( d, 10.0 );",
 
-					"gl_FragColor = vec4( noise, 0.0, 0.0, 1.0 );//encodeFloat( noise );",
+					// "gl_FragColor = vec4( m, z, 1.0 );//encodeFloat( noise );",
+					"gl_FragColor = vec4( vec3( d * 0.4 + noise * d * 1.9) , 1.0 );",
 
 		        "}"
 
@@ -99,6 +109,7 @@ define(
 
 		var uOffset 	= shader.getUniformLocation( "uOffset" ),
 			uDivisor 	= shader.getUniformLocation( "uDivisor" ),
+			uComplexity = shader.getUniformLocation( "uComplexity" ),
 			uFrequency 	= shader.getUniformLocation( "uFrequency" ),
 			channels	= 3;
 
@@ -106,41 +117,41 @@ define(
 
 		return {
 
-			noise3D: function ( w, h, d, frequency, seed ){
+			noise3D: function ( w, h, d, frequency, complexity, seed ){
 
 				var div    = Math.ceil( Math.sqrt( d )),
-					size   = w * h * Math.pow( d, 2.0 ) * 4,
+					d 	   = Math.pow( div, 2.0 );
+					size   = w * h * d * 4.0,
 					volume = new Uint8Array( size );
 					
-
-				frequency = frequency | 1.0;
+				frequency = frequency || 1.0;
 				seed 	  = seed | Math.random();
 
+				
 				shader.uniformFloat( uDivisor, 	 div );
 				shader.uniformFloat( uFrequency, frequency );
+				shader.uniformFloat( uComplexity, complexity );
 
-				// while( n-- > 0 ){
-					// console.log( n * size, size, volume.length  );	
-					// shader.uniformFloat( uOffset, n / Math.ceil( d / channels ) );
-					shader.size( w * div, h * div );
-					shader.draw( seed );
-					shader.gl.readPixels( 0, 0, w * div, h * div, shader.gl.RGBA, shader.gl.UNSIGNED_BYTE, volume );
-				// }
-
-				console.log( volume );
+				shader.size( w * div, h * div );
+				shader.draw( seed );
+				shader.gl.readPixels( 0, 0, w * div, h * div, shader.gl.RGBA, shader.gl.UNSIGNED_BYTE, volume );
+			
 
 				var fract, floor; 
-				return function( x, y, z ){
+				var fn = function( x, y, z ){
 
-					fract = z % channels;
-					floor = ~~( z / channels );
+					// var wPix = div * w;
+					var yPos 	= Math.floor(z/div) * div * w * h,
+						xPos 	= ( z % div ) * w,
+						zOffset = ( xPos + yPos ),
+						index   =  y * div * w;
 
-					// return volume[( y * w + x ) * 4.0 * floor + fract] / 255.0;
-					var index = ( (floor*w*h)+(y*w)+x ) * 4.0;
-					// console.log( index );
-					return volume[index+fract] / 255.0;
+					return volume[((zOffset+index + x) * 4.0 )] / 256.0;
 
 				};
+
+				fn.volume = volume;
+				return fn;
 
 			},
 			

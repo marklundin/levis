@@ -12,6 +12,7 @@ define([
 	"libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer",
 	"libs/threejs/examples/js/ImprovedNoise",
+	"libs/threejs/examples/js/controls/TransformControls"
 
 	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, n ) {
 
@@ -35,12 +36,12 @@ define([
 			controls 	= new THREE.OrbitControls( camera, $( document, "#main" ) );
 			
 
-		scene.fog = new THREE.Fog( 0xFF0000, 100, 110 );
+		scene.fog = new THREE.Fog( 0xFFFFFF, 100, 5000 );
 		controls.maxPolarAngle = Math.PI / 1.62;
 		controls.userRotateSpeed = 0.4;
 
 		camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
-		camera.position.z = 3500;
+		camera.position.z = 2500;
 		// controls.addEventListener( 'change', render );
 
 		$( document, "#main" ).appendChild( renderer.domElement );
@@ -80,7 +81,7 @@ define([
 			var basePlane = new THREE.Mesh( new THREE.PlaneGeometry( 10000, 10000, 1, 1 ), planeMat );
 			basePlane.rotation.x = Math.PI * -0.5;
 			basePlane.position.y = STRUCT_SIZE.y * -0.5;
-			scene.add( basePlane );
+			// scene.add( basePlane );
 
 
 		// DEPTH PASS
@@ -138,158 +139,116 @@ define([
 
 
 
-			var material,
+			var faceMaterial, wfMaterial,
 				obj 		= new THREE.Object3D(),
 				structGeom 	= new THREE.Geometry(),
-				DIMENSION 	= 30,
-				SCALE 		= 200,
+				DIMENSION 	= 25,
+				SCALE 		= 100,
 				x, y, z 	= DIMENSION;
 
-			
-		
 
-			var tmpVec3 = new THREE.Vector3();
-			function randomVec4InSphere( rad, mag ){
-
-				tmpVec3.set(
-					math.random( -rad, rad ), //x
-					math.random( -rad, rad ), //y
-					math.random( -rad, rad )  //z
-				);
-
-				tmpVec3.normalize().multiplyScalar( math.random( mag, rad - mag  ))
-
-				
-				var size = math.random( rad * 0.05, 300.0 );//math.cosineInterpolation( Math.random(), rad * 0.1, rad * 0.5 );//random( rad * 0.1, rad * 0.5 ) //size
-				// var dist = math.random( size , rad - ( 2.0 * size ));//Math.sin( Math.PI * Math.random() * 0.5 ) * rad;
-
-				var vec = new THREE.Vector4( 
-					tmpVec3.x,
-					tmpVec3.y, 
-					tmpVec3.z,
-					size
-				);
-
-
-				return vec;
-			}
-
-
-			var centerRadius  			= 800.0,
-				lacunarity 	  			= 0.7,
-				baseNode 	  			= new THREE.Vector4( 0.0, 0.0, 0.0, centerRadius ),
-				baseNode2 	  			= baseNode.clone();
-
-			baseNode.rot  			= new THREE.Matrix4().makeRotationX( Math.PI * math.random( 0.3, 0.7 ));
-			baseNode2.rot 			= new THREE.Matrix4().makeRotationX( Math.PI * math.random( 0.3, 0.7 ));
-			baseNode.direction 	 	= new THREE.Vector3( math.random( -1, 1 ), math.random( -1, 1 ), math.random( -1, 1 ));
-			baseNode2.direction 	= new THREE.Vector3( math.random( -1, 1 ), math.random( -1, 1 ), math.random( -1, 1 ));
-
-			var metaballs = [ 
-				baseNode
-            ] 
-
-
-
-			var debugmesh = new THREE.Mesh( new THREE.SphereGeometry( baseNode.w ), new THREE.MeshNormalMaterial() )
-				debugmesh.position.copy( baseNode );
-				// scene.add( debugmesh );
-
-			// createSubNode( baseNode, 0, 4 );
-			// createSubNode( baseNode2, 0, 4 );
-			// var subNode1 = createSubNode( subNode0 );
-			// var subNode2 = createSubNode( subNode1 );
-
-
-
-
-			// var tmpVec3 = new THREE.Vector3();
-			
-
-			function createSubNode ( node, n, limit ){
-
-				if( n++ === limit ) return;
-
-				var position = tmpVec3.copy( node );
-				var size 	 = node.w * lacunarity  * math.random( 0.5, 1.0 ); // Add some variation
-
-
-
-				position.add ( node.direction.clone().normalize().transformDirection( node.rot ).multiplyScalar(   ( node.w + size ) * math.random( 0.8, 1.6 )  ));
-				
-				var result 		 = new THREE.Vector4( tmpVec3.x, tmpVec3.y, tmpVec3.z, size);
-				result.direction = node.direction;
-				result.rot 		 = node.rot.clone();
-
-				metaballs.push( result );
-
-				var debugmesh = new THREE.Mesh( new THREE.SphereGeometry( size ), new THREE.MeshNormalMaterial() )
-				debugmesh.position.copy( position );
-				scene.add( debugmesh );
-
-				createSubNode( result, n, limit );
-
-			}
-
-		
-            
-			var seed = ( Math.random() * 30000 )|0;
+			var seed = 2394;//( Math.random() * 30000 )|0;
 
 			// shader params
+		
+			// material = new THREE.ShaderMaterial({
+
+			// 	uniforms: {
+			// 		// "uInverseProjectionMatrix": { type: "m4", value: camera.projectionMatrixInverse },
+			// 		// "tDepth": 					{ type: "t", value: depthTarget }
+			// 		uExponent :  { type: "f", 	value:40.0 },
+			// 		uSeed :  	 { type: "f", 	value:seed },
+			// 		radius :  	 { type: "f", 	value:0.5 },
+			// 		frequency :  { type: "f", 	value:0.53 },
+			// 		exponent :   { type: "f", 	value:10.0 },
+			// 		threshold :  { type: "f", 	value:0.99 },
+			// 		noise :   	 { type: "f", 	value:0.7 },
+			// 		complexity : { type: "f", 	value:0.5 },
+			// 		// uMetaballs : { type: "v4v", value: metaballs },
+   //                  fogColor:    { type: "c", 	value: scene.fog.color },
+			// 	    fogNear:     { type: "f", 	value: scene.fog.near },
+			// 	    fogFar:      { type: "f", 	value: scene.fog.far }
+			// 	},
+
+			// 	wireframe: 		true,
+			// 	fog: true,
+			// 	blending: 		THREE.AdditiveBlending,
+			// 	depthTest:		false,
+			// 	transparent:	true,
+			// 	vertexShader: 	structureShader.vertexShader,
+			// 	fragmentShader: structureShader.fragmentShader,
+			// });
+
 			
 
-			material = new THREE.ShaderMaterial({
+			var amlight = new THREE.AmbientLight(0x111111 ),
+				dilight = new THREE.DirectionalLight(0x444444),
+				polight = new THREE.PointLight(0xffffff);
 
-				uniforms: {
-					// "uInverseProjectionMatrix": { type: "m4", value: camera.projectionMatrixInverse },
-					// "tDepth": 					{ type: "t", value: depthTarget }
-					uExponent :  { type: "f", 	value:40.0 },
-					uSeed :  	 { type: "f", 	value:seed },
-					radius :  	 { type: "f", 	value:0.5 },
-					frequency :  { type: "f", 	value:0.53 },
-					exponent :   { type: "f", 	value:10.0 },
-					threshold :  { type: "f", 	value:0.99 },
-					noise :   	 { type: "f", 	value:0.7 },
-					complexity : { type: "f", 	value:0.5 },
-					// uMetaballs : { type: "v4v", value: metaballs },
-                    fogColor:    { type: "c", 	value: scene.fog.color },
-				    fogNear:     { type: "f", 	value: scene.fog.near },
-				    fogFar:      { type: "f", 	value: scene.fog.far }
-				},
-				wireframe: 		true,
-				fog: true,
-				blending: 		THREE.AdditiveBlending,
-				depthTest:		false,
-				transparent:	true,
-				vertexShader: 	structureShader.vertexShader,
-				fragmentShader: structureShader.fragmentShader,
+			var tControl = new THREE.TransformControls( camera, $( document, "#main" ) );
+				// tControl.addEventListener( 'change', render );
+				tControl.attach( polight );
+				tControl.scale = 0.65;
+				scene.add( tControl.gizmo );
+
+			dilight.position.set( 1, 1, 0 ).normalize();
+			polight.position.set( 1000, 500, 0 ).normalize();
+			
+
+			faceMaterial = new THREE.MeshPhongMaterial({
+				color: new THREE.Color( 0xffffff ),
+				specular : new THREE.Color( 0xffffff ),
+				opacity: 0.7,
+				metal: true,
+				transparent: true,
+				blending: THREE.NormalBlending
 			});
 
-			material.linewidth = 0.1;
-			material.seed = seed.toString();
+			wfMaterial = new THREE.MeshPhongMaterial({
+				color: new THREE.Color( 0xffffff ),
+				specular : new THREE.Color( 0xffffff ),
+				shading: THREE.FlatShading,
+				// opacity: 0.7,
+				// transparent: true,
+				wireframe:true,
+				// blending: THREE.AdditiveBlending
+			});
+
+			scene.add( amlight );
+			scene.add( dilight );
+			scene.add( polight );
+
+			faceMaterial.linewidth = 0.1;
+			faceMaterial.seed = seed.toString();
 
 			var api = {
-				frequency 	: material.uniforms.frequency.value,
+				frequency 	: 0.8,
 				seedRadius 	: 0.5,
-				threshold 	: material.uniforms.threshold.value,
-				noiseAmount : material.uniforms.noise.value,
-				complexity 	: material.uniforms.complexity.value,
+				threshold 	: 0.68,
+				noiseAmount : 0.7,
+				complexity 	: 0.5,
+				additive 	: false,
+				wireframe: true,
+				// opacity		: material.opacity
 			}
 
 
 			function updateMaterial()
 			{
-				material.uniforms.frequency.value 	= api.frequency;
-				material.uniforms.threshold.value 	= api.threshold;
-				material.uniforms.noise.value 		= api.noiseAmount;
-				material.uniforms.complexity.value 	= api.complexity;
+				var mode = api.additive ?  THREE.AdditiveBlending : THREE.NormalBlending;
+				faceMaterial.needsUpdate = mode !== faceMaterial.blending;
+				faceMaterial.blending = mode;
+
+			
+				wfMesh.material.visible = api.wireframe;
+				faceMaterial.generate();
 				
 			}
 
 
-			material.generate_random = function (){
-				material.seed = String( (Math.random() * 30000)|0 );
-				material.generate();
+			faceMaterial.generate_random = function (){
+				faceMaterial.seed = String( (Math.random() * 30000)|0 );
+				faceMaterial.generate();
 				// console.log( material.uniforms.uSeed.value );
 				// console.log( material.uniforms.complexity.value );
 			}
@@ -302,157 +261,102 @@ define([
 			var fbmV3 = new THREE.Vector3();
 			var fbmElevV3 = new THREE.Vector3();
 			var structMesh;
-			// var emptyGeom = new THREE.Geometry();
 
 			
 
-			function fbm( p ){
+			faceMaterial.generate = function(){
 
-				fbmV3.copy( p );
-
-				fbmV3.multiplyScalar( 1.0 / ( DIMENSION * 0.5 ) );
-				fbmV3.multiplyScalar( api.frequency );
-				
-				fbmV3.x += 1.0;
-				fbmV3.y += 1.0;
-				fbmV3.z += 1.0;
-
-
-
-				
-				//scale fbmV3 by frequency
-
-				var x, y, z;
-				// fbmElevV3.copy( fbm );
-				// fbmElevV3.x = prng.noise( fbmV3.x * 2.0 , 		fbmV3.y * 2.0, 			fbmV3.z * 2.0 );// * 0.5 + 0.5;
-				// fbmElevV3.y = prng.noise( fbmV3.x * 2.0 + 0.3 , fbmV3.y * 2.0 - 0.1 , 	fbmV3.z * 2.0 + 0.2 );// * 0.5 + 0.5;
-				// fbmElevV3.z = prng.noise( fbmV3.x * 2.0 + 0.2, 	fbmV3.y * 2.0 + 0.3, 	fbmV3.z * 2.0 + 0.2);// * 0.5 + 0.5;
-
-				// fbmElevV3.multiplyScalar( api.complexity );
-
-				// return prng.noise( fbmV3.x + fbmElevV3.x, fbmV3.y + fbmElevV3.y, fbmV3.z + fbmElevV3.z );// * 0.5 + 0.5;
-				return prng.noise( fbmV3.x , fbmV3.y, fbmV3.z );
-
-
-			}
-
-			function step( edge, x ){
-				return x < edge ? 0.0 : 1.0;
-			}
-
-			material.generate = function(){
-
-				
 
 				var d;
 				
 				if( structMesh ){
 					scene.remove( structMesh );
+					scene.remove( wfMesh );
 					baseGeom.dispose();
 				}
 
 				baseGeom = new THREE.Geometry();
-				// baseGeom.dynamic = true;
 
-				var noise3D;
-				// function noiseVolume( ){
+				console.time( 'gpu noise')
+				var noise3D = n.noise3D( DIMENSION, DIMENSION, DIMENSION, api.frequency, api.complexity, faceMaterial.seed );
+				console.timeEnd( 'gpu noise')
 
-					console.time( 'gpu noise')
-					noise3D = n.noise3D( DIMENSION, DIMENSION, DIMENSION );
-					console.timeEnd( 'gpu noise')
-
-				// }
-
-				// noiseVolume()
-// console.time( 'generate' );
 
 				x = y = z = DIMENSION;
 				var hDIM = DIMENSION * 0.5;
+
 
 				while( z-- > 0 ){
 					y = DIMENSION;
 					while( y-- > 0 ){
 						x = DIMENSION;
 						while( x-- > 0 ){
-
-							cubeMesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
-							
-							// console.log( x, y, z, noise3D( x, y, z ));
-							noise = noise3D( x, y, z );//fbm( cubeMesh.position );// * api.noiseAmount;//prng.noise( x / DIMENSION, y / DIMENSION, z / DIMENSION );// * 0.5 + 0.5;
-							// d = ( 1.0 - step( api.seedRadius * ( 1.0 - noise ), cubeMesh.position.length() / hDIM  ));
-
-							// console.log( material.uniforms.radius.value * noise );
-
-							if( noise > 0.5 ){
-								// console.log( 'here' );
+							// console.log( noise3D( x, y, z )  );
+							if( noise3D( x, y, z ) > api.threshold ){
+								// console.log( "here" );
+								cubeMesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 								cubeMesh.position.multiplyScalar( SCALE );
 								THREE.GeometryUtils.merge( baseGeom, cubeMesh );
 							}
-
-							// structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-							// structGeom.vertices.push( new THREE.Vector3( x+1, y, z ).multiplyScalar( SCALE ));
-
-							// structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-							// structGeom.vertices.push( new THREE.Vector3( x, y+1, z ).multiplyScalar( SCALE ));
-
-							// structGeom.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-							// structGeom.vertices.push( new THREE.Vector3( x, y, z+1 ).multiplyScalar( SCALE ));
-							// struct.geometry.vertices.push( new THREE.Vector3( x, y, z ).multiplyScalar( SCALE ));
-							// struct.geometry.vertices.push( new THREE.Vector3( y, z, x ).multiplyScalar( SCALE ));
-							// struct.geometry.vertices.push( new THREE.Vector3( z, x, y ).multiplyScalar( SCALE ));
-
-
 						}
 					}
 				}
 
-				// THREE.GeometryUtils.center( baseGeom );
-
-				structMesh = new THREE.Mesh( baseGeom, material );
+				structMesh = new THREE.Mesh( baseGeom, faceMaterial );
 				scene.add( structMesh );
+
+				wfMesh = new THREE.Mesh( baseGeom, wfMaterial );
+				scene.add( wfMesh );
 
 				// console.timeEnd( 'generate' );
 
 			}
 
+			var formgui = gui.addFolder('form');
+			formgui.add( api, "frequency", 		0.00, 2.0 	).onFinishChange( updateMaterial );
+			formgui.add( api, "threshold", 		0.01, 0.99 	).onFinishChange( updateMaterial );
+			formgui.add( api, "complexity", 	0.0, 1.0 	).onFinishChange( updateMaterial );
 			
+			formgui.open();
 
-			// gui.add( material.uniforms.radius, 		"value", 0, 1 );
-			gui.add( api, "frequency", 		0.00, 2.0 	).onChange( updateMaterial );
-			gui.add( api, "seedRadius", 		0.01, 1.0 	).onChange( updateMaterial );
-			// gui.add( api, "threshold", 		0.01, 0.99 	).onChange( updateMaterial );
-			gui.add( api, "noiseAmount", 	0.0, 1.0 	).onChange( updateMaterial );
-			gui.add( api, "complexity", 	0.0, 1.0 	).onChange( updateMaterial );
-
-			gui.add( material, 	"wireframe" );
-			gui.add( material, 	"seed" ).listen();
-			gui.add( material, 	"generate_random" );
-			gui.add( material, 	"generate" );
-
-
-			
-
-			
+			var matgui = gui.addFolder('material');
+			matgui.addColor( faceMaterial, "color"	);//.onChange( updateMaterial );
+			matgui.addColor( faceMaterial, "specular"	);//.onChange( updateMaterial );
+			matgui.addColor( faceMaterial, "ambient"	);//.onChange( updateMaterial );
+			matgui.add( faceMaterial, "opacity", 		0.0, 1.0 	);//.onChange( updateMaterial );
+			matgui.add( api, "additive" 	).onChange( updateMaterial );
+			matgui.add( api, "wireframe" 	).onChange( updateMaterial );
+			matgui.open();
+			// gui.add( material, 	"wireframe" );
+			gui.add( faceMaterial, 	"seed" ).listen();
+			gui.add( faceMaterial, 	"generate_random" );
+			gui.add( faceMaterial, 	"generate" );
 
 
-
-		material.generate();
+		faceMaterial.generate();
 		
 		
 		
 		
-		scene.add( structMesh );
+		// scene.add( structMesh );
 		// scene.add( obj );
 
 
 		function animate( delta ){
 
 			requestAnimationFrame( animate );
+			tControl.update();
 			controls.update();
 			render( delta || 0 );
+
 		}
 
 		function render( delta ){
+
+
+			// polight.position.x = Math.sin( delta * 0.001 ) * 1000.0;
+			// polight.position.x += Math.sin( polight.position.x  * 0.001 ) * 2000.0;
+			// polight.position.y = Math.sin( delta * 0.0014 ) * 5000.0;
 
 			//depth pass
 			// scene.overrideMaterial = depthMaterial;

@@ -679,6 +679,8 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 	function onMouseMove( event ) {
 
+		event.preventDefault();
+
 		if ( scope.active ) {
 
 			var planeIntersect = intersectObjects( event, [intersectionPlanes[currentPlane]] );
