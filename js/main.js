@@ -192,7 +192,7 @@ define([
 				scene.add( tControl.gizmo );
 
 			dilight.position.set( 1, 1, 0 ).normalize();
-			polight.position.set( 1000, 500, 0 );//.normalize();
+			polight.position.set( math.random( -1000, 1000 ), math.random( -1000, 1000 ), math.random( -1000, 1000 ) );//.normalize();
 			
 
 			faceMaterial = new THREE.MeshPhongMaterial({
