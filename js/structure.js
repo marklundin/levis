@@ -1,32 +1,55 @@
 define([
-		"libs/threejs/examples/js/ImprovedNoise"
-	],function(){
+	"utils/noise",
+	"geometry/cubeframe",
+	'libs/threejs/build/three'
+	],function( prng, cube ){
 
 
-		var DIMENSION = 100;
-		var psng = new ImprovedNoise();
+		var GRID = {
+			DIMENSION : 30,
+			SCALE:  	100
+		};
 
+		var STRUT = {}
+			STRUT.WIDTH  = 7;
+			STRUT.LENGTH = GRID.SCALE - STRUT.WIDTH;
 
 		
-		var structure = function(){
+		var structure = function( frequency, complexity, seed, threshold ){
 
-			this.noise = new Float64Array( DIMENSION * DIMENSION * DIMENSION );
 
-			var x, y, z = DIMENSION, invDim = 1.0 / DIMENSION;
+			var noise3D 	= prng.noise3D( GRID.DIMENSION, GRID.DIMENSION, GRID.DIMENSION, frequency, complexity, seed ),
+				hDIM 		= GRID.DIMENSION * 0.5,
+				x, y, z 	= GRID.DIMENSION,
+				baseGeom 	= new THREE.Geometry(),
+				volume 		= [], 
+				mesh 	 	= new THREE.Mesh( cube( GRID.SCALE, STRUT.WIDTH ));
 
-			
-			while( z -- > 0 ){
-				y = DIMENSION;
-				// zDD = z * DIMENSION * DIMENSION;
-				while( y -- > 0 ){
-					x = DIMENSION;
-					// yD = y * DIMENSION;
-					while( x -- > 0 ){
-						noise[zDD+yD+x] = psng.noise( x * invDim, y * invDim, z * invDim ) * 0.5 + 0.5;
+
+			// Generate noise pattern
+			while( z-- > 0 ){
+				volume[z] = []
+				y = GRID.DIMENSION;
+				while( y-- > 0 ){
+					volume[z][y] = []
+					x = GRID.DIMENSION;
+					while( x-- > 0 ){
+						if( noise3D( x, y, z ) > threshold ){
+							volume[z][y][x] = true;
+							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
+							mesh.position.multiplyScalar( GRID.SCALE );
+							THREE.GeometryUtils.merge( baseGeom, mesh );
+						}
 					}
 				}
 			}
 
+			return {
+				geometry: baseGeom,
+				// geometry: mesh.geometry,
+				volume: volume
+			}
+					
 		}
 
 		return structure;
