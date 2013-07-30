@@ -220,42 +220,81 @@ define([
 					noiseAmount : 0.7,
 					complexity 	: 0.82,
 					generate 	: generate,
+					seed 		: String( seed ),
+
+					color 		: "#"+faceMaterial.color.getHexString(),
+					specular 	: "#"+faceMaterial.specular.getHexString(),
+					ambient 	: "#"+faceMaterial.ambient.getHexString(),
+
+					directional_light 	: "#"+dilight.color.getHexString(),
+					point_light 		: "#"+polight.color.getHexString(),
+					ambient_light 		: "#"+amlight.color.getHexString(),
+
 					random 		: function (){
-						faceMaterial.seed = String( (Math.random() * 30000)|0 );
+						seed = (Math.random() * 9999 )|0;
+						api.seed = String( seed );
 						generate();
+					},
+					updateMaterial: function(){
+
+						faceMaterial.color.set( api.color )
+						faceMaterial.specular.set( api.specular )
+						faceMaterial.ambient.set( api.ambient )
+
+					},
+					updateLights: function(){
+						amlight.color.set( api.ambient_light );
+						polight.color.set( api.point_light );
+						dilight.color.set( api.directional_light );
 					}
 				}
 
-
+				
 				var formgui = gui.addFolder('form');
-				formgui.add( api, "frequency", 		0.00, 2.0 	).onFinishChange( api.updateMaterial );
-				formgui.add( api, "threshold", 		0.01, 0.99 	).onFinishChange( api.updateMaterial );
-				formgui.add( api, "complexity", 	0.0, 1.0 	).onFinishChange( api.updateMaterial );
+				formgui.add( api, "frequency", 		0.00, 2.0 	).onFinishChange( api.generate );
+				formgui.add( api, "threshold", 		0.01, 0.99 	).onFinishChange( api.generate );
+				formgui.add( api, "complexity", 	0.0,  1.0 	).onFinishChange( api.generate );
 				formgui.open();
 
 				var matgui = gui.addFolder('material');
-				matgui.addColor( faceMaterial, "color"	);//.onChange( updateMaterial );
-				matgui.addColor( faceMaterial, "specular"	);//.onChange( updateMaterial );
-				matgui.addColor( faceMaterial, "ambient"	);//.onChange( updateMaterial );
-				matgui.open();
+				matgui.addColor( api, "color"	).onChange( api.updateMaterial );
+				matgui.addColor( api, "ambient" ).onChange( api.updateMaterial );
+				matgui.addColor( api, "specular" ).onChange( api.updateMaterial );
+				// matgui.open();
+
+				var lightsgui = gui.addFolder('lights');
+				lightsgui.addColor( api, "ambient_light" ).onChange( api.updateLights );
+				lightsgui.addColor( api, "point_light" ).onChange( api.updateLights );
+				lightsgui.addColor( api, "directional_light" ).onChange( api.updateLights );
+				// lightsgui.open()
+				
+				
 				// gui.add( material, 	"wireframe" );
-				gui.add( faceMaterial, 	"seed" ).listen();
+				gui.add( api, 	"seed" );//.listen();
 				gui.add( api, 	"random" );
 				gui.add( api, 	"generate" );
+
+				gui.remember( api );
+				// gui.remember( faceMaterial );
+
 
 			// END GUI+API
 
 
-
 			// Creates new structure
 			function generate(){
+
+				console.log( 'GENERATE' );
 				
 				if( structMesh ){
 					scene.remove( structMesh );
+					scene.remove( contentObj3d );
 					structMesh.geometry.dispose();
 				}
 
-				var strut = structure( api.frequency, api.complexity, api.seed, api.threshold );
+				console.log( api.frequency, api.complexity, seed, api.threshold );
+
+				var strut = structure( api.frequency, api.complexity, seed, api.threshold );
 
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
