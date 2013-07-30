@@ -274,8 +274,6 @@ define([
 				gui.add( api, 	"random" );
 				gui.add( api, 	"generate" );
 
-				gui.remember( api );
-				// gui.remember( faceMaterial );
 
 
 			// END GUI+API
