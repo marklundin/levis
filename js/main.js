@@ -36,8 +36,8 @@ define([
 			controls 	= new THREE.OrbitControls( camera, $( document, "#main" ) );
 			
 
-		scene.fog = new THREE.Fog( 0xFFFFFF, 100, 5000 );
-		// controls.maxPolarAngle = Math.PI / 1.62;
+		// scene.fog = new THREE.Fog( 0xFFFFFF, 100, 5000 );
+		controls.maxPolarAngle = Math.PI / 1.62;
 		controls.userRotateSpeed = 0.4;
 
 		camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
@@ -86,25 +86,28 @@ define([
 
 		// DEPTH PASS
 			
-			var depthShader = THREE.ShaderLib[ "depthRGBA" ];
-			var depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
+			// var depthShader = THREE.ShaderLib[ "depthRGBA" ];
+			// var depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
 
-			var depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms } );
-			depthMaterial.blending = THREE.NoBlending;
+			// var depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms } );
+			// depthMaterial.blending = THREE.NoBlending;
 
-			// postprocessing
-			var composer = new THREE.EffectComposer( renderer );
-			composer.addPass( new THREE.RenderPass( scene, camera ) );
 
-			var depthTarget = new THREE.WebGLRenderTarget( WIDTH, HEIGHT, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat } );
-			
-			var effect = new THREE.ShaderPass( THREE.SSAOShader );
-			effect.uniforms[ 'tDepth' ].value = depthTarget;
-			effect.uniforms[ 'size' ].value.set( WIDTH, HEIGHT );
-			effect.uniforms[ 'cameraNear' ].value = camera.near;
-			effect.uniforms[ 'cameraFar' ].value = camera.far;
-			effect.renderToScreen = true;
-			composer.addPass( effect );
+			// console.log(  depthUniforms)
+
+			// // postprocessing
+			// var composer = new THREE.EffectComposer( renderer );
+			// composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+			// var depthTarget = new THREE.WebGLRenderTarget( WIDTH, HEIGHT, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat } );
+			// // console.log( camera.near );
+			// var effect = new THREE.ShaderPass( THREE.SSAOShader );
+			// effect.uniforms[ 'tDepth' ].value = depthTarget;
+			// effect.uniforms[ 'size' ].value.set( WIDTH, HEIGHT );
+			// effect.uniforms[ 'cameraNear' ].value = camera.near;
+			// effect.uniforms[ 'cameraFar' ].value = camera.far;
+			// effect.renderToScreen = true;
+			// composer.addPass( effect );
 
 
 
@@ -139,6 +142,7 @@ define([
 
 
 			var faceMaterial,
+				contentObj3d,
 				seed = 2394,
 				structMesh;
 		
@@ -248,14 +252,43 @@ define([
 				
 				if( structMesh ){
 					scene.remove( structMesh );
-					baseGeom.dispose();
+					structMesh.geometry.dispose();
 				}
 
 				var strut = structure( api.frequency, api.complexity, api.seed, api.threshold );
 
-				baseGeom = strut.geometry;
-				structMesh = new THREE.Mesh( baseGeom, faceMaterial );
+
+				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
 				scene.add( structMesh );
+
+
+				contentObj3d = new THREE.Object3D();
+
+				var contentMaterial = new THREE.MeshPhongMaterial({
+					color:new THREE.Color( 0xff2200 ),
+					ambient:new THREE.Color( 0xff2200 ),
+					transparent: true,
+					opacity: 0.8,
+				});
+
+				var n = 60,
+					index, item, mesh;
+
+				while( n-- > 0 ){
+					mesh = new THREE.Mesh( new THREE.CubeGeometry( 100, 100, 100 ), contentMaterial );
+					index = ~~( Math.random() * strut.volume.length )
+					item = strut.volume[index];
+					mesh.position.set( item[0], item[1], item[2] );
+					mesh.position.x -= 15;
+					mesh.position.y -= 15;
+					mesh.position.z -= 15;
+					mesh.position.multiplyScalar( 100 );
+					
+
+					contentObj3d.add( mesh );
+				}
+
+				scene.add( contentObj3d );
 				
 			}
 
@@ -281,7 +314,7 @@ define([
 
 			//depth pass
 			// scene.overrideMaterial = depthMaterial;
-			// renderer.render( scene, camera );
+			// renderer.render( scene, camera, depthTarget );
 			// scene.overrideMaterial = null;
 
 			// //to screen

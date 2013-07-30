@@ -114,6 +114,7 @@ define(
 			channels	= 3;
 
 		document.body.appendChild( shader.domElement );
+		shader.domElement.style.display = 'none';
 
 		return {
 

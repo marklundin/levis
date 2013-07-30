@@ -23,22 +23,26 @@ define([
 				x, y, z 	= GRID.DIMENSION,
 				baseGeom 	= new THREE.Geometry(),
 				volume 		= [], 
+				empty 		= [], 
 				mesh 	 	= new THREE.Mesh( cube( GRID.SCALE, STRUT.WIDTH ));
 
 
 			// Generate noise pattern
 			while( z-- > 0 ){
-				volume[z] = []
+				// volume[z] = []
 				y = GRID.DIMENSION;
 				while( y-- > 0 ){
-					volume[z][y] = []
+					// volume[z][y] = []
 					x = GRID.DIMENSION;
 					while( x-- > 0 ){
 						if( noise3D( x, y, z ) > threshold ){
-							volume[z][y][x] = true;
+							volume.push( [x, y, z])
+							// volume[z][y][x] = true;
 							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							mesh.position.multiplyScalar( GRID.SCALE );
 							THREE.GeometryUtils.merge( baseGeom, mesh );
+						}else{
+							empty.push( [x, y, z] );
 						}
 					}
 				}
@@ -47,7 +51,8 @@ define([
 			return {
 				geometry: baseGeom,
 				// geometry: mesh.geometry,
-				volume: volume
+				volume: volume,
+				empty: empty
 			}
 					
 		}
