@@ -249,6 +249,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		if ( scope.enabled === false ) return;
 
+
 		event.preventDefault();
 
 		if ( state === STATE.ROTATE ) {
@@ -288,6 +289,22 @@ THREE.OrbitControls = function ( object, domElement ) {
 		}
 
 	}
+
+	this.setPauseState = function( pause ){
+
+		if( this.enabled !== pause ) return;
+
+		if( pause ){
+		 	document.removeEventListener( 'mousemove', onMouseMove, false );
+			document.removeEventListener( 'mouseup', onMouseUp, false );
+			this.domElement.addEventListener( 'mousewheel', onMouseUp, false );
+		}else{
+			this.domElement.addEventListener( 'mousedown', onMouseDown, false );
+			this.domElement.addEventListener( 'mousewheel', onMouseUp, false );
+		};
+		this.enabled = !pause;
+	}
+
 
 	function onMouseUp( event ) {
 

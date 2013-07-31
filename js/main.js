@@ -9,12 +9,13 @@ define([
 	"glsl!shaders/reflection.glsl",
 	"utils/timer",
 	"utils/noise",
+	"lighting",
 	"libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer",
 	"libs/threejs/examples/js/ImprovedNoise",
 	"libs/threejs/examples/js/controls/TransformControls"
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, n ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, n, lighting ) {
 
 
 		// APP CONSTANTS
@@ -149,23 +150,39 @@ define([
 			
 			//LIGHTS
 
-				var amlight = new THREE.AmbientLight(0x111111 ),
-					dilight = new THREE.DirectionalLight(0x444444),
-					polight = new THREE.PointLight(0xffffff);
+				var lights = new lighting( scene, camera, $( document, "#main" ) , gui );
 
-				var tControl = new THREE.TransformControls( camera, $( document, "#main" ) );
-					// tControl.addEventListener( 'change', render );
-					tControl.attach( polight );
-					tControl.scale = 0.65;
-					// scene.add( tControl.gizmo );
+				// var amlight = new THREE.AmbientLight( 0x111111 ),
+				// 	dilight = new THREE.DirectionalLight( 0x444444),
+				// 	polight = new THREE.PointLight( 0xffffff );
 
-				dilight.position.set( 1, 1, 0 ).normalize();
-				polight.position.set( math.random( -1000, 1000 ), math.random( -1000, 1000 ), math.random( -1000, 1000 ) );//.normalize();
+
+				// //po light control + Helper
+				// polight.helper  = new THREE.PointLightHelper( polight, 100 );
+				// polight.control = new THREE.TransformControls( camera, $( document, "#main" ) );
+				// polight.control.attach( polight );
+				// polight.control.scale = 0.65;
+				// scene.add( polight.control.gizmo );
+				// scene.add( polight.helper );
 				
 
-				scene.add( amlight );
-				scene.add( dilight );
-				scene.add( polight );
+
+				// //po light control + Helper
+				// dilight.helper  = new THREE.DirectionalLightHelper( dilight, 100 );
+				// dilight.control = new THREE.TransformControls( camera, $( document, "#main" ) );
+				// dilight.control.attach( dilight );
+				// dilight.control.scale = 0.65;
+				// scene.add( dilight.control.gizmo );
+				// scene.add( dilight.helper );
+
+
+				// dilight.position.set( 1, 1, 0 ).normalize();
+				// polight.position.set( math.random( -1000, 1000 ), math.random( -1000, 1000 ), math.random( -1000, 1000 ) );//.normalize();
+				
+
+				// // scene.add( amlight );
+				// scene.add( dilight );
+				// scene.add( polight );
 
 			// END LIGHTS
 
@@ -226,9 +243,9 @@ define([
 					specular 	: "#"+faceMaterial.specular.getHexString(),
 					ambient 	: "#"+faceMaterial.ambient.getHexString(),
 
-					directional_light 	: "#"+dilight.color.getHexString(),
-					point_light 		: "#"+polight.color.getHexString(),
-					ambient_light 		: "#"+amlight.color.getHexString(),
+					// directional_light 	: "#"+dilight.color.getHexString(),
+					// point_light 		: "#"+polight.color.getHexString(),
+					// ambient_light 		: "#"+amlight.color.getHexString(),
 
 					random 		: function (){
 						seed = (Math.random() * 9999 )|0;
@@ -242,11 +259,11 @@ define([
 						faceMaterial.ambient.set( api.ambient )
 
 					},
-					updateLights: function(){
-						amlight.color.set( api.ambient_light );
-						polight.color.set( api.point_light );
-						dilight.color.set( api.directional_light );
-					}
+					// updateLights: function(){
+					// 	amlight.color.set( api.ambient_light );
+					// 	polight.color.set( api.point_light );
+					// 	dilight.color.set( api.directional_light );
+					// }
 				}
 
 				
@@ -262,10 +279,10 @@ define([
 				matgui.addColor( api, "specular" ).onChange( api.updateMaterial );
 				// matgui.open();
 
-				var lightsgui = gui.addFolder('lights');
-				lightsgui.addColor( api, "ambient_light" ).onChange( api.updateLights );
-				lightsgui.addColor( api, "point_light" ).onChange( api.updateLights );
-				lightsgui.addColor( api, "directional_light" ).onChange( api.updateLights );
+				// var lightsgui = gui.addFolder('lights');
+				// lightsgui.addColor( api, "ambient_light" ).onChange( api.updateLights );
+				// lightsgui.addColor( api, "point_light" ).onChange( api.updateLights );
+				// lightsgui.addColor( api, "directional_light" ).onChange( api.updateLights );
 				// lightsgui.open()
 				
 				
@@ -289,8 +306,6 @@ define([
 					scene.remove( contentObj3d );
 					structMesh.geometry.dispose();
 				}
-
-				console.log( api.frequency, api.complexity, seed, api.threshold );
 
 				var strut = structure( api.frequency, api.complexity, seed, api.threshold );
 
@@ -332,12 +347,20 @@ define([
 
 		// END SUPPORT STRUCTURE
 
-
+		var controlActive = false;
 		function animate( delta ){
 
 			requestAnimationFrame( animate );
-			// tControl.update();
+			// controlActive = (Boolean( dilight.control.active ) || Boolean( polight.control.active ));
+			// controls.setPauseState( controlActive );
+			lights.update();
 			controls.update();
+
+			// dilight.control.update();
+			// dilight.helper.update();
+
+			// polight.control.update();
+			
 			render( delta || 0 );
 
 		}
