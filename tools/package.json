@@ -1,0 +1,21 @@
+{
+  "name": "Levis",
+  "version": "0.0.0",
+  "description": "levis =====",
+  "main": "index.html",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/marklundin/levis.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "4fb4d696e079a82a9f1ae8021d26ef6ad9f7d6ec",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-gitinfo": "~0.1.1",
+    "grunt-gh-pages": "~0.6.0"
+  }
+}
