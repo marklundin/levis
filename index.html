@@ -1,7 +1,20 @@
 <html>
 	<head>
 		<title>Test</title>
+		<style>
+			
+			body {
+				color: #222222;
+				font-size: 0.8em;
+				font-family: 'courier';
+				background: #cccccc;
+			}
 
+			div{
+				padding-top: 30px;
+			}
+		</style>
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
 		<!--
 			
 			Levis STS
@@ -12,6 +25,24 @@
 		-->
 	</head>
 	<body>
-		<div id="main"></div>
+		<div id="main">
+			<div>
+				<a href='/build/'><strong>Latest</strong></a>
+			</div>
+			<div id="listing"></div>
+		</div>
 	</body>
+	<script>
+
+		$.getJSON( "versions.json", function( data ){
+
+			console.log( data );
+			$.each( data, function( key, value ){
+				console.log( value );
+				$('#listing').append("<div><a href='"+value.url+"'>"+value.title+"</a></div>")
+			})
+
+	    });
+
+	</script>
 </html>

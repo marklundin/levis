@@ -15,7 +15,7 @@ module.exports = function(grunt) {
           dest: '../versions/<%= gitinfo.local.branch.current.shortSHA %>'
         }]
       }
-    },
+    }
 
   });
 
