@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     },
 
     "gh-pages": {
-      ".": [ '../index.html' ]
+      ".": [ '../index.html', '../build/*' ]
     }
 
   });
