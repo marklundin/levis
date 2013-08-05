@@ -1,4 +1,5 @@
 /tools/node_modules
+/tools/.grunt
 /versions
 /versions.json
 .DS_Store
