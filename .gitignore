@@ -1,3 +1,4 @@
 /tools/node_modules
 /versions
 /versions.json
+.DS_Store
