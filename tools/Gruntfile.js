@@ -25,7 +25,7 @@ module.exports = function(grunt) {
     var versionfile   = grunt.file.readJSON( "../versions.json" );
     var sha           = grunt.config( "gitinfo" ).local.branch.current.shortSHA;
     versionfile[sha]  = {
-      url: "/versions/" + sha,
+      url: "versions/" + sha,
       title: grunt.option('m') || "Version "+ sha
     }
     grunt.file.write( "../versions.json", JSON.stringify( versionfile ));
