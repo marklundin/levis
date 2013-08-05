@@ -17,15 +17,15 @@ requirejs.config( {
 			exports: "THREE"
 		},
 
-		"../libs/threejs/examples/js/postprocessing/EffectComposer": [
-			"../libs/threejs/examples/js/shaders/CopyShader", 
-			"..//libs/threejs/examples/js/postprocessing/ShaderPass",
-			"../libs/threejs/examples/js/postprocessing/RenderPass",
-			"../libs/threejs/examples/js/shaders/SSAOShader",
-			"../libs/threejs/examples/js/postprocessing/MaskPass"
-		],
+		// "../libs/threejs/examples/js/postprocessing/EffectComposer": [
+		// 	"../libs/threejs/examples/js/shaders/CopyShader", 
+		// 	"..//libs/threejs/examples/js/postprocessing/ShaderPass",
+		// 	"../libs/threejs/examples/js/postprocessing/RenderPass",
+		// 	"../libs/threejs/examples/js/shaders/SSAOShader",
+		// 	"../libs/threejs/examples/js/postprocessing/MaskPass"
+		// ],
 
-		"../libs/threejs/examples/js/controls/OrbitControls.js": ['../libs/threejs/build/three.js'] ,
+		"../libs/threejs/examples/js/controls/OrbitControls.js": ['../../../build/three.js'] ,
 		"../libs/threejs/examples/js/shaders/SSAOShader.js": ['../libs/threejs/build/three.js'] ,
 		"../libs/threejs/examples/js/shaders/CopyShader.js": ['../libs/threejs/build/three.js'] ,
 		"../libs/threejs/examples/js/postprocessing/RenderPass.js": ['../libs/threejs/build/three.js'] ,
