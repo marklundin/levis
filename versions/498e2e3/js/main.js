@@ -10,7 +10,7 @@ define([
 	"utils/timer",
 	"utils/noise",
 	"lighting",
-	"./libs/threejs/examples/js/controls/OrbitControls.js"
+	"../libs/threejs/examples/js/controls/OrbitControls.js"
 
 	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, n, lighting ) {
 
