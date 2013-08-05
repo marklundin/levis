@@ -27,7 +27,7 @@
 	<body>
 		<div id="main">
 			<div>
-				<a href='build/'><strong>Latest</strong></a>
+				<a href='./build/'><strong>Latest</strong></a>
 			</div>
 			<div id="listing"></div>
 		</div>
@@ -39,7 +39,7 @@
 			console.log( data );
 			$.each( data, function( key, value ){
 				console.log( value );
-				$('#listing').append("<div><a href='"+value.url+"'>"+value.title+"</a></div>")
+				$('#listing').append("<div><a href='./"+value.url+"'>"+value.title+"</a></div>")
 			})
 
 	    });
