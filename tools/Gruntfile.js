@@ -17,17 +17,17 @@ module.exports = function(grunt) {
       }
     },
 
-    "gh-pages": {
-      ".": [ '../index.html', '../build/*' ]
-    }
-
   });
 
-  grunt.registerTask("index", "Updates index", function ( prop, cwd, tits ) {
+  grunt.registerTask("index", "Updates index", function ( prop, cwd ) {
 
-    var versionfile = grunt.file.readJSON( "../versions.json" );
-    var sha = grunt.config( "gitinfo" ).local.branch.current.shortSHA;
-    versionfile[sha] = "/versions/" + sha;
+    grunt.log.writeln( grunt.option('m') )
+    var versionfile   = grunt.file.readJSON( "../versions.json" );
+    var sha           = grunt.config( "gitinfo" ).local.branch.current.shortSHA;
+    versionfile[sha]  = {
+      url: "/versions/" + sha,
+      title: grunt.option('m') || "Version "+ sha
+    }
     grunt.file.write( "../versions.json", JSON.stringify( versionfile ));
    
   });
@@ -39,7 +39,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-gitinfo');
 
   // Default task(s).
-  grunt.registerTask('default', ['gitinfo', 'index', 'copy', 'gh-pages']);
+  grunt.registerTask( 'snap', ['gitinfo', 'index', 'copy']);
+  grunt.registerTask( 'default', ['snap']);
 
 
 };
