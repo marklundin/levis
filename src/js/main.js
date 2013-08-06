@@ -202,6 +202,7 @@ define([
 				var lights = new lighting( scene, camera, $( document, "#main" ) , gui );
 				lights.onLightAdded( updateMaterial );
 				lights.onLightRemoved( updateMaterial );
+				lights.addPointLight( 0xffffff );
 
 				// var amlight = new THREE.AmbientLight( 0x111111 ),
 				// 	dilight = new THREE.DirectionalLight( 0x444444),
@@ -277,7 +278,7 @@ define([
 				}
 
 				
-				var formgui = gui.addFolder('form');
+				var formgui = gui.addFolder('structure');
 				formgui.add( api, "frequency", 		0.00, 2.0 	).onFinishChange( api.generate );
 				formgui.add( api, "threshold", 		0.01, 0.99 	).onFinishChange( api.generate );
 				formgui.add( api, "complexity", 	0.0,  1.0 	).onFinishChange( api.generate );
@@ -300,6 +301,7 @@ define([
 				gui.add( api, 	"seed" );//.listen();
 				gui.add( api, 	"random" );
 				gui.add( api, 	"generate" );
+				gui.add( skyMat, "visible" );
 
 
 
