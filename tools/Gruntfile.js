@@ -10,7 +10,7 @@ module.exports = function(grunt) {
       main:{
         files:[{ 
           expand: true,
-          cwd: '../build', 
+          cwd: '../src', 
           src: ['**'], 
           dest: '../versions/<%= gitinfo.local.branch.current.shortSHA %>'
         }]
