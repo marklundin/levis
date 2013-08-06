@@ -1,5 +1,5 @@
 define(
-	[], 
+	["../libs/threejs/examples/js/controls/TransformControls.js"], 
 	function(){
 
 		return function( scene, camera, dom, gui ){
@@ -33,7 +33,6 @@ define(
 			// DAT.GUI shim to remove folders
 			function removeGUIFolder( gui, name ) {
 				gui.__folders[name].close();
-				console.log( gui.__ul, gui.__folders[name].domElement.parentNode );
 				gui.__ul.removeChild( gui.__folders[name].domElement.parentNode );
 				// dom.removeClass( gui.__folders[name].domElement, 'folder');
 				gui.__folders[name] = undefined;
