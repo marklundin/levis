@@ -11,12 +11,15 @@ define([
 	"glsl!shaders/skydome.glsl",
 	"glsl!shaders/reflection.glsl",
 	"utils/timer",
-	"utils/noise",
+	// "utils/noise",
 	"lighting",
 	"utils/gui",
+	"text!shaders/libs/noise2d.glsl",
+	"text!shaders/libs/noise3d.glsl",
+	"text!shaders/libs/utils.glsl",
 	"./libs/threejs/examples/js/controls/OrbitControls"
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, n, lighting, gui ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk ) {
 
 
 		// APP VARIABLES
@@ -28,7 +31,7 @@ define([
 		// Scene
 		var renderer 	= new THREE.WebGLRenderer({ antialias:true}),
 			scene 		= new THREE.Scene(),
-			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT, 1, 100000 ),
+			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
 			controls 	= new THREE.OrbitControls( camera, $( document, "#main" ) );
 			
 
@@ -148,6 +151,101 @@ define([
 
 			// MATERIALS
 
+				var phongShader = THREE.ShaderLib.phong,
+					uniforms = THREE.UniformsUtils.clone(phongShader.uniforms),
+					phongVertexShader = [
+
+						"#define PHONG",
+
+						"varying vec3 vViewPosition;",
+						"varying vec3 vNormal;",
+
+						noise3dShaderChunk,
+						utilsShaderChunk,
+
+						THREE.ShaderChunk[ "map_pars_vertex" ],
+						THREE.ShaderChunk[ "lightmap_pars_vertex" ],
+						THREE.ShaderChunk[ "envmap_pars_vertex" ],
+						THREE.ShaderChunk[ "lights_phong_pars_vertex" ],
+						THREE.ShaderChunk[ "color_pars_vertex" ],
+						THREE.ShaderChunk[ "morphtarget_pars_vertex" ],
+						THREE.ShaderChunk[ "skinning_pars_vertex" ],
+						THREE.ShaderChunk[ "shadowmap_pars_vertex" ],
+
+						"uniform float uFrequency;",
+						"uniform float uAmplitude;",
+						"uniform float uTwist;",
+
+
+						"void main() {",
+
+							THREE.ShaderChunk[ "map_vertex" ],
+							THREE.ShaderChunk[ "lightmap_vertex" ],
+							THREE.ShaderChunk[ "color_vertex" ],
+
+							THREE.ShaderChunk[ "morphnormal_vertex" ],
+							THREE.ShaderChunk[ "skinbase_vertex" ],
+							THREE.ShaderChunk[ "skinnormal_vertex" ],
+							THREE.ShaderChunk[ "defaultnormal_vertex" ],
+
+							"vNormal = normalize( transformedNormal );",
+
+							THREE.ShaderChunk[ "morphtarget_vertex" ],
+							THREE.ShaderChunk[ "skinning_vertex" ],
+							"vec4 mvPosition;",
+
+							"#ifdef USE_SKINNING",
+
+								"mvPosition = modelViewMatrix * skinned;",
+
+							"#endif",
+
+							"#if !defined( USE_SKINNING ) && defined( USE_MORPHTARGETS )",
+
+								"mvPosition = modelViewMatrix * vec4( morphed, 1.0 );",
+
+							"#endif",
+
+							"#if !defined( USE_SKINNING ) && ! defined( USE_MORPHTARGETS )",
+
+								// "vec3 noiseDirection = vec3( snoise( position.zy * uFrequency ) * 2.0 - 1.0 , snoise( position.xz * uFrequency )  * 2.0 - 1.0 ,  snoise( position.xy * uFrequency ) * 2.0 - 1.0  );",
+								// "mvPosition = modelViewMatrix * vec4( position, 1.0 );",
+								// "mvPosition = modelViewMatrix * (  rotationMatrix(vec3( 0.0, 1.0, 0.0), position.y * uTwist ) * vec4( position, 1.0 ) + vec4( noiseDirection * uAmplitude, 0.0 ));",
+								"float rotAmount = fract( position.y * 0.01 ) * 100.0 * uTwist;",
+								"mvPosition = modelViewMatrix * (  rotationMatrix(vec3( 0.0, 1.0, 0.0), rotAmount ) * vec4( position + uAmplitude * snoise( position * uFrequency ), 1.0 ));",
+
+							"#endif",
+
+							
+							"gl_Position = projectionMatrix * mvPosition;",
+
+							"vViewPosition = -mvPosition.xyz;",
+
+							THREE.ShaderChunk[ "worldpos_vertex" ],
+							THREE.ShaderChunk[ "envmap_vertex" ],
+							THREE.ShaderChunk[ "lights_phong_vertex" ],
+							THREE.ShaderChunk[ "shadowmap_vertex" ],
+
+						"}"
+
+					].join("\n");
+
+				console.log( phongVertexShader );
+
+				faceMaterial = new THREE.ShaderMaterial({
+				  	uniforms: THREE.UniformsUtils.merge([
+					  	{
+					  		"uFrequency" : { type: "f", value: 0.0 },
+					  		"uAmplitude" : { type: "f", value: 0.0 },
+					  		"uTwist" 	 : { type: "f", value: 0.001 },
+					  	},
+				  		uniforms
+				  	]),
+				  	lights: true,
+				  	vertexShader: phongVertexShader,
+				  	fragmentShader: phongShader.fragmentShader
+				});
+
 				// material = new THREE.ShaderMaterial({
 
 				// 	uniforms: {
@@ -180,10 +278,10 @@ define([
 
 	
 
-				faceMaterial = new THREE.MeshPhongMaterial({
-					color: new THREE.Color( 0xffffff ),
-					specular : new THREE.Color( 0xffffff ),
-				});
+				// faceMaterial = new THREE.MeshPhongMaterial({
+				// 	color: new THREE.Color( 0xffffff ),
+				// 	specular : new THREE.Color( 0xffffff ),
+				// });
 
 
 				function updateMaterial(){
@@ -204,37 +302,6 @@ define([
 				lights.onLightRemoved( updateMaterial );
 				lights.addPointLight( 0xffffff );
 
-				// var amlight = new THREE.AmbientLight( 0x111111 ),
-				// 	dilight = new THREE.DirectionalLight( 0x444444),
-				// 	polight = new THREE.PointLight( 0xffffff );
-
-
-				// //po light control + Helper
-				// polight.helper  = new THREE.PointLightHelper( polight, 100 );
-				// polight.control = new THREE.TransformControls( camera, $( document, "#main" ) );
-				// polight.control.attach( polight );
-				// polight.control.scale = 0.65;
-				// scene.add( polight.control.gizmo );
-				// scene.add( polight.helper );
-				
-
-
-				// //po light control + Helper
-				// dilight.helper  = new THREE.DirectionalLightHelper( dilight, 100 );
-				// dilight.control = new THREE.TransformControls( camera, $( document, "#main" ) );
-				// dilight.control.attach( dilight );
-				// dilight.control.scale = 0.65;
-				// scene.add( dilight.control.gizmo );
-				// scene.add( dilight.helper );
-
-
-				// dilight.position.set( 1, 1, 0 ).normalize();
-				// polight.position.set( math.random( -1000, 1000 ), math.random( -1000, 1000 ), math.random( -1000, 1000 ) );//.normalize();
-				
-
-				// // scene.add( amlight );
-				// scene.add( dilight );
-				// scene.add( polight );
 
 			// END LIGHTS
 
@@ -250,9 +317,13 @@ define([
 					generate 	: generate,
 					seed 		: String( seed ),
 
-					color 		: "#"+faceMaterial.color.getHexString(),
-					specular 	: "#"+faceMaterial.specular.getHexString(),
-					ambient 	: "#"+faceMaterial.ambient.getHexString(),
+					twist 		: faceMaterial.uniforms.uTwist.value * 100.0,
+					distortion 	: faceMaterial.uniforms.uFrequency.value * 100.0,
+					amount 		: faceMaterial.uniforms.uAmplitude.value,
+
+					color 		: "#"+faceMaterial.uniforms.diffuse.value.getHexString(),
+					specular 	: "#"+faceMaterial.uniforms.specular.value.getHexString(),
+					ambient 	: "#"+faceMaterial.uniforms.ambient.value.getHexString(),
 
 					// directional_light 	: "#"+dilight.color.getHexString(),
 					// point_light 		: "#"+polight.color.getHexString(),
@@ -263,18 +334,20 @@ define([
 						api.seed = String( seed );
 						generate();
 					},
+					updateCamera: function(){
+						camera.updateProjectionMatrix();
+					},
 					updateMaterial: function(){
 
-						faceMaterial.color.set( api.color )
-						faceMaterial.specular.set( api.specular )
-						faceMaterial.ambient.set( api.ambient )
+						faceMaterial.uniforms.diffuse.value.set( api.color )
+						faceMaterial.uniforms.specular.value.set( api.specular )
+						faceMaterial.uniforms.ambient.value.set( api.ambient )
 
-					},
-					// updateLights: function(){
-					// 	amlight.color.set( api.ambient_light );
-					// 	polight.color.set( api.point_light );
-					// 	dilight.color.set( api.directional_light );
-					// }
+						faceMaterial.uniforms.uFrequency.value = api.distortion / 100.0;
+						faceMaterial.uniforms.uTwist.value = api.twist / 100.0;
+						faceMaterial.uniforms.uAmplitude.value = api.amount;
+
+					}
 				}
 
 				
@@ -282,6 +355,10 @@ define([
 				formgui.add( api, "frequency", 		0.00, 2.0 	).onFinishChange( api.generate );
 				formgui.add( api, "threshold", 		0.01, 0.99 	).onFinishChange( api.generate );
 				formgui.add( api, "complexity", 	0.0,  1.0 	).onFinishChange( api.generate );
+				formgui.add( api, "distortion", 	0.0,  1.0 ).step( 0.001 ).onChange( api.updateMaterial );
+				formgui.add( api, "amount",	 		0.0,  50.0 ).onChange( api.updateMaterial );
+				formgui.add( api, "twist", 	0.0,  4.0 ).step( 0.001 ).onChange( api.updateMaterial );
+
 				formgui.open();
 
 				var matgui = gui.addFolder('material');
@@ -296,12 +373,12 @@ define([
 				// lightsgui.addColor( api, "directional_light" ).onChange( api.updateLights );
 				// lightsgui.open()
 				
-				
-				// gui.add( material, 	"wireframe" );
+
 				gui.add( api, 	"seed" );//.listen();
 				gui.add( api, 	"random" );
 				gui.add( api, 	"generate" );
 				gui.add( skyMat, "visible" );
+				gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
 
 
 
