@@ -1,7 +1,8 @@
 define([
 	"utils/noise",
 	"geometry/cubeframe",
-	],function( prng, cube ){
+	"utils/math",
+	],function( prng, cube, math ){
 
 
 		var GRID = {
@@ -10,11 +11,19 @@ define([
 		};
 
 		var STRUT = {}
-			STRUT.WIDTH  = 7;
+			STRUT.WIDTH  = 4;
 			STRUT.LENGTH = GRID.SCALE - STRUT.WIDTH;
 
 		
 		var structure = function( frequency, complexity, seed, threshold ){
+
+
+			var cubes = [
+				new THREE.Mesh( cube( GRID.SCALE * 0.25, STRUT.WIDTH )),
+				new THREE.Mesh( cube( GRID.SCALE * 0.50, STRUT.WIDTH )),
+				new THREE.Mesh( cube( GRID.SCALE * 0.75, STRUT.WIDTH )),
+				new THREE.Mesh( cube( GRID.SCALE * 1.00, STRUT.WIDTH )),
+			];
 
 
 			var noise3D 	= prng.noise3D( GRID.DIMENSION, GRID.DIMENSION, GRID.DIMENSION, frequency, complexity, seed ),
@@ -22,24 +31,24 @@ define([
 				x, y, z 	= GRID.DIMENSION,
 				baseGeom 	= new THREE.Geometry(),
 				volume 		= [], 
-				empty 		= [], 
-				mesh 	 	= new THREE.Mesh( cube( GRID.SCALE, STRUT.WIDTH ));
+				empty 		= [],
+				variations 	= Math.pow( 2, 12 ) - 1, 
+				mesh;
 
 
 			// Generate noise pattern
 			while( z-- > 0 ){
-				// volume[z] = []
 				y = GRID.DIMENSION;
 				while( y-- > 0 ){
-					// volume[z][y] = []
 					x = GRID.DIMENSION;
 					while( x-- > 0 ){
-						if( noise3D( x, y, z ) > threshold ){
+						if( noise3D( x, y, z ) > threshold ) {
 							volume.push( [x, y, z])
-							// volume[z][y][x] = true;
+							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, STRUT.WIDTH, math.random( 1, variations )|0 ));//cubes[(Math.random() * 4)|0];
 							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							mesh.position.multiplyScalar( GRID.SCALE );
 							THREE.GeometryUtils.merge( baseGeom, mesh );
+
 						}else{
 							empty.push( [x, y, z] );
 						}

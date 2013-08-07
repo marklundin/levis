@@ -172,9 +172,9 @@ define([
 						THREE.ShaderChunk[ "skinning_pars_vertex" ],
 						THREE.ShaderChunk[ "shadowmap_pars_vertex" ],
 
-						"uniform float uFrequency;",
-						"uniform float uAmplitude;",
-						"uniform float uTwist;",
+						// "uniform float uFrequency;",
+						// "uniform float uAmplitude;",
+						// "uniform float uTwist;",
 
 
 						"void main() {",
@@ -211,8 +211,8 @@ define([
 								// "vec3 noiseDirection = vec3( snoise( position.zy * uFrequency ) * 2.0 - 1.0 , snoise( position.xz * uFrequency )  * 2.0 - 1.0 ,  snoise( position.xy * uFrequency ) * 2.0 - 1.0  );",
 								// "mvPosition = modelViewMatrix * vec4( position, 1.0 );",
 								// "mvPosition = modelViewMatrix * (  rotationMatrix(vec3( 0.0, 1.0, 0.0), position.y * uTwist ) * vec4( position, 1.0 ) + vec4( noiseDirection * uAmplitude, 0.0 ));",
-								"float rotAmount = fract( position.y * 0.01 ) * 100.0 * uTwist;",
-								"mvPosition = modelViewMatrix * (  rotationMatrix(vec3( 0.0, 1.0, 0.0), rotAmount ) * vec4( position + uAmplitude * snoise( position * uFrequency ), 1.0 ));",
+								// "float rotAmount = fract( position.y * 0.01 ) * 100.0 * uTwist;",
+								"mvPosition = modelViewMatrix * vec4( position, 1.0 );//(  rotationMatrix(vec3( 0.0, 1.0, 0.0), rotAmount ) * vec4( position + uAmplitude * snoise( position * uFrequency ), 1.0 ));",
 
 							"#endif",
 
@@ -230,7 +230,7 @@ define([
 
 					].join("\n");
 
-				console.log( phongVertexShader );
+				// console.log( phongVertexShader );
 
 				faceMaterial = new THREE.ShaderMaterial({
 				  	uniforms: THREE.UniformsUtils.merge([
@@ -317,9 +317,9 @@ define([
 					generate 	: generate,
 					seed 		: String( seed ),
 
-					twist 		: faceMaterial.uniforms.uTwist.value * 100.0,
-					distortion 	: faceMaterial.uniforms.uFrequency.value * 100.0,
-					amount 		: faceMaterial.uniforms.uAmplitude.value,
+					// twist 		: faceMaterial.uniforms.uTwist.value * 100.0,
+					// distortion 	: faceMaterial.uniforms.uFrequency.value * 100.0,
+					// amount 		: faceMaterial.uniforms.uAmplitude.value,
 
 					color 		: "#"+faceMaterial.uniforms.diffuse.value.getHexString(),
 					specular 	: "#"+faceMaterial.uniforms.specular.value.getHexString(),
@@ -355,9 +355,9 @@ define([
 				formgui.add( api, "frequency", 		0.00, 2.0 	).onFinishChange( api.generate );
 				formgui.add( api, "threshold", 		0.01, 0.99 	).onFinishChange( api.generate );
 				formgui.add( api, "complexity", 	0.0,  1.0 	).onFinishChange( api.generate );
-				formgui.add( api, "distortion", 	0.0,  1.0 ).step( 0.001 ).onChange( api.updateMaterial );
-				formgui.add( api, "amount",	 		0.0,  50.0 ).onChange( api.updateMaterial );
-				formgui.add( api, "twist", 	0.0,  4.0 ).step( 0.001 ).onChange( api.updateMaterial );
+				// formgui.add( api, "distortion", 	0.0,  1.0 ).step( 0.001 ).onChange( api.updateMaterial );
+				// formgui.add( api, "amount",	 		0.0,  50.0 ).onChange( api.updateMaterial );
+				// formgui.add( api, "twist", 	0.0,  4.0 ).step( 0.001 ).onChange( api.updateMaterial );
 
 				formgui.open();
 
