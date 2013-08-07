@@ -17,9 +17,11 @@ define([
 	"text!shaders/libs/noise2d.glsl",
 	"text!shaders/libs/noise3d.glsl",
 	"text!shaders/libs/utils.glsl",
-	"./libs/threejs/examples/js/controls/OrbitControls"
+	"data",
+	"./libs/threejs/examples/js/controls/OrbitControls",
+	
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, dataloader ) {
 
 
 		// APP VARIABLES
@@ -389,6 +391,62 @@ define([
 			// END GUI+API
 
 
+			// DATA 
+
+				var strut;
+
+				contentObj3d = new THREE.Object3D();
+				scene.add( contentObj3d );
+
+				dataloader( function( twitter, instagram ){
+
+					generate();
+
+					var videoContentMaterial = new THREE.MeshPhongMaterial({
+						color:new THREE.Color( 0xff2200 ),
+						ambient:new THREE.Color( 0xff2200 ),
+						transparent: true,
+						opacity: 0.8,
+					});
+
+					var imageContentMaterial = new THREE.MeshPhongMaterial({
+						color:new THREE.Color( 0x0033ff ),
+						ambient:new THREE.Color( 0x00fff00 ),
+						transparent: true,
+						opacity: 1.0,
+					});
+
+					var n = twitter.results.length + instagram.results.length,
+						index, item, mesh;
+
+					console.log( twitter, instagram );
+
+					while( n-- > 0 ){
+						mesh = new THREE.Mesh( new THREE.CubeGeometry( 100, 100, 100 ), n >= twitter.results.length ? videoContentMaterial : imageContentMaterial  );
+						index = ~~( Math.random() * strut.volume.length )
+						item = strut.volume[index];
+						mesh.position.set( item[0], item[1], item[2] );
+						mesh.position.x -= 15;
+						mesh.position.y -= 15;
+						mesh.position.z -= 15;
+						mesh.position.multiplyScalar( 100 );
+						
+						contentObj3d.add( mesh );
+					}
+
+				
+					// generate();
+					animate();
+
+				}, function( twitter, instagram ){
+					if( !instagram.loaded ) console.log( 'Instagram failed to load.' )
+					if( !twitter.loaded ) 	console.log( 'Twitter failed to load.' )
+				});
+
+
+			// END DATA
+
+
 			// Creates new structure
 			function generate(){
 
@@ -396,45 +454,18 @@ define([
 				
 				if( structMesh ){
 					scene.remove( structMesh );
-					scene.remove( contentObj3d );
+					// scene.remove( contentObj3d );
 					structMesh.geometry.dispose();
 				}
 
-				console.log( api.horizontal_thickness, api.vertical_thickness );
-				var strut = structure( api.frequency, api.complexity, seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
+				strut = structure( api.frequency, api.complexity, seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
 
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
 				scene.add( structMesh );
 
 
-				contentObj3d = new THREE.Object3D();
-
-				var contentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0xff2200 ),
-					ambient:new THREE.Color( 0xff2200 ),
-					transparent: true,
-					opacity: 0.8,
-				});
-
-				var n = 60,
-					index, item, mesh;
-
-				while( n-- > 0 ){
-					mesh = new THREE.Mesh( new THREE.CubeGeometry( 100, 100, 100 ), contentMaterial );
-					index = ~~( Math.random() * strut.volume.length )
-					item = strut.volume[index];
-					mesh.position.set( item[0], item[1], item[2] );
-					mesh.position.x -= 15;
-					mesh.position.y -= 15;
-					mesh.position.z -= 15;
-					mesh.position.multiplyScalar( 100 );
-					
-
-					contentObj3d.add( mesh );
-				}
-
-				scene.add( contentObj3d );
+				
 				
 			}
 
@@ -484,8 +515,7 @@ define([
 
 		}
 
-		generate();
-		animate();
+		
 
 
 	}

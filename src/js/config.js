@@ -4,16 +4,10 @@ requirejs.config( {
 	baseUrl: './js',
 
 	config:{
-		url: "http://sandbox28.thismoment.com/v2/api/gallery/get.jsonp",
-		params:
-		{
-        	environment: 1, // dont't change this one
-            gallery_id: 1, // your projects gallery ID will be provided to you.
-            category_id: 6, // category IDs will be provided. categories will be text (Twitter), photo (Instagram), video (Instagram), or all.
-            start: 1, // starting index for paging
-            total: 10, // page size, 40 maximum.
-            active: 1, // only pull approved content.
-        }
+		data:{
+			instagramUrl: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.json?environment=1&gallery_id=4&category_id=28",
+			twitterUrl: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.json?environment=1&gallery_id=4&category_id=29"
+		}
 	},
 
 

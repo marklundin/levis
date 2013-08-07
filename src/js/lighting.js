@@ -261,7 +261,6 @@ define(
 
 
 			if( gui ){
-				console.log( 'lights' );
 				gui = gui.addFolder( 'lights' );	
 				gui.add( api, 'addPointLight' );
 				gui.add( api, 'addDirectionalLight' );

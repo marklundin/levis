@@ -1,13 +1,25 @@
-define((['module'], function (module) {
+define(['module'], function (module) {
 
+	
+	var api =  function( callback, errCallback ) {
 
-    console.log( module.config('url'));
+	    require([ 
+	    	"json!"+module.config().instagramUrl,
+	    	"json!"+module.config().twitterUrl
+	    	], function( instagramData, twitterData ){
 
-    // require([ 'json!'+url], function(){
+	    		twitterData.loaded 		= twitterData.status === 'OK';
+	    		instagramData.loaded 	= instagramData.status === 'OK';
+	    		var loaded = instagramData.loaded && twitterData.loaded;
 
-    // });
+	    		if( loaded ) callback( twitterData, instagramData )
+	    		else errCallback( instagramData, twitterData );
 
-  })
+	    });
+
+	}
+
+	return api;
 
 
 })
