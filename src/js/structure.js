@@ -10,20 +10,12 @@ define([
 			SCALE:  	100
 		};
 
-		var STRUT = {}
-			STRUT.WIDTH  = 7;
-			STRUT.LENGTH = GRID.SCALE - STRUT.WIDTH;
+		// var STRUT = {}
+			// STRUT.WIDTH  = 10;
+			// STRUT.LENGTH = GRID.SCALE - STRUT.WIDTH;
 
 		
-		var structure = function( frequency, complexity, seed, threshold ){
-
-
-			var cubes = [
-				new THREE.Mesh( cube( GRID.SCALE * 0.25, STRUT.WIDTH )),
-				new THREE.Mesh( cube( GRID.SCALE * 0.50, STRUT.WIDTH )),
-				new THREE.Mesh( cube( GRID.SCALE * 0.75, STRUT.WIDTH )),
-				new THREE.Mesh( cube( GRID.SCALE * 1.00, STRUT.WIDTH )),
-			];
+		var structure = function( frequency, complexity, seed, threshold, horizontalThickness, verticaThickness ){
 
 
 			var noise3D 	= prng.noise3D( GRID.DIMENSION, GRID.DIMENSION, GRID.DIMENSION, frequency, complexity, seed ),
@@ -47,7 +39,7 @@ define([
 							volume.push( [x, y, z])
 							// console.log( value );
 							solidity = Math.pow(( value - threshold ) / ( 1.0 - threshold ), exponent );
-							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, STRUT.WIDTH, (math.random( 1, variations )|0)  ));
+							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, horizontalThickness, verticaThickness, (math.random( 1, variations )|0)  ));
 							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							mesh.position.multiplyScalar( GRID.SCALE );
 							THREE.GeometryUtils.merge( baseGeom, mesh );

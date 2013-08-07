@@ -314,6 +314,8 @@ define([
 					threshold 	: 0.68,
 					noiseAmount : 0.7,
 					complexity 	: 0.82,
+					horizontal_thickness 	: 7,
+					vertical_thickness 	: 2,
 					generate 	: generate,
 					seed 		: String( seed ),
 
@@ -355,6 +357,8 @@ define([
 				formgui.add( api, "frequency", 		0.00, 2.0 	).onFinishChange( api.generate );
 				formgui.add( api, "threshold", 		0.01, 0.99 	).onFinishChange( api.generate );
 				formgui.add( api, "complexity", 	0.0,  1.0 	).onFinishChange( api.generate );
+				formgui.add( api, "horizontal_thickness", 0, 50	).onFinishChange( api.generate );
+				formgui.add( api, "vertical_thickness", 0, 50	).onFinishChange( api.generate );
 				// formgui.add( api, "distortion", 	0.0,  1.0 ).step( 0.001 ).onChange( api.updateMaterial );
 				// formgui.add( api, "amount",	 		0.0,  50.0 ).onChange( api.updateMaterial );
 				// formgui.add( api, "twist", 	0.0,  4.0 ).step( 0.001 ).onChange( api.updateMaterial );
@@ -396,7 +400,8 @@ define([
 					structMesh.geometry.dispose();
 				}
 
-				var strut = structure( api.frequency, api.complexity, seed, api.threshold );
+				console.log( api.horizontal_thickness, api.vertical_thickness );
+				var strut = structure( api.frequency, api.complexity, seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
 
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );

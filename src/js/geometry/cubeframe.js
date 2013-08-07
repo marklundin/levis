@@ -4,11 +4,11 @@ define(function(){
 	    return (value & (1 << bitindex)) != 0;
 	}
 	
-	return function ( w,h,d, thickness, bitflag ){
+	return function ( w,h,d, thickness, vThickness, bitflag ){
 
 		var strut 	    = {
 				w: new THREE.Mesh( new THREE.CubeGeometry( w - thickness, 	thickness, 		thickness 		)),
-				h: new THREE.Mesh( new THREE.CubeGeometry( thickness, 		h - thickness,	thickness 		)),
+				h: new THREE.Mesh( new THREE.CubeGeometry( vThickness, 		h - thickness,	vThickness				 )),
 				d: new THREE.Mesh( new THREE.CubeGeometry( thickness, 		thickness, 		d - thickness 	)),	
 			}, 
 			cornerMesh 	= new THREE.Mesh( new THREE.CubeGeometry( thickness, thickness, thickness ));
