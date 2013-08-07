@@ -33,7 +33,7 @@ define([
 				volume 		= [], 
 				empty 		= [],
 				variations 	= Math.pow( 2, 12 ) - 1, 
-				mesh, value;
+				mesh, value, solidity, exponent = 1.3;
 
 
 			// Generate noise pattern
@@ -46,7 +46,8 @@ define([
 						if( value > threshold ) {
 							volume.push( [x, y, z])
 							// console.log( value );
-							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, STRUT.WIDTH, ( value - threshold ) / ( 1.0 - threshold ) ));
+							solidity = Math.pow(( value - threshold ) / ( 1.0 - threshold ), exponent );
+							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, STRUT.WIDTH, (math.random( 1, variations )|0)  ));
 							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							mesh.position.multiplyScalar( GRID.SCALE );
 							THREE.GeometryUtils.merge( baseGeom, mesh );
