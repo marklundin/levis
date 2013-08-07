@@ -11,7 +11,7 @@ define([
 		};
 
 		var STRUT = {}
-			STRUT.WIDTH  = 4;
+			STRUT.WIDTH  = 7;
 			STRUT.LENGTH = GRID.SCALE - STRUT.WIDTH;
 
 		
@@ -46,7 +46,7 @@ define([
 						if( value > threshold ) {
 							volume.push( [x, y, z])
 							// console.log( value );
-							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, STRUT.WIDTH, value - threshold ));
+							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, STRUT.WIDTH, ( value - threshold ) / ( 1.0 - threshold ) ));
 							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							mesh.position.multiplyScalar( GRID.SCALE );
 							THREE.GeometryUtils.merge( baseGeom, mesh );
