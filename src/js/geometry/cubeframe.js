@@ -4,7 +4,7 @@ define(function(){
 	    return (value & (1 << bitindex)) != 0;
 	}
 	
-	return function ( w,h,d, thickness, bitflag ){
+	return function ( w,h,d, thickness, solidity ){
 
 		var strut 	    = {
 				w: new THREE.Mesh( new THREE.CubeGeometry( w - thickness, 	thickness, 		thickness 		)),
@@ -25,42 +25,42 @@ define(function(){
 
 		//width
 		strut.w.position.set( 0, -hh, -hd );
-		if( isBitSet( bitflag, 0 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.w );
 
 		strut.w.position.set( 0, -hh,  hd );
-		if( isBitSet( bitflag, 1 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.w );
 
 		strut.w.position.set( 0,  hh,  hd );
-		if( isBitSet( bitflag, 2 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		if( Math.random() < solidity) THREE.GeometryUtils.merge( cube.geometry, strut.w );
 
 		strut.w.position.set( 0,  hh, -hd );
-		if( isBitSet( bitflag, 3 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.w );
 
 		// height
 		strut.h.position.set( -hw, 0, -hd  );
-		if( isBitSet( bitflag, 4 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.h );
 
 		strut.h.position.set(  hw, 0, -hd  );
-		if( isBitSet( bitflag, 5 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
 
 		strut.h.position.set(  hw, 0,  hd  );
-		if( isBitSet( bitflag, 6 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
+		if(Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
 
 		strut.h.position.set( -hw, 0,  hd  );
-		if( isBitSet( bitflag, 7 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.h );
 
 		//depth
 		strut.d.position.set( -hw, -hh, 0  );
-		if( isBitSet( bitflag, 8 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.d );
 
 		strut.d.position.set(  hw, -hh, 0  );
-		if( isBitSet( bitflag, 9 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
 
 		strut.d.position.set(  hw,  hh, 0  );
-		if( isBitSet( bitflag, 10 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
 
 		strut.d.position.set( -hw,  hh, 0  );
-		if( isBitSet( bitflag, 11 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );
+		if( Math.random() < solidity ) THREE.GeometryUtils.merge( cube.geometry, strut.d );
 
 
 		var ninetyDegs = Math.PI * 0.5;

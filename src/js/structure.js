@@ -33,7 +33,7 @@ define([
 				volume 		= [], 
 				empty 		= [],
 				variations 	= Math.pow( 2, 12 ) - 1, 
-				mesh;
+				mesh, value;
 
 
 			// Generate noise pattern
@@ -42,9 +42,11 @@ define([
 				while( y-- > 0 ){
 					x = GRID.DIMENSION;
 					while( x-- > 0 ){
-						if( noise3D( x, y, z ) > threshold ) {
+						value = noise3D( x, y, z );
+						if( value > threshold ) {
 							volume.push( [x, y, z])
-							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, STRUT.WIDTH, math.random( 1, variations )|0 ));//cubes[(Math.random() * 4)|0];
+							// console.log( value );
+							mesh = new THREE.Mesh( cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, STRUT.WIDTH, value - threshold ));
 							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							mesh.position.multiplyScalar( GRID.SCALE );
 							THREE.GeometryUtils.merge( baseGeom, mesh );
