@@ -18,6 +18,7 @@ define([
 	"text!shaders/libs/noise3d.glsl",
 	"text!shaders/libs/utils.glsl",
 	"data",
+	"textplane",
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	
 

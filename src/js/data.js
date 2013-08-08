@@ -4,8 +4,8 @@ define(['module'], function (module) {
 	var api =  function( callback, errCallback ) {
 
 	    require([ 
-	    	"json!"+module.config().instagramUrl,
-	    	"json!"+module.config().twitterUrl
+	    	module.config().instagramUrl + "&callback=define",
+	    	module.config().twitterUrl + "&callback=define",
 	    	], function( instagramData, twitterData ){
 
 	    		twitterData.loaded 		= twitterData.status === 'OK';

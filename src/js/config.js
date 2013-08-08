@@ -5,8 +5,8 @@ requirejs.config( {
 
 	config:{
 		data:{
-			instagramUrl: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.json?environment=1&gallery_id=4&category_id=28",
-			twitterUrl: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.json?environment=1&gallery_id=4&category_id=29"
+			instagramUrl: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&gallery_id=4&category_id=28",
+			twitterUrl: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&gallery_id=4&category_id=29"
 		}
 	},
 
