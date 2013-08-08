@@ -38,8 +38,9 @@ define([
 		var renderer 	= new THREE.WebGLRenderer({ antialias:true}),
 			scene 		= new THREE.Scene(),
 			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
-			controls 	= new THREE.OrbitControls( camera, $( document, "#main" ) );
+			controls 	= new THREE.OrbitControls( camera, $( document, "#main" ));
 			
+		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
 		// scene.fog = new THREE.Fog( 0xFFFFFF, 100, 5000 );
 		controls.maxPolarAngle = Math.PI / 1.62;
@@ -248,6 +249,7 @@ define([
 					  	},
 				  		uniforms
 				  	]),
+				  	fog:true,
 				  	lights: true,
 				  	vertexShader: phongVertexShader,
 				  	fragmentShader: phongShader.fragmentShader
@@ -340,6 +342,10 @@ define([
 					// point_light 		: "#"+polight.color.getHexString(),
 					// ambient_light 		: "#"+amlight.color.getHexString(),
 
+					fog:{
+						color: "#"+scene.fog.color.getHexString()
+					},
+
 					random 		: function (){
 						seed = (Math.random() * 9999 )|0;
 						api.seed = String( seed );
@@ -361,6 +367,9 @@ define([
 					},
 					updateBackgoundColor: function(){
 						renderer.setClearColor( api.background_color );
+					},
+					updateFogColor: function(){
+						scene.fog.color.set( api.fog.color );
 					}
 				}
 
@@ -393,6 +402,11 @@ define([
 				// lightsgui.addColor( api, "point_light" ).onChange( api.updateLights );
 				// lightsgui.addColor( api, "directional_light" ).onChange( api.updateLights );
 				// lightsgui.open()
+
+				var fogGui = gui.addFolder( 'fog' );
+				fogGui.addColor( api.fog, "color" ).onChange( api.updateFogColor );
+				fogGui.add( scene.fog, "near" );
+				fogGui.add( scene.fog, "far" );
 				
 
 				gui.add( api, 	"seed" );//.listen();
