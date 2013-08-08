@@ -138,6 +138,7 @@ define([
 				uniforms: uniforms, side: THREE.BackSide 
 			} );
 
+
 			var sky = new THREE.Mesh( skyGeo, skyMat );
 			scene.add( sky );
 
@@ -333,6 +334,8 @@ define([
 					specular 	: "#"+faceMaterial.uniforms.specular.value.getHexString(),
 					ambient 	: "#"+faceMaterial.uniforms.ambient.value.getHexString(),
 
+					background_color: '#'+renderer.getClearColor().getHexString(),
+
 					// directional_light 	: "#"+dilight.color.getHexString(),
 					// point_light 		: "#"+polight.color.getHexString(),
 					// ambient_light 		: "#"+amlight.color.getHexString(),
@@ -355,6 +358,9 @@ define([
 						faceMaterial.uniforms.uTwist.value = api.twist / 100.0;
 						faceMaterial.uniforms.uAmplitude.value = api.amount;
 
+					},
+					updateBackgoundColor: function(){
+						renderer.setClearColor( api.background_color );
 					}
 				}
 
@@ -375,6 +381,11 @@ define([
 				matgui.addColor( api, "color"	).onChange( api.updateMaterial );
 				matgui.addColor( api, "ambient" ).onChange( api.updateMaterial );
 				matgui.addColor( api, "specular" ).onChange( api.updateMaterial );
+
+				// var backgui = gui.addFolder('background');
+				
+				// backgui.addColor( api, "ambient" ).onChange( api.updateMaterial );
+				// backgui.addColor( api, "specular" ).onChange( api.updateMaterial );
 				// matgui.open();
 
 				// var lightsgui = gui.addFolder('lights');
@@ -389,6 +400,7 @@ define([
 				gui.add( api, 	"generate" );
 				gui.add( skyMat, "visible" );
 				gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
+				gui.addColor( api, "background_color" ).onChange( api.updateBackgoundColor );
 
 
 
