@@ -22,7 +22,10 @@ define([
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, dataloader ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, dataloader, textplane ) {
+
+
+		
 
 
 		// APP VARIABLES
@@ -420,10 +423,16 @@ define([
 					var n = twitter.results.length + instagram.results.length,
 						index, item, mesh;
 
-					console.log( twitter, instagram );
+					var plane,result, isInstagram;
+
 
 					while( n-- > 0 ){
-						mesh = new THREE.Mesh( new THREE.CubeGeometry( 100, 100, 100 ), n >= twitter.results.length ? videoContentMaterial : imageContentMaterial  );
+
+						isInstagram = n >= twitter.results.length;
+
+						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
+
+						mesh = new THREE.Mesh( new THREE.CubeGeometry( 100, 100, 100 ), isInstagram ? videoContentMaterial : imageContentMaterial  );
 						index = ~~( Math.random() * strut.volume.length )
 						item = strut.volume[index];
 						mesh.position.set( item[0], item[1], item[2] );
@@ -431,6 +440,12 @@ define([
 						mesh.position.y -= 15;
 						mesh.position.z -= 15;
 						mesh.position.multiplyScalar( 100 );
+						
+						plane = textplane( result.user_id + ' \n' + result.title + ' \n' + result.add_date );
+						plane.position.copy( mesh.position );
+						plane.position.z += 65;
+						// plane.rotation.y += Math.PI;
+						scene.add( plane );
 						
 						contentObj3d.add( mesh );
 					}
