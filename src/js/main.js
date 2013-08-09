@@ -38,7 +38,11 @@ define([
 		var renderer 	= new THREE.WebGLRenderer({ antialias:true}),
 			scene 		= new THREE.Scene(),
 			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
-			controls 	= new THREE.OrbitControls( camera, $( document, "#main" ));
+			controls 	= new THREE.OrbitControls( camera, $( document, "#main" )),
+			projector 	= new THREE.Projector(),
+			raycaster 	= new THREE.Raycaster(),
+			mouse 		= new THREE.Vector2(),
+			INTERSECTED;
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
@@ -65,6 +69,15 @@ define([
 			renderer.setSize( WIDTH, HEIGHT );			
 		})
 
+		document.addEventListener( 'mousemove', function ( event ) {
+
+			event.preventDefault();
+
+			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+		});
+
 
 		renderer.setSize( WIDTH, HEIGHT );
 
@@ -87,7 +100,7 @@ define([
 			var basePlane = new THREE.Mesh( new THREE.PlaneGeometry( 10000, 10000, 1, 1 ), planeMat );
 			basePlane.rotation.x = Math.PI * -0.5;
 			basePlane.position.y = STRUCT_SIZE.y * -0.5;
-			// scene.add( basePlane );
+			scene.add( basePlane );
 
 
 		// DEPTH PASS
@@ -141,7 +154,7 @@ define([
 
 
 			var sky = new THREE.Mesh( skyGeo, skyMat );
-			scene.add( sky );
+			// scene.add( sky );
 
 
 
@@ -332,21 +345,25 @@ define([
 					// distortion 	: faceMaterial.uniforms.uFrequency.value * 100.0,
 					// amount 		: faceMaterial.uniforms.uAmplitude.value,
 
-					color 		: "#"+faceMaterial.uniforms.diffuse.value.getHexString(),
-					specular 	: "#"+faceMaterial.uniforms.specular.value.getHexString(),
-					ambient 	: "#"+faceMaterial.uniforms.ambient.value.getHexString(),
+					
 
 					background_color: '#'+renderer.getClearColor().getHexString(),
 
 					// directional_light 	: "#"+dilight.color.getHexString(),
 					// point_light 		: "#"+polight.color.getHexString(),
 					// ambient_light 		: "#"+amlight.color.getHexString(),
+					material:{
+						shininess: faceMaterial.uniforms.shininess.value,
+						color 		: "#"+faceMaterial.uniforms.diffuse.value.getHexString(),
+						specular 	: "#"+faceMaterial.uniforms.specular.value.getHexString(),
+						ambient 	: "#"+faceMaterial.uniforms.ambient.value.getHexString(),
+					},
 
 					fog:{
 						color: "#"+scene.fog.color.getHexString()
 					},
 
-					random 		: function (){
+					random 	: function (){
 						seed = (Math.random() * 9999 )|0;
 						api.seed = String( seed );
 						generate();
@@ -356,9 +373,10 @@ define([
 					},
 					updateMaterial: function(){
 
-						faceMaterial.uniforms.diffuse.value.set( api.color )
-						faceMaterial.uniforms.specular.value.set( api.specular )
-						faceMaterial.uniforms.ambient.value.set( api.ambient )
+						faceMaterial.uniforms.diffuse.value.set( api.material.color );
+						faceMaterial.uniforms.specular.value.set( api.material.specular );
+						faceMaterial.uniforms.ambient.value.set( api.material.ambient );
+						faceMaterial.uniforms.shininess.value = api.material.shininess.value;
 
 						faceMaterial.uniforms.uFrequency.value = api.distortion / 100.0;
 						faceMaterial.uniforms.uTwist.value = api.twist / 100.0;
@@ -387,9 +405,10 @@ define([
 				formgui.open();
 
 				var matgui = gui.addFolder('material');
-				matgui.addColor( api, "color"	).onChange( api.updateMaterial );
-				matgui.addColor( api, "ambient" ).onChange( api.updateMaterial );
-				matgui.addColor( api, "specular" ).onChange( api.updateMaterial );
+				matgui.addColor( api.material, "color"	).onChange( api.updateMaterial );
+				matgui.addColor( api.material, "ambient" ).onChange( api.updateMaterial );
+				matgui.addColor( api.material, "specular" ).onChange( api.updateMaterial );
+				matgui.add( api.material, "shininess" ).onChange( api.updateMaterial );
 
 				// var backgui = gui.addFolder('background');
 				
@@ -530,8 +549,42 @@ define([
 			// dilight.helper.update();
 
 			// polight.control.update();
-			
+			picking();
 			render( delta || 0 );
+
+		}
+
+		var mouseVector = new THREE.Vector3();
+		function picking(){
+
+			mouseVector.set( mouse.x, mouse.y, 1 );
+			projector.unprojectVector( mouseVector, camera );
+
+			raycaster.set( camera.position, mouseVector.sub( camera.position ).normalize() );
+
+			var intersects = raycaster.intersectObjects( contentObj3d.children, true );
+			// console.log( mouse.x, mouse.y, contentObj3d.children.length );
+			if ( intersects.length > 0 ) {
+
+
+				if ( INTERSECTED != intersects[ 0 ].object ) {
+
+
+					if ( INTERSECTED ) INTERSECTED.scale.set( 1.0, 1.0, 1.0 );
+
+					INTERSECTED = intersects[ 0 ].object;
+					// INTERSECTED.currentHex = INTERSECTED.material.uniforms.color.getHex();
+					INTERSECTED.scale.set( 1.5, 1.5, 1.5 );
+
+				}
+
+			} else {
+
+				if ( INTERSECTED ) INTERSECTED.scale.set( 1.0, 1.0, 1.0 );
+
+				INTERSECTED = null;
+
+			}
 
 		}
 
