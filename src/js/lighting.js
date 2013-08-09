@@ -70,9 +70,9 @@ define(
 				},
 
 
-				addPointLight: function ( color ){
+				addPointLight: function ( color, intensity, distance  ){
 
-					var light = new THREE.PointLight( color );
+					var light = new THREE.PointLight( color, intensity, distance );
 
 					light.helper = new THREE.PointLightHelper( light, 100 );
 					scene.add( light.helper );
@@ -97,6 +97,7 @@ define(
 						});
 
 						lightui.add( light, "intensity" );
+						lightui.add( light, "distance" );
 
 						lightui.add( privateApi, "remove" ).onChange(function(){
 

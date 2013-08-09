@@ -135,14 +135,14 @@ define([
 			// camera.add( m );
 
 
-			clouds.material.opacity = 0.01;
-			clouds.meshA = new THREE.Mesh( geometry, clouds.material );
-			// mesh.position.z = - 8000;
-			scene.add( clouds.meshA );
+			// clouds.material.opacity = 0.01;
+			// clouds.meshA = new THREE.Mesh( geometry, clouds.material );
+			// // mesh.position.z = - 8000;
+			// scene.add( clouds.meshA );
 
-			clouds.meshB = new THREE.Mesh( geometry, clouds.material );
-			clouds.meshB.position.z = - 8000;
-			scene.add( clouds.meshB );
+			// clouds.meshB = new THREE.Mesh( geometry, clouds.material );
+			// clouds.meshB.position.z = - 8000;
+			// scene.add( clouds.meshB );
 
 
 		// END CLOUDS
@@ -530,7 +530,9 @@ define([
 
 			// DATA 
 
-				var strut;
+				var strut, selectionLight = new THREE.PointLight( 0xFF0000, 0.0, 250 );
+
+				scene.add( selectionLight );
 
 				contentObj3d = new THREE.Object3D();
 				scene.add( contentObj3d );
@@ -539,10 +541,13 @@ define([
 
 					generate();
 
+					
+
 					var videoContentMaterial = new THREE.MeshPhongMaterial({
 						color:new THREE.Color( 0xff2200 ),
 						ambient:new THREE.Color( 0xff2200 ),
 						transparent: true,
+						// blending: THREE.AdditiveBlending,
 						opacity: 0.8,
 					});
 
@@ -550,13 +555,15 @@ define([
 						color:new THREE.Color( 0x0033ff ),
 						ambient:new THREE.Color( 0x00fff00 ),
 						transparent: true,
+						// blending: THREE.AdditiveBlending,
 						opacity: 1.0,
 					});
 
 					var n = twitter.results.length + instagram.results.length,
 						index, item, mesh;
 
-					var plane,result, isInstagram;
+					var plane,result, isInstagram,
+						cubeGeometry = new THREE.CubeGeometry( 100, 100, 100 );
 
 
 					while( n-- > 0 ){
@@ -565,7 +572,7 @@ define([
 
 						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
 
-						mesh = new THREE.Mesh( new THREE.CubeGeometry( 100, 100, 100 ), isInstagram ? videoContentMaterial : imageContentMaterial  );
+						mesh = new THREE.Mesh( cubeGeometry, isInstagram ? videoContentMaterial.clone() : imageContentMaterial.clone()  );
 						index = ~~( Math.random() * strut.volume.length )
 						item = strut.volume[index];
 						mesh.position.set( item[0], item[1], item[2] );
@@ -658,18 +665,26 @@ define([
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
 
-					if ( INTERSECTED ) INTERSECTED.scale.set( 1.0, 1.0, 1.0 );
+					if ( INTERSECTED ){
+						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+						selectionLight.intensity = 0;
+					}
 
 					INTERSECTED = intersects[ 0 ].object;
-					// INTERSECTED.currentHex = INTERSECTED.material.uniforms.color.getHex();
-					INTERSECTED.scale.set( 1.5, 1.5, 1.5 );
+					INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+					INTERSECTED.material.color.multiplyScalar( 2.3 );
+					selectionLight.color.set( INTERSECTED.material.color );
+					selectionLight.intensity = 2.5;
+					selectionLight.position.copy( INTERSECTED.position );
 
 				}
 
 			} else {
 
-				if ( INTERSECTED ) INTERSECTED.scale.set( 1.0, 1.0, 1.0 );
-
+				if ( INTERSECTED ){
+					INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+					selectionLight.intensity = 0;
+				} 
 				INTERSECTED = null;
 
 			}
