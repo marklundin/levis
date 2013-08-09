@@ -17,12 +17,14 @@ define([
 	"text!shaders/libs/noise2d.glsl",
 	"text!shaders/libs/noise3d.glsl",
 	"text!shaders/libs/utils.glsl",
+	"glsl!shaders/clouds.glsl",
 	"data",
 	"textplane",
 	"./libs/threejs/examples/js/controls/OrbitControls",
+	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, dataloader, textplane ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, cloudsShader, dataloader, textplane ) {
 
 
 		
@@ -45,6 +47,7 @@ define([
 			INTERSECTED;
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
+		scene.add( camera );
 
 		// scene.fog = new THREE.Fog( 0xFFFFFF, 100, 5000 );
 		controls.maxPolarAngle = Math.PI / 1.62;
@@ -81,6 +84,71 @@ define([
 
 		renderer.setSize( WIDTH, HEIGHT );
 
+		// CLOUDS
+
+			var clouds = {};
+			var geometry = new THREE.Geometry();
+
+			var texture = THREE.ImageUtils.loadTexture( 'js/cloud10.png' );
+			texture.magFilter = THREE.LinearMipMapLinearFilter;
+			texture.minFilter = THREE.LinearMipMapLinearFilter;
+
+
+			clouds.material = new THREE.ShaderMaterial( {
+
+				uniforms: {
+
+					// 'tDepth': { type: 't', value: depthTarget },
+					"map": { type: "t", value: texture },
+					"fogColor" : { type: "c", value: scene.fog.color },
+					"fogNear" : { type: "f", value: scene.fog.near },
+					"fogFar" : { type: "f", value: scene.fog.far },
+
+				},
+				vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
+				fragmentShader: cloudsShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
+				depthWrite: false,
+				// depthTest: false,
+				transparent: true,
+				// side: THREE.DoubleSide
+
+			} );
+
+			var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
+
+			for ( var i = 0; i < 8000; i++ ) {
+
+				plane.position.x = Math.random() * 1000 - 500;
+				plane.position.y = - Math.random() * Math.random() * 200 - 15;
+				plane.position.z = i;
+				plane.rotation.z = Math.random() * Math.PI;
+				plane.scale.x = plane.scale.y = Math.random() * Math.random() * 1.5 + 0.5;
+
+
+				THREE.GeometryUtils.merge( geometry, plane );
+
+			}
+
+			// var m = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ),  clouds.material );
+			// m.position.z = -40;
+			// m.rotation.y = Math.PI * -0.5;
+			// camera.add( m );
+
+
+			clouds.material.opacity = 0.01;
+			clouds.meshA = new THREE.Mesh( geometry, clouds.material );
+			// mesh.position.z = - 8000;
+			scene.add( clouds.meshA );
+
+			clouds.meshB = new THREE.Mesh( geometry, clouds.material );
+			clouds.meshB.position.z = - 8000;
+			scene.add( clouds.meshB );
+
+
+		// END CLOUDS
+
+
+
 		// BASE PLANE
 
 			var planeUniforms = {
@@ -100,33 +168,50 @@ define([
 			var basePlane = new THREE.Mesh( new THREE.PlaneGeometry( 10000, 10000, 1, 1 ), planeMat );
 			basePlane.rotation.x = Math.PI * -0.5;
 			basePlane.position.y = STRUCT_SIZE.y * -0.5;
-			scene.add( basePlane );
+			// scene.add( basePlane );
 
 
 		// DEPTH PASS
 			
-			// var depthShader = THREE.ShaderLib[ "depthRGBA" ];
-			// var depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
+			var depthShader = THREE.ShaderLib[ "depthRGBA" ];
+			var depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
 
-			// var depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms } );
-			// depthMaterial.blending = THREE.NoBlending;
+			var depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms } );
+			depthMaterial.blending = THREE.NoBlending;
 
 
 			// console.log(  depthUniforms)
 
 			// // postprocessing
 			// var composer = new THREE.EffectComposer( renderer );
-			// composer.addPass( new THREE.RenderPass( scene, camera ) );
+			// // composer.addPass( new THREE.RenderPass( scene, camera ) );
 
 			// var depthTarget = new THREE.WebGLRenderTarget( WIDTH, HEIGHT, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat } );
-			// // console.log( camera.near );
-			// var effect = new THREE.ShaderPass( THREE.SSAOShader );
-			// effect.uniforms[ 'tDepth' ].value = depthTarget;
-			// effect.uniforms[ 'size' ].value.set( WIDTH, HEIGHT );
-			// effect.uniforms[ 'cameraNear' ].value = camera.near;
-			// effect.uniforms[ 'cameraFar' ].value = camera.far;
+			// // // console.log( camera.near );
+			// var effect = new THREE.ShaderPass( {
+			// 	uniforms: {
+
+			// 		'tDepth': { type: 't', value: depthTarget },
+			// 		"map": { type: "t", value: texture },
+			// 		"fogColor" : { type: "c", value: scene.fog.color },
+			// 		"fogNear" : { type: "f", value: scene.fog.near },
+			// 		"fogFar" : { type: "f", value: scene.fog.far },
+
+			// 	},
+			// 	vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
+			// 	fragmentShader: cloudsShader.fragmentShader,
+			// } );
+			// // effect.uniforms[ 'tDepth' ].value = depthTarget;
+			// // effect.uniforms[ 'size' ].value.set( WIDTH, HEIGHT );
+			// // effect.uniforms[ 'cameraNear' ].value = camera.near;
+			// // effect.uniforms[ 'cameraFar' ].value = camera.far;
+
+			// var fxaaPass = new THREE.ShaderPass( THREE.FXAAShader );
+			// fxaaPass.uniforms[ 'resolution' ].value = new THREE.Vector2( 1 / WIDTH, 1 / HEIGHT );
 			// effect.renderToScreen = true;
 			// composer.addPass( effect );
+			// composer.addPass( fxaaPass );
+			
 
 
 
@@ -154,7 +239,7 @@ define([
 
 
 			var sky = new THREE.Mesh( skyGeo, skyMat );
-			// scene.add( sky );
+			scene.add( sky );
 
 
 
@@ -315,6 +400,9 @@ define([
 
 			// END MATERIALS
 
+
+
+			
 
 
 			//LIGHTS
@@ -600,8 +688,8 @@ define([
 			// renderer.render( scene, camera, depthTarget );
 			// scene.overrideMaterial = null;
 
-			// //to screen
-			// composer.render()
+			// // //to screen
+			// composer.render();
 			// console.time('render')
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
