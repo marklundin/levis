@@ -220,7 +220,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 		if ( scope.enabled === false ) return;
 		if ( scope.userRotate === false ) return;
 
-		event.preventDefault();
+		// event.preventDefault();
 
 		if ( event.button === 0 ) {
 
@@ -240,8 +240,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		}
 
-		document.addEventListener( 'mousemove', onMouseMove, false );
-		document.addEventListener( 'mouseup', onMouseUp, false );
+		scope.domElement.addEventListener( 'mousemove', onMouseMove, false );
+		scope.domElement.addEventListener( 'mouseup', onMouseUp, false );
 
 	}
 
@@ -295,8 +295,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 		if( this.enabled !== pause ) return;
 
 		if( pause ){
-		 	document.removeEventListener( 'mousemove', onMouseMove, false );
-			document.removeEventListener( 'mouseup', onMouseUp, false );
+		 	this.domElement.removeEventListener( 'mousemove', onMouseMove, false );
+			this.domElement.removeEventListener( 'mouseup', onMouseUp, false );
 			this.domElement.addEventListener( 'mousewheel', onMouseUp, false );
 		}else{
 			this.domElement.addEventListener( 'mousedown', onMouseDown, false );
@@ -311,8 +311,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 		if ( scope.enabled === false ) return;
 		if ( scope.userRotate === false ) return;
 
-		document.removeEventListener( 'mousemove', onMouseMove, false );
-		document.removeEventListener( 'mouseup', onMouseUp, false );
+		scope.domElement.removeEventListener( 'mousemove', onMouseMove, false );
+		scope.domElement.removeEventListener( 'mouseup', onMouseUp, false );
 
 		state = STATE.NONE;
 

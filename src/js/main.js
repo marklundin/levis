@@ -27,7 +27,8 @@ define([
 	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, cloudsShader, dataloader, textplane ) {
 
 
-		
+		var guiContainerDom = document.getElementById('gui');
+		guiContainerDom.appendChild( gui.domElement );
 
 
 		// APP VARIABLES
@@ -410,7 +411,7 @@ define([
 				var lights = new lighting( scene, camera, $( document, "#main" ) , gui );
 				lights.onLightAdded( updateMaterial );
 				lights.onLightRemoved( updateMaterial );
-				lights.addPointLight( 0xffffff );
+				// lights.addPointLight( 0xffffff );
 
 
 			// END LIGHTS

@@ -1,7 +1,7 @@
 define([
     "libs/datgui"
     ], function(){
-        return DEBUG ? new dat.GUI() : {
+        return DEBUG ? new dat.GUI( {autoPlace:false}) : {
 
         	// Stubs
         	addFolder: function(){},

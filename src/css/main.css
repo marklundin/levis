@@ -4,3 +4,37 @@ body{
 	padding: 0px;
 	background: black
 }
+
+#search{
+	padding: 50px;
+	right: 0px;
+	position: absolute;
+	z-index: 1;
+}
+
+#search-field{
+
+	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
+
+	font-family: 'helvetica neue';
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	font-size: 10pt;
+	-webkit-font-smoothing: subpixel-antialiased;
+	color: white;
+	border: none;
+	border-bottom: 2px white inset;
+	padding: 5px;
+	width: 250px;
+	outline: none;
+	padding-left: 0px;
+}
+
+#search-field::-webkit-input-placeholder{
+	color: white;
+}
+
+#gui{
+	position: absolute;
+	z-index: 2;
+}
