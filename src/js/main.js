@@ -93,7 +93,7 @@ define([
 
 		});
 
-		var lastClicked
+		var lastClicked;
 		document.addEventListener( 'mousedown', function(){
 
 			if( INTERSECTED && INTERSECTED !== lastClicked ){
@@ -457,7 +457,11 @@ define([
 
 				var camDir 	= FORWARD.clone(),
 					origin  = new THREE.Vector3(),
-					cameraPath;
+					tmpAppr  = new THREE.Vector3(),
+					cameraPath, testCam;
+
+
+				
 
 				function generatePathTo( object ){
 
@@ -470,9 +474,10 @@ define([
 					// Add first control point along the cameras current direction, at a slower velocity
 					pts.push( camDir.clone().multiplyScalar(( camera.velocity || 600 ) * 0.75 ).add( origin ));
 
-					// Position end 100 pixels away from the destination object in the direction of it's normal
-					approach.copy( object.normal || FORWARD ).multiplyScalar( 600 ).add( object.position );
-					end.copy     ( object.normal || FORWARD ).multiplyScalar( 200 ).add( object.position );
+					// Position end X pixels away from the destination object in the direction of it's normal
+					// approach.copy( object.normal ).multiplyScalar( 600 ).add( object.position );
+					end.copy     ( object.normal ).multiplyScalar( 300 ).add( object.position );
+					approach.copy( object.normal ).multiplyScalar( 500 ).add( end );
 
 
 					// Mid point
@@ -482,6 +487,10 @@ define([
 					cross.copy( UP ).cross( dir );
 					cross.applyAxisAngle( dir, Math.random() * Math.PI * 2.0 );
 					mid.add( cross.multiplyScalar( dif.length() * CAMERA_PATH_DEVIATION ));
+
+
+					// Shift the approach way point toward the middle to avoid sharp turns
+					approach.add( tmpAppr.copy( mid ).sub( approach ).multiplyScalar( 0.2 ));
 					
 
 
@@ -489,7 +498,7 @@ define([
 					pts.push( approach );
 					pts.push( end );
 
-					// console.log( pts );
+
 
 					
 
@@ -502,22 +511,68 @@ define([
 					var curve = new THREE.SplineCurve3( pts );
 
 					var pathGeometry = new THREE.Geometry();
-					pathGeometry.vertices = curve.getSpacedPoints( 100.0 );
+					pathGeometry.vertices = curve.getSpacedPoints( 50.0 );
 
-					// var reParamaterisedCurve =  new THREE.SplineCurve3( curve.getSpacedPoints( 5.0 ) );
 
-					// var pathGeometryReParam = new THREE.Geometry();
-					// pathGeometryReParam.vertices = reParamaterisedCurve.getSpacedPoints( 100.0 );
+					var smooth = new THREE.SplineCurve3( curve.getSpacedPoints( 4 ));
+					smooth.geom = new THREE.Geometry();
+					smooth.geom.vertices = smooth.getSpacedPoints( 50 );
+
+					// var smoothPoints = resampleSpline( new THREE.SplineCurve3( curve.getSpacedPoints( 50.0 ) ), 50.0 );
+					// console.log( smoothPoints, pts );
+					// var smoothCurve =  new THREE.SplineCurve3( smoothPoints );
+
+					// smoothCurve.geom = new THREE.Geometry();
+					// smoothCurve.geom.vertices = smoothCurve.getSpacedPoints( 50.0 );
 					
 					cameraPath = new THREE.Line( pathGeometry, new THREE.LineBasicMaterial() );
+					cameraPathSmooth = new THREE.Line( smooth.geom, new THREE.LineBasicMaterial({color:0xff0000}) );
 
-					cameraPath.controls = pathcontrols( camera, curve, 30000 );
-					cameraPath.controls.onComplete( function(){
-						cameraPath.controls.paused = true;
-					});
+
+					var n = pathGeometry.vertices.length,
+						sph = new THREE.SphereGeometry( 10 ),
+						sphMat = new THREE.MeshNormalMaterial(),
+						sphMat2 = new THREE.MeshBasicMaterial({color:0xff0000}),
+						sphMesh, sphMesh2;
+
+					// var n = pts.length;
+					// while( n-- > 0 ){
+					// 	sphMesh = new THREE.Mesh( sph, sphMat );
+					// 	sphMesh.position.copy( pts[n] );
+					// 	scene.add( sphMesh );
+					// }
+
+					// testCam = new THREE.Mesh( sph, sphMat );
+					// scene.add( testCam );
+
+					cameraPath.controls = pathcontrols( camera, curve, curve.getLength() * 20  );
+					// cameraPath.controlsSmooth = pathcontrols( testCam, curve, 30000 );
+
+					// cameraPath.controls.onComplete( function(){
+						// cameraPath.controls.paused = true;
+					// });
+
+					
+
+					// while( n-- > 0){
+					// 	sphMesh = new THREE.Mesh( sph, sphMat );
+						
+					// 	sphMesh.position.copy( pathGeometry.vertices[n] );
+						
+					// 	scene.add( sphMesh );
+						
+					// }
+
+					// n = smoothCurve.geom.vertices.length;
+					// while( n-- > 0 ){
+					// 	sphMesh2 = new THREE.Mesh( sph, sphMat2 );
+					// 	sphMesh2.position.copy( smoothCurve.geom.vertices[n] );
+					// 	scene.add( sphMesh2 );
+					// }
 
 					
 					scene.add( cameraPath );
+					// scene.add( cameraPathSmooth );
 
 
 				}
@@ -795,7 +850,9 @@ define([
 
 
 		var controlsActive = false,
-			currentCamera;
+			currentCamera, 
+			testLastPos = new THREE.Vector3(), tmpVec3 = new THREE.Vector3(),
+			camLastPos = new THREE.Vector3(), tmpVec32 = new THREE.Vector3();
 
 		function animate( delta ){
 
@@ -811,6 +868,13 @@ define([
 
 			if( cameraPath && !cameraPath.controls.paused ){
 				cameraPath.controls.update( delta );
+				// cameraPath.controlsSmooth.updateSmooth( delta );
+
+				// console.log( tmpVec3.copy( camera.position ).sub( camLastPos ).length(), tmpVec32.copy( testCam.position ).sub( testLastPos ).length() );
+
+				// camLastPos.copy( camera.position );
+				// // testLastPos.copy( testCam.position );
+
 			}
 
 			camera.helper.visible = ( currentCamera === debugCamera );
