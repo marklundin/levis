@@ -373,9 +373,11 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 	}
 
-	this.update = function () {
+	this.update = function ( camera ) {
 
 		if ( this.object === undefined ) return;
+
+		if( camera ) this.camera = camera;
 
 		this.object.updateMatrixWorld();
 		worldPosition.getPositionFromMatrix( this.object.matrixWorld );
@@ -586,7 +588,7 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 	function onMouseHover( event ) {
 
-		event.preventDefault();
+		// event.preventDefault();
 
 		if ( event.button === 0 && scope.active === false ) {
 
@@ -638,7 +640,7 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 	function onMouseDown( event ) {
 
-		event.preventDefault();
+		// event.preventDefault();
 
 		if ( event.button === 0 ) {
 
@@ -679,7 +681,7 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 	function onMouseMove( event ) {
 
-		event.preventDefault();
+		// event.preventDefault();
 
 		if ( scope.active ) {
 

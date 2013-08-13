@@ -5,8 +5,14 @@ requirejs.config( {
 
 	config:{
 		data:{
-			instagramUrl: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&gallery_id=4&category_id=28",
-			twitterUrl: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&gallery_id=4&category_id=29"
+			instagram:{
+				feed: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&sort=1&gallery_id=4&category_id=28",
+				search: "https://levismakeourmark.thismoment.com/v4/api/search/content.jsonp?environment=1&gallery_id=4&category_id=28&query="
+			},
+			twitter:{
+				feed: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&sort=1&gallery_id=4&category_id=29",
+				search: "https://levismakeourmark.thismoment.com/v4/api/search/content.jsonp?environment=1&gallery_id=4&category_id=29&query="
+			}
 		}
 	},
 
@@ -40,6 +46,11 @@ requirejs.config( {
 		],
 
 		"libs/threejs/examples/js/controls/OrbitControls": ['libs/threejs/build/three'] ,
+		"libs/threejs/examples/js/controls/PathControls": [
+			'libs/threejs/build/three',
+			"libs/threejs/src/extras/animation/Animation"
+		] ,
+		"libs/threejs/src/extras/animation/Animation": ['libs/threejs/build/three'] ,
 		"libs/threejs/examples/js/shaders/SSAOShader": ['libs/threejs/build/three'] ,
 		"libs/threejs/examples/js/shaders/FXAAShader": ['libs/threejs/build/three'] ,
 		"libs/threejs/examples/js/shaders/CopyShader": ['libs/threejs/build/three'] ,

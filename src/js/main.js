@@ -20,11 +20,12 @@ define([
 	"glsl!shaders/clouds.glsl",
 	"data",
 	"textplane",
+	"pathcontrols",
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, cloudsShader, dataloader, textplane ) {
+	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, cloudsShader, dataloader, textplane, pathcontrols ) {
 
 
 		var guiContainerDom = document.getElementById('gui');
@@ -39,26 +40,35 @@ define([
 
 		// Scene
 		var renderer 	= new THREE.WebGLRenderer({ antialias:true}),
+			container 	= $( document, '#main' ),
+			inputField  = $( container, '#search-field' ),
 			scene 		= new THREE.Scene(),
 			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
-			controls 	= new THREE.OrbitControls( camera, $( document, "#main" )),
+			debugCamera = new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
+			controls 	= new THREE.OrbitControls( camera, container ),
 			projector 	= new THREE.Projector(),
 			raycaster 	= new THREE.Raycaster(),
 			mouse 		= new THREE.Vector2(),
 			INTERSECTED;
+
+		camera.helper = new THREE.CameraHelper( camera );
+		scene.add( camera.helper );
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 		scene.add( camera );
+		scene.add( debugCamera );
 
 		// scene.fog = new THREE.Fog( 0xFFFFFF, 100, 5000 );
 		controls.maxPolarAngle = Math.PI / 1.62;
 		controls.userRotateSpeed = 0.4;
 
+		debugCamera.projectionMatrixInverse.getInverse( debugCamera.projectionMatrix );
 		camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
-		camera.position.z = 2500;
+		debugCamera.position.z = 2500;
+		camera.position.z = 2000;
 		// controls.addEventListener( 'change', render );
 
-		$( document, "#main" ).appendChild( renderer.domElement );
+		container.appendChild( renderer.domElement );
 
 
 		window.addEventListener( 'resize', function(){
@@ -66,8 +76,9 @@ define([
 			WIDTH = window.innerWidth;
 			HEIGHT =window.innerHeight;
 
-			camera.aspect = WIDTH / HEIGHT;
+			debugCamera.aspect = camera.aspect = WIDTH / HEIGHT;
 			camera.updateProjectionMatrix();
+			debugCamera.updateProjectionMatrix();
 			// camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
 
 			renderer.setSize( WIDTH, HEIGHT );			
@@ -82,8 +93,29 @@ define([
 
 		});
 
+		var lastClicked
+		document.addEventListener( 'mousedown', function(){
+
+			if( INTERSECTED && INTERSECTED !== lastClicked ){
+
+				lastClicked = INTERSECTED;
+				
+				generatePathTo( {
+					position:INTERSECTED.position,
+					normal: [
+						new THREE.Vector3( 0,0, 1 ),
+						new THREE.Vector3( 0,0,-1 ),
+						new THREE.Vector3( 1,0,0 ),
+						new THREE.Vector3( -1,0,0 ),
+					][Math.round( Math.random()*3)]
+				});
+
+			} 
+
+		})
 
 		renderer.setSize( WIDTH, HEIGHT );
+
 
 		// CLOUDS
 
@@ -258,101 +290,105 @@ define([
 
 			// MATERIALS
 
-				var phongShader = THREE.ShaderLib.phong,
-					uniforms = THREE.UniformsUtils.clone(phongShader.uniforms),
-					phongVertexShader = [
+				// var phongShader = THREE.ShaderLib.phong,
+				// 	uniforms = THREE.UniformsUtils.clone(phongShader.uniforms),
+				// 	phongVertexShader = [
 
-						"#define PHONG",
+				// 		"#define PHONG",
 
-						"varying vec3 vViewPosition;",
-						"varying vec3 vNormal;",
+				// 		"varying vec3 vViewPosition;",
+				// 		"varying vec3 vNormal;",
 
-						noise3dShaderChunk,
-						utilsShaderChunk,
+				// 		noise3dShaderChunk,
+				// 		utilsShaderChunk,
 
-						THREE.ShaderChunk[ "map_pars_vertex" ],
-						THREE.ShaderChunk[ "lightmap_pars_vertex" ],
-						THREE.ShaderChunk[ "envmap_pars_vertex" ],
-						THREE.ShaderChunk[ "lights_phong_pars_vertex" ],
-						THREE.ShaderChunk[ "color_pars_vertex" ],
-						THREE.ShaderChunk[ "morphtarget_pars_vertex" ],
-						THREE.ShaderChunk[ "skinning_pars_vertex" ],
-						THREE.ShaderChunk[ "shadowmap_pars_vertex" ],
+				// 		THREE.ShaderChunk[ "map_pars_vertex" ],
+				// 		THREE.ShaderChunk[ "lightmap_pars_vertex" ],
+				// 		THREE.ShaderChunk[ "envmap_pars_vertex" ],
+				// 		THREE.ShaderChunk[ "lights_phong_pars_vertex" ],
+				// 		THREE.ShaderChunk[ "color_pars_vertex" ],
+				// 		THREE.ShaderChunk[ "morphtarget_pars_vertex" ],
+				// 		THREE.ShaderChunk[ "skinning_pars_vertex" ],
+				// 		THREE.ShaderChunk[ "shadowmap_pars_vertex" ],
 
-						// "uniform float uFrequency;",
-						// "uniform float uAmplitude;",
-						// "uniform float uTwist;",
+				// 		// "uniform float uFrequency;",
+				// 		// "uniform float uAmplitude;",
+				// 		// "uniform float uTwist;",
 
 
-						"void main() {",
+				// 		"void main() {",
 
-							THREE.ShaderChunk[ "map_vertex" ],
-							THREE.ShaderChunk[ "lightmap_vertex" ],
-							THREE.ShaderChunk[ "color_vertex" ],
+				// 			THREE.ShaderChunk[ "map_vertex" ],
+				// 			THREE.ShaderChunk[ "lightmap_vertex" ],
+				// 			THREE.ShaderChunk[ "color_vertex" ],
 
-							THREE.ShaderChunk[ "morphnormal_vertex" ],
-							THREE.ShaderChunk[ "skinbase_vertex" ],
-							THREE.ShaderChunk[ "skinnormal_vertex" ],
-							THREE.ShaderChunk[ "defaultnormal_vertex" ],
+				// 			THREE.ShaderChunk[ "morphnormal_vertex" ],
+				// 			THREE.ShaderChunk[ "skinbase_vertex" ],
+				// 			THREE.ShaderChunk[ "skinnormal_vertex" ],
+				// 			THREE.ShaderChunk[ "defaultnormal_vertex" ],
 
-							"vNormal = normalize( transformedNormal );",
+				// 			"vNormal = normalize( transformedNormal );",
 
-							THREE.ShaderChunk[ "morphtarget_vertex" ],
-							THREE.ShaderChunk[ "skinning_vertex" ],
-							"vec4 mvPosition;",
+				// 			THREE.ShaderChunk[ "morphtarget_vertex" ],
+				// 			THREE.ShaderChunk[ "skinning_vertex" ],
+				// 			"vec4 mvPosition;",
 
-							"#ifdef USE_SKINNING",
+				// 			"#ifdef USE_SKINNING",
 
-								"mvPosition = modelViewMatrix * skinned;",
+				// 				"mvPosition = modelViewMatrix * skinned;",
 
-							"#endif",
+				// 			"#endif",
 
-							"#if !defined( USE_SKINNING ) && defined( USE_MORPHTARGETS )",
+				// 			"#if !defined( USE_SKINNING ) && defined( USE_MORPHTARGETS )",
 
-								"mvPosition = modelViewMatrix * vec4( morphed, 1.0 );",
+				// 				"mvPosition = modelViewMatrix * vec4( morphed, 1.0 );",
 
-							"#endif",
+				// 			"#endif",
 
-							"#if !defined( USE_SKINNING ) && ! defined( USE_MORPHTARGETS )",
+				// 			"#if !defined( USE_SKINNING ) && ! defined( USE_MORPHTARGETS )",
 
-								// "vec3 noiseDirection = vec3( snoise( position.zy * uFrequency ) * 2.0 - 1.0 , snoise( position.xz * uFrequency )  * 2.0 - 1.0 ,  snoise( position.xy * uFrequency ) * 2.0 - 1.0  );",
-								// "mvPosition = modelViewMatrix * vec4( position, 1.0 );",
-								// "mvPosition = modelViewMatrix * (  rotationMatrix(vec3( 0.0, 1.0, 0.0), position.y * uTwist ) * vec4( position, 1.0 ) + vec4( noiseDirection * uAmplitude, 0.0 ));",
-								// "float rotAmount = fract( position.y * 0.01 ) * 100.0 * uTwist;",
-								"mvPosition = modelViewMatrix * vec4( position, 1.0 );//(  rotationMatrix(vec3( 0.0, 1.0, 0.0), rotAmount ) * vec4( position + uAmplitude * snoise( position * uFrequency ), 1.0 ));",
+				// 				// "vec3 noiseDirection = vec3( snoise( position.zy * uFrequency ) * 2.0 - 1.0 , snoise( position.xz * uFrequency )  * 2.0 - 1.0 ,  snoise( position.xy * uFrequency ) * 2.0 - 1.0  );",
+				// 				// "mvPosition = modelViewMatrix * vec4( position, 1.0 );",
+				// 				// "mvPosition = modelViewMatrix * (  rotationMatrix(vec3( 0.0, 1.0, 0.0), position.y * uTwist ) * vec4( position, 1.0 ) + vec4( noiseDirection * uAmplitude, 0.0 ));",
+				// 				// "float rotAmount = fract( position.y * 0.01 ) * 100.0 * uTwist;",
+				// 				"mvPosition = modelViewMatrix * vec4( position, 1.0 );//(  rotationMatrix(vec3( 0.0, 1.0, 0.0), rotAmount ) * vec4( position + uAmplitude * snoise( position * uFrequency ), 1.0 ));",
 
-							"#endif",
+				// 			"#endif",
 
 							
-							"gl_Position = projectionMatrix * mvPosition;",
+				// 			"gl_Position = projectionMatrix * mvPosition;",
 
-							"vViewPosition = -mvPosition.xyz;",
+				// 			"vViewPosition = -mvPosition.xyz;",
 
-							THREE.ShaderChunk[ "worldpos_vertex" ],
-							THREE.ShaderChunk[ "envmap_vertex" ],
-							THREE.ShaderChunk[ "lights_phong_vertex" ],
-							THREE.ShaderChunk[ "shadowmap_vertex" ],
+				// 			THREE.ShaderChunk[ "worldpos_vertex" ],
+				// 			THREE.ShaderChunk[ "envmap_vertex" ],
+				// 			THREE.ShaderChunk[ "lights_phong_vertex" ],
+				// 			THREE.ShaderChunk[ "shadowmap_vertex" ],
 
-						"}"
+				// 		"}"
 
-					].join("\n");
+				// 	].join("\n");
 
-				// console.log( phongVertexShader );
+				// // console.log( phongVertexShader );
 
-				faceMaterial = new THREE.ShaderMaterial({
-				  	uniforms: THREE.UniformsUtils.merge([
-					  	{
-					  		"uFrequency" : { type: "f", value: 0.0 },
-					  		"uAmplitude" : { type: "f", value: 0.0 },
-					  		"uTwist" 	 : { type: "f", value: 0.001 },
-					  	},
-				  		uniforms
-				  	]),
-				  	fog:true,
-				  	lights: true,
-				  	vertexShader: phongVertexShader,
-				  	fragmentShader: phongShader.fragmentShader
-				});
+				// faceMaterial = new THREE.ShaderMaterial({
+				//   	uniforms: THREE.UniformsUtils.merge([
+				// 	  	{
+				// 	  		"uFrequency" : { type: "f", value: 0.0 },
+				// 	  		"uAmplitude" : { type: "f", value: 0.0 },
+				// 	  		"uTwist" 	 : { type: "f", value: 0.001 },
+				// 	  	},
+				//   		uniforms
+				//   	]),
+				//   	fog:true,
+				//   	lights: true,
+				//   	vertexShader: phongVertexShader,
+				//   	fragmentShader: phongShader.fragmentShader
+				// });
+				
+
+				faceMaterial = new THREE.MeshPhongMaterial({metal:true});
+
 
 				// material = new THREE.ShaderMaterial({
 
@@ -403,7 +439,95 @@ define([
 
 
 
-			
+
+
+			// CAMERA PATH
+
+				var end      = new THREE.Vector3(),
+					approach = new THREE.Vector3(),
+					dif      = new THREE.Vector3(),
+					dir      = new THREE.Vector3(),
+					mid      = new THREE.Vector3(),
+					UP       = new THREE.Vector3( 0, 1, 0),
+					FORWARD  = new THREE.Vector3( 0, 0, -1 ), 
+					cross    = new THREE.Vector3();
+
+				var CAMERA_PATH_DEVIATION = 0.5;
+
+
+				var camDir 	= FORWARD.clone(),
+					origin  = new THREE.Vector3(),
+					cameraPath;
+
+				function generatePathTo( object ){
+
+					origin.copy( camera.position)
+					var pts = [ origin ];
+
+					// Get Camera direction
+					camDir.copy( FORWARD ).applyQuaternion( camera.quaternion );
+					
+					// Add first control point along the cameras current direction, at a slower velocity
+					pts.push( camDir.clone().multiplyScalar(( camera.velocity || 600 ) * 0.75 ).add( origin ));
+
+					// Position end 100 pixels away from the destination object in the direction of it's normal
+					approach.copy( object.normal || FORWARD ).multiplyScalar( 600 ).add( object.position );
+					end.copy     ( object.normal || FORWARD ).multiplyScalar( 200 ).add( object.position );
+
+
+					// Mid point
+					dif.copy( approach ).sub( pts[1] );
+					dir.copy( dif ).normalize();
+					mid.copy( dif ).multiplyScalar( 0.5 ).add( pts[1] );
+					cross.copy( UP ).cross( dir );
+					cross.applyAxisAngle( dir, Math.random() * Math.PI * 2.0 );
+					mid.add( cross.multiplyScalar( dif.length() * CAMERA_PATH_DEVIATION ));
+					
+
+
+					pts.push( mid );
+					pts.push( approach );
+					pts.push( end );
+
+					// console.log( pts );
+
+					
+
+					if( cameraPath ){
+						scene.remove( cameraPath );
+						cameraPath.geometry.dispose();
+					}
+
+
+					var curve = new THREE.SplineCurve3( pts );
+
+					var pathGeometry = new THREE.Geometry();
+					pathGeometry.vertices = curve.getSpacedPoints( 100.0 );
+
+					// var reParamaterisedCurve =  new THREE.SplineCurve3( curve.getSpacedPoints( 5.0 ) );
+
+					// var pathGeometryReParam = new THREE.Geometry();
+					// pathGeometryReParam.vertices = reParamaterisedCurve.getSpacedPoints( 100.0 );
+					
+					cameraPath = new THREE.Line( pathGeometry, new THREE.LineBasicMaterial() );
+
+					cameraPath.controls = pathcontrols( camera, curve, 30000 );
+					cameraPath.controls.onComplete( function(){
+						cameraPath.controls.paused = true;
+					});
+
+					
+					scene.add( cameraPath );
+
+
+				}
+
+				
+
+				
+
+
+			// END CAMERA PATH
 
 
 			//LIGHTS
@@ -411,7 +535,7 @@ define([
 				var lights = new lighting( scene, camera, $( document, "#main" ) , gui );
 				lights.onLightAdded( updateMaterial );
 				lights.onLightRemoved( updateMaterial );
-				// lights.addPointLight( 0xffffff );
+				lights.addPointLight( 0xffffff );
 
 
 			// END LIGHTS
@@ -429,6 +553,7 @@ define([
 					vertical_thickness 	: 2,
 					generate 	: generate,
 					seed 		: String( seed ),
+					camera 		: false,
 
 					// twist 		: faceMaterial.uniforms.uTwist.value * 100.0,
 					// distortion 	: faceMaterial.uniforms.uFrequency.value * 100.0,
@@ -442,10 +567,10 @@ define([
 					// point_light 		: "#"+polight.color.getHexString(),
 					// ambient_light 		: "#"+amlight.color.getHexString(),
 					material:{
-						shininess: faceMaterial.uniforms.shininess.value,
-						color 		: "#"+faceMaterial.uniforms.diffuse.value.getHexString(),
-						specular 	: "#"+faceMaterial.uniforms.specular.value.getHexString(),
-						ambient 	: "#"+faceMaterial.uniforms.ambient.value.getHexString(),
+						shininess: faceMaterial.shininess,
+						color 		: "#"+faceMaterial.color.getHexString(),
+						specular 	: "#"+faceMaterial.specular.getHexString(),
+						ambient 	: "#"+faceMaterial.ambient.getHexString(),
 					},
 
 					fog:{
@@ -462,14 +587,37 @@ define([
 					},
 					updateMaterial: function(){
 
-						faceMaterial.uniforms.diffuse.value.set( api.material.color );
-						faceMaterial.uniforms.specular.value.set( api.material.specular );
-						faceMaterial.uniforms.ambient.value.set( api.material.ambient );
-						faceMaterial.uniforms.shininess.value = api.material.shininess.value;
+						faceMaterial.color.set( api.material.color );
+						faceMaterial.specular.set( api.material.specular );
+						faceMaterial.ambient.set( api.material.ambient );
+						faceMaterial.shininess = api.material.shininess.value;
 
-						faceMaterial.uniforms.uFrequency.value = api.distortion / 100.0;
-						faceMaterial.uniforms.uTwist.value = api.twist / 100.0;
-						faceMaterial.uniforms.uAmplitude.value = api.amount;
+					},
+					createRandomPath: function(){
+
+						var position = new THREE.Vector3( 
+							Math.round(( Math.random() - 0.5 ) * structure.grid.DIMENSION ) * structure.grid.SCALE,
+							Math.round(( Math.random() - 0.5 ) * structure.grid.DIMENSION ) * structure.grid.SCALE,
+							Math.round(( Math.random() - 0.5 ) * structure.grid.DIMENSION ) * structure.grid.SCALE
+						);
+
+						console.log( position );
+
+						var points = generatePathTo({
+							position: position,
+							normal: [
+								new THREE.Vector3( 0,0, 1 ),
+								new THREE.Vector3( 0,0,-1 ),
+								new THREE.Vector3( 0,1,0 ),
+								new THREE.Vector3( 0,-1,0 ),
+								new THREE.Vector3( 1,0,0 ),
+								new THREE.Vector3( -1,0,0 ),
+							][Math.round( Math.random()*5)]
+
+						});
+
+
+
 
 					},
 					updateBackgoundColor: function(){
@@ -520,7 +668,10 @@ define([
 				gui.add( api, 	"seed" );//.listen();
 				gui.add( api, 	"random" );
 				gui.add( api, 	"generate" );
+				gui.add( api, 	"camera" );
 				gui.add( skyMat, "visible" );
+
+				// gui.add( api, "createRandomPath" );
 				gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
 				gui.addColor( api, "background_color" ).onChange( api.updateBackgoundColor );
 
@@ -542,7 +693,6 @@ define([
 
 					generate();
 
-					
 
 					var videoContentMaterial = new THREE.MeshPhongMaterial({
 						color:new THREE.Color( 0xff2200 ),
@@ -601,13 +751,28 @@ define([
 				});
 
 
+				// SEARCH 
+
+					inputField.addEventListener( 'change', function(){
+
+						dataloader.search( inputField.value, function( results ){
+							if( inputField.value !== '' ){
+								console.log( results );
+							}
+						})
+
+					});
+
+
+				// END SEARCH
+
+
 			// END DATA
 
 
 			// Creates new structure
 			function generate(){
 
-				console.log( 'GENERATE' );
 				
 				if( structMesh ){
 					scene.remove( structMesh );
@@ -615,48 +780,64 @@ define([
 					structMesh.geometry.dispose();
 				}
 
+				console.time( 'GENERATE' );
 				strut = structure( api.frequency, api.complexity, seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
-
+				console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
 				scene.add( structMesh );
-
-
-				
 				
 			}
 
 
 		// END SUPPORT STRUCTURE
 
-		var controlsActive = false;
+
+
+		var controlsActive = false,
+			currentCamera;
+
 		function animate( delta ){
 
+			currentCamera = getCamera();
+
 			requestAnimationFrame( animate );
-			// controlActive = (Boolean( dilight.control.active ) || Boolean( polight.control.active ));
 			
-			controlsActive = lights.update();
+			controlsActive = lights.update( currentCamera);
 			controls.setPauseState( controlsActive );
 			if( !controlsActive ){
-				controls.update();
+				controls.update( debugCamera );
 			}
 
-			// dilight.control.update();
-			// dilight.helper.update();
+			if( cameraPath && !cameraPath.controls.paused ){
+				cameraPath.controls.update( delta );
+			}
 
-			// polight.control.update();
+			camera.helper.visible = ( currentCamera === debugCamera );
+			if( cameraPath ) cameraPath.material.visible = ( currentCamera === debugCamera );
+
+			if( camera.helper.visible ){
+				camera.helper.update();
+			}
+
 			picking();
 			render( delta || 0 );
 
 		}
 
+
+		function getCamera(){
+			return api.camera ? camera : debugCamera;
+		}
+
+
 		var mouseVector = new THREE.Vector3();
 		function picking(){
 
 			mouseVector.set( mouse.x, mouse.y, 1 );
-			projector.unprojectVector( mouseVector, camera );
+			projector.unprojectVector( mouseVector,  getCamera() );
 
-			raycaster.set( camera.position, mouseVector.sub( camera.position ).normalize() );
+			raycaster.set( getCamera().position, mouseVector.sub( getCamera().position ).normalize() );
 
 			var intersects = raycaster.intersectObjects( contentObj3d.children, true );
 			// console.log( mouse.x, mouse.y, contentObj3d.children.length );
@@ -673,7 +854,7 @@ define([
 
 					INTERSECTED = intersects[ 0 ].object;
 					INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-					INTERSECTED.material.color.multiplyScalar( 2.3 );
+					INTERSECTED.material.color.multiplyScalar( 20.3 );
 					selectionLight.color.set( INTERSECTED.material.color );
 					selectionLight.intensity = 2.5;
 					selectionLight.position.copy( INTERSECTED.position );
@@ -709,7 +890,7 @@ define([
 			// console.time('render')
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
-			renderer.render( scene, camera );
+			renderer.render( scene, getCamera() );
 			// console.timeEnd('render')
 
 		}
