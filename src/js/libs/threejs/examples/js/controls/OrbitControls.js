@@ -34,6 +34,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.minDistance = 0;
 	this.maxDistance = Infinity;
 
+	this.distance = 4000;
+
 	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
 	// internals
@@ -147,6 +149,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	};
 
+
+
 	this.update = function ( object ) {
 
 		if( object ) this.object = object;
@@ -181,11 +185,11 @@ THREE.OrbitControls = function ( object, domElement ) {
 		var radius = offset.length() * scale;
 
 		// restrict radius to be between desired limits
-		radius = Math.max( this.minDistance, Math.min( this.maxDistance, radius ) );
+		// radius = Math.max( this.minDistance, Math.min( this.maxDistance, radius ) );
 
-		offset.x = radius * Math.sin( phi ) * Math.sin( theta );
-		offset.y = radius * Math.cos( phi );
-		offset.z = radius * Math.sin( phi ) * Math.cos( theta );
+		offset.x = this.distance * Math.sin( phi ) * Math.sin( theta );
+		offset.y = this.distance * Math.cos( phi );
+		offset.z = this.distance * Math.sin( phi ) * Math.cos( theta );
 
 		position.copy( this.center ).add( offset );
 

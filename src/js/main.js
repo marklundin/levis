@@ -44,28 +44,32 @@ define([
 			inputField  = $( container, '#search-field' ),
 			scene 		= new THREE.Scene(),
 			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
-			debugCamera = new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
+			camera = new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
 			controls 	= new THREE.OrbitControls( camera, container ),
 			projector 	= new THREE.Projector(),
 			raycaster 	= new THREE.Raycaster(),
 			mouse 		= new THREE.Vector2(),
 			INTERSECTED;
 
-		camera.helper = new THREE.CameraHelper( camera );
-		scene.add( camera.helper );
+		// camera.helper = new THREE.CameraHelper( camera );
+		// scene.add( camera.helper );
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 		scene.add( camera );
-		scene.add( debugCamera );
+
 
 		// scene.fog = new THREE.Fog( 0xFFFFFF, 100, 5000 );
 		controls.maxPolarAngle = Math.PI / 1.62;
 		controls.userRotateSpeed = 0.4;
+		controls.userPan = false;
+		controls.userZoom = false;
+		controls.autoRotateSpeed = 0.8;
+		var distanceTarget = controls.distance = 2500;
+		controls.distanceVel = 0;
+		// distanceTarget = 300;
 
-		debugCamera.projectionMatrixInverse.getInverse( debugCamera.projectionMatrix );
 		camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
-		debugCamera.position.z = 2500;
-		camera.position.z = 2000;
+		camera.position.z = 2500;
 		// controls.addEventListener( 'change', render );
 
 		container.appendChild( renderer.domElement );
@@ -76,9 +80,9 @@ define([
 			WIDTH = window.innerWidth;
 			HEIGHT =window.innerHeight;
 
-			debugCamera.aspect = camera.aspect = WIDTH / HEIGHT;
+			camera.aspect = camera.aspect = WIDTH / HEIGHT;
 			camera.updateProjectionMatrix();
-			debugCamera.updateProjectionMatrix();
+			camera.updateProjectionMatrix();
 			// camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
 
 			renderer.setSize( WIDTH, HEIGHT );			
@@ -99,16 +103,22 @@ define([
 			if( INTERSECTED && INTERSECTED !== lastClicked ){
 
 				lastClicked = INTERSECTED;
+
+				controls.autoRotate = true;
 				
-				generatePathTo( {
-					position:INTERSECTED.position,
-					normal: [
-						new THREE.Vector3( 0,0, 1 ),
-						new THREE.Vector3( 0,0,-1 ),
-						new THREE.Vector3( 1,0,0 ),
-						new THREE.Vector3( -1,0,0 ),
-					][Math.round( Math.random()*3)]
-				});
+				// maxDistTarget = 300;
+				distanceTarget = 300;
+				// generatePathTo( {
+				// 	position:INTERSECTED.position,
+				// 	normal: [
+				// 		new THREE.Vector3( 0,0, 1 ),
+				// 		new THREE.Vector3( 0,0,-1 ),
+				// 		new THREE.Vector3( 1,0,0 ),
+				// 		new THREE.Vector3( -1,0,0 ),
+				// 	][Math.round( Math.random()*3)]
+				// });
+
+				camTarget.copy( INTERSECTED.position );
 
 			} 
 
@@ -526,7 +536,7 @@ define([
 					// smoothCurve.geom.vertices = smoothCurve.getSpacedPoints( 50.0 );
 					
 					cameraPath = new THREE.Line( pathGeometry, new THREE.LineBasicMaterial() );
-					cameraPathSmooth = new THREE.Line( smooth.geom, new THREE.LineBasicMaterial({color:0xff0000}) );
+					// cameraPathSmooth = new THREE.Line( smooth.geom, new THREE.LineBasicMaterial({color:0xff0000}) );
 
 
 					var n = pathGeometry.vertices.length,
@@ -854,16 +864,35 @@ define([
 			testLastPos = new THREE.Vector3(), tmpVec3 = new THREE.Vector3(),
 			camLastPos = new THREE.Vector3(), tmpVec32 = new THREE.Vector3();
 
+		var SPRING_CONSTANT = 5.0;
+
+
+		var theta = new THREE.Vector3();
+		function spring( b, a, vel, delta, spring ){
+
+			// var currentToTarget = b - a;
+		    var springForce 	= ( b - a ) * ( spring || 5.0 );
+		    var dampingForce 	= -vel * 2.0 * Math.sqrt( spring || 5.0 );
+		    var force 			= springForce + dampingForce;
+		    // vel 		   		+= force * delta;
+		    // float displacement = a_Velocity * a_TimeStep;
+		    // debugger;
+		    return force * delta;
+
+		}
+
+
+		var camTarget = new THREE.Vector3();
 		function animate( delta ){
 
-			currentCamera = getCamera();
+			currentCamera = camera;
 
 			requestAnimationFrame( animate );
 			
 			controlsActive = lights.update( currentCamera);
 			controls.setPauseState( controlsActive );
 			if( !controlsActive ){
-				controls.update( debugCamera );
+				controls.update( camera );
 			}
 
 			if( cameraPath && !cameraPath.controls.paused ){
@@ -877,39 +906,54 @@ define([
 
 			}
 
-			camera.helper.visible = ( currentCamera === debugCamera );
-			if( cameraPath ) cameraPath.material.visible = ( currentCamera === debugCamera );
-
-			if( camera.helper.visible ){
-				camera.helper.update();
-			}
-
 			picking();
+
+			if( !controls.velocity ) controls.velocity = new THREE.Vector3();
+			// controls.velocity.x += ( camTarget.x - controls.center.x ) * 0.4;
+			// controls.velocity.y += ( camTarget.y - controls.center.y ) * 0.4;
+			// controls.velocity.z += ( camTarget.z - controls.center.z ) * 0.4;
+
+			// controls.center.x += ( controls.velocity.x - controls.center.x ) * 0.009;
+			// controls.center.y += ( controls.velocity.y - controls.center.y ) * 0.009
+			// controls.center.z += ( controls.velocity.z - controls.center.z ) * 0.009;
+			var timestep = 0.01;
+			controls.velocity.x += spring( camTarget.x, controls.center.x, controls.velocity.x, timestep, 2 ); 
+			controls.velocity.y += spring( camTarget.y, controls.center.y, controls.velocity.y, timestep, 3 ); 
+			controls.velocity.z += spring( camTarget.z, controls.center.z, controls.velocity.z, timestep, 2 ); 
+
+			// console.log( distanceTarget, controls.distance, controls.distanceVel );
+			controls.distanceVel += spring( distanceTarget, controls.distance, controls.distanceVel, timestep ); 
+			controls.distance += controls.distanceVel * timestep;
+
+			
+
+			controls.center.add( controls.velocity.clone().multiplyScalar( timestep  ) );
+
 			render( delta || 0 );
 
 		}
 
 
-		function getCamera(){
-			return api.camera ? camera : debugCamera;
-		}
+		// function camera{
+		// 	return api.camera ? camera : camera;
+		// }
 
 
 		var mouseVector = new THREE.Vector3();
+			
+
 		function picking(){
 
 			mouseVector.set( mouse.x, mouse.y, 1 );
-			projector.unprojectVector( mouseVector,  getCamera() );
+			projector.unprojectVector( mouseVector,  camera );
 
-			raycaster.set( getCamera().position, mouseVector.sub( getCamera().position ).normalize() );
+			raycaster.set( camera.position, mouseVector.sub( camera.position ).normalize() );
 
 			var intersects = raycaster.intersectObjects( contentObj3d.children, true );
 			// console.log( mouse.x, mouse.y, contentObj3d.children.length );
 			if ( intersects.length > 0 ) {
 
-
 				if ( INTERSECTED != intersects[ 0 ].object ) {
-
 
 					if ( INTERSECTED ){
 						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
@@ -954,7 +998,7 @@ define([
 			// console.time('render')
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
-			renderer.render( scene, getCamera() );
+			renderer.render( scene, camera );
 			// console.timeEnd('render')
 
 		}
