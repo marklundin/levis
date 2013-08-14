@@ -2,7 +2,8 @@
 body{
 	margin: 0px;
 	padding: 0px;
-	background: black
+	background: black;
+	font-family: 'helvetica neue';
 }
 
 #search{
@@ -12,11 +13,42 @@ body{
 	z-index: 1;
 }
 
+.close-button-icon{
+	cursor: pointer;
+	background: 
+		url( ../img/close-button-icon.svg )
+		no-repeat;
+
+	float: right;
+
+	background-size: contain;
+	width: 38px;
+	height: 38px;
+
+}
+
+#info-overlay h1{
+	padding-top: 0px;
+	margin-top: 0px;
+}
+
+/*.close-button-icon:hover{
+	opacity:1.0;
+}*/
+
+#info-overlay{
+	display: none;
+	width: 300px;
+	color: white;
+	position: absolute;
+	z-index: 3;
+}
+
 #search-field{
 
 	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
 
-	font-family: 'helvetica neue';
+	
 	text-transform: uppercase;
 	letter-spacing: 0.2em;
 	font-size: 10pt;

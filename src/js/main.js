@@ -4,7 +4,7 @@ var DEBUG = true;
 define([
 
 	"utils/domReady!",
-	"utils/qwery",
+	"jquery",
 	"glsl!shaders/structure.glsl",
 	"utils/math",
 	"structure",
@@ -25,7 +25,7 @@ define([
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( DOM, $, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, cloudsShader, dataloader, textplane, pathcontrols ) {
+	], function( DOM, jquery, structureShader, math, structure, skydome, reflection, timer, lighting, gui, noise2dShaderChunk , noise3dShaderChunk, utilsShaderChunk, cloudsShader, dataloader, textplane, pathcontrols ) {
 
 
 		var guiContainerDom = document.getElementById('gui');
@@ -40,8 +40,9 @@ define([
 
 		// Scene
 		var renderer 	= new THREE.WebGLRenderer({ antialias:true}),
-			container 	= $( document, '#main' ),
-			inputField  = $( container, '#search-field' ),
+			container 	= $( '#main' )[0],
+			infoOverlay = $( '#info-overlay' ),
+			inputField  = $( '#search-field' )[0],
 			scene 		= new THREE.Scene(),
 			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
 			camera = new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
@@ -49,29 +50,25 @@ define([
 			projector 	= new THREE.Projector(),
 			raycaster 	= new THREE.Raycaster(),
 			mouse 		= new THREE.Vector2(),
-			INTERSECTED,
-			timestep 	= 0.003;
+			INTERSECTED, moving = false, arrived = false,
+			timestep 	= 0.0003;
 
-		// camera.helper = new THREE.CameraHelper( camera );
-		// scene.add( camera.helper );
+		infoOverlay.fadeOut(0);
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 		scene.add( camera );
 
 
-		// scene.fog = new THREE.Fog( 0xFFFFFF, 100, 5000 );
 		controls.maxPolarAngle = Math.PI / 1.62;
 		controls.userRotateSpeed = 0.4;
 		controls.userPan = false;
 		controls.userZoom = false;
-		controls.autoRotateSpeed = 100 * timestep;
+		controls.autoRotateSpeed = 300 * timestep;
 		var distanceTarget = controls.distance = 2500;
 		controls.distanceVel = 0;
-		// distanceTarget = 300;
 
 		camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
 		camera.position.z = 2500;
-		// controls.addEventListener( 'change', render );
 
 		container.appendChild( renderer.domElement );
 
@@ -98,17 +95,44 @@ define([
 
 		});
 
-		var lastClicked;
+		infoOverlay.children( ".close-button-icon" ).click(function( e ){
+
+			e.preventDefault();
+
+			infoOverlay.fadeOut( 400 );
+			distanceTarget = 2000;
+			camTarget.set( 0, 0, 0 );
+
+			// var d = camera.position.clone().sub( clicked.position ).length();
+			timeCoeff = 30000 / 2500; 
+
+		})
+
+		var clicked;
+		var timeCoeff = 1;
 		document.addEventListener( 'mousedown', function(){
 
-			if( INTERSECTED && INTERSECTED !== lastClicked ){
+			if( INTERSECTED && INTERSECTED !== clicked ){
 
-				lastClicked = INTERSECTED;
+				clicked = INTERSECTED;
 
 				controls.autoRotate = true;
+				infoOverlay.fadeOut( 400, function(){
+
+					infoOverlay.children( '#image' ).attr( 'src', clicked.infoDataObject.attribution_avatar );
+					// console.log( clicked.infoDataObject );
+
+				} );
 				
 				// maxDistTarget = 300;
 				distanceTarget = 250;
+				moving = true;
+				arrived = false;
+
+
+				var d = camera.position.clone().sub( clicked.position ).length();
+				timeCoeff = 30000 / d;
+
 				// generatePathTo( {
 				// 	position:INTERSECTED.position,
 				// 	normal: [
@@ -598,7 +622,7 @@ define([
 
 			//LIGHTS
 
-				var lights = new lighting( scene, camera, $( document, "#main" ) , gui );
+				var lights = new lighting( scene, camera, container, gui );
 				lights.onLightAdded( updateMaterial );
 				lights.onLightRemoved( updateMaterial );
 				lights.addPointLight( 0xffffff );
@@ -734,7 +758,7 @@ define([
 				gui.add( api, 	"seed" );//.listen();
 				gui.add( api, 	"random" );
 				gui.add( api, 	"generate" );
-				gui.add( api, 	"camera" );
+				// gui.add( api, 	"camera" );
 				gui.add( skyMat, "visible" );
 
 				// gui.add( api, "createRandomPath" );
@@ -797,10 +821,12 @@ define([
 						mesh.position.y -= 15;
 						mesh.position.z -= 15;
 						mesh.position.multiplyScalar( 100 );
+						mesh.infoDataObject = result;
 						
 						plane = textplane( result.user_id + ' \n' + result.title + ' \n' + result.add_date );
 						plane.position.copy( mesh.position );
 						plane.position.z += 65;
+						
 						// plane.rotation.y += Math.PI;
 						scene.add( plane );
 						
@@ -918,17 +944,36 @@ define([
 			// controls.center.y += ( controls.velocity.y - controls.center.y ) * 0.009
 			// controls.center.z += ( controls.velocity.z - controls.center.z ) * 0.009;
 			
-			controls.velocity.x += spring( camTarget.x, controls.center.x, controls.velocity.x, timestep, 1.5 ); 
-			controls.velocity.y += spring( camTarget.y, controls.center.y, controls.velocity.y, timestep, 1.5 ); 
-			controls.velocity.z += spring( camTarget.z, controls.center.z, controls.velocity.z, timestep, 1.5 ); 
+			controls.velocity.x += spring( camTarget.x, controls.center.x, controls.velocity.x, timestep * timeCoeff, 1.5 ); 
+			controls.velocity.y += spring( camTarget.y, controls.center.y, controls.velocity.y, timestep * timeCoeff, 1.5 ); 
+			controls.velocity.z += spring( camTarget.z, controls.center.z, controls.velocity.z, timestep * timeCoeff, 1.5 ); 
 
 			// console.log( distanceTarget, controls.distance, controls.distanceVel );
-			controls.distanceVel += spring( distanceTarget, controls.distance, controls.distanceVel, timestep , 2 ); 
-			controls.distance += controls.distanceVel * timestep;
+			controls.distanceVel += spring( distanceTarget, controls.distance, controls.distanceVel, timestep* timeCoeff , 2 ); 
+			controls.distance += controls.distanceVel * timestep * timeCoeff;
 
+			// if( clicked ) console.log( camera.position.clone().sub( clicked.position ).length() );
+			if( clicked && camera.position.clone().sub( clicked.position ).length() <= distanceTarget + 100 && moving ){
+
+				moving = false;
+				arrived = true;
+				console.log( 'ARRIVED' );
+
+				infoOverlay.children('#content').html( "<h3>"+ clicked.infoDataObject.title +"<h3>"); 
+				infoOverlay.fadeIn( 400 );
+
+
+
+			}
+
+			if( arrived ){
+				var pt = toScreenXY( clicked.position, camera, $('#main')  );
+				// pt.left += 300;
+				infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+			}
 			
 
-			controls.center.add( controls.velocity.clone().multiplyScalar( timestep  ) );
+			controls.center.add( controls.velocity.clone().multiplyScalar( timestep * timeCoeff  ) );
 
 			render( delta || 0 );
 
@@ -941,6 +986,25 @@ define([
 
 
 		var mouseVector = new THREE.Vector3();
+		var pos = new THREE.Vector3(),
+			projScreenMat = new THREE.Matrix4();
+		function toScreenXY ( position, camera, jqdiv ) {
+
+		    pos.copy( position );
+		    
+		    projScreenMat.copy( camera.projectionMatrix ).multiply( camera.matrixWorldInverse );
+		    pos.applyProjection( projScreenMat );
+		    
+
+		    return { left: ( pos.x + 1 ) * jqdiv.width() / 2 ,
+		             top:  ( - pos.y + 1) * jqdiv.height() / 2 };
+
+		    // return { left: ( pos.x + 1 ) ,
+		    //          top:  ( - pos.y + 1)};
+
+
+
+		}
 			
 
 		function picking(){
