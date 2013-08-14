@@ -53,6 +53,7 @@ define([
 			INTERSECTED, moving = false, arrived = false,
 			timestep 	= 0.0003;
 
+
 		infoOverlay.fadeOut(0);
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
@@ -636,6 +637,7 @@ define([
 
 				var api = {
 					frequency 	: 0.95,
+					speed 		: 0.95,
 					threshold 	: 0.68,
 					noiseAmount : 0.7,
 					complexity 	: 0.82,
@@ -760,6 +762,7 @@ define([
 				gui.add( api, 	"generate" );
 				// gui.add( api, 	"camera" );
 				gui.add( skyMat, "visible" );
+				gui.add( api, 	"speed", 0.05, 3 );//.listen();
 
 				// gui.add( api, "createRandomPath" );
 				gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
@@ -944,13 +947,13 @@ define([
 			// controls.center.y += ( controls.velocity.y - controls.center.y ) * 0.009
 			// controls.center.z += ( controls.velocity.z - controls.center.z ) * 0.009;
 			
-			controls.velocity.x += spring( camTarget.x, controls.center.x, controls.velocity.x, timestep * timeCoeff, 1.5 ); 
-			controls.velocity.y += spring( camTarget.y, controls.center.y, controls.velocity.y, timestep * timeCoeff, 1.5 ); 
-			controls.velocity.z += spring( camTarget.z, controls.center.z, controls.velocity.z, timestep * timeCoeff, 1.5 ); 
+			controls.velocity.x += spring( camTarget.x, controls.center.x, controls.velocity.x, timestep * timeCoeff * api.speed, 1.5 ); 
+			controls.velocity.y += spring( camTarget.y, controls.center.y, controls.velocity.y, timestep * timeCoeff * api.speed, 1.5 ); 
+			controls.velocity.z += spring( camTarget.z, controls.center.z, controls.velocity.z, timestep * timeCoeff * api.speed, 1.5 ); 
 
 			// console.log( distanceTarget, controls.distance, controls.distanceVel );
-			controls.distanceVel += spring( distanceTarget, controls.distance, controls.distanceVel, timestep* timeCoeff , 2 ); 
-			controls.distance += controls.distanceVel * timestep * timeCoeff;
+			controls.distanceVel += spring( distanceTarget, controls.distance, controls.distanceVel, timestep * timeCoeff * api.speed, 2 ); 
+			controls.distance += controls.distanceVel * timestep * timeCoeff * api.speed;
 
 			// if( clicked ) console.log( camera.position.clone().sub( clicked.position ).length() );
 			if( clicked && camera.position.clone().sub( clicked.position ).length() <= distanceTarget + 100 && moving ){
@@ -973,7 +976,7 @@ define([
 			}
 			
 
-			controls.center.add( controls.velocity.clone().multiplyScalar( timestep * timeCoeff  ) );
+			controls.center.add( controls.velocity.clone().multiplyScalar( timestep * timeCoeff * api.speed ) );
 
 			render( delta || 0 );
 
