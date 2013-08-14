@@ -49,7 +49,8 @@ define([
 			projector 	= new THREE.Projector(),
 			raycaster 	= new THREE.Raycaster(),
 			mouse 		= new THREE.Vector2(),
-			INTERSECTED;
+			INTERSECTED,
+			timestep 	= 0.003;
 
 		// camera.helper = new THREE.CameraHelper( camera );
 		// scene.add( camera.helper );
@@ -63,7 +64,7 @@ define([
 		controls.userRotateSpeed = 0.4;
 		controls.userPan = false;
 		controls.userZoom = false;
-		controls.autoRotateSpeed = 0.8;
+		controls.autoRotateSpeed = 100 * timestep;
 		var distanceTarget = controls.distance = 2500;
 		controls.distanceVel = 0;
 		// distanceTarget = 300;
@@ -107,7 +108,7 @@ define([
 				controls.autoRotate = true;
 				
 				// maxDistTarget = 300;
-				distanceTarget = 300;
+				distanceTarget = 250;
 				// generatePathTo( {
 				// 	position:INTERSECTED.position,
 				// 	normal: [
@@ -916,13 +917,13 @@ define([
 			// controls.center.x += ( controls.velocity.x - controls.center.x ) * 0.009;
 			// controls.center.y += ( controls.velocity.y - controls.center.y ) * 0.009
 			// controls.center.z += ( controls.velocity.z - controls.center.z ) * 0.009;
-			var timestep = 0.01;
-			controls.velocity.x += spring( camTarget.x, controls.center.x, controls.velocity.x, timestep, 2 ); 
-			controls.velocity.y += spring( camTarget.y, controls.center.y, controls.velocity.y, timestep, 3 ); 
-			controls.velocity.z += spring( camTarget.z, controls.center.z, controls.velocity.z, timestep, 2 ); 
+			
+			controls.velocity.x += spring( camTarget.x, controls.center.x, controls.velocity.x, timestep, 1.5 ); 
+			controls.velocity.y += spring( camTarget.y, controls.center.y, controls.velocity.y, timestep, 1.5 ); 
+			controls.velocity.z += spring( camTarget.z, controls.center.z, controls.velocity.z, timestep, 1.5 ); 
 
 			// console.log( distanceTarget, controls.distance, controls.distanceVel );
-			controls.distanceVel += spring( distanceTarget, controls.distance, controls.distanceVel, timestep ); 
+			controls.distanceVel += spring( distanceTarget, controls.distance, controls.distanceVel, timestep , 2 ); 
 			controls.distance += controls.distanceVel * timestep;
 
 			
