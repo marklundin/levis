@@ -826,12 +826,12 @@ define([
 						mesh.position.multiplyScalar( 100 );
 						mesh.infoDataObject = result;
 						
-						plane = textplane( result.user_id + ' \n' + result.title + ' \n' + result.add_date );
-						plane.position.copy( mesh.position );
-						plane.position.z += 65;
+						// plane = textplane( result.user_id + ' \n' + result.title + ' \n' + result.add_date );
+						// plane.position.copy( mesh.position );
+						// plane.position.z += 65;
 						
-						// plane.rotation.y += Math.PI;
-						scene.add( plane );
+						// // plane.rotation.y += Math.PI;
+						// scene.add( plane );
 						
 						contentObj3d.add( mesh );
 					}
