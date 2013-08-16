@@ -1169,7 +1169,7 @@ define([
 
 		function picking(){
 
-			console.log( videoContentMaterial.opacity );
+			// console.log( videoContentMaterial.opacity );
 
 			imageContentMaterial.opacity = 0.1;
 			videoContentMaterial.opacity = 0.1;
