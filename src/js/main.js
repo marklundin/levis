@@ -815,7 +815,7 @@ define([
 				gui.add( api, 	"generate" );
 				// gui.add( api, 	"camera" );
 				gui.add( skyMat, "visible" );
-				gui.add( api, 	"speed", 0.05, 3 );//.listen();
+				gui.add( api, 	"speed" );//.listen();
 
 				// gui.add( api, "createRandomPath" );
 				gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
@@ -1171,8 +1171,8 @@ define([
 
 			// console.log( videoContentMaterial.opacity );
 
-			imageContentMaterial.opacity = 0.1;
-			videoContentMaterial.opacity = 0.1;
+			// imageContentMaterial.opacity = 0.1;
+			// videoContentMaterial.opacity = 0.1;
 
 			mouseVector.set( mouse.x, mouse.y, 1 );
 			projector.unprojectVector( mouseVector,  camera );
