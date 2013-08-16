@@ -39,19 +39,22 @@ define([
 
 
 		// Scene
-		var renderer 	= new THREE.WebGLRenderer({ antialias:true}),
-			container 	= $( '#main' )[0],
-			infoOverlay = $( '#info-overlay' ),
-			inputField  = $( '#search-field' )[0],
-			scene 		= new THREE.Scene(),
-			camera 		= new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
-			camera = new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
-			controls 	= new THREE.OrbitControls( camera, container ),
-			projector 	= new THREE.Projector(),
-			raycaster 	= new THREE.Raycaster(),
-			mouse 		= new THREE.Vector2(),
-			INTERSECTED, moving = false, arrived = false,
-			timestep 	= 0.0003;
+		var renderer 	  = new THREE.WebGLRenderer({ antialias:true}),
+			container 	  = $( '#main' )[0],
+			infoOverlay   = $( '#info-overlay' ),
+			searchOverlay = $( '#search-overlay' ),
+			inputField    = $( '#search-field' )[0],
+			scene 		  = new THREE.Scene(),
+			camera 		  = new THREE.PerspectiveCamera( 65,  WIDTH / HEIGHT , 1, 100000 ),
+			controls 	  = new THREE.OrbitControls( camera, container ),
+			projector  	  = new THREE.Projector(),
+			raycaster 	  = new THREE.Raycaster(),
+			mouse 		  = new THREE.Vector2(),
+			moving 		  = false,
+			arrived       = false,
+			timestep 	  = 0.0003,
+			showingSearchResults = false,
+			INTERSECTED;
 
 
 		infoOverlay.fadeOut(0);
@@ -96,9 +99,44 @@ define([
 
 		});
 
+		searchOverlay.children( ".close-button-icon" ).click(function( e ){
+			e.preventDefault();
+			// clicked = null;
+			showingSearchResults = false;
+
+			var n = searchCubes.length;
+			while( n-- > 0 ){
+				searchCubes[n].parent.remove( searchCubes[n] );
+			}
+			searchCubes = [];
+
+			inputField.value = '';
+
+			searchOverlay.fadeOut( 400 );
+			distanceTarget = 2000;
+			camTarget.set( 0, 0, 0 );
+
+			// var d = camera.position.clone().sub( clicked.position ).length();
+			timeCoeff = 30000 / 2500; 
+		});
+
+
+
 		infoOverlay.children( ".close-button-icon" ).click(function( e ){
 
+			if( showingSearchResults ){
+				showingSearchResults = false;
+				var n = searchCubes.length;
+				inputField.value = '';
+
+				searchOverlay.fadeOut( 400 );
+				while( n-- > 0 ){
+					searchCubes[n].parent.remove( searchCubes[n] );
+				}
+			}
+
 			e.preventDefault();
+			// clicked = null;
 
 			infoOverlay.fadeOut( 400 );
 			distanceTarget = 2000;
@@ -111,9 +149,25 @@ define([
 
 		var clicked;
 		var timeCoeff = 1;
+		function moveCameraTo( p, dst ){
+			// maxDistTarget = 300;
+			distanceTarget = dst || 250;
+			moving = true;
+			arrived = false;
+
+
+			var d = camera.position.clone().sub( p ).length();
+			timeCoeff = 30000 / d;
+
+			camTarget.copy( p );
+		}
+
+
 		document.addEventListener( 'mousedown', function(){
 
 			if( INTERSECTED && INTERSECTED !== clicked ){
+
+				if( showingSearchResults && searchCubes.indexOf( INTERSECTED ) === -1 ) return;
 
 				clicked = INTERSECTED;
 
@@ -125,26 +179,18 @@ define([
 
 				} );
 				
-				// maxDistTarget = 300;
-				distanceTarget = 250;
-				moving = true;
-				arrived = false;
+
+				moveCameraTo( clicked.position );
+				// // maxDistTarget = 300;
+				// distanceTarget = 250;
+				// moving = true;
+				// arrived = false;
 
 
-				var d = camera.position.clone().sub( clicked.position ).length();
-				timeCoeff = 30000 / d;
+				// var d = camera.position.clone().sub( clicked.position ).length();
+				// timeCoeff = 30000 / d;
 
-				// generatePathTo( {
-				// 	position:INTERSECTED.position,
-				// 	normal: [
-				// 		new THREE.Vector3( 0,0, 1 ),
-				// 		new THREE.Vector3( 0,0,-1 ),
-				// 		new THREE.Vector3( 1,0,0 ),
-				// 		new THREE.Vector3( -1,0,0 ),
-				// 	][Math.round( Math.random()*3)]
-				// });
-
-				camTarget.copy( INTERSECTED.position );
+				// camTarget.copy( INTERSECTED.position );
 
 			} 
 
@@ -782,32 +828,34 @@ define([
 				contentObj3d = new THREE.Object3D();
 				scene.add( contentObj3d );
 
+				var videoContentMaterial = new THREE.MeshPhongMaterial({
+					color:new THREE.Color( 0xff2200 ),
+					ambient:new THREE.Color( 0xff2200 ),
+					transparent: true,
+					// blending: THREE.AdditiveBlending,
+					opacity: 0.8,
+				});
+
+				var imageContentMaterial = new THREE.MeshPhongMaterial({
+					color:new THREE.Color( 0x0033ff ),
+					ambient:new THREE.Color( 0x00fff00 ),
+					transparent: true,
+					// blending: THREE.AdditiveBlending,
+					opacity: 1.0,
+				});
+
+
 				dataloader( function( twitter, instagram ){
 
 					generate();
 
 
-					var videoContentMaterial = new THREE.MeshPhongMaterial({
-						color:new THREE.Color( 0xff2200 ),
-						ambient:new THREE.Color( 0xff2200 ),
-						transparent: true,
-						// blending: THREE.AdditiveBlending,
-						opacity: 0.8,
-					});
-
-					var imageContentMaterial = new THREE.MeshPhongMaterial({
-						color:new THREE.Color( 0x0033ff ),
-						ambient:new THREE.Color( 0x00fff00 ),
-						transparent: true,
-						// blending: THREE.AdditiveBlending,
-						opacity: 1.0,
-					});
-
+				
 					var n = twitter.results.length + instagram.results.length,
-						index, item, mesh;
+						index, item, mesh
 
-					var plane,result, isInstagram,
-						cubeGeometry = new THREE.CubeGeometry( 100, 100, 100 );
+					var plane,result, isInstagram;
+						
 
 
 					while( n-- > 0 ){
@@ -816,15 +864,8 @@ define([
 
 						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
 
-						mesh = new THREE.Mesh( cubeGeometry, isInstagram ? videoContentMaterial.clone() : imageContentMaterial.clone()  );
-						index = ~~( Math.random() * strut.volume.length )
-						item = strut.volume[index];
-						mesh.position.set( item[0], item[1], item[2] );
-						mesh.position.x -= 15;
-						mesh.position.y -= 15;
-						mesh.position.z -= 15;
-						mesh.position.multiplyScalar( 100 );
-						mesh.infoDataObject = result;
+						// mesh = 
+
 						
 						// plane = textplane( result.user_id + ' \n' + result.title + ' \n' + result.add_date );
 						// plane.position.copy( mesh.position );
@@ -833,7 +874,7 @@ define([
 						// // plane.rotation.y += Math.PI;
 						// scene.add( plane );
 						
-						contentObj3d.add( mesh );
+						contentObj3d.add( getDataObject( result, isInstagram ) );
 					}
 
 				
@@ -846,16 +887,113 @@ define([
 				});
 
 
+
+				var cubeGeometry = new THREE.CubeGeometry( 100, 100, 100 );
+				function getDataObject( result, isInstagram, position ){
+
+					var mesh = new THREE.Mesh( cubeGeometry, isInstagram ? videoContentMaterial.clone() : imageContentMaterial.clone()  );
+					var index = ( Math.random() * strut.volume.length )|0;
+					var item = strut.volume[index];
+
+					position ? mesh.position.copy( position ) : mesh.position.set( item[0], item[1], item[2] );
+					mesh.position.x -= 15;
+					mesh.position.y -= 15;
+					mesh.position.z -= 15;
+					mesh.position.multiplyScalar( 100 );
+					mesh.infoDataObject = result;
+
+					return mesh;
+				}
+
+
 				// SEARCH 
+
+					var searchCubes = [];
+					var originOffset = new THREE.Vector3( 15, 15, 15 )
 
 					inputField.addEventListener( 'change', function(){
 
-						dataloader.search( inputField.value, function( results ){
-							if( inputField.value !== '' ){
-								console.log( results );
-							}
-						})
+						infoOverlay.fadeOut( 400 );
+						clicked = null;
 
+						var value = inputField.value,
+							limit = 4, mesh;
+
+						if( value !== '' ){
+							dataloader.search( value, function( results ){
+
+								searchOverlay.fadeIn( 400 );
+
+
+								var n = searchCubes.length;
+								while( n-- > 0 ){
+									if( searchCubes[n].parent ) searchCubes[n].parent.remove( searchCubes[n] );
+								}
+								searchCubes = [];
+								showingSearchResults = true;
+
+								if( results.length > 0 ){
+									
+
+
+									var origin = new THREE.Vector3( 0, 0, -1 ).applyQuaternion( camera.quaternion ).multiplyScalar( 300 ).add( camera.position ).multiplyScalar( 1/100 );
+
+									//Ensure on grid
+									origin.x = Math.round( origin.x );
+									origin.y = Math.round( origin.y );
+									origin.z = Math.round( origin.z );
+
+									// //bound within structure 
+									origin.x = Math.max( -11, Math.min( origin.x, 11 ));
+									origin.y = Math.max( -11, Math.min( origin.y, 11 ));
+									origin.z = Math.max( -11, Math.min( origin.z, 11 ));
+
+									//add offset
+									origin.add( originOffset )
+
+
+									// controls.center.copy( pos ).sub( new THREE.Vector3( -15, -15, -15 )).multiplyScalar( 100 );
+									// distanceTarget = 300;
+									
+									
+									var usedPos = [],
+										posChoices = [], n = 27;
+										while( n-- > 0 ){ posChoices[n] = n };
+										posChoices.sort( function(){
+											return Math.round(Math.random())-0.5;
+										});
+
+									var nextPos = new THREE.Vector3(), nPos = new THREE.Vector3();
+									var n = Math.min( results.length, 5 ), gridLocation;
+
+									while( n-- > 0 ){
+
+										gridLocation = posChoices.shift();//Math.round( Math.random() * 27 );
+										console.log( gridLocation );
+										nPos.copy( origin );
+
+										nextPos.z = (gridLocation/9)|0;
+										nextPos.y = ((gridLocation - nextPos.z*9 ) / 3 )|0;
+										nextPos.x = ((gridLocation - (nextPos.z*9) - (nextPos.y*3) ))|0;
+										
+										nextPos.x -= 1;
+										nextPos.y -= 1;
+										nextPos.z -= 1;
+
+
+
+										mesh = getDataObject( results[n], true, nPos.add( nextPos ) );
+										searchCubes.push( mesh );
+										contentObj3d.add( mesh );
+									}
+
+									moveCameraTo( searchCubes[0].position, 300 );
+									// console.log( contentObj3d.children.length );
+								}
+
+
+							})
+						}
 					});
 
 
@@ -965,11 +1103,9 @@ define([
 				infoOverlay.children('#content').html( "<h3>"+ clicked.infoDataObject.title +"<h3>"); 
 				infoOverlay.fadeIn( 400 );
 
-
-
 			}
 
-			if( arrived ){
+			if( arrived && clicked ){
 				var pt = toScreenXY( clicked.position, camera, $('#main')  );
 				// pt.left += 300;
 				infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
@@ -998,14 +1134,8 @@ define([
 		    projScreenMat.copy( camera.projectionMatrix ).multiply( camera.matrixWorldInverse );
 		    pos.applyProjection( projScreenMat );
 		    
-
 		    return { left: ( pos.x + 1 ) * jqdiv.width() / 2 ,
 		             top:  ( - pos.y + 1) * jqdiv.height() / 2 };
-
-		    // return { left: ( pos.x + 1 ) ,
-		    //          top:  ( - pos.y + 1)};
-
-
 
 		}
 			
@@ -1018,8 +1148,8 @@ define([
 			raycaster.set( camera.position, mouseVector.sub( camera.position ).normalize() );
 
 			var intersects = raycaster.intersectObjects( contentObj3d.children, true );
-			// console.log( mouse.x, mouse.y, contentObj3d.children.length );
-			if ( intersects.length > 0 ) {
+			
+			if ( intersects.length > 0) {
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
@@ -1027,6 +1157,8 @@ define([
 						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
 						selectionLight.intensity = 0;
 					}
+
+					if( showingSearchResults && searchCubes.indexOf( intersects[ 0 ].object ) === -1 ) return;
 
 					INTERSECTED = intersects[ 0 ].object;
 					INTERSECTED.currentHex = INTERSECTED.material.color.getHex();

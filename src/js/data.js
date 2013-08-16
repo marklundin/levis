@@ -23,15 +23,15 @@ define(['module'], function (module) {
 
 
 		require([ 
-	    	module.config().instagram.search + "&callback=define",
-	    	module.config().twitter.search + "&callback=define",
+	    	module.config().instagram.search + term + "&callback=define&bust="+Date.now(),
+	    	module.config().twitter.search + term + "&callback=define&bust="+Date.now(),
 	    	], function( instagramData, twitterData ){
 
 	    		twitterData.loaded 		= twitterData.status === 'OK';
 	    		instagramData.loaded 	= instagramData.status === 'OK';
 	    		var loaded = instagramData.loaded && twitterData.loaded;
 
-	    		if( loaded ) callback( twitterData, instagramData )
+	    		if( loaded ) callback( twitterData.results.search_results, instagramData.results.search_results )
 	    		else errCallback( instagramData, twitterData );
 
 	    });

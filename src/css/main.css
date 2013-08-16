@@ -44,6 +44,23 @@ body{
 	z-index: 3;
 }
 
+#search-overlay{
+	background: rgb(49, 49, 49);
+	padding: 15px;
+	display: none;
+	width: 400px;
+	color: white;
+	top: 40px;
+	left: 50%;
+	position: absolute;
+	z-index: 4;
+}
+
+#search-overlay h1{
+	padding-top: 0px;
+	margin-top: 0px;
+}
+
 #search-field{
 
 	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
