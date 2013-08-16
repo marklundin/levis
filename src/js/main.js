@@ -104,6 +104,9 @@ define([
 			// clicked = null;
 			showingSearchResults = false;
 
+			imageContentMaterial.opacity = 1.0;
+			videoContentMaterial.opacity = 0.8;
+
 			var n = searchCubes.length;
 			while( n-- > 0 ){
 				searchCubes[n].parent.remove( searchCubes[n] );
@@ -125,6 +128,10 @@ define([
 		infoOverlay.children( ".close-button-icon" ).click(function( e ){
 
 			if( showingSearchResults ){
+
+				imageContentMaterial.opacity = 1.0;
+				videoContentMaterial.opacity = 0.8;
+
 				showingSearchResults = false;
 				var n = searchCubes.length;
 				inputField.value = '';
@@ -231,18 +238,18 @@ define([
 
 			var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
 
-			for ( var i = 0; i < 8000; i++ ) {
+			// for ( var i = 0; i < 8000; i++ ) {
 
-				plane.position.x = Math.random() * 1000 - 500;
-				plane.position.y = - Math.random() * Math.random() * 200 - 15;
-				plane.position.z = i;
-				plane.rotation.z = Math.random() * Math.PI;
-				plane.scale.x = plane.scale.y = Math.random() * Math.random() * 1.5 + 0.5;
+			// 	plane.position.x = Math.random() * 1000 - 500;
+			// 	plane.position.y = - Math.random() * Math.random() * 200 - 15;
+			// 	plane.position.z = i;
+			// 	plane.rotation.z = Math.random() * Math.PI;
+			// 	plane.scale.x = plane.scale.y = Math.random() * Math.random() * 1.5 + 0.5;
 
 
-				THREE.GeometryUtils.merge( geometry, plane );
+			// 	THREE.GeometryUtils.merge( geometry, plane );
 
-			}
+			// }
 
 			// var m = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ),  clouds.material );
 			// m.position.z = -40;
@@ -832,9 +839,11 @@ define([
 					color:new THREE.Color( 0xff2200 ),
 					ambient:new THREE.Color( 0xff2200 ),
 					transparent: true,
-					// blending: THREE.AdditiveBlending,
+					// lights: false,
+					blending: THREE.AdditiveBlending,
 					opacity: 0.8,
 				});
+				videoContentMaterial.originColor = new THREE.Color( 0xff2200 )
 
 				var imageContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0x0033ff ),
@@ -843,6 +852,16 @@ define([
 					// blending: THREE.AdditiveBlending,
 					opacity: 1.0,
 				});
+				imageContentMaterial.originColor = new THREE.Color( 0x0033ff )
+
+				var searchContentMaterial = new THREE.MeshPhongMaterial({
+					color:new THREE.Color( 0xff33ff ),
+					ambient:new THREE.Color( 0x00fff00 ),
+					transparent: true,
+					// blending: THREE.AdditiveBlending,
+					opacity: 1.0,
+				});
+
 
 
 				dataloader( function( twitter, instagram ){
@@ -924,6 +943,10 @@ define([
 
 								searchOverlay.fadeIn( 400 );
 
+								imageContentMaterial.opacity = 0.1;
+								videoContentMaterial.opacity = 0.1;
+
+
 
 								var n = searchCubes.length;
 								while( n-- > 0 ){
@@ -931,6 +954,7 @@ define([
 								}
 								searchCubes = [];
 								showingSearchResults = true;
+
 
 								if( results.length > 0 ){
 									
@@ -975,6 +999,8 @@ define([
 										nextPos.z = (gridLocation/9)|0;
 										nextPos.y = ((gridLocation - nextPos.z*9 ) / 3 )|0;
 										nextPos.x = ((gridLocation - (nextPos.z*9) - (nextPos.y*3) ))|0;
+
+										console.log( nextPos.x, nextPos.y, nextPos.z );
 										
 										nextPos.x -= 1;
 										nextPos.y -= 1;
@@ -983,6 +1009,7 @@ define([
 
 
 										mesh = getDataObject( results[n], true, nPos.add( nextPos ) );
+										mesh.material = searchContentMaterial
 										searchCubes.push( mesh );
 										contentObj3d.add( mesh );
 									}
@@ -1141,6 +1168,11 @@ define([
 			
 
 		function picking(){
+
+			console.log( videoContentMaterial.opacity );
+
+			imageContentMaterial.opacity = 0.1;
+			videoContentMaterial.opacity = 0.1;
 
 			mouseVector.set( mouse.x, mouse.y, 1 );
 			projector.unprojectVector( mouseVector,  camera );
