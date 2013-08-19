@@ -21,51 +21,127 @@ body{
 }
 
 .close-button-icon{
+	/*opacity: 0.8;*/
+	background: white;
 	cursor: pointer;
+	display: inline-block;
 	background: 
-		url( ../img/close-button-icon.svg )
+		url( ../img/close-button-icon.png )
 		no-repeat;
 
-	float: right;
-
 	background-size: contain;
-	width: 38px;
-	height: 38px;
+	width: 50px;
+	height: 50px;
 
+}
+
+#info-overlay h1, h2, #date{
+	letter-spacing: 0.2em;
+
+	text-transform: uppercase;
+}
+
+#info-overlay h1, h2{
+	padding-left: 10px;
+	margin-top: 1px;
+	margin-bottom: 4px;
+}
+
+#info-overlay #user-info{
+	display: inline-block;
 }
 
 #info-overlay h1{
-	padding-top: 0px;
 	margin-top: 0px;
+	margin-top: 0px;
+	font-size: 12pt;
 }
 
-/*.close-button-icon:hover{
+#info-overlay h2, h3{
+	font-size: 10pt;
+
+}
+
+#info-overlay h2, h3{	
+	font-weight: normal;
+}
+
+#info-overlay #date{
+	color: rgb( 114, 114, 114);
+	font-size: 10pt;
+}
+
+#info-overlay #content{
+	margin-top: 10px;
+	margin-bottom: 10px
+}
+
+#body{
+	vertical-align: top;
+	display: inline-block;
+	background: white;
+	min-width: 470px;
+	padding: 15px;
+	color: black;
+	font-size: 10pt;
+}
+
+.close-button-icon:hover{
 	opacity:1.0;
-}*/
+}
 
 #info-overlay{
+	
 	display: none;
-	width: 300px;
-	color: white;
+	vertical-align: top;
+	
 	position: absolute;
 	z-index: 3;
 }
 
+#info-overlay #image{
+	display: inline-block;
+	vertical-align: top;
+	width: 50px;
+	height: 50px;
+}
+
+#info-overlay #user-id:before {
+   content: "@";
+}
+
+#search-overlay #body{
+	text-align: center;
+	background: white;
+}
+
 #search-overlay{
-	background: rgb(49, 49, 49);
+	color: black;
 	padding: 15px;
 	display: none;
-	width: 400px;
+	min-width: 470px;
 	color: white;
 	top: 40px;
-	left: 50%;
+	left: 35%;
 	position: absolute;
 	z-index: 4;
 }
 
+#search-overlay h1, h2{
+	letter-spacing: 0.2em;
+	/*padding-left: 10px;*/
+	margin-top: 1px;
+	/*margin-bottom: 4px;*/
+
+}
+
 #search-overlay h1{
-	padding-top: 0px;
-	margin-top: 0px;
+	font-size: 12pt;
+}
+
+#search-overlay h2{
+	font-size: 10pt;
+	margin-top: 4px;
 }
 
 #search-field{

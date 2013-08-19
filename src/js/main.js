@@ -167,8 +167,11 @@ define([
 			arrived = true;
 			if( clicked ){
 				lastClicked = clicked;
-
-				infoOverlay.children('#content').html( "<h3>"+ clicked.infoDataObject.title +"<h3>"); 
+				var content = infoOverlay.children('#body')
+				content.children('#content').html( clicked.infoDataObject.title ); 
+				content.children('#user-info').children('#user-name').html( clicked.infoDataObject.user_name ); 
+				content.children('#user-info').children('#user-id').html( clicked.infoDataObject.user_id ); 
+				content.children('#date').html( new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
 				infoOverlay.fadeIn( 400 );
 			}
 
@@ -216,7 +219,7 @@ define([
 				controls.autoRotate = true;
 				infoOverlay.fadeOut( 400, function(){
 
-					infoOverlay.children( '#image' ).attr( 'src', clicked.infoDataObject.attribution_avatar );
+					infoOverlay.children('#body').children( '#image' ).attr( 'src', clicked.infoDataObject.attribution_avatar );
 
 				} );
 				
@@ -497,7 +500,7 @@ define([
 					  urls: ['audio/ambient.mp3'],
 					  autoplay: true,
 					  loop: true,
-					  volume: 1.9,
+					  volume: gui ? 0 : 1.9,
 					});
 					animate();
 
@@ -558,6 +561,10 @@ define([
 						if( value !== '' ){
 
 							dataloader.search( value, function( results ){
+
+								searchOverlay.children('#body').children('#results').html(
+									'YOUR SEARCH FOR "'+value+'" RETURNED ' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + ' RESULTS' 
+								 );
 
 								searchOverlay.fadeIn( 400, function () {
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
@@ -632,7 +639,8 @@ define([
 
 			if( arrived && lastClicked ){
 				var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
-				infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+				// infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+				infoOverlay.css("transform", 'translate( '+ 500+ 'px, '+ 400 +'px )');
 			}
 
 			render( delta || 0 );
