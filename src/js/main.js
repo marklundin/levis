@@ -113,8 +113,11 @@ define([
 
 		}
 
-		$( '#search-field' ).focus( function(){
-			resetCamera();
+		$( '#search-field' ).click( function(){
+			$( this ).select();
+			$( this ).keypress( function(){
+				resetCamera();
+			});
 		});	
 
 
@@ -139,7 +142,7 @@ define([
 
 			e.preventDefault();
 
-			resetCamera();
+			if( !showingSearchResults ) resetCamera();
 			infoOverlay.fadeOut( 400 );
 
 		});
@@ -315,20 +318,20 @@ define([
 				});
 
 				function updateMaterial(){
-					var n = materials.length;
-					while( n-- > 0 ){
-						materials[n].needsUpdate = true;
-					}
+					// var n = materials.length;
+					// while( n-- > 0 ){
+					// 	materials[n].needsUpdate = true;
+					// }
 				}
 				
 				faceMaterial.seed = seed.toString();
 
 
-				var materials = [];
-				materials.push( faceMaterial );
-				materials.push( imageContentMaterial );
-				materials.push( searchContentMaterial );
-				materials.push( videoContentMaterial );
+				// var materials = [];
+				// materials.push( faceMaterial );
+				// materials.push( imageContentMaterial );
+				// materials.push( searchContentMaterial );
+				// materials.push( videoContentMaterial );
 
 			// END MATERIALS
 
@@ -509,6 +512,8 @@ define([
 							nPos = new THREE.Vector3(),
 							mesh;
 
+						$( '#search-field' ).blur();
+
 						if( value !== '' ){
 
 							dataloader.search( value, function( results ){
@@ -533,7 +538,7 @@ define([
 										nPos.set( pos[0], pos[1], pos[2] );
 
 										mesh = getDataObject( results[n], true, nPos );
-										mesh.material = searchContentMaterial;
+										mesh.material = searchContentMaterial.clone();
 										searchResObj3d.add( mesh );
 									}
 								}
