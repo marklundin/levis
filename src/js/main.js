@@ -123,14 +123,13 @@ define([
 			e.preventDefault();
 			showingSearchResults = false;
 
-			// imageContentMaterial.opacity = 1.0;
-			// videoContentMaterial.opacity = 0.8;
 			inputField.value = '';
 			hideVisibleDataObjects();
 			searchOverlay.fadeOut( 400 );
+			infoOverlay.fadeOut( 400 );
 			setDatObjectsOpacity( 0.8 );
 
-			// searchCubes = [];
+			resetCamera();
 
 		});
 
@@ -140,23 +139,11 @@ define([
 
 			e.preventDefault();
 
-			if( showingSearchResults ){
+			resetCamera();
+			infoOverlay.fadeOut( 400 );
 
-				showingSearchResults = false;
+		});
 
-				// imageContentMaterial.opacity = 1.0;
-				// videoContentMaterial.opacity = 0.8;
-				inputField.value = '';
-				hideVisibleDataObjects();
-				setDatObjectsOpacity( 0.8 );
-				// searchOverlay.fadeOut( 400 );
-
-			}
-
-			
-			resetCamera();		
-
-		})
 
 		var clicked;
 		var timeCoeff = 1;
@@ -178,7 +165,7 @@ define([
 			// timeCoeff = 30000 / 2500; 
 			clicked = null;
 			infoOverlay.fadeOut( 400 );
-			searchOverlay.fadeOut( 400 );
+			// searchOverlay.fadeOut( 400 );
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000 );
 
@@ -585,7 +572,6 @@ define([
 
 		// THIS SHIT IS GOLD DUST. BEST SIMPLE ANIMATION SYSTEM I'VE COME ACROSS
 
-		var SPRING_CONSTANT = 5.0;
 		function spring( b, a, vel, delta, spring ){
 		    var springForce 	= ( b - a ) * ( spring || 5.0 );
 		    var dampingForce 	= -vel * 2.0 * Math.sqrt( spring || 5.0 );
