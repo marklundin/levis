@@ -1,10 +1,11 @@
-var DEBUG = true;
+var DEBUG = false;
 
 
 define([
 
 	"utils/domReady!",
 	"jquery",
+
 	"glsl!shaders/structure.glsl",
 	"utils/math",
 	"structure",
@@ -16,15 +17,19 @@ define([
 	"data",
 	"textplane",
 	"pathcontrols",
+	'transition',
+	"purl",
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( DOM, jquery, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols ) {
+	], function( DOM, jquery, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition ) {
 
 
-		var guiContainerDom = document.getElementById('gui');
-		guiContainerDom.appendChild( gui.domElement );
+		if( gui ){
+			var guiContainerDom = document.getElementById('gui');
+			guiContainerDom.appendChild( gui.domElement );
+		}
 
 
 		// APP VARIABLES
@@ -149,26 +154,49 @@ define([
 
 
 		var clicked;
+		var camMoveTransition = transition( controls, ['distance'], null, {spring:1.5} );
+		var camLookTransition = transition.vec3( controls.center, camTarget, null, {spring:2} );
+		camLookTransition.paused = true;
+
+
+		camLookTransition.callback = function(){
+
+			moving = false;
+			arrived = true;
+			if( clicked ){
+				lastClicked = clicked;
+
+				infoOverlay.children('#content').html( "<h3>"+ clicked.infoDataObject.title +"<h3>"); 
+				infoOverlay.fadeIn( 400 );
+			}
+
+		}
+
+
 		var timeCoeff = 1;
 		function moveCameraTo( p, dst ){
 
 			distanceTarget = dst || 250;
+
+			camMoveTransition.target = distanceTarget;
+			camLookTransition.target.copy( p );
+
 			moving = true;
-			arrived = false;
+			camLookTransition.arrived = false;
+			camMoveTransition.arrived = false;
+			camLookTransition.paused = false;
 
 			var d = camera.position.clone().sub( p ).length();
 			timeCoeff = 30000 / d;
 
-			camTarget.copy( p );
+
 		}
 
 
 		function resetCamera(){
-
-			// timeCoeff = 30000 / 2500; 
+ 
 			clicked = null;
 			infoOverlay.fadeOut( 400 );
-			// searchOverlay.fadeOut( 400 );
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000 );
 
@@ -318,10 +346,15 @@ define([
 				});
 
 				function updateMaterial(){
-					// var n = materials.length;
-					// while( n-- > 0 ){
-					// 	materials[n].needsUpdate = true;
-					// }
+					var n = contentObj3d.children.length;
+					while( n-- > 0 ){
+						if( contentObj3d.children[n].material ) contentObj3d.children[n].material.needsUpdate = true;
+					}
+
+					n = searchResObj3d.children.length;
+					while( n-- > 0 ){
+						if( searchResObj3d.children[n].material ) searchResObj3d.children[n].material.needsUpdate = true;
+					}
 				}
 				
 				faceMaterial.seed = seed.toString();
@@ -400,7 +433,7 @@ define([
 					}
 				}
 
-				if( DEBUG ){
+				if( gui ){
 					
 					var formgui = gui.addFolder('structure');
 					formgui.add( api, "frequency", 		0.00, 2.0 	).onFinishChange( api.generate );
@@ -519,7 +552,7 @@ define([
 							dataloader.search( value, function( results ){
 
 								searchOverlay.fadeIn( 400, function () {
-								    if( results.length === 0 )$(this).delay(5000).fadeOut( 400 );
+								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
 								showingSearchResults = true;
@@ -575,15 +608,6 @@ define([
 		// END SUPPORT STRUCTURE
 
 
-		// THIS SHIT IS GOLD DUST. BEST SIMPLE ANIMATION SYSTEM I'VE COME ACROSS
-
-		function spring( b, a, vel, delta, spring ){
-		    var springForce 	= ( b - a ) * ( spring || 5.0 );
-		    var dampingForce 	= -vel * 2.0 * Math.sqrt( spring || 5.0 );
-		    var force 			= springForce + dampingForce;
-		    return force * delta;
-		}
-
 
 		
 		function animate( delta ){
@@ -596,33 +620,12 @@ define([
 
 			picking();
 
-			
-			controls.velocity.x += spring( camTarget.x, controls.center.x, controls.velocity.x, timestep * timeCoeff * api.speed, 1.5 ); 
-			controls.velocity.y += spring( camTarget.y, controls.center.y, controls.velocity.y, timestep * timeCoeff * api.speed, 1.5 ); 
-			controls.velocity.z += spring( camTarget.z, controls.center.z, controls.velocity.z, timestep * timeCoeff * api.speed, 1.5 ); 
+			transition.update( timestep * timeCoeff * api.speed );
 
-			// console.log( distanceTarget, controls.distance, controls.distanceVel );
-			controls.distanceVel += spring( distanceTarget, controls.distance, controls.distanceVel, timestep * timeCoeff * api.speed, 2 ); 
-			controls.distance += controls.distanceVel * timestep * timeCoeff * api.speed;
-
-			if( clicked && camera.position.clone().sub( clicked.position ).length() <= distanceTarget + 100 && moving ){
-
-				moving = false;
-				arrived = true;
-				console.log( 'ARRIVED' );
-
-				infoOverlay.children('#content').html( "<h3>"+ clicked.infoDataObject.title +"<h3>"); 
-				infoOverlay.fadeIn( 400 );
-
-			}
-
-			if( arrived && clicked ){
-				var pt = toScreenXY( clicked.position, camera, $('#main')  );
+			if( arrived && lastClicked ){
+				var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
 				infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
 			}
-			
-
-			controls.center.add( controls.velocity.clone().multiplyScalar( timestep * timeCoeff * api.speed ) );
 
 			render( delta || 0 );
 

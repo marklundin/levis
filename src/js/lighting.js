@@ -22,7 +22,7 @@ define(
 				allLights.push( light );
 
 				scene.add( light );
-				scene.add( light.controls.gizmo );
+				if( gui ) scene.add( light.controls.gizmo );
 
 				if( onLightAddedCallback ) onLightAddedCallback();
 
@@ -75,7 +75,7 @@ define(
 					var light = new THREE.PointLight( color, intensity, distance );
 
 					light.helper = new THREE.PointLightHelper( light, 100 );
-					scene.add( light.helper );
+					if( gui ) scene.add( light.helper );
 
 					light.api = {
 						color: "#"+light.color.getHexString()
@@ -122,7 +122,7 @@ define(
 					var light = new THREE.DirectionalLight( color );
 
 					light.helper = new THREE.DirectionalLightHelper( light, 100 );
-					scene.add( light.helper );
+					if ( gui ) scene.add( light.helper );
 
 
 					light.api = {
@@ -167,7 +167,7 @@ define(
 					var light = new THREE.HemisphereLight( color );
 
 					light.helper = new THREE.HemisphereLightHelper( light, 100 );
-					scene.add( light.helper );
+					if( gui ) scene.add( light.helper );
 
 
 					light.api = {
@@ -214,7 +214,7 @@ define(
 
 					var light = new THREE.SpotLight( color );
 					light.helper = new THREE.SpotLightHelper( light, 100 );
-					scene.add( light.helper );
+					if( gui ) scene.add( light.helper );
 					
 					light.api = {
 						color: "#"+light.color.getHexString()

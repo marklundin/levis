@@ -31,9 +31,13 @@ requirejs.config( {
 			exports: "THREE"
 		},
 
-		"libs/underscore.js":{
-			exports: "_"
+		"purl":{
+			deps:['jquery']
 		},
+
+		// "libs/underscore.js":{
+		// 	exports: "_"
+		// },
 
 		"libs/threejs/examples/js/postprocessing/EffectComposer": [
 			'libs/threejs/build/three',

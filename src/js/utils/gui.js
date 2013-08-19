@@ -1,15 +1,7 @@
 define([
-    "libs/datgui"
+    "libs/datgui",
+    "purl"
     ], function(){
-        return DEBUG ? new dat.GUI( {autoPlace:false}) : {
-
-        	// Stubs
-        	addFolder: function(){},
-        	removeFolder: function(){},
-        	add: function(){},
-        	remove: function(){},
-        	remove: function(){}, 
-
-        };
+        return $.url().param('gui') === undefined ? null : new dat.GUI( {autoPlace:false});
     }
 )
