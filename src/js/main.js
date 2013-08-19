@@ -59,6 +59,7 @@ define([
 			arrived        = false,
 			timestep 	   = 0.0003,
 			controlsActive = false,
+			lastClicked,
 			showingSearchResults = false,
 
 			INTERSECTED;
