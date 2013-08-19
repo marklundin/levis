@@ -639,8 +639,8 @@ define([
 
 			if( arrived && lastClicked ){
 				var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
-				// infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
-				infoOverlay.css("transform", 'translate( '+ 500+ 'px, '+ 400 +'px )');
+				infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+				// infoOverlay.css("transform", 'translate( '+ 500+ 'px, '+ 400 +'px )');
 			}
 
 			render( delta || 0 );
