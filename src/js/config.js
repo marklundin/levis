@@ -2,6 +2,7 @@ requirejs.config( {
 
 	name: 'main',
 	baseUrl: './js',
+	waitSeconds:0,
 
 	config:{
 		data:{

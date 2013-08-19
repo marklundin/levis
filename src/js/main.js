@@ -39,6 +39,7 @@ define([
 			STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
 
 
+
 		// Scene
 		var renderer 	   = new THREE.WebGLRenderer({ antialias:true}),
 			container 	   = $( '#main' )[0],
@@ -491,6 +492,12 @@ define([
 						contentObj3d.add( getDataObject( result, isInstagram ) );
 					}
 
+					var sound = new Howl({
+					  urls: ['audio/ambient.mp3'],
+					  autoplay: true,
+					  loop: true,
+					  volume: 1.9,
+					});
 					animate();
 
 				}, function( twitter, instagram ){
