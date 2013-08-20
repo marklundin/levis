@@ -18,12 +18,13 @@ define([
 	"textplane",
 	"pathcontrols",
 	'transition',
+	'utils/easing',
 	"purl",
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( DOM, jquery, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition ) {
+	], function( DOM, jquery, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing ) {
 
 
 		if( gui ){
@@ -36,6 +37,7 @@ define([
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
 			MAX_SEARCH_RESULTS = 5,
+			DIV_SLIDE_OFFSET = 40;
 			STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
 
 
@@ -110,6 +112,18 @@ define([
 		});
 
 
+		function divFadeIn( jdiv, speed, callback ){
+			jdiv.fadeIn({ duration: speed || 400, step:function( n ){
+				// console.log( n );
+				jdiv.xOffsetPos = easing.inOutQuad( 1 -  n ) * DIV_SLIDE_OFFSET;
+			}});
+		}
+
+		function divFadeOut( jdiv, speed, callback ){
+			jdiv.fadeOut({ duration: speed || 400, step:function( n ){
+				jdiv.xOffsetPos = easing.inOutQuad( 1 -  n ) * DIV_SLIDE_OFFSET;
+			}} );
+		}
 
 		function hideVisibleDataObjects(){
 
@@ -135,8 +149,8 @@ define([
 
 			inputField.value = '';
 			hideVisibleDataObjects();
-			searchOverlay.fadeOut( 400 );
-			infoOverlay.fadeOut( 400 );
+			divFadeOut( searchOverlay, 400 );
+			divFadeOut( infoOverlay, 400 );
 			setDatObjectsOpacity( 0.8 );
 
 			resetCamera();
@@ -150,7 +164,8 @@ define([
 			e.preventDefault();
 
 			if( !showingSearchResults ) resetCamera();
-			infoOverlay.fadeOut( 400 );
+			// infoOverlay.fadeOut( 400 );
+			divFadeOut( infoOverlay, 400 );
 
 		});
 
@@ -172,7 +187,8 @@ define([
 				content.children('#user-info').children('#user-name').html( clicked.infoDataObject.user_name ); 
 				content.children('#user-info').children('#user-id').html( clicked.infoDataObject.user_id ); 
 				content.children('#date').html( new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
-				infoOverlay.fadeIn( 400 );
+				// infoOverlay.fadeIn( 400 );
+				divFadeIn( infoOverlay, 400 )
 			}
 
 		}
@@ -201,7 +217,8 @@ define([
 		function resetCamera(){
  
 			clicked = null;
-			infoOverlay.fadeOut( 400 );
+			// infoOverlay.fadeOut( 400 );
+			divFadeOut( infoOverlay, 400 );
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000 );
 
@@ -217,7 +234,7 @@ define([
 				clicked = INTERSECTED;
 
 				controls.autoRotate = true;
-				infoOverlay.fadeOut( 400, function(){
+				divFadeOut( infoOverlay, 400, function(){
 
 					infoOverlay.children('#body').children( '#image' ).attr( 'src', clicked.infoDataObject.attribution_avatar );
 
@@ -549,7 +566,8 @@ define([
 
 					inputField.addEventListener( 'change', function(){
 
-						infoOverlay.fadeOut( 400 );
+						// infoOverlay.fadeOut( 400 );
+						divFadeOut( infoOverlay, 400 );
 						clicked = null;
 
 						var value = inputField.value,
@@ -566,7 +584,7 @@ define([
 									'YOUR SEARCH FOR "'+value+'" RETURNED ' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + ' RESULTS' 
 								 );
 
-								searchOverlay.fadeIn( 400, function () {
+								divFadeOut( searchOverlay, 400, function () {
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
@@ -639,7 +657,7 @@ define([
 
 			if( arrived && lastClicked ){
 				var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
-				infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+				infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 + infoOverlay.xOffsetPos ) + 'px, '+ Number( pt.top - 100 ) +'px )');
 				// infoOverlay.css("transform", 'translate( '+ 500+ 'px, '+ 400 +'px )');
 			}
 
