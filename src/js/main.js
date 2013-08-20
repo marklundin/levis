@@ -37,7 +37,7 @@ define([
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
 			MAX_SEARCH_RESULTS = 5,
-			DIV_SLIDE_OFFSET = 40;
+			DIV_SLIDE_OFFSET = 80;
 			STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
 
 
