@@ -37,7 +37,7 @@ define([
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
 			MAX_SEARCH_RESULTS = 10,
-			SEARCH_RES_RADIUS = 0.5,
+			SEARCH_RES_RADIUS = 0.3,
 			DIV_SLIDE_OFFSET = 80;
 			STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
 
@@ -540,7 +540,10 @@ define([
 					while( n-- > 0 ){
 						if( contentObj3d.children[n].material !== undefined ){
 							contentObj3d.children[n].material.opacity = opacity;
-							contentObj3d.children[n].normalHex = contentObj3d.children[n].material.color.getHex();
+							if( !contentObj3d.children[n].normalHexColor ){
+								contentObj3d.children[n].normalHexColor = contentObj3d.children[n].material.color.getHex();
+								contentObj3d.children[n].normalHexAmbientColor = contentObj3d.children[n].material.color.getHex();
+							}
 
 							// f = contentObj3d.children[n].geometry.faces.length;
 							// while( f-- > 0 ){
@@ -549,8 +552,9 @@ define([
 
 							// }
 							// geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
-							contentObj3d.children[n].material.color.setHex( opacity <= 1 ? 0x444444 : contentObj3d.children[n].normalHex );
-							contentObj3d.children[n].material.ambient.setHex( opacity <= 1 ? 0x444444 : contentObj3d.children[n].normalHex );
+
+							contentObj3d.children[n].material.color.setHex( opacity < 0.5 ? 0x444444 : contentObj3d.children[n].normalHexColor );
+							contentObj3d.children[n].material.ambient.setHex( opacity < 0.5 ? 0x444444 : contentObj3d.children[n].normalHexAmbientColor );
 							
 							// console.log( contentObj3d.children[n] );
 							contentObj3d.children[n].material.needsUpdate = true;
@@ -600,7 +604,7 @@ define([
 
 								searchOverlay.children('#body').children('#results').html(
 									'YOUR SEARCH FOR "'+value+'" RETURNED ' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + ' RESULTS' 
-								 );
+								);
 
 								searchOverlay.fadeIn( 400, function () {
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
@@ -614,11 +618,12 @@ define([
 									setDatObjectsOpacity( 0.3 );
 									
 									var pos,
+										positions = strut.centeredVolume.slice();
 										n = Math.min( results.length, MAX_SEARCH_RESULTS );
 
-									while( n-- > 0 ){
+									while( n-- > 0 && positions.length > 0 ){
 
-										pos = strut.centeredVolume[ ( Math.random() * strut.centeredVolume.length)|0 ];
+										pos = positions[ ( Math.random() * positions.length)|0 ];
 										nPos.set( pos[0], pos[1], pos[2] );
 
 										mesh = getDataObject( results[n], true, nPos );
