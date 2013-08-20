@@ -36,7 +36,8 @@ define([
 		// APP VARIABLES
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
-			MAX_SEARCH_RESULTS = 5,
+			MAX_SEARCH_RESULTS = 10,
+			SEARCH_RES_RADIUS = 0.5,
 			DIV_SLIDE_OFFSET = 80;
 			STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
 
@@ -515,7 +516,7 @@ define([
 
 					var sound = new Howl({
 					  urls: ['audio/ambient.mp3'],
-					  autoplay: true,
+					  // autoplay: true,
 					  loop: true,
 					  volume: gui ? 0 : 1.9,
 					});
@@ -532,10 +533,27 @@ define([
 
 				function setDatObjectsOpacity( opacity ){
 
-					var n = contentObj3d.children.length;
+					var n = contentObj3d.children.length,
+					 	f
+
+					
 					while( n-- > 0 ){
 						if( contentObj3d.children[n].material !== undefined ){
-							contentObj3d.children[n].material.opacity = opacity;	
+							contentObj3d.children[n].material.opacity = opacity;
+							contentObj3d.children[n].normalHex = contentObj3d.children[n].material.color.getHex();
+
+							// f = contentObj3d.children[n].geometry.faces.length;
+							// while( f-- > 0 ){
+							// 	console.log( contentObj3d.children[n].geometry.faces[f] );
+							// 	contentObj3d.children[n].geometry.faces[f].color.setHex( opacity <= 0 ? 0x444444 : contentObj3d.children[n].normalHex );
+
+							// }
+							// geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
+							contentObj3d.children[n].material.color.setHex( opacity <= 1 ? 0x444444 : contentObj3d.children[n].normalHex );
+							contentObj3d.children[n].material.ambient.setHex( opacity <= 1 ? 0x444444 : contentObj3d.children[n].normalHex );
+							
+							// console.log( contentObj3d.children[n] );
+							contentObj3d.children[n].material.needsUpdate = true;
 						} 
 					}
 
@@ -584,7 +602,7 @@ define([
 									'YOUR SEARCH FOR "'+value+'" RETURNED ' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + ' RESULTS' 
 								 );
 
-								divFadeOut( searchOverlay, 400, function () {
+								searchOverlay.fadeIn( 400, function () {
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
@@ -593,14 +611,14 @@ define([
 								
 								if( results.length > 0 ){
 
-									setDatObjectsOpacity( 0.2 );
+									setDatObjectsOpacity( 0.3 );
 									
 									var pos,
 										n = Math.min( results.length, MAX_SEARCH_RESULTS );
 
 									while( n-- > 0 ){
 
-										pos = strut.volume[ ( Math.random() * strut.volume.length)|0 ];
+										pos = strut.centeredVolume[ ( Math.random() * strut.centeredVolume.length)|0 ];
 										nPos.set( pos[0], pos[1], pos[2] );
 
 										mesh = getDataObject( results[n], true, nPos );
@@ -630,6 +648,14 @@ define([
 
 				// console.time( 'GENERATE' );
 				strut = structure( api.frequency, api.complexity, seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
+				strut.centeredVolume = strut.volume.slice();
+
+				var ca = new THREE.Vector3(),
+					cb = new THREE.Vector3();
+				strut.centeredVolume.sort(function(a, b){
+					return ca.set( a[0]- 15, a[1]- 15, a[2]- 15).length() - cb.set( b[0]- 15, b[1]- 15, b[2]- 15).length();
+				})
+				strut.centeredVolume = strut.centeredVolume.splice( 0, (strut.centeredVolume.length * SEARCH_RES_RADIUS )|0 );
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
