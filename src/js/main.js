@@ -62,7 +62,7 @@ define([
 			searchResObj3d = new THREE.Object3D(),
 			moving 		   = false,
 			arrived        = false,
-			timestep 	   = 0.0003,
+			timestep 	   = 0.0008,
 			controlsActive = false,
 			lastClicked,
 			showingSearchResults = false,
@@ -154,6 +154,7 @@ define([
 			hideVisibleDataObjects();
 			divFadeOut( searchOverlay, 400 );
 			divFadeOut( infoOverlay, 400 );
+			infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
 			setDatObjectsOpacity( 0.8 );
 
 			resetCamera();
@@ -169,14 +170,15 @@ define([
 
 		});
 
-
-		infoOverlay.children( ".close-button-icon" ).click(function( e ){
+		
+		infoOverlay.children('.buttons').children( ".close-button-icon" ).click(function( e ){
 
 			e.preventDefault();
 
 			if( !showingSearchResults ) resetCamera();
 			// infoOverlay.fadeOut( 400 );
 			divFadeOut( infoOverlay, 400 );
+			infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
 
 		});
 
@@ -210,8 +212,6 @@ define([
 
 			distanceTarget = dst || 250;
 
-			timeCoeff = 30000 / ( distanceTarget - camMoveTransition.target );
-
 			camMoveTransition.target = distanceTarget;
 			camLookTransition.target.copy( p );
 
@@ -220,8 +220,8 @@ define([
 			camMoveTransition.arrived = false;
 			camLookTransition.paused = false;
 
-			// var d = camera.position.clone().sub( p ).length();
-			
+			var d = camera.position.clone().sub( p ).length();
+			timeCoeff = 30000 / d;
 
 
 		}
@@ -248,10 +248,10 @@ define([
 
 				controls.autoRotate = true;
 				divFadeOut( infoOverlay, 400, function(){
-					console.log( 'here' );
 					infoOverlay.children('#body').children( '#image' ).attr( 'src', clicked.infoDataObject.attribution_avatar );
 
 				} );
+				infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
 				
 
 				moveCameraTo( clicked.position );
@@ -700,7 +700,7 @@ define([
 
 			if( arrived && lastClicked ){
 				var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
-				infoOverlay.css("transform", 'translate( '+ Number( pt.left + infoOverlay.xOffsetPos ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+				infoOverlay.css("transform", 'translate( '+ Number( pt.left ) + 'px, '+ Number( pt.top - 100 ) +'px )');
 				// infoOverlay.css("transform", 'translate( '+ 500+ 'px, '+ 400 +'px )');
 			}
 
