@@ -20,20 +20,38 @@ body{
   user-select: none;
 }
 
-.close-button-icon{
-	/*opacity: 0.8;*/
+.button-icon{
 	margin-left: 1px;
 	background: white;
 	cursor: pointer;
 	display: inline-block;
-	background: 
-		url( ../img/close-button-icon.png )
-		no-repeat;
+	
 
 	background-size: contain;
 	width: 50px;
 	height: 50px;
+	padding-bottom: 5px;
+}
 
+.close-button-icon{
+	/*opacity: 0.8;*/
+	background: 
+		url( ../img/close-button-icon.png )
+		no-repeat;
+}
+
+.down-button-icon{
+	/*opacity: 0.8;*/
+	background: 
+		url( ../img/down-arrow.png )
+		no-repeat;
+}
+
+.up-button-icon{
+	/*opacity: 0.8;*/
+	background: 
+		url( ../img/up-arrow.png )
+		no-repeat;
 }
 
 #info-overlay h1, h2, #date{
@@ -92,6 +110,11 @@ body{
 	opacity:1.0;
 }
 
+#info-overlay #body{
+	display: none;
+	float:left;
+}
+
 #info-overlay{
 	overflow: hidden;
 	display: none;
@@ -99,6 +122,17 @@ body{
 	
 	position: absolute;
 	z-index: 3;
+}
+
+#info-overlay .buttons{
+	display: inline-block;
+	padding-left: 4px;
+	float:left;
+}
+
+#info-overlay .buttons #show-more{
+
+	display: block;
 }
 
 #info-overlay #image{

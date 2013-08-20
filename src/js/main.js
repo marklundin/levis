@@ -5,7 +5,7 @@ define([
 
 	"utils/domReady!",
 	"jquery",
-
+	"libs/jquery-ui",
 	"glsl!shaders/structure.glsl",
 	"utils/math",
 	"structure",
@@ -24,13 +24,15 @@ define([
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( DOM, jquery, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing ) {
+	], function( DOM, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing ) {
 
 
 		if( gui ){
 			var guiContainerDom = document.getElementById('gui');
 			guiContainerDom.appendChild( gui.domElement );
 		}
+
+
 
 
 		// APP VARIABLES
@@ -115,15 +117,14 @@ define([
 
 		function divFadeIn( jdiv, speed, callback ){
 			jdiv.fadeIn({ duration: speed || 400, step:function( n ){
-				// console.log( n );
 				jdiv.xOffsetPos = easing.inOutQuad( 1 -  n ) * DIV_SLIDE_OFFSET;
-			}});
+			}, complete: callback });
 		}
 
 		function divFadeOut( jdiv, speed, callback ){
 			jdiv.fadeOut({ duration: speed || 400, step:function( n ){
 				jdiv.xOffsetPos = easing.inOutQuad( 1 -  n ) * DIV_SLIDE_OFFSET;
-			}} );
+			}, complete: callback });
 		}
 
 		function hideVisibleDataObjects(){
@@ -143,6 +144,7 @@ define([
 		});	
 
 
+
 		searchOverlay.children( ".close-button-icon" ).click(function( e ){
 
 			e.preventDefault();
@@ -158,6 +160,14 @@ define([
 
 		});
 
+
+		
+		$( "#show-more" ).click(function( e ){
+
+			e.preventDefault();
+			infoOverlay.children( "#body" ).toggle('slide', {direction: 'right'}, 400 );
+
+		});
 
 
 		infoOverlay.children( ".close-button-icon" ).click(function( e ){
@@ -200,6 +210,8 @@ define([
 
 			distanceTarget = dst || 250;
 
+			timeCoeff = 30000 / ( distanceTarget - camMoveTransition.target );
+
 			camMoveTransition.target = distanceTarget;
 			camLookTransition.target.copy( p );
 
@@ -208,8 +220,8 @@ define([
 			camMoveTransition.arrived = false;
 			camLookTransition.paused = false;
 
-			var d = camera.position.clone().sub( p ).length();
-			timeCoeff = 30000 / d;
+			// var d = camera.position.clone().sub( p ).length();
+			
 
 
 		}
@@ -236,7 +248,7 @@ define([
 
 				controls.autoRotate = true;
 				divFadeOut( infoOverlay, 400, function(){
-
+					console.log( 'here' );
 					infoOverlay.children('#body').children( '#image' ).attr( 'src', clicked.infoDataObject.attribution_avatar );
 
 				} );
@@ -688,7 +700,7 @@ define([
 
 			if( arrived && lastClicked ){
 				var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
-				infoOverlay.css("transform", 'translate( '+ Number( pt.left + 150 + infoOverlay.xOffsetPos ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+				infoOverlay.css("transform", 'translate( '+ Number( pt.left + infoOverlay.xOffsetPos ) + 'px, '+ Number( pt.top - 100 ) +'px )');
 				// infoOverlay.css("transform", 'translate( '+ 500+ 'px, '+ 400 +'px )');
 			}
 

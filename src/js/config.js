@@ -36,6 +36,10 @@ requirejs.config( {
 			deps:['jquery']
 		},
 
+		"libs/jquery-ui": ['jquery'],
+
+
+
 		// "libs/underscore.js":{
 		// 	exports: "_"
 		// },
