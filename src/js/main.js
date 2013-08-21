@@ -81,7 +81,7 @@ define([
 
 		controls.velocity = new THREE.Vector3();
 		controls.maxPolarAngle = Math.PI / 1.62;
-		controls.userRotateSpeed = 1.4;
+		controls.userRotateSpeed = 0.4;
 		controls.userPan = false;
 		controls.userZoom = false;
 		controls.autoRotateSpeed = 300 * timestep;
@@ -446,7 +446,7 @@ define([
 				var api = {
 
 					frequency 	: 0.95,
-					speed 		: 1.0,
+					speed 		: 1.4,
 					threshold 	: 0.68,
 					noiseAmount : 0.7,
 					complexity 	: 0.82,
