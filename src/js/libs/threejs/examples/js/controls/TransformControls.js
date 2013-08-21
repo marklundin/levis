@@ -624,7 +624,6 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 				hovered.material.opacity = hoveredOpacity;
 
 				hovered = null;
-
 				scope.dispatchEvent( changeEvent );
 
 				scope.hovered = false;

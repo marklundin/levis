@@ -240,6 +240,8 @@ define([
 
 		document.addEventListener( 'mousedown', function(){
 
+			if( gui ) controls.autoRotate = false;
+
 			if( INTERSECTED && INTERSECTED !== clicked ){
 
 				if( showingSearchResults && searchResObj3d.children.indexOf( INTERSECTED ) === -1 ) return;
@@ -249,9 +251,7 @@ define([
 				controls.autoRotate = true;
 				var imageElem = infoOverlay.children('#body').children( '#image' );
 				divFadeOut( infoOverlay, 400, function( url ){
-
 					imageElem.attr( 'src', url );
-					console.log( url );
 				}.bind( this, clicked.infoDataObject.attribution_avatar ) );
 				infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
 				
@@ -260,7 +260,8 @@ define([
 
 			} 
 
-		})
+		});
+
 
 		renderer.setSize( WIDTH, HEIGHT );
 
@@ -392,6 +393,8 @@ define([
 					while( n-- > 0 ){
 						if( searchResObj3d.children[n].material ) searchResObj3d.children[n].material.needsUpdate = true;
 					}
+
+					faceMaterial.needsUpdate = true;
 				}
 				
 				faceMaterial.seed = seed.toString();
@@ -460,6 +463,7 @@ define([
 						faceMaterial.specular.set( api.material.specular );
 						faceMaterial.ambient.set( api.material.ambient );
 						faceMaterial.shininess = api.material.shininess.value;
+
 
 					},
 					updateBackgoundColor: function(){
@@ -692,9 +696,10 @@ define([
 
 			requestAnimationFrame( animate );
 			
-			controlsActive = lights.update( camera);
+			controlsActive = lights.update( camera );
 			controls.setPauseState( controlsActive );
 			if( !controlsActive ) controls.update( camera );
+			if( gui && lastClicked ) controls.autoRotate = !controlsActive;
 
 			picking();
 

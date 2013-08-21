@@ -11,7 +11,13 @@ define(
 				spotLights 			= 0,
 				allLights 			= [],
 				controlsActive 		= false,
+				isHovering 			= false,
 				l;
+
+			function onLightInteraction(e){
+				// console.log( 'here', !e.target.hovered );
+				isHovering = !e.target.hovered;
+			}
 
 			function addLight ( light ){
 
@@ -20,9 +26,12 @@ define(
 				light.controls.attach( light );
 
 				allLights.push( light );
-
 				scene.add( light );
-				if( gui ) scene.add( light.controls.gizmo );
+
+				if( gui ){
+					light.controls.addEventListener( 'change', onLightInteraction );
+					scene.add( light.controls.gizmo );
+				} 
 
 				if( onLightAddedCallback ) onLightAddedCallback();
 
@@ -66,7 +75,7 @@ define(
 						controlsActive = controlsActive || Boolean( allLights[l].controls.active );
 					}
 
-					return controlsActive;
+					return controlsActive || isHovering;
 				},
 
 
