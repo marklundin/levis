@@ -3,15 +3,14 @@
 		<title>CORS Test</title>
 	</head>
 	<body>
-		<video id='video' autoplay src='https://distilleryimage1.s3.amazonaws.com/fde562c6fed311e2b81222000a1fd1fa_101.mp4' ></video>
-
 		<script src="http://code.jquery.com/jquery-latest.js"></script>
 		<script>
 
 			$(document).ready(function(){
 
 				var VIDEO_URL = "https://distilleryimage1.s3.amazonaws.com/fde562c6fed311e2b81222000a1fd1fa_101.mp4",
-					IMAGE_URL = "https://si0.twimg.com/profile_images/378800000073907004/c8bf6069f0740db057764f9c70c86172_normal.jpeg";//https://distilleryimage1.s3.amazonaws.com/fde562c6fed311e2b81222000a1fd1fa_6.jpg";
+					IMAGE_URL = "https://levismakeourmark.thismoment.com/v4/api/media/image_proxy.json?url=https://distilleryimage8.s3.amazonaws.com/46834fb4012e11e395c822000ae80c95_7.jpg";//https://distilleryimage1.s3.amazonaws.com/fde562c6fed311e2b81222000a1fd1fa_6.jpg";
+					// IMAGE_URL = "https://distilleryimage1.s3.amazonaws.com/fde562c6fed311e2b81222000a1fd1fa_6.jpg";
 
 				var canvas 	= document.createElement( 'canvas' ),
 					image 	= new Image();
@@ -19,15 +18,14 @@
 				document.body.appendChild( canvas );
 
   				image.onload = function() {
-  					console.log( 'hey' );
 
-  					image.toDataURL();
-  					// var texture = gl.createTexture();
-				   //  gl.bindTexture(gl.TEXTURE_2D, texture );
-				   //  gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image );
+  					var texture = gl.createTexture();
+				    gl.bindTexture(gl.TEXTURE_2D, texture );
+				    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image );
   				}
 
-  				image.crossorigin = '';
+  				// image.crossorigin = '';
+  				image.crossOrigin = '';
   				image.src = IMAGE_URL;
 
 
