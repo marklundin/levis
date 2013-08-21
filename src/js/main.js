@@ -120,15 +120,11 @@ define([
 
 
 		function divFadeIn( jdiv, speed, callback ){
-			jdiv.fadeIn({ duration: speed || 400, step:function( n ){
-				jdiv.xOffsetPos = easing.inOutQuad( 1 -  n ) * DIV_SLIDE_OFFSET;
-			}, complete: callback });
+			jdiv.fadeIn({ duration: speed || 400, complete: callback });
 		}
 
 		function divFadeOut( jdiv, speed, callback ){
-			jdiv.fadeOut({ duration: speed || 400, step:function( n ){
-				jdiv.xOffsetPos = easing.inOutQuad( 1 -  n ) * DIV_SLIDE_OFFSET;
-			}, complete: callback });
+			jdiv.fadeOut({ duration: speed || 400, complete: callback });
 		}
 
 		function hideVisibleDataObjects(){
@@ -170,7 +166,10 @@ define([
 		$( "#show-more" ).click(function( e ){
 
 			e.preventDefault();
-			infoOverlay.children( "#body" ).toggle('slide', {direction: 'right'}, 400 );
+			infoOverlay.children( "#body" ).toggle({direction: 'right', step:function( n ){
+				// console.log( n );
+				// jdiv.xOffsetPos = easing.inOutQuad( 1 -  n ) * DIV_SLIDE_OFFSET;
+			}, duration:400}  );
 
 		});
 
@@ -250,7 +249,7 @@ define([
 			// infoOverlay.fadeOut( 400 );
 			divFadeOut( infoOverlay, 400 );
 
-			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0. );
+			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
 
 		}
 
@@ -738,7 +737,7 @@ define([
 
 					if( arrived && lastClicked ){
 						var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
-						infoOverlay.css("transform", 'translate( '+ Number( pt.left ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+						infoOverlay.css("transform", 'translate( '+ Number( pt.left + 170 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
 					}
 
 					render();
