@@ -41,7 +41,7 @@ define([
 		// APP VARIABLES
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
-			FPS = 1 / 60;
+			FPmS = 1000 / 60;
 			MAX_SEARCH_RESULTS = 10,
 			SEARCH_RES_RADIUS = 0.3,
 			DIV_SLIDE_OFFSET = 80;
@@ -68,6 +68,7 @@ define([
 			arrived        = false,
 			timestep 	   = 0.0008,
 			controlsActive = false,
+			isActive       = true,
 			lastClicked,
 			showingSearchResults = false,
 
@@ -115,6 +116,36 @@ define([
 
 			mouse.x =   ( event.clientX / window.innerWidth  ) * 2 - 1;
 			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+		});
+
+		var hidden, visibilityChange; 
+		if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+		  hidden = "hidden";
+		  visibilityChange = "visibilitychange";
+		} else if (typeof document.mozHidden !== "undefined") {
+		  hidden = "mozHidden";
+		  visibilityChange = "mozvisibilitychange";
+		} else if (typeof document.msHidden !== "undefined") {
+		  hidden = "msHidden";
+		  visibilityChange = "msvisibilitychange";
+		} else if (typeof document.webkitHidden !== "undefined") {
+		  hidden = "webkitHidden";
+		  visibilityChange = "webkitvisibilitychange";
+		}
+
+
+
+		document.addEventListener(visibilityChange, function() {
+
+			if (!document[hidden]) {
+
+		    	time = 0;
+	 			delta = 0;
+	 			t = 0;
+	 			startTime = timer.now() - ( performance && performance.timing ? performance.timing.navigationStart : pageLoad );
+
+		  	}
 
 		});
 
@@ -227,18 +258,7 @@ define([
 			camMoveTransition.arrived = false;
 			camLookTransition.paused  = false;
 
-			// lookRange.set( 0, 0, lookRange ).applyQuaternion( camera.quaternion );
-
-			// camLookTransition.speed = tmpLookVec.sub( p ).length() / turnPerSec;
 			camLookTransition.speed = camMoveTransition.speed = speedCoeff;//movePerSec / Math.abs( camera.position.clone().sub( p ).length() - distanceTarget ) * speedCoeff;
-			console.log( camLookTransition.speed );
-
-
-
-			//tmpLookVec.normalize().multiplyScalar( theta ) / pixelsPerSec;
-			// var distance = camera.position.clone().sub( p ).length() / distanceTarget * 500;
-			// var duration = distance / pixelsPerSec;
-			// durationMs   = duration * 1000;
 
 		}
 
@@ -246,7 +266,6 @@ define([
 		function resetCamera(){
  
 			clicked = null;
-			// infoOverlay.fadeOut( 400 );
 			divFadeOut( infoOverlay, 400 );
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
@@ -282,8 +301,6 @@ define([
 
 
 		renderer.setSize( WIDTH, HEIGHT );
-
-
 
 
 
@@ -710,21 +727,23 @@ define([
 
 
 		var running = false;
+		var startTime, time, delta, t, firstStep = true;
 
 		function run(){
 
 			if( !running ){
 
-				var time, delta, startTime, t;
-
 				running = true;
 		
 				function animate( timeSinceLoad ){
 
+
+					cloat = true;
+
 					t = timeSinceLoad - startTime;
 					delta = t - time;
+					delta = delta > FPmS ? FPmS : delta
 					time = t;
-		
 					
 					controlsActive = lights.update( camera );
 					controls.setPauseState( controlsActive );
@@ -732,7 +751,7 @@ define([
 					if( gui && lastClicked ) controls.autoRotate = !controlsActive;
 
 					picking();
-					// console.log( FPS * 1000.0 / durationMs );
+					
 					transition.update( delta / 1000 * api.speed );
 
 					if( arrived && lastClicked ){
@@ -741,7 +760,8 @@ define([
 					}
 
 					render();
-					requestAnimationFrame( animate );
+					requestAnimationFrame( animate );	
+
 
 				}
 
@@ -750,7 +770,6 @@ define([
 	 			t = 0;
 
 	 			startTime = timer.now() - ( performance && performance.timing ? performance.timing.navigationStart : pageLoad );
-	 			// console.log( new Date( performance.timing.navigationStart ), new Date( pageLoad ));
 
 				requestAnimationFrame( animate );
 		

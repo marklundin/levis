@@ -32,8 +32,8 @@ define(function(){
 
 		return update = function( a, b, delta ){
 
-			theta 		 = b - a;//controls.target - obj[ prop ];
-			time  	   	 = delta * api.globalSpeed;// * controls.speed;
+			theta 		 = b - a;
+			time  	   	 = delta * api.globalSpeed;
 			springForce  = theta * params.spring;
 		    dampingForce = -velocity * 2.0 * root;
 		    force 		 = springForce + dampingForce;
@@ -56,16 +56,12 @@ define(function(){
 				arrived	: false,
 				paused	: false,
 				speed 	: 1.0,
-				// normalize: function(){
-				// 	params.duration = Math.abs( controls.target - obj[prop] );
-				// 	// console.log('norm', params.duration );
-				// }
 			}
 
 		var update = function( t ){
 
 			if( !controls.paused && controls.target !== null ){
-				
+
 				system( obj[prop], controls.target, t * controls.speed );
 
 				if( !controls.arrived && Math.abs( controls.target - obj[ prop ] ) <= DEFAULT_THRESHOLD ){
@@ -106,17 +102,6 @@ define(function(){
 				arrived	: false, 
 				paused 	: true,
 				speed 	: 1.0,
-				// normalize: function(){
-
-				// 	var dx = Math.abs( controls.target.x - v3.x ),
-				// 		dy = Math.abs( controls.target.y - v3.y ),
-				// 		dz = Math.abs( controls.target.z - v3.z );
-
-				// 	params.duration = Math.sqrt( dx*dx + dy*dy + dz*dz );
-
-				// 	// console.log('norm', params.duration, dx, dy, dz );
-
-				// }
 			}
 
 		var update = function( t ){
