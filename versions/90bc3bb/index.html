@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<title>Levis STS</title>
+
+		<!--
+			
+			Levis STS
+			----------
+
+			onFormative & Mark Lundin
+
+		-->
+
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<script src='js/libs/howler.js'></script>
+		<script data-main="main" src='js/require.js'></script>
+		<script src="js/config.js"></script>
+
+	</head>
+	<body>
+		<div id='gui'></div>
+		<div id="main">
+			<div id='search'>
+				<input type="text" name="fname" id='search-field' placeholder="search">
+			</div>
+			<div id='search-overlay' class='disable-select' >
+				<div id='body' >
+					<h1>SEARCH RESULTS</h1>
+					<h2 id='results'></h2>
+				</div>	
+				<div class='close-button-icon'></div>
+			</div>
+			<div id='info-overlay' class='disable-select' >
+				<div id='body' >
+					<img id='image'></img>
+					<div id='user-info'>
+						<h1 id='user-name'></h1>
+						<h2 id='user-id'></h2>
+					</div>
+					<div id='content'></div>
+					<div id='date'></div>
+				</div>
+				<div class='buttons'>
+					<div class='button-icon close-button-icon'></div>
+					<div class='button-icon down-button-icon' id='show-more'></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
