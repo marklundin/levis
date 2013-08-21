@@ -247,10 +247,12 @@ define([
 				clicked = INTERSECTED;
 
 				controls.autoRotate = true;
-				divFadeOut( infoOverlay, 400, function(){
-					infoOverlay.children('#body').children( '#image' ).attr( 'src', clicked.infoDataObject.attribution_avatar );
+				var imageElem = infoOverlay.children('#body').children( '#image' );
+				divFadeOut( infoOverlay, 400, function( url ){
 
-				} );
+					imageElem.attr( 'src', url );
+					console.log( url );
+				}.bind( this, clicked.infoDataObject.attribution_avatar ) );
 				infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
 				
 
