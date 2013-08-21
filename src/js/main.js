@@ -451,6 +451,9 @@ define([
 				lights.onLightAdded( updateMaterial );
 				lights.onLightRemoved( updateMaterial );
 				lights.addPointLight( 0xffffff );
+				lights.addPointLight( 0xffffff );
+				lights.addPointLight( 0xffffff );
+			
 
 
 			// END LIGHTS

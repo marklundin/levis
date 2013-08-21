@@ -1,6 +1,7 @@
 define(
-	["libs/threejs/examples/js/controls/TransformControls"], 
-	function(){
+	["utils/math",
+	 "libs/threejs/examples/js/controls/TransformControls",], 
+	function( math ){
 
 		return function( scene, camera, dom, gui ){
 
@@ -78,9 +79,20 @@ define(
 				},
 
 
-				addPointLight: function ( color, intensity, distance  ){
+				addPointLight: function ( color, intensity, distance, position  ){
 
-					var light = new THREE.PointLight( color, intensity, distance );
+					var light = new THREE.PointLight( color, intensity || math.random( 50, 100 ) , distance || 2000 );
+
+					if( position ){
+						light.position.copy( position );
+					}else{
+
+						light.position.set(
+							Math.random() * 30 - 15,
+							Math.random() * 30 - 15,
+							Math.random() * 30 - 15
+						).multiplyScalar( 100 );
+					}
 
 					light.helper = new THREE.PointLightHelper( light, 100 );
 					if( gui ) scene.add( light.helper );
