@@ -17,6 +17,7 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 	this.active = false;
 	this.hovered = false;
+	this.keysEnabled = false;
 
 	this.mode = 'translate';
 	this.space = 'world';
@@ -357,7 +358,7 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 		this.domElement.addEventListener( 'mousedown', onMouseDown, false );
 		this.domElement.addEventListener( 'mousemove', onMouseHover, false );
-		this.document.addEventListener( 'keydown', onKeyDown, false );
+		if( this.keysEnabled ) this.document.addEventListener( 'keydown', onKeyDown, false );
 
 	}
 
@@ -369,7 +370,7 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 		this.domElement.removeEventListener( 'mousedown', onMouseDown, false );
 		this.domElement.removeEventListener( 'mousemove', onMouseHover, false );
-		this.document.removeEventListener( 'keydown', onKeyDown, false );
+		if( this.keysEnabled ) this.document.removeEventListener( 'keydown', onKeyDown, false );
 
 	}
 
@@ -598,6 +599,8 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 				if ( hovered !== intersect.object ) {
 
+					scope.hovered = true;
+
 					if ( hovered !== null ) {
 
 						hovered.material.color.copy( hoveredColor );
@@ -616,7 +619,7 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 				}
 
-				scope.hovered = true;
+				
 
 			} else if ( hovered !== null ) {
 
@@ -624,9 +627,10 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 				hovered.material.opacity = hoveredOpacity;
 
 				hovered = null;
-				scope.dispatchEvent( changeEvent );
+				
 
 				scope.hovered = false;
+				scope.dispatchEvent( changeEvent );
 
 			}
 

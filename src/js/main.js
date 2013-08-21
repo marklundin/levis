@@ -27,6 +27,9 @@ define([
 	], function( DOM, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing ) {
 
 
+		var pageLoad = Date.now();
+
+
 		if( gui ){
 			var guiContainerDom = document.getElementById('gui');
 			guiContainerDom.appendChild( gui.domElement );
@@ -38,6 +41,7 @@ define([
 		// APP VARIABLES
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
+			FPS = 1 / 60;
 			MAX_SEARCH_RESULTS = 10,
 			SEARCH_RES_RADIUS = 0.3,
 			DIV_SLIDE_OFFSET = 80;
@@ -207,7 +211,9 @@ define([
 		}
 
 
-		var timeCoeff = 1;
+		var durationMs = 1,
+			pixelsPerSec = 500; 
+
 		function moveCameraTo( p, dst ){
 
 			distanceTarget = dst || 250;
@@ -220,9 +226,9 @@ define([
 			camMoveTransition.arrived = false;
 			camLookTransition.paused = false;
 
-			var d = camera.position.clone().sub( p ).length();
-			timeCoeff = 30000 / d;
-
+			var distance = camera.position.clone().sub( p ).length();
+			var duration = distance / pixelsPerSec;
+			durationMs   = duration * 1000;
 
 		}
 
@@ -238,11 +244,13 @@ define([
 		}
 
 
-		document.addEventListener( 'mousedown', function(){
+		document.addEventListener( 'mousedown', function( e ){
 
 			if( gui ) controls.autoRotate = false;
 
 			if( INTERSECTED && INTERSECTED !== clicked ){
+
+				e.preventDefault();
 
 				if( showingSearchResults && searchResObj3d.children.indexOf( INTERSECTED ) === -1 ) return;
 
@@ -538,7 +546,7 @@ define([
 					  loop: true,
 					  volume: gui ? 0 : 1.9,
 					});
-					animate();
+					run();
 
 				}, function( twitter, instagram ){
 
@@ -691,28 +699,52 @@ define([
 
 
 
+		var running = false;
+
+		function run(){
+
+			if( !running ){
+
+				var time, delta, startTime, t;
+
+				running = true;
 		
-		function animate( delta ){
+				function animate( timeSinceLoad ){
 
-			requestAnimationFrame( animate );
-			
-			controlsActive = lights.update( camera );
-			controls.setPauseState( controlsActive );
-			if( !controlsActive ) controls.update( camera );
-			if( gui && lastClicked ) controls.autoRotate = !controlsActive;
+					t = timeSinceLoad - startTime;
+					delta = t - time;
+					time = t;
+		
+					
+					controlsActive = lights.update( camera );
+					controls.setPauseState( controlsActive );
+					if( !controlsActive ) controls.update( camera );
+					if( gui && lastClicked ) controls.autoRotate = !controlsActive;
 
-			picking();
+					picking();
+					// console.log( FPS * 1000.0 / durationMs );
+					transition.update( delta / durationMs * api.speed );
 
-			transition.update( timestep * timeCoeff * api.speed );
+					if( arrived && lastClicked ){
+						var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
+						infoOverlay.css("transform", 'translate( '+ Number( pt.left ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+					}
 
-			if( arrived && lastClicked ){
-				var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
-				infoOverlay.css("transform", 'translate( '+ Number( pt.left ) + 'px, '+ Number( pt.top - 100 ) +'px )');
-				// infoOverlay.css("transform", 'translate( '+ 500+ 'px, '+ 400 +'px )');
+					render();
+					requestAnimationFrame( animate );
+
+				}
+
+				time = 0;
+	 			delta = 0;
+	 			t = 0;
+
+	 			startTime = timer.now() - ( performance && performance.timing ? performance.timing.navigationStart : pageLoad );
+	 			// console.log( new Date( performance.timing.navigationStart ), new Date( pageLoad ));
+
+				requestAnimationFrame( animate );
+		
 			}
-
-			render( delta || 0 );
-
 		}
 
 

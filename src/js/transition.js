@@ -21,7 +21,7 @@ define(function(){
 
 
 		params.spring   = params.spring || DEFAULT_SPRING_CONSTANT;
-		params.duration = params.duration || 3000;
+		// params.duration = params.duration || 3000;
 
 
 		var velocity 	= 0,

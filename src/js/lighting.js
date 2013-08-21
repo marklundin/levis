@@ -15,8 +15,7 @@ define(
 				l;
 
 			function onLightInteraction(e){
-				// console.log( 'here', !e.target.hovered );
-				isHovering = !e.target.hovered;
+				isHovering = e.target.hovered;
 			}
 
 			function addLight ( light ){
