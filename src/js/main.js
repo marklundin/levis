@@ -81,7 +81,7 @@ define([
 
 		controls.velocity = new THREE.Vector3();
 		controls.maxPolarAngle = Math.PI / 1.62;
-		controls.userRotateSpeed = 0.4;
+		controls.userRotateSpeed = 1.4;
 		controls.userPan = false;
 		controls.userZoom = false;
 		controls.autoRotateSpeed = 300 * timestep;
@@ -189,7 +189,7 @@ define([
 
 		var clicked;
 		var camMoveTransition = transition( controls, ['distance'], null, {spring:1.5} );
-		var camLookTransition = transition.vec3( controls.center, camTarget, null, {spring:2} );
+		var camLookTransition = transition.vec3( controls.center, new THREE.Vector3(), null, {spring:2} );
 		camLookTransition.paused = true;
 
 
@@ -212,23 +212,34 @@ define([
 
 
 		var durationMs = 1,
-			pixelsPerSec = 500; 
+			movePerSec = 1000;
 
-		function moveCameraTo( p, dst ){
+		function moveCameraTo( p, dst, speedCoeff ){
 
+			speedCoeff = speedCoeff || 1.0;
 			distanceTarget = dst || 250;
 
 			camMoveTransition.target = distanceTarget;
 			camLookTransition.target.copy( p );
 
+
 			moving = true;
 			camLookTransition.arrived = false;
 			camMoveTransition.arrived = false;
-			camLookTransition.paused = false;
+			camLookTransition.paused  = false;
 
-			var distance = camera.position.clone().sub( p ).length();
-			var duration = distance / pixelsPerSec;
-			durationMs   = duration * 1000;
+			// lookRange.set( 0, 0, lookRange ).applyQuaternion( camera.quaternion );
+
+			// camLookTransition.speed = tmpLookVec.sub( p ).length() / turnPerSec;
+			camLookTransition.speed = camMoveTransition.speed = speedCoeff;//movePerSec / Math.abs( camera.position.clone().sub( p ).length() - distanceTarget ) * speedCoeff;
+			console.log( camLookTransition.speed );
+
+
+
+			//tmpLookVec.normalize().multiplyScalar( theta ) / pixelsPerSec;
+			// var distance = camera.position.clone().sub( p ).length() / distanceTarget * 500;
+			// var duration = distance / pixelsPerSec;
+			// durationMs   = duration * 1000;
 
 		}
 
@@ -239,7 +250,7 @@ define([
 			// infoOverlay.fadeOut( 400 );
 			divFadeOut( infoOverlay, 400 );
 
-			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000 );
+			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0. );
 
 		}
 
@@ -435,7 +446,7 @@ define([
 				var api = {
 
 					frequency 	: 0.95,
-					speed 		: 0.95,
+					speed 		: 1.0,
 					threshold 	: 0.68,
 					noiseAmount : 0.7,
 					complexity 	: 0.82,
@@ -723,7 +734,7 @@ define([
 
 					picking();
 					// console.log( FPS * 1000.0 / durationMs );
-					transition.update( delta / durationMs * api.speed );
+					transition.update( delta / 1000 * api.speed );
 
 					if( arrived && lastClicked ){
 						var pt = toScreenXY( lastClicked.position, camera, $('#main')  );

@@ -55,6 +55,7 @@ define(function(){
 				target 	: target || null,
 				arrived	: false,
 				paused	: false,
+				speed 	: 1.0,
 				// normalize: function(){
 				// 	params.duration = Math.abs( controls.target - obj[prop] );
 				// 	// console.log('norm', params.duration );
@@ -64,8 +65,8 @@ define(function(){
 		var update = function( t ){
 
 			if( !controls.paused && controls.target !== null ){
-
-				system( obj[prop], controls.target, t );
+				
+				system( obj[prop], controls.target, t * controls.speed );
 
 				if( !controls.arrived && Math.abs( controls.target - obj[ prop ] ) <= DEFAULT_THRESHOLD ){
 					controls.arrived = true;
@@ -104,6 +105,7 @@ define(function(){
 				target 	: target || null,
 				arrived	: false, 
 				paused 	: true,
+				speed 	: 1.0,
 				// normalize: function(){
 
 				// 	var dx = Math.abs( controls.target.x - v3.x ),
@@ -121,9 +123,9 @@ define(function(){
 
 			if( !controls.paused && controls.target !== null ){
 
-				vx( v3.x, controls.target.x, t );
-				vy( v3.y, controls.target.y, t );
-				vz( v3.z, controls.target.z, t );
+				vx( v3.x, controls.target.x, t * controls.speed );
+				vy( v3.y, controls.target.y, t * controls.speed );
+				vz( v3.z, controls.target.z, t * controls.speed );
 
 				tx = controls.target.x - v3.x;
 				ty = controls.target.y - v3.y;
