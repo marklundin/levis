@@ -81,7 +81,7 @@ define(
 
 				addPointLight: function ( color, intensity, distance, position  ){
 
-					var light = new THREE.PointLight( color, intensity || math.random( 50, 100 ) , distance || 2000 );
+					var light = new THREE.PointLight( color, intensity , distance || 2000 );
 
 					if( position ){
 						light.position.copy( position );
