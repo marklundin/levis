@@ -742,11 +742,32 @@ define([
 				}
 
 
+				var thickness = 5;
+				var cubeGeometryW = new THREE.Mesh( new THREE.CubeGeometry( 85, 85, thickness, 10, 10, 1 )),
+					cubeGeometryD = new THREE.Mesh( new THREE.CubeGeometry( thickness, 85, 85, 1, 10, 10 )),
+					cubeGeometryT = new THREE.Mesh( new THREE.CubeGeometry( 85, thickness, 85, 10, 1, 10 ));
 
-				var cubeGeometry = new THREE.CubeGeometry( 100, 100, 100 );
+				var baseGeometry = new THREE.Geometry();
+				cubeGeometryW.position.z = -50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
+				cubeGeometryW.position.z = 50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
+
+				cubeGeometryD.position.x = -50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
+				cubeGeometryD.position.x = 50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
+
+				cubeGeometryT.position.y = -50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
+				cubeGeometryT.position.y = 50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
+
+
+
 				function getDataObject( result, isInstagram, position ){
 
-					var mesh = new THREE.Mesh( cubeGeometry, isInstagram ? videoContentMaterial.clone() : imageContentMaterial.clone()  );
+					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? videoContentMaterial.clone() : imageContentMaterial.clone()  );
 					var index = ( Math.random() * strut.volume.length )|0;
 					var item = strut.volume[index];
 
