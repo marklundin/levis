@@ -15,6 +15,11 @@ define(
 				isHovering 			= false,
 				l;
 
+
+			var ambientLight = new THREE.AmbientLight(0x222222);
+
+			scene.add(ambientLight);
+
 			function onLightInteraction(e){
 				isHovering = e.target.hovered;
 			}
@@ -287,6 +292,17 @@ define(
 				gui.add( api, 'addDirectionalLight' );
 				gui.add( api, 'addHemispshereLight' );
 				gui.add( api, 'addSpotLight' );
+
+				var ambLightUI = gui.addFolder( "Ambient Lighting" );
+				var amLightApi ={
+					color: "#"+ambientLight.color.getHexString()
+				}
+				ambLightUI.addColor( amLightApi, "color" ).onChange( function(){
+
+					ambientLight.color.set( amLightApi.color );
+
+				});
+				
 			} 
 
 

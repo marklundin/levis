@@ -398,7 +398,7 @@ define([
 			// MATERIALS
 
 				
-				var faceMaterial = new THREE.MeshPhongMaterial({metal:true});
+				var faceMaterial = new THREE.MeshPhongMaterial({color:0x000000, ambient:0xff0000, specular:0x000000});
 				
 
 				var videoContentMaterial = new THREE.MeshPhongMaterial({
@@ -507,15 +507,15 @@ define([
 						camera.updateProjectionMatrix();
 					},
 					structure:{
-						shininess: faceMaterial.shininess,
+						shininess	: faceMaterial.shininess,
 						color 		: "#"+faceMaterial.color.getHexString(),
 						specular 	: "#"+faceMaterial.specular.getHexString(),
 						ambient 	: "#"+faceMaterial.ambient.getHexString(),
 						updateMaterial: function(){
 							faceMaterial.color.set( api.structure.color );
-							// faceMaterial.specular.set( api.structure.specular );
-							// faceMaterial.ambient.set( api.structure.ambient );
-							// faceMaterial.shininess = api.structure.shininess.value;
+							faceMaterial.specular.set( api.structure.specular );
+							faceMaterial.ambient.set( api.structure.ambient );
+							faceMaterial.shininess = api.structure.shininess;
 						},
 					},
 
@@ -580,9 +580,10 @@ define([
 
 					var matgui = gui.addFolder('Structure Material');
 					matgui.addColor( api.structure, "color"	).onChange( api.structure.updateMaterial );
-					// matgui.addColor( api.material, "ambient" ).onChange( api.updateMaterial );
-					// matgui.addColor( api.material, "specular" ).onChange( api.updateMaterial );
-					// matgui.add( api.material, "shininess" ).onChange( api.updateMaterial );
+					matgui.addColor( api.structure, "ambient" ).onChange( api.structure.updateMaterial );
+					matgui.addColor( api.structure, "specular" ).onChange( api.structure.updateMaterial );
+					matgui.add( api.structure, "shininess" ).onChange( api.structure.updateMaterial );
+					matgui.add( faceMaterial, "metal" );
 
 					var dataObgGui = gui.addFolder( 'Data Object Material');
 					dataObgGui.add( api.dataObjects, 'refractionRatio' ).onChange( api.dataObjects.updateMaterial );
