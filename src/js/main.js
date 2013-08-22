@@ -398,29 +398,29 @@ define([
 			// MATERIALS
 
 				
-				var faceMaterial = new THREE.MeshPhongMaterial({color:0x000000, ambient:0xff0000, specular:0x000000});
+				var faceMaterial = new THREE.MeshPhongMaterial();
 				
 
 				var videoContentMaterial = new THREE.MeshPhongMaterial({
-					// color:new THREE.Color( 0xff2200 ),
-					// ambient:new THREE.Color( 0xff2200 ),
-					// transparent: true,
-					// envMap: cubemap,
-					// side: THREE.DoubleSide,
-					// // lights: false,
-					// // blending: THREE.AdditiveBlending,
-					// opacity: 0.8,
+					color:new THREE.Color( 0xff2200 ),
+					ambient:new THREE.Color( 0xff2200 ),
+					transparent: true,
+					envMap: cubemap,
+					side: THREE.DoubleSide,
+					// lights: false,
+					// blending: THREE.AdditiveBlending,
+					opacity: 0.8,
 				});
 				videoContentMaterial.originColor = new THREE.Color( 0xff2200 )
 
 				var imageContentMaterial = new THREE.MeshPhongMaterial({
-					// color:new THREE.Color( 0x0033ff ),
-					// ambient:new THREE.Color( 0x00fff00 ),
-					// transparent: true,
-					// envMap: cubemap,
-					// side: THREE.DoubleSide,
-					// // blending: THREE.AdditiveBlending,
-					// opacity: 0.8,
+					color:new THREE.Color( 0x0033ff ),
+					ambient:new THREE.Color( 0x00fff00 ),
+					transparent: true,
+					envMap: cubemap,
+					side: THREE.DoubleSide,
+					// blending: THREE.AdditiveBlending,
+					opacity: 0.8,
 				});
 				imageContentMaterial.originColor = new THREE.Color( 0x0033ff )
 
@@ -525,7 +525,20 @@ define([
 						reflectivity: 1,
 						opacity: 0.8,
 						metal: false,
-
+						twitter:{
+							color 		: "#"+imageContentMaterial.color.getHexString(),	
+							specular 	: "#"+imageContentMaterial.specular.getHexString(),
+							ambient 	: "#"+imageContentMaterial.ambient.getHexString(),
+							shininess	: imageContentMaterial.shininess,
+							combine 	: imageContentMaterial.combine
+						},
+						instagram :{
+							color 		: "#"+videoContentMaterial.color.getHexString(),	
+							specular 	: "#"+videoContentMaterial.specular.getHexString(),
+							ambient 	: "#"+videoContentMaterial.ambient.getHexString(),
+							shininess	: videoContentMaterial.shininess,
+							combine 	: imageContentMaterial.combine
+						},
 						updateMaterial:function(){
 
 							var n = contentObj3d.children.length;
@@ -536,6 +549,11 @@ define([
 									contentObj3d.children[n].material.reflectivity 		= api.dataObjects.reflectivity;
 									contentObj3d.children[n].material.opacity 			= api.dataObjects.opacity;
 									contentObj3d.children[n].material.metal 			= api.dataObjects.metal;
+									contentObj3d.children[n].material.color.set( contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.color : api.dataObjects.twitter.color );
+									contentObj3d.children[n].material.specular.set( contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.specular : api.dataObjects.twitter.specular );
+									contentObj3d.children[n].material.ambient.set( contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.ambient : api.dataObjects.twitter.ambient );
+									contentObj3d.children[n].material.shininess 		= contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.shininess : api.dataObjects.twitter.shininess;
+									contentObj3d.children[n].material.combine 			= contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.combine : api.dataObjects.twitter.combine;
 									contentObj3d.children[n].material.needsUpdate = true;
 
 								} 
@@ -576,7 +594,6 @@ define([
 					formgui.add( api, "horizontal_thickness", 0, 50	).onFinishChange( api.generate );
 					formgui.add( api, "vertical_thickness", 0, 50	).onFinishChange( api.generate );
 
-					formgui.open();
 
 					var matgui = gui.addFolder('Structure Material');
 					matgui.addColor( api.structure, "color"	).onChange( api.structure.updateMaterial );
@@ -590,6 +607,20 @@ define([
 					dataObgGui.add( api.dataObjects, 'reflectivity' ).onChange( api.dataObjects.updateMaterial );
 					dataObgGui.add( api.dataObjects, 'opacity' ).onChange( api.dataObjects.updateMaterial );
 					dataObgGui.add( api.dataObjects, 'metal' ).onChange( api.dataObjects.updateMaterial );
+
+					var instgramUI = dataObgGui.addFolder( 'instagram material')
+					instgramUI.addColor( api.dataObjects.instagram, 'color' ).onChange( api.dataObjects.updateMaterial );
+					instgramUI.addColor( api.dataObjects.instagram, 'specular' ).onChange( api.dataObjects.updateMaterial );
+					instgramUI.addColor( api.dataObjects.instagram, 'ambient' ).onChange( api.dataObjects.updateMaterial );
+					instgramUI.add( api.dataObjects.instagram, 'shininess' )
+					instgramUI.add( api.dataObjects.instagram, 'combine', { Multiply: THREE.MultiplyOperation, Mix: THREE.MixOperation, Add: THREE.AddOperation } ).onChange( api.dataObjects.updateMaterial );
+
+					var twitterUI = dataObgGui.addFolder( 'twitter material')
+					twitterUI.addColor( api.dataObjects.twitter, 'color' ).onChange( api.dataObjects.updateMaterial );
+					twitterUI.addColor( api.dataObjects.twitter, 'specular' ).onChange( api.dataObjects.updateMaterial );
+					twitterUI.addColor( api.dataObjects.twitter, 'ambient' ).onChange( api.dataObjects.updateMaterial );
+					twitterUI.add( api.dataObjects.twitter, 'shininess' )
+					twitterUI.add( api.dataObjects.twitter, 'combine', { Multiply: THREE.MultiplyOperation, Mix: THREE.MixOperation, Add: THREE.AddOperation } ).onChange( api.dataObjects.updateMaterial );
 					
 
 
@@ -632,6 +663,7 @@ define([
 						isInstagram = n >= twitter.results.length;
 						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
 						dataObject = getDataObject( result, isInstagram )
+						dataObject.isInstagram = isInstagram;
 						contentObj3d.add( dataObject );
 
 						if( n <= INITIAL_NUM_ANIMATIONS ){
