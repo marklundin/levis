@@ -31,8 +31,8 @@ define([
 
 
 		if( gui ){
-			// var guiContainerDom = document.getElementById('gui');
-			// guiContainerDom.appendChild( gui.domElement );
+			var guiContainerDom = document.getElementById('gui');
+			guiContainerDom.appendChild( gui.domElement );
 		}
 
 
@@ -192,6 +192,18 @@ define([
 			resetCamera();
 
 		});
+
+
+		var urls = [
+		  'img/skybox/px.jpg',
+		  'img/skybox/nx.jpg',
+		  'img/skybox/py.jpg',
+		  'img/skybox/ny.jpg',
+		  'img/skybox/pz.jpg',
+		  'img/skybox/nz.jpg',
+		];
+
+		var cubemap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
 
 
 		
@@ -390,23 +402,25 @@ define([
 				
 
 				var videoContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0xff2200 ),
-					ambient:new THREE.Color( 0xff2200 ),
-					transparent: true,
-					side: THREE.DoubleSide,
-					// lights: false,
-					// blending: THREE.AdditiveBlending,
-					opacity: 0.8,
+					// color:new THREE.Color( 0xff2200 ),
+					// ambient:new THREE.Color( 0xff2200 ),
+					// transparent: true,
+					// envMap: cubemap,
+					// side: THREE.DoubleSide,
+					// // lights: false,
+					// // blending: THREE.AdditiveBlending,
+					// opacity: 0.8,
 				});
 				videoContentMaterial.originColor = new THREE.Color( 0xff2200 )
 
 				var imageContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0x0033ff ),
-					ambient:new THREE.Color( 0x00fff00 ),
-					transparent: true,
-					side: THREE.DoubleSide,
-					// blending: THREE.AdditiveBlending,
-					opacity: 0.8,
+					// color:new THREE.Color( 0x0033ff ),
+					// ambient:new THREE.Color( 0x00fff00 ),
+					// transparent: true,
+					// envMap: cubemap,
+					// side: THREE.DoubleSide,
+					// // blending: THREE.AdditiveBlending,
+					// opacity: 0.8,
 				});
 				imageContentMaterial.originColor = new THREE.Color( 0x0033ff )
 
@@ -414,12 +428,13 @@ define([
 					color:new THREE.Color( 0xff33ff ),
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
+					envMap: cubemap,
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.8,
 				});
 
-				function updateMaterial(){
+				function updateAllMaterial(){
 					var n = contentObj3d.children.length;
 					while( n-- > 0 ){
 						if( contentObj3d.children[n].material ) contentObj3d.children[n].material.needsUpdate = true;
@@ -449,8 +464,8 @@ define([
 			//LIGHTS
 
 				var lights = new lighting( scene, camera, container, gui );
-				lights.onLightAdded( updateMaterial );
-				lights.onLightRemoved( updateMaterial );
+				lights.onLightAdded( updateAllMaterial );
+				lights.onLightRemoved( updateAllMaterial );
 				lights.addPointLight( 0xffffff );
 				lights.addPointLight( 0xffffff );
 				lights.addPointLight( 0xffffff );
@@ -477,12 +492,7 @@ define([
 					camera 		: false,
 
 					background_color: '#'+renderer.getClearColor().getHexString(),
-					material:{
-						shininess: faceMaterial.shininess,
-						color 		: "#"+faceMaterial.color.getHexString(),
-						specular 	: "#"+faceMaterial.specular.getHexString(),
-						ambient 	: "#"+faceMaterial.ambient.getHexString(),
-					},
+
 
 					fog:{
 						color: "#"+scene.fog.color.getHexString()
@@ -496,18 +506,62 @@ define([
 					updateCamera: function(){
 						camera.updateProjectionMatrix();
 					},
-					updateMaterial: function(){
-						console.log( api.material.color );
-						faceMaterial.color.set( api.material.color );
-						faceMaterial.specular.set( api.material.specular );
-						faceMaterial.ambient.set( api.material.ambient );
-						faceMaterial.shininess = api.material.shininess.value;
-
-
+					structure:{
+						shininess: faceMaterial.shininess,
+						color 		: "#"+faceMaterial.color.getHexString(),
+						specular 	: "#"+faceMaterial.specular.getHexString(),
+						ambient 	: "#"+faceMaterial.ambient.getHexString(),
+						updateMaterial: function(){
+							faceMaterial.color.set( api.structure.color );
+							// faceMaterial.specular.set( api.structure.specular );
+							// faceMaterial.ambient.set( api.structure.ambient );
+							// faceMaterial.shininess = api.structure.shininess.value;
+						},
 					},
+
+					dataObjects:{
+
+						refractionRatio: 0.98,
+						reflectivity: 1,
+						opacity: 0.8,
+						metal: false,
+
+						updateMaterial:function(){
+
+							var n = contentObj3d.children.length;
+							while( n-- > 0 ){
+								if( contentObj3d.children[n].material ){
+
+									contentObj3d.children[n].material.refractionRatio 	= api.dataObjects.refractionRatio;
+									contentObj3d.children[n].material.reflectivity 		= api.dataObjects.reflectivity;
+									contentObj3d.children[n].material.opacity 			= api.dataObjects.opacity;
+									contentObj3d.children[n].material.metal 			= api.dataObjects.metal;
+									contentObj3d.children[n].material.needsUpdate = true;
+
+								} 
+							}
+
+							n = searchResObj3d.children.length;
+							while( n-- > 0 ){
+								if( searchResObj3d.children[n].material ) {
+
+									searchResObj3d.children[n].material.refractionRatio = api.dataObjects.refractionRatio;
+									searchResObj3d.children[n].material.reflectivity 	= api.dataObjects.reflectivity;
+									searchResObj3d.children[n].material.opacity 		= api.dataObjects.opacity;
+									contentObj3d.children[n].material.metal 			= api.dataObjects.metal;
+									contentObj3d.children[n].material.needsUpdate = true;
+
+								}
+							}
+
+
+						}
+					},
+
 					updateBackgoundColor: function(){
 						renderer.setClearColor( api.background_color );
 					},
+
 					updateFogColor: function(){
 						scene.fog.color.set( api.fog.color );
 					}
@@ -524,11 +578,18 @@ define([
 
 					formgui.open();
 
-					var matgui = gui.addFolder('material');
-					matgui.addColor( api.material, "color"	).onChange( api.updateMaterial );
+					var matgui = gui.addFolder('Structure Material');
+					matgui.addColor( api.structure, "color"	).onChange( api.structure.updateMaterial );
 					// matgui.addColor( api.material, "ambient" ).onChange( api.updateMaterial );
 					// matgui.addColor( api.material, "specular" ).onChange( api.updateMaterial );
 					// matgui.add( api.material, "shininess" ).onChange( api.updateMaterial );
+
+					var dataObgGui = gui.addFolder( 'Data Object Material');
+					dataObgGui.add( api.dataObjects, 'refractionRatio' ).onChange( api.dataObjects.updateMaterial );
+					dataObgGui.add( api.dataObjects, 'reflectivity' ).onChange( api.dataObjects.updateMaterial );
+					dataObgGui.add( api.dataObjects, 'opacity' ).onChange( api.dataObjects.updateMaterial );
+					dataObgGui.add( api.dataObjects, 'metal' ).onChange( api.dataObjects.updateMaterial );
+					
 
 
 					var fogGui = gui.addFolder( 'fog' );
@@ -536,11 +597,11 @@ define([
 					fogGui.add( scene.fog, "near" );
 					fogGui.add( scene.fog, "far" );
 					
-					gui.add( api, 	"seed" );
-					gui.add( api, 	"random" );
-					gui.add( api, 	"generate" );
-					gui.add( skyMat, "visible" );
-					gui.add( api, 	"speed" );
+					gui.add( api, 		"seed" );
+					gui.add( api, 		"random" );
+					gui.add( api, 		"generate" );
+					gui.add( skyMat, 	"visible" );
+					gui.add( api, 		"speed" );
 
 					gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
 					gui.addColor( api, "background_color" ).onChange( api.updateBackgoundColor );
@@ -576,19 +637,21 @@ define([
 
 							var probability = Math.random();
 							var prop = probability <  1/3 ? 'x' : probability < 2/3 ? 'y' : 'z';
-							dataObject.targetPosition = dataObject.position[prop];
-							dataObject.position[prop] += 4000 * ( Math.round( Math.random() ) * 2 - 1 );
-							dataObject.unclickable = true;
+							dataObject.targetPosition   = dataObject.position[prop];
+							dataObject.position[prop]  += 4000 * ( Math.round( Math.random() ) * 2 - 1 );
+							dataObject.unclickable 		= true;
 							dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
 								spring: 10,//math.random( 1, 10 ),
 								speed: math.random( 0.1, 1 ),
 								delay: n === INITIAL_NUM_ANIMATIONS ? 0 : math.random( 1.0, 8.0 )
 							});
 
-							dataObject.transition.callback = function( e, b){
+							dataObject.transition.callback = function( e, b ){
+
 								dataObject.unclickable = false;
 								dataObject.transition.dispose();
 								console.log( 'Animation Completed', INITIAL_NUM_ANIMATIONS );
+
 							}.bind( this, dataObject.transition );
 
 						}
