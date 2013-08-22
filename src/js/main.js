@@ -31,8 +31,8 @@ define([
 
 
 		if( gui ){
-			var guiContainerDom = document.getElementById('gui');
-			guiContainerDom.appendChild( gui.domElement );
+			// var guiContainerDom = document.getElementById('gui');
+			// guiContainerDom.appendChild( gui.domElement );
 		}
 
 
@@ -526,9 +526,9 @@ define([
 
 					var matgui = gui.addFolder('material');
 					matgui.addColor( api.material, "color"	).onChange( api.updateMaterial );
-					matgui.addColor( api.material, "ambient" ).onChange( api.updateMaterial );
-					matgui.addColor( api.material, "specular" ).onChange( api.updateMaterial );
-					matgui.add( api.material, "shininess" ).onChange( api.updateMaterial );
+					// matgui.addColor( api.material, "ambient" ).onChange( api.updateMaterial );
+					// matgui.addColor( api.material, "specular" ).onChange( api.updateMaterial );
+					// matgui.add( api.material, "shininess" ).onChange( api.updateMaterial );
 
 
 					var fogGui = gui.addFolder( 'fog' );
