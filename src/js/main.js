@@ -497,7 +497,7 @@ define([
 						camera.updateProjectionMatrix();
 					},
 					updateMaterial: function(){
-
+						console.log( api.material.color );
 						faceMaterial.color.set( api.material.color );
 						faceMaterial.specular.set( api.material.specular );
 						faceMaterial.ambient.set( api.material.ambient );
@@ -578,6 +578,7 @@ define([
 							var prop = probability <  1/3 ? 'x' : probability < 2/3 ? 'y' : 'z';
 							dataObject.targetPosition = dataObject.position[prop];
 							dataObject.position[prop] += 4000 * ( Math.round( Math.random() ) * 2 - 1 );
+							dataObject.unclickable = true;
 							dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
 								spring: 10,//math.random( 1, 10 ),
 								speed: math.random( 0.1, 1 ),
@@ -585,8 +586,9 @@ define([
 							});
 
 							dataObject.transition.callback = function( e, b){
+								dataObject.unclickable = false;
 								dataObject.transition.dispose();
-								console.log( 'here' );
+								console.log( 'Animation Completed', INITIAL_NUM_ANIMATIONS );
 							}.bind( this, dataObject.transition );
 
 						}
@@ -836,7 +838,7 @@ define([
 
 			var intersects = raycaster.intersectObjects( contentObj3d.children, true );
 			
-			if ( intersects.length > 0) {
+			if ( intersects.length > 0 && !intersects[ 0 ].object.unclickable) {
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 

@@ -22,7 +22,6 @@ define(function(){
 		
 		params.spring   = params.spring || DEFAULT_SPRING_CONSTANT;
 		params.delay 	= params.delay  || 0;
-		console.log( params.spring );
 
 		var velocity 	= 0,
 			totaltime 	= 0,
@@ -34,7 +33,6 @@ define(function(){
 		return update = function( a, b, delta ){
 
 			totaltime += delta;
-			// console.log( delta, params.delay );
 			if( totaltime >= params.delay ){
 
 				theta 		 = b - a;
@@ -45,8 +43,6 @@ define(function(){
 			    velocity    += force * time;
 
 				obj[prop]   += velocity * time;
-			}else{
-				// console.log( time , 	 params.delay)
 			}
 
 		};
