@@ -204,7 +204,8 @@ define([
 		];
 
 		var cubemap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
-
+		var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 512 );
+		envMap = cubeCamera.renderTarget;
 
 		
 		$( "#show-more" ).click(function( e ){
@@ -405,7 +406,7 @@ define([
 					color:new THREE.Color( 0xff2200 ),
 					ambient:new THREE.Color( 0xff2200 ),
 					transparent: true,
-					envMap: cubemap,
+					envMap: envMap,
 					side: THREE.DoubleSide,
 					// lights: false,
 					// blending: THREE.AdditiveBlending,
@@ -418,6 +419,7 @@ define([
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
 					envMap: cubemap,
+					// map: envMap,
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.8,
@@ -966,6 +968,7 @@ define([
 
 		}
 
+		var cubeRendered = false;
 		function render( delta ){
 
 			//depth pass
@@ -978,6 +981,10 @@ define([
 			// console.time('render')
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
+			if( !cubeRendered ){
+				cubeRendered = true;
+				cubeCamera.updateCubeMap( renderer, scene );
+			}
 			renderer.render( scene, camera );
 			// console.timeEnd('render')
 
