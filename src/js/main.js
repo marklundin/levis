@@ -41,10 +41,11 @@ define([
 		// APP VARIABLES
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
-			FPmS = 1000 / 60;
+			FPmS = 1000 / 60,
+			INITIAL_NUM_ANIMATIONS = 7,
 			MAX_SEARCH_RESULTS = 10,
 			SEARCH_RES_RADIUS = 0.3,
-			DIV_SLIDE_OFFSET = 80;
+			DIV_SLIDE_OFFSET = 80,
 			STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
 
 
@@ -453,7 +454,7 @@ define([
 				lights.addPointLight( 0xffffff );
 				lights.addPointLight( 0xffffff );
 				lights.addPointLight( 0xffffff );
-			
+
 
 
 			// END LIGHTS
@@ -543,6 +544,7 @@ define([
 
 					gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
 					gui.addColor( api, "background_color" ).onChange( api.updateBackgoundColor );
+
 				}
 
 
@@ -561,13 +563,33 @@ define([
 					generate();
 
 					var n = twitter.results.length + instagram.results.length,
-						result, isInstagram;
+						result, isInstagram, dataObject;
 						
 					while( n-- > 0 ){
 
 						isInstagram = n >= twitter.results.length;
 						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
-						contentObj3d.add( getDataObject( result, isInstagram ) );
+						dataObject = getDataObject( result, isInstagram )
+						contentObj3d.add( dataObject );
+
+						if( n <= INITIAL_NUM_ANIMATIONS ){
+
+							var probability = Math.random();
+							var prop = probability <  1/3 ? 'x' : probability < 2/3 ? 'y' : 'z';
+							dataObject.targetPosition = dataObject.position[prop];
+							dataObject.position[prop] += 4000 * ( Math.round( Math.random() ) * 2 - 1 );
+							dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
+								spring: 10,//math.random( 1, 10 ),
+								speed: math.random( 0.1, 1 ),
+								delay: n === INITIAL_NUM_ANIMATIONS ? 0 : math.random( 1.0, 8.0 )
+							});
+
+							dataObject.transition.callback = function( e, b){
+								dataObject.transition.dispose();
+								console.log( 'here' );
+							}.bind( this, dataObject.transition );
+
+						}
 					}
 
 					var sound = new Howl({

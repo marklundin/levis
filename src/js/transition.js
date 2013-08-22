@@ -19,12 +19,13 @@ define(function(){
 
 	function getSystem( obj, prop, target, params ){
 
-
+		
 		params.spring   = params.spring || DEFAULT_SPRING_CONSTANT;
-		// params.duration = params.duration || 3000;
-
+		params.delay 	= params.delay  || 0;
+		console.log( params.spring );
 
 		var velocity 	= 0,
+			totaltime 	= 0,
 			springForce, dampingForce, force,
 			root 		= Math.sqrt( params.spring ),
 			time, theta;
@@ -32,14 +33,21 @@ define(function(){
 
 		return update = function( a, b, delta ){
 
-			theta 		 = b - a;
-			time  	   	 = delta * api.globalSpeed;
-			springForce  = theta * params.spring;
-		    dampingForce = -velocity * 2.0 * root;
-		    force 		 = springForce + dampingForce;
-		    velocity    += force * time;
+			totaltime += delta;
+			// console.log( delta, params.delay );
+			if( totaltime >= params.delay ){
 
-			obj[prop]   += velocity * time;
+				theta 		 = b - a;
+				time  	   	 = delta * api.globalSpeed;
+				springForce  = theta * params.spring;
+			    dampingForce = -velocity * 2.0 * root;
+			    force 		 = springForce + dampingForce;
+			    velocity    += force * time;
+
+				obj[prop]   += velocity * time;
+			}else{
+				// console.log( time , 	 params.delay)
+			}
 
 		};
 
@@ -55,7 +63,10 @@ define(function(){
 				target 	: target || null,
 				arrived	: false,
 				paused	: false,
-				speed 	: 1.0,
+				speed 	: params.speed || 1.0,
+				dispose: function(){
+					systems.splice( systems.indexOf( update ), 1 );
+				}
 			}
 
 		var update = function( t ){
@@ -101,7 +112,10 @@ define(function(){
 				target 	: target || null,
 				arrived	: false, 
 				paused 	: true,
-				speed 	: 1.0,
+				speed 	: params.speed || 1.0,
+				dispose: function(){
+					systems.splice( systems.indexOf( update ), 1 );
+				}
 			}
 
 		var update = function( t ){

@@ -88,9 +88,9 @@ define(
 					}else{
 
 						light.position.set(
-							Math.random() * 30 - 15,
-							Math.random() * 30 - 15,
-							Math.random() * 30 - 15
+							Math.random() * 12 - 6,
+							Math.random() * 12 - 6,
+							Math.random() * 12 - 6
 						).multiplyScalar( 100 );
 					}
 
