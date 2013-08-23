@@ -6,6 +6,10 @@ body{
 	font-family: "helvetica neue", arial, sans-serif;
 }
 
+video{
+	padding-bottom: 10px;
+}
+
 #search{
 	padding: 50px;
 	right: 0px;

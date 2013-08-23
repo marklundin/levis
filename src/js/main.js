@@ -229,10 +229,12 @@ define([
 		$( "#show-more" ).click(function( e ){
 
 			e.preventDefault();
-			infoOverlay.children( "#body" ).toggle({direction: 'right', step:function( n ){
-				// console.log( n );
-				// jdiv.xOffsetPos = easing.inOutQuad( 1 -  n ) * DIV_SLIDE_OFFSET;
-			}, duration:400}  );
+			infoOverlay.children( "#body" ).toggle({direction: 'right', duration:400, onComplete:function(){
+				infoOverlay.video.get(0).currentTime = 0;
+			}});
+			if( infoOverlay.video ){
+				infoOverlay.video.get(0).paused || infoOverlay.video.get(0).currentTime === 0 ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
+			} 
 
 		});
 
@@ -244,7 +246,11 @@ define([
 			if( !showingSearchResults ) resetCamera();
 			// infoOverlay.fadeOut( 400 );
 			divFadeOut( infoOverlay, 400 );
-			infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
+			if( infoOverlay.video ) infoOverlay.video.get(0).stop();
+
+			infoOverlay.children( "#body" ).hide('slide', {direction: 'right', onComplete:function(){
+				if( infoOverlay.video ) infoOverlay.remove( infoOverlay.video );
+			}}, 400 );
 
 		});
 
@@ -319,10 +325,22 @@ define([
 
 				controls.autoRotate = true;
 				var imageElem = infoOverlay.children('#body').children( '#image' );
-				divFadeOut( infoOverlay, 400, function( url ){
-					imageElem.attr( 'src', url );
-				}.bind( this, clicked.infoDataObject.attribution_avatar ) );
-				infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
+				divFadeOut( infoOverlay, 400, function( imageUrl, videoUrl ){
+
+					imageElem.attr( 'src', imageUrl );
+					if( clicked.isInstagram && videoUrl ){
+						console.log( videoUrl );
+						if( infoOverlay.video === undefined ){
+							$( '#date' ).before( infoOverlay.video = $('<video width="100%" height="auto" ></video>'));	
+							infoOverlay.video.sourceElem = infoOverlay.video.append('<source type="video/mp4" />');//.appendTo(infoOverlay.children('#body'));
+						} 
+						infoOverlay.video.sourceElem.attr( 'src', videoUrl );
+						
+					}
+
+				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
+
+				infoOverlay.children( "#body" ).hide('slide', { direction: 'right' }, 400 );
 				
 
 				moveCameraTo( clicked.position );
@@ -337,66 +355,66 @@ define([
 
 		// CLOUDS
 
-			var clouds = {};
-			var geometry = new THREE.Geometry();
+			// var clouds = {};
+			// var geometry = new THREE.Geometry();
 
-			var texture = THREE.ImageUtils.loadTexture( 'js/cloud10.png' );
-			texture.magFilter = THREE.LinearMipMapLinearFilter;
-			texture.minFilter = THREE.LinearMipMapLinearFilter;
-
-
-			clouds.material = new THREE.ShaderMaterial( {
-
-				uniforms: {
-
-					// 'tDepth': { type: 't', value: depthTarget },
-					"map": { type: "t", value: texture },
-					"fogColor" : { type: "c", value: scene.fog.color },
-					"fogNear" : { type: "f", value: scene.fog.near },
-					"fogFar" : { type: "f", value: scene.fog.far },
-
-				},
-				vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
-				fragmentShader: cloudsShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
-				// depthWrite: false,
-				// depthTest: false,
-				transparent: true,
-				// side: THREE.DoubleSide
-
-			} );
-
-			var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
-
-			for ( var i = 0; i < 4000; i++ ) {
-
-				plane.position.x = Math.random() * 1000 - 500;
-				plane.position.y = - Math.random() * Math.random() * 200 - 15;
-				plane.position.z = i;
-				plane.rotation.z = Math.random() * Math.PI;
-				plane.scale.x = plane.scale.y = Math.random() * Math.random() * 2.5 + 0.5;
+			// var texture = THREE.ImageUtils.loadTexture( 'js/cloud10.png' );
+			// texture.magFilter = THREE.LinearMipMapLinearFilter;
+			// texture.minFilter = THREE.LinearMipMapLinearFilter;
 
 
-				THREE.GeometryUtils.merge( geometry, plane );
+			// clouds.material = new THREE.ShaderMaterial( {
 
-			}
+			// 	uniforms: {
 
-			// var m = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ),  clouds.material );
-			// m.position.z = -40;
-			// m.rotation.y = Math.PI * -0.5;
-			// camera.add( m );
+			// 		// 'tDepth': { type: 't', value: depthTarget },
+			// 		"map": { type: "t", value: texture },
+			// 		"fogColor" : { type: "c", value: scene.fog.color },
+			// 		"fogNear" : { type: "f", value: scene.fog.near },
+			// 		"fogFar" : { type: "f", value: scene.fog.far },
 
-			var cloudsObj3d = new THREE.Object3D();
-			clouds.material.opacity = 0.01;
-			clouds.meshA = new THREE.Mesh( geometry, clouds.material );
-			// mesh.position.z = - 8000;
-			cloudsObj3d.add( clouds.meshA );
+			// 	},
+			// 	vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
+			// 	fragmentShader: cloudsShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
+			// 	// depthWrite: false,
+			// 	// depthTest: false,
+			// 	transparent: true,
+			// 	// side: THREE.DoubleSide
 
-			clouds.meshB = new THREE.Mesh( geometry, clouds.material );
-			clouds.meshB.position.z = - 8000;
-			cloudsObj3d.add( clouds.meshB );
+			// } );
+
+			// var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
+
+			// for ( var i = 0; i < 4000; i++ ) {
+
+			// 	plane.position.x = Math.random() * 1000 - 500;
+			// 	plane.position.y = - Math.random() * Math.random() * 200 - 15;
+			// 	plane.position.z = i;
+			// 	plane.rotation.z = Math.random() * Math.PI;
+			// 	plane.scale.x = plane.scale.y = Math.random() * Math.random() * 2.5 + 0.5;
+
+
+			// 	THREE.GeometryUtils.merge( geometry, plane );
+
+			// }
+
+			// // var m = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ),  clouds.material );
+			// // m.position.z = -40;
+			// // m.rotation.y = Math.PI * -0.5;
+			// // camera.add( m );
+
+			// var cloudsObj3d = new THREE.Object3D();
+			// clouds.material.opacity = 0.01;
+			// clouds.meshA = new THREE.Mesh( geometry, clouds.material );
+			// // mesh.position.z = - 8000;
+			// cloudsObj3d.add( clouds.meshA );
+
+			// clouds.meshB = new THREE.Mesh( geometry, clouds.material );
+			// clouds.meshB.position.z = - 8000;
+			// cloudsObj3d.add( clouds.meshB );
 
 			
-			scene.add( cloudsObj3d );
+			// scene.add( cloudsObj3d );
 
 
 		// END CLOUDS
@@ -893,7 +911,10 @@ define([
 
 						if( value !== '' ){
 
-							dataloader.search( value, function( results ){
+							dataloader.search( value, function( twitterResults, instagramResults ){
+
+								var results = twitterResults.concat( instagramResults );
+
 
 								searchOverlay.children('#body').children('#results').html(
 									'YOUR SEARCH FOR "'+value+'" RETURNED ' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + ' RESULTS' 
@@ -910,7 +931,7 @@ define([
 
 									setDatObjectsOpacity( 0.3 );
 									
-									var pos,
+									var pos, isInstagram,
 										positions = strut.centeredVolume.slice();
 										n = Math.min( results.length, MAX_SEARCH_RESULTS );
 
@@ -919,7 +940,9 @@ define([
 										pos = positions[ ( Math.random() * positions.length)|0 ];
 										nPos.set( pos[0], pos[1], pos[2] );
 
-										mesh = getDataObject( results[n], true, nPos );
+										isInstagram = n >= twitterResults.length;
+										mesh = getDataObject( results[n], isInstagram, nPos );
+										mesh.isInstagram = isInstagram;
 										mesh.material = searchContentMaterial.clone();
 										searchResObj3d.add( mesh );
 									}
@@ -1097,10 +1120,6 @@ define([
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
 
-			var n = cloudsObj3d.children.length;
-			while( n-- > 0 ){
-				cloudsObj3d.children[n].lookAt( camera.position );
-			}
 
 			if( !cubeRendered ){
 				cubeRendered = true;
