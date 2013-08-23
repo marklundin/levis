@@ -2,7 +2,7 @@ var DEBUG = false;
 
 
 define([
-
+	"module",
 	"utils/domReady!",
 	"jquery",
 	"libs/jquery-ui",
@@ -25,7 +25,7 @@ define([
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( DOM, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing, cloudsShader ) {
+	], function( module, DOM, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing, cloudsShader ) {
 
 
 		var pageLoad = Date.now();
@@ -220,10 +220,56 @@ define([
 		// normalmap.repeat.set( 10, 1 );
 
 
-		console.log( THREE.RepeatWrapping );
 		var cubemap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
 		var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 1024 );
 		envMap = cubeCamera.renderTarget;
+
+		var dataTexture = new THREE.Texture( null, new THREE.CubeRefractionMapping() );
+		function loadTexture ( array, onLoad, onError )  {
+
+			var images = [];
+			images.loadCount = 0;
+
+			dataTexture.image = images;
+			// if ( mapping !== undefined ) dataTexture.mapping = mapping;
+
+			// no flipping needed for cube textures
+
+			dataTexture.flipY = false;
+
+			for ( var i = 0, il = array.length; i < il; ++ i ) {
+
+				var cubeImage = new Image();
+				images[ i ] = cubeImage;
+
+				cubeImage.onload = function () {
+
+					images.loadCount += 1;
+
+					if ( images.loadCount === 6 ) {
+
+						dataTexture.needsUpdate = true;
+						if ( onLoad ) onLoad( dataTexture );
+
+					}
+
+				};
+
+				cubeImage.onerror = onError;
+
+				cubeImage.crossOrigin = '';
+				cubeImage.src = module.config().proxy + array[ i ];
+
+			}
+
+			return dataTexture;
+		}
+
+		function updateEnvMapWithImage( material, url ){
+			material.envMap = loadTexture( [url, url, url, url, url, url ], function(){
+
+			});
+		}
 
 		
 		$( "#show-more" ).click(function( e ){
@@ -246,10 +292,11 @@ define([
 			if( !showingSearchResults ) resetCamera();
 			// infoOverlay.fadeOut( 400 );
 			divFadeOut( infoOverlay, 400 );
-			if( infoOverlay.video ) infoOverlay.video.get(0).stop();
+			if( infoOverlay.video ) infoOverlay.video.get(0).pause();
 
 			infoOverlay.children( "#body" ).hide('slide', {direction: 'right', onComplete:function(){
 				if( infoOverlay.video ) infoOverlay.remove( infoOverlay.video );
+				clicked.material.envMap = envMap;
 			}}, 400 );
 
 		});
@@ -321,15 +368,20 @@ define([
 
 				if( showingSearchResults && searchResObj3d.children.indexOf( INTERSECTED ) === -1 ) return;
 
+				if( clicked ){
+					clicked.material.envMap = envMap;
+				}
+
 				clicked = INTERSECTED;
 
 				controls.autoRotate = true;
 				var imageElem = infoOverlay.children('#body').children( '#image' );
-				divFadeOut( infoOverlay, 400, function( imageUrl, videoUrl ){
+				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
 
-					imageElem.attr( 'src', imageUrl );
+					imageElem.attr( 'src', avatarUrl );
+					updateEnvMapWithImage( clicked.material, thumbUrl );
+
 					if( clicked.isInstagram && videoUrl ){
-						console.log( videoUrl );
 						if( infoOverlay.video === undefined ){
 							$( '#date' ).before( infoOverlay.video = $('<video width="100%" height="auto" ></video>'));	
 							infoOverlay.video.sourceElem = infoOverlay.video.append('<source type="video/mp4" />');//.appendTo(infoOverlay.children('#body'));
@@ -338,7 +390,7 @@ define([
 						
 					}
 
-				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
+				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
 
 				infoOverlay.children( "#body" ).hide('slide', { direction: 'right' }, 400 );
 				
@@ -518,7 +570,7 @@ define([
 					color:new THREE.Color( 0xff2200 ),
 					ambient:new THREE.Color( 0xff2200 ),
 					transparent: true,
-					// envMap: envMap,
+					envMap: envMap,
 					side: THREE.DoubleSide,
 					// lights: false,
 					// blending: THREE.AdditiveBlending,
@@ -530,7 +582,7 @@ define([
 					color:new THREE.Color( 0x0033ff ),
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
-					// envMap: cubemap,
+					envMap: cubemap,
 					// map: envMap,
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,

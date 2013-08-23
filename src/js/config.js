@@ -5,7 +5,11 @@ requirejs.config( {
 	waitSeconds:0,
 
 	config:{
+		main:{
+			proxy: "https://levismakeourmark.thismoment.com/v4/api/media/image_proxy.json?url="
+		},
 		data:{
+			
 			instagram:{
 				feed: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&sort=1&gallery_id=4&category_id=28",
 				search: "https://levismakeourmark.thismoment.com/v4/api/search/content.jsonp?environment=1&gallery_id=4&category_id=28&query="
