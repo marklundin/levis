@@ -173,6 +173,10 @@ define([
 		$( '#search-field' ).click( function(){
 			$( this ).select();
 			$( this ).keypress( function(){
+				if( clicked ){
+						clicked.material.envMap = envMap;
+					clicked.material.needsUpdate = true;
+				}
 				resetCamera();
 			});
 		});	
@@ -373,6 +377,7 @@ define([
 
 				if( clicked ){
 					clicked.material.envMap = envMap;
+					clicked.material.needsUpdate = true;
 				}
 
 				clicked = INTERSECTED;
@@ -954,8 +959,8 @@ define([
 
 					inputField.addEventListener( 'change', function(){
 
-						// infoOverlay.fadeOut( 400 );
 						divFadeOut( infoOverlay, 400 );
+						console.log( 'test' );
 						clicked = null;
 
 						var value = inputField.value,
@@ -969,7 +974,6 @@ define([
 							dataloader.search( value, function( twitterResults, instagramResults ){
 
 								var results = twitterResults.concat( instagramResults );
-
 
 								searchOverlay.children('#body').children('#results').html(
 									'YOUR SEARCH FOR "'+value+'" RETURNED ' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + ' RESULTS' 
