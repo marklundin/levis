@@ -2,11 +2,9 @@ define([
 		"libs/threejs/build/three"
 	],function(){
 
-		var DIMENSION = 100;
+		var DIMENSION = 1500;
 
 		
-
-
          // document.body.appendChild( canvas );
 
         function wrapText(context, text, x, y, maxWidth, lineHeight) {
@@ -46,28 +44,29 @@ define([
 			backGroundColor 	= backGroundColor || 0x000000;
 			backGroundAlpha		= backGroundAlpha || 0.0;
 			
-			context.font = size + "pt Arial";
+			context.font = size + "pt Helvertica Neue, Arial, sans";
+			context.scale(-1, -1);
 
 			var textWidth = context.measureText(text).width;
 
-			canvas.width = DIMENSION * 3;//textWidth + backgroundMargin;
-			canvas.height = DIMENSION * 3;//size + backgroundMargin;
+			// canvas.width = DIMENSION * 3;//textWidth + backgroundMargin;
+			// canvas.height = DIMENSION * 3;//size + backgroundMargin;
 			context = canvas.getContext("2d");
-			context.textAlign = 'left';
-			context.font = size + "pt Arial";
+			context.textAlign = 'center';
+			context.font = size + "pt Helvertica Neue, Arial, sans";
 
 			// if(backGroundColor) {
 			// context.globalAlpha = 1.0;//backGroundAlpha
-			context.fillStyle = ( '000000' + backGroundColor.toString( 16 ) ).slice( - 6 );;
+			// context.fillStyle = ( '000000' + backGroundColor.toString( 16 ) ).slice( - 6 );;
 			// context.fillRect(canvas.width / 2 - textWidth / 2 - backgroundMargin / 2, canvas.height / 2 - size / 2 - +backgroundMargin / 2, textWidth + backgroundMargin, size + backgroundMargin);
-			context.fillRect(0, 0, canvas.width, canvas.height );
+			// context.fillRect(0, 0, canvas.width, canvas.height );
 			// context.globalAlpha = 1.0;
 			// }
 
 			context.textBaseline = "middle";
 			context.fillStyle = ( '000000' + color.toString( 16 ) ).slice( - 6 );
 			// context.fillText(text, canvas.height / 2, canvas.height / 2 );
-			wrapText( context, text, 20, 20, canvas.width - 50, 21 );
+			wrapText( context, text, canvas.width*-0.5, canvas.height*-0.5, canvas.width * 0.3, 31 );
 
 			// context.strokeStyle = "black";
 			// context.strokeRect(0, 0, canvas.width, canvas.height);
@@ -75,19 +74,19 @@ define([
 			var texture = new THREE.Texture( canvas );
 			texture.needsUpdate = true;
 
-			var material = new THREE.MeshBasicMaterial({
-				map : texture,
-				transparent: backGroundAlpha < 1.0
-			});
+			// var material = new THREE.MeshBasicMaterial({
+			// 	map : texture,
+			// 	transparent: backGroundAlpha < 1.0
+			// });
 
-			var mesh = new THREE.Mesh( new THREE.PlaneGeometry( DIMENSION, DIMENSION ), material );
+			// var mesh = new THREE.Mesh( new THREE.PlaneGeometry( DIMENSION, DIMENSION ), material );
 			// mesh.overdraw = true;
 			// mesh.doubleSided = true;
 			// mesh.position.x = x - canvas.width;
 			// mesh.position.y = y - canvas.height;
 			// mesh.position.z = z;
 
-			return mesh;
+			return canvas;
 
 		}
 

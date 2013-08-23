@@ -174,7 +174,7 @@ define([
 			$( this ).select();
 			$( this ).keypress( function(){
 				if( clicked ){
-						clicked.material.envMap = envMap;
+					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
 				}
 				resetCamera();
@@ -230,14 +230,27 @@ define([
 		envMap = cubeCamera.renderTarget;
 
 		var dataTexture = new THREE.Texture( null, new THREE.CubeRefractionMapping() );
+		var textTexture = new THREE.Texture( null, 
+			new THREE.UVMapping(), 
+			THREE.ClampToEdgeWrapping, 
+			THREE.ClampToEdgeWrapping, 
+			THREE.LinearMipMapLinearFilter, THREE.LinearMipMapLinearFilter
+		);
+
+		this.offset = new THREE.Vector2( 0, 0 );
+		this.repeat = new THREE.Vector2( 0.05, 0.05 );
+		textTexture.magFilter = THREE.LinearMipMapLinearFilter;
+		textTexture.minFilter = THREE.LinearMipMapLinearFilter;
+
+		// this.mapping = mapping !== undefined ? mapping : new THREE.UVMapping();
+
+
 		function loadTexture ( array, onLoad, onError )  {
 
 			var images = [];
 			images.loadCount = 0;
-
 			dataTexture.image = images;
 			// if ( mapping !== undefined ) dataTexture.mapping = mapping;
-
 			// no flipping needed for cube textures
 
 			dataTexture.flipY = false;
@@ -252,12 +265,9 @@ define([
 					images.loadCount += 1;
 
 					if ( images.loadCount === 6 ) {
-
 						dataTexture.needsUpdate = true;
 						if ( onLoad ) onLoad( dataTexture );
-
 					}
-
 				};
 
 				cubeImage.onerror = onError;
@@ -272,6 +282,12 @@ define([
 
 		function updateEnvMapWithImage( material, url ){
 			material.envMap = loadTexture( [url, url, url, url, url, url ]);
+		}
+
+		function updateEnvMapWithCanvas( material, canvas ){
+			textTexture.image 	= [canvas, canvas, canvas, canvas, canvas, canvas ];
+			textTexture.needsUpdate = true;
+			material.envMap 	= textTexture;
 		}
 
 		
@@ -387,7 +403,14 @@ define([
 				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
 
 					imageElem.attr( 'src', avatarUrl );
-					updateEnvMapWithImage( clicked.material, thumbUrl );
+
+					console.log( clicked.isInstagram )
+					if( clicked.isInstagram ){
+						updateEnvMapWithImage( clicked.material, thumbUrl );
+					} else {
+						var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
+						updateEnvMapWithCanvas( clicked.material, tp );
+					}
 
 					if( clicked.isInstagram && videoUrl ){
 						if( infoOverlay.video === undefined ){
@@ -957,7 +980,7 @@ define([
 				// SEARCH 
 
 
-					inputField.addEventListener( 'change', function(){
+					$( '#search-field' ).change( function(){
 
 						divFadeOut( infoOverlay, 400 );
 						console.log( 'test' );
@@ -1004,6 +1027,7 @@ define([
 										mesh.isInstagram = isInstagram;
 										mesh.material = searchContentMaterial.clone();
 										searchResObj3d.add( mesh );
+
 									}
 								}
 
