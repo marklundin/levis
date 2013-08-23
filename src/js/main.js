@@ -19,12 +19,13 @@ define([
 	"pathcontrols",
 	'transition',
 	'utils/easing',
+	'glsl!shaders/clouds.glsl',
 	"purl",
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( DOM, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing ) {
+	], function( DOM, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing, cloudsShader ) {
 
 
 		var pageLoad = Date.now();
@@ -203,8 +204,25 @@ define([
 		  'img/skybox/nz.jpg',
 		];
 
+			
+		var bumpmap = THREE.ImageUtils.loadTexture( "img/sand-bump-map.jpg" ); // load textures
+		var normalmap = THREE.ImageUtils.loadTexture( "img/noise_normal.png" ); // load textures
+		var map = THREE.ImageUtils.loadTexture( "img/noise-bump.jpg" ); // load textures
+		
+		bumpmap.wrapS = bumpmap.wrapT = THREE.RepeatWrapping;
+		map.wrapS = map.wrapT = THREE.RepeatWrapping;
+		normalmap.wrapS = normalmap.wrapT = THREE.RepeatWrapping;
+		
+		map.repeat.set( 0.2, 0.2 );
+		normalmap.repeat.set( 0.2, 0.2 );
+		bumpmap.repeat.set( 0.05, 0.05 );
+
+		// normalmap.repeat.set( 10, 1 );
+
+
+		console.log( THREE.RepeatWrapping );
 		var cubemap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
-		var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 512 );
+		var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 1024 );
 		envMap = cubeCamera.renderTarget;
 
 		
@@ -317,6 +335,73 @@ define([
 		renderer.setSize( WIDTH, HEIGHT );
 
 
+		// CLOUDS
+
+			var clouds = {};
+			var geometry = new THREE.Geometry();
+
+			var texture = THREE.ImageUtils.loadTexture( 'js/cloud10.png' );
+			texture.magFilter = THREE.LinearMipMapLinearFilter;
+			texture.minFilter = THREE.LinearMipMapLinearFilter;
+
+
+			clouds.material = new THREE.ShaderMaterial( {
+
+				uniforms: {
+
+					// 'tDepth': { type: 't', value: depthTarget },
+					"map": { type: "t", value: texture },
+					"fogColor" : { type: "c", value: scene.fog.color },
+					"fogNear" : { type: "f", value: scene.fog.near },
+					"fogFar" : { type: "f", value: scene.fog.far },
+
+				},
+				vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
+				fragmentShader: cloudsShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
+				// depthWrite: false,
+				// depthTest: false,
+				transparent: true,
+				// side: THREE.DoubleSide
+
+			} );
+
+			var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
+
+			for ( var i = 0; i < 4000; i++ ) {
+
+				plane.position.x = Math.random() * 1000 - 500;
+				plane.position.y = - Math.random() * Math.random() * 200 - 15;
+				plane.position.z = i;
+				plane.rotation.z = Math.random() * Math.PI;
+				plane.scale.x = plane.scale.y = Math.random() * Math.random() * 2.5 + 0.5;
+
+
+				THREE.GeometryUtils.merge( geometry, plane );
+
+			}
+
+			// var m = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ),  clouds.material );
+			// m.position.z = -40;
+			// m.rotation.y = Math.PI * -0.5;
+			// camera.add( m );
+
+			var cloudsObj3d = new THREE.Object3D();
+			clouds.material.opacity = 0.01;
+			clouds.meshA = new THREE.Mesh( geometry, clouds.material );
+			// mesh.position.z = - 8000;
+			cloudsObj3d.add( clouds.meshA );
+
+			clouds.meshB = new THREE.Mesh( geometry, clouds.material );
+			clouds.meshB.position.z = - 8000;
+			cloudsObj3d.add( clouds.meshB );
+
+			
+			scene.add( cloudsObj3d );
+
+
+		// END CLOUDS
+
+
 
 		// DEPTH PASS
 			
@@ -359,7 +444,6 @@ define([
 			
 
 
-
 		// SKYDOME
 
 
@@ -399,14 +483,24 @@ define([
 			// MATERIALS
 
 				
-				var faceMaterial = new THREE.MeshPhongMaterial();
+				var faceMaterial = new THREE.MeshPhongMaterial({
+
+					envMap: envMap,
+					reflectivity: 0.3,
+					// bumpMap: bumpmap,
+					bumpScale: 0.2
+					// normalMap: normalmap,
+					// normalScale: new THREE.Vector2( 0.2, 0.2 )
+					// map: map
+
+				});
 				
 
 				var videoContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0xff2200 ),
 					ambient:new THREE.Color( 0xff2200 ),
 					transparent: true,
-					envMap: envMap,
+					// envMap: envMap,
 					side: THREE.DoubleSide,
 					// lights: false,
 					// blending: THREE.AdditiveBlending,
@@ -418,7 +512,7 @@ define([
 					color:new THREE.Color( 0x0033ff ),
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
-					envMap: cubemap,
+					// envMap: cubemap,
 					// map: envMap,
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
@@ -430,7 +524,7 @@ define([
 					color:new THREE.Color( 0xff33ff ),
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
-					envMap: cubemap,
+					// envMap: cubemap,
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.8,
@@ -1002,6 +1096,12 @@ define([
 			// console.time('render')
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
+
+			var n = cloudsObj3d.children.length;
+			while( n-- > 0 ){
+				cloudsObj3d.children[n].lookAt( camera.position );
+			}
+
 			if( !cubeRendered ){
 				cubeRendered = true;
 				cubeCamera.updateCubeMap( renderer, scene );
