@@ -71,6 +71,7 @@ define([
 			timestep 	   = 0.0008,
 			controlsActive = false,
 			isActive       = true,
+			clicked,
 			lastClicked,
 			showingSearchResults = false,
 
@@ -220,7 +221,7 @@ define([
 		// normalmap.repeat.set( 10, 1 );
 
 
-		var cubemap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
+		// var cubemap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
 		var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 1024 );
 		envMap = cubeCamera.renderTarget;
 
@@ -266,9 +267,7 @@ define([
 		}
 
 		function updateEnvMapWithImage( material, url ){
-			material.envMap = loadTexture( [url, url, url, url, url, url ], function(){
-
-			});
+			material.envMap = loadTexture( [url, url, url, url, url, url ]);
 		}
 
 		
@@ -292,17 +291,19 @@ define([
 			if( !showingSearchResults ) resetCamera();
 			// infoOverlay.fadeOut( 400 );
 			divFadeOut( infoOverlay, 400 );
-			if( infoOverlay.video ) infoOverlay.video.get(0).pause();
+			// if( infoOverlay.video ) infoOverlay.video.get(0).pause();
 
-			infoOverlay.children( "#body" ).hide('slide', {direction: 'right', onComplete:function(){
-				if( infoOverlay.video ) infoOverlay.remove( infoOverlay.video );
-				clicked.material.envMap = envMap;
-			}}, 400 );
+			infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
+
+			// if( infoOverlay.video ) infoOverlay.remove( infoOverlay.video );
+
+			lastClicked.material.envMap = envMap;
+			lastClicked.material.needsUpdate = true;
 
 		});
 
 
-		var clicked;
+		
 		var camMoveTransition = transition( controls, ['distance'], null, {spring:1.5} );
 		var camLookTransition = transition.vec3( controls.center, new THREE.Vector3(), null, {spring:2} );
 		camLookTransition.paused = true;
@@ -314,13 +315,15 @@ define([
 			arrived = true;
 			if( clicked ){
 				lastClicked = clicked;
-				var content = infoOverlay.children('#body')
+				var content = infoOverlay.children('#body');
+
 				content.children('#content').html( clicked.infoDataObject.title ); 
 				content.children('#user-info').children('#user-name').html( clicked.infoDataObject.user_name ); 
 				content.children('#user-info').children('#user-id').html( clicked.infoDataObject.user_id ); 
 				content.children('#date').html( new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
 				// infoOverlay.fadeIn( 400 );
-				divFadeIn( infoOverlay, 400 )
+				divFadeIn( infoOverlay, 400 );
+
 			}
 
 		}
@@ -349,7 +352,7 @@ define([
 
 
 		function resetCamera(){
- 
+
 			clicked = null;
 			divFadeOut( infoOverlay, 400 );
 
@@ -582,7 +585,7 @@ define([
 					color:new THREE.Color( 0x0033ff ),
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
-					envMap: cubemap,
+					envMap: envMap,
 					// map: envMap,
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
