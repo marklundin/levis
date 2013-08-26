@@ -225,9 +225,9 @@ define([
 		// normalmap.repeat.set( 10, 1 );
 
 
-		// var cubemap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
+		var envMap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
 		var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 1024 );
-		envMap = cubeCamera.renderTarget;
+		// envMap = cubeCamera.renderTarget;
 
 		var dataTexture = new THREE.Texture( null, new THREE.CubeRefractionMapping() );
 		var textTexture = new THREE.Texture( null, 
