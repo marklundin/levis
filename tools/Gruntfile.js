@@ -15,6 +15,16 @@ module.exports = function(grunt) {
           dest: '../versions/<%= gitinfo.local.branch.current.shortSHA %>'
         }]
       }
+    },
+
+    requirejs: {
+      compile: {
+        options: {
+          baseUrl: "../src/js",
+          mainConfigFile: "../src/js/config.js",
+          out: "path/to/optimized.js"
+        }
+      }
     }
 
   });
@@ -33,7 +43,10 @@ module.exports = function(grunt) {
   });
 
 
-  // Load the plugin that provides the "uglify" task.
+  
+
+
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-gh-pages');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-gitinfo');

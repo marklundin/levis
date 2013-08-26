@@ -82,6 +82,8 @@ define([
 		infoOverlay.fadeOut(0);
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
+
+		renderer.setClearColor( 0x2f2f2f );
 		
 
 		controls.velocity = new THREE.Vector3();
@@ -192,8 +194,12 @@ define([
 			inputField.value = '';
 			hideVisibleDataObjects();
 			divFadeOut( searchOverlay, 400 );
-			divFadeOut( infoOverlay, 400 );
-			infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
+			//divFadeOut( infoOverlay, 400 );
+			if( infoOverlay.expanded ){
+				console.log( 'hEREE ')
+				infoOverlay.expanded = false;
+				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 }, 400 );
+			}
 			setDatObjectsOpacity( 0.8 );
 
 			resetCamera();
@@ -291,16 +297,17 @@ define([
 			material.envMap 	= textTexture;
 		}
 
+		function updateInfoOffset( n, a ){
+			console.log( infoOverlay.expanded ? a : 1.0 - a  );
+			infoOverlay.xOffset = easing.inOutQuad( infoOverlay.expanded ? a : 1.0 - a ) * 500;
+		}
 		
 		$( "#show-more" ).click(function( e ){
 
 			e.preventDefault();
 			infoOverlay.expanded = !infoOverlay.expanded;
-			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:function( n, a, b, c ){
-				console.log( n, a, b)
-					infoOverlay.xOffset =  easing.inOutQuad( infoOverlay.expanded ? a : 1.0 - a ) * 500;//infoOverlay.width();
-				}, onComplete:function(){
-				infoOverlay.video.get(0).currentTime = 0;
+			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, onComplete:function(){
+				if( !infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
 			}});
 
 			if( infoOverlay.video ){
@@ -319,7 +326,11 @@ define([
 			divFadeOut( infoOverlay, 400 );
 			// if( infoOverlay.video ) infoOverlay.video.get(0).pause();
 
-			infoOverlay.children( "#body" ).hide('slide', {direction: 'right'}, 400 );
+			if( infoOverlay.expanded ){
+				infoOverlay.expanded = false;
+				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
+				if( lastClicked.isInstagram ) infoOverlay.video.get(0).pause();
+			}
 
 			// if( infoOverlay.video ) infoOverlay.remove( infoOverlay.video );
 
@@ -381,7 +392,7 @@ define([
 		function resetCamera(){
 
 			clicked = null;
-			divFadeOut( infoOverlay, 400 );
+			//divFadeOut( infoOverlay, 400 );
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
 
@@ -409,7 +420,8 @@ define([
 				var imageElem = infoOverlay.children('#body').children( '#image' );
 				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
 
-					imageElem.attr( 'src', avatarUrl );
+
+					imageElem.attr( 'src', avatarUrl )
 
 					
 					if( clicked.isInstagram ){
@@ -437,7 +449,10 @@ define([
 
 				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
 
-				infoOverlay.children( "#body" ).hide('slide', { direction: 'right' }, 400 );
+				if( infoOverlay.expanded ){
+					infoOverlay.expanded = false;
+					infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
+				}
 				
 
 				moveCameraTo( clicked.position );
@@ -603,7 +618,9 @@ define([
 					envMap: envMap,
 					reflectivity: 0.3,
 					// bumpMap: bumpmap,
-					bumpScale: 0.2
+					bumpScale: 0.2,
+					ambient: 0xFFFFFF,
+					specular: 0xFFFFFF,
 					// normalMap: normalmap,
 					// normalScale: new THREE.Vector2( 0.2, 0.2 )
 					// map: map
@@ -696,8 +713,8 @@ define([
 					threshold 	: 0.68,
 					noiseAmount : 0.7,
 					complexity 	: 0.82,
-					horizontal_thickness 	: 7,
-					vertical_thickness 	: 2,
+					horizontal_thickness 	: 11,
+					vertical_thickness 	: 3,
 					generate 	: generate,
 					seed 		: String( seed ),
 					camera 		: false,
@@ -996,7 +1013,7 @@ define([
 
 					$( '#search-field' ).change( function(){
 
-						divFadeOut( infoOverlay, 400 );
+						//divFadeOut( infoOverlay, 400 );
 						console.log( 'test' );
 						clicked = null;
 
@@ -1088,7 +1105,7 @@ define([
 
 		var running = false;
 		var startTime, time, delta, t, firstStep = true;
-		var offsetVec = new THREE.Vector3();
+		// var offsetVec = new THREE.Vector3();
 
 		function run(){
 
@@ -1116,9 +1133,7 @@ define([
 					transition.update( delta / 1000 * api.speed );
 
 					if( arrived && lastClicked ){
-						offsetVec.copy( lastClicked.position );
-						// offsetVec.y += 80;
-						var pt = toScreenXY( offsetVec , camera, $('#main')  );
+						var pt = toScreenXY( lastClicked.position , camera, $('#main')  );
 						infoOverlay.css("transform", 'translate( '+ Number( pt.left + 250 - infoOverlay.xOffset ) + 'px, '+ Number( pt.top - 200 ) +'px )');
 					}
 
