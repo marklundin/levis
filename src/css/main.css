@@ -141,7 +141,7 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 
 #info-overlay{
 	overflow: hidden;
-	/*display: none;*/
+	display: none;
 	vertical-align: top;
 	
 	position: absolute;

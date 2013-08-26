@@ -297,6 +297,7 @@ define([
 			infoOverlay.children( "#body" ).toggle({direction: 'right', duration:400, onComplete:function(){
 				infoOverlay.video.get(0).currentTime = 0;
 			}});
+
 			if( infoOverlay.video ){
 				infoOverlay.video.get(0).paused || infoOverlay.video.get(0).currentTime === 0 ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
 			} 
@@ -413,6 +414,8 @@ define([
 						updateEnvMapWithCanvas( clicked.material, tp );
 					}
 
+
+
 					if( clicked.isInstagram && videoUrl ){
 						if( infoOverlay.video === undefined ){
 							$( '#date' ).before( infoOverlay.video = $('<video width="100%" height="auto" ></video>'));	
@@ -421,6 +424,8 @@ define([
 						infoOverlay.video.sourceElem.attr( 'src', videoUrl );
 						
 					}
+
+					if( infoOverlay.video ) infoOverlay.video.toggle( clicked.isInstagram, 0 );
 
 				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
 
