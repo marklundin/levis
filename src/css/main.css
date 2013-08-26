@@ -169,9 +169,9 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	height: 50px;
 }
 
-#info-overlay #user-id:before {
+/*#info-overlay #user-id:before {
    content: "@";
-}
+}*/
 
 #search-overlay #body{
 	text-align: center;
