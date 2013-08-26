@@ -27,7 +27,6 @@ requirejs.config( {
         "text": "loaders/text",
         "json": "loaders/json",
         "template": "loaders/template",
-        // "libs": './libs'
 	},
 
 	shim:{
@@ -43,18 +42,11 @@ requirejs.config( {
 		"libs/jquery-ui": ['jquery'],
 
 
-
-		// "libs/underscore.js":{
-		// 	exports: "_"
-		// },
-
 		"libs/threejs/examples/js/postprocessing/EffectComposer": [
 			'libs/threejs/build/three',
 			"libs/threejs/examples/js/shaders/CopyShader", 
 			"libs/threejs/examples/js/postprocessing/ShaderPass",
 			"libs/threejs/examples/js/shaders/FXAAShader",
-			// "libs/threejs/examples/js/postprocessing/RenderPass",
-			// "libs/threejs/examples/js/shaders/SSAOShader",
 			"libs/threejs/examples/js/postprocessing/MaskPass"
 		],
 

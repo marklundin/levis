@@ -1,9 +1,4 @@
-if (typeof NAME    === 'undefined') NAME            = "Levis";
-if (typeof DEBUG   === 'undefined') DEBUG           = true;
-if (typeof VERSION === 'undefined') VERSION         = 'Unknown version';
-
-
-require([
+define('main',[
 	"module",
 	"jquery",
 	"libs/jquery-ui",
@@ -12,7 +7,6 @@ require([
 	"structure",
 	"glsl!shaders/skydome.glsl",
 	"utils/timer",
-	// "utils/noise",
 	"lighting",
 	"utils/gui",
 	"data",

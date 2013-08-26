@@ -1,88 +1,21 @@
 module.exports = function(grunt) {
 
 
-  var buildOptions = {
-          name: 'main',
-          baseUrl: "../src/js",
-          out: "../src/js/optimized.js",
-          optimize: "none",
-          waitSeconds: 0,
-          paths: {
-                "glsl": "loaders/glsl",
-                "text": "loaders/text",
-                "json": "loaders/json",
-                "template": "loaders/template",
-                // "libs": './libs'
-          },
-
-          shim:{
-
-            "libs/threejs/build/three":{
-              exports: "THREE"
-            },
-
-            "purl":{
-              deps:['jquery']
-            },
-
-            "libs/jquery-ui": ['jquery'],
+  var dev = grunt.file.readJSON( 'dev.build.js' );
+  
+  var replaceOptions = {
+      variables: {
+        'date': '<%= grunt.template.today() %>'
+      }
+    }
 
 
 
-            // "libs/underscore.js":{
-            //  exports: "_"
-            // },
-
-            "libs/threejs/examples/js/postprocessing/EffectComposer": [
-              'libs/threejs/build/three',
-              "libs/threejs/examples/js/shaders/CopyShader", 
-              "libs/threejs/examples/js/postprocessing/ShaderPass",
-              "libs/threejs/examples/js/shaders/FXAAShader",
-              // "libs/threejs/examples/js/postprocessing/RenderPass",
-              // "libs/threejs/examples/js/shaders/SSAOShader",
-              "libs/threejs/examples/js/postprocessing/MaskPass"
-            ],
-
-            "libs/threejs/examples/js/controls/OrbitControls": ['libs/threejs/build/three'] ,
-            "libs/threejs/examples/js/controls/PathControls": [
-              'libs/threejs/build/three',
-              "libs/threejs/src/extras/animation/Animation"
-            ] ,
-            "libs/threejs/src/extras/animation/Animation": ['libs/threejs/build/three'] ,
-            "libs/threejs/examples/js/shaders/SSAOShader": ['libs/threejs/build/three'] ,
-            "libs/threejs/examples/js/shaders/FXAAShader": ['libs/threejs/build/three'] ,
-            "libs/threejs/examples/js/shaders/CopyShader": ['libs/threejs/build/three'] ,
-            "libs/threejs/examples/js/postprocessing/RenderPass": ['libs/threejs/build/three'] ,
-            "libs/threejs/examples/js/postprocessing/ShaderPass": ['libs/threejs/build/three'],
-            "libs/threejs/examples/js/postprocessing/MaskPass":['libs/threejs/build/three'],
-            "libs/threejs/examples/js/controls/TransformControls":['libs/threejs/build/three'],
-            
-            "libs/threejs/examples/js/ImprovedNoise": {
-              exports:"ImprovedNoise"
-            }
-          
-          },
-          uglify2: {
-              compress: {
-                  drop_debugger: true,
-                  sequences: false,
-                  conditionals: false,
-                  join_vars: false,
-                  properties: false,
-                  global_defs: {
-                      DEBUG: true,
-                      VERSION: "UNKNOWN"
-                  }
-              }
-          }
-        }
-
-  // Project configuration.
+  // Project configuration. 
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),
 
-    gitinfo:{},
 
     copy:{
       main:{
@@ -96,8 +29,17 @@ module.exports = function(grunt) {
     },
 
     requirejs: {
-      compile: {
-        options: buildOptions
+      dev: {
+        options: dev
+      }
+    },
+
+    replace: {
+      dist: {
+        options: replaceOptions,
+        files: [
+          {expand: true, flatten: true, src: ['../build/index.html'], dest:'../build/'}
+        ]
       }
     }
 
@@ -117,9 +59,12 @@ module.exports = function(grunt) {
   });
 
 
+
+
+
   var CWD = "cwd";
-    var PROP = "prop";
-    var DIRTY_MARK = "dirtyMark";
+  var PROP = "prop";
+  var DIRTY_MARK = "dirtyMark";
 
     grunt.registerTask("describe", "Describes current git commit", function (prop, cwd) {
         // Start async task
@@ -170,24 +115,23 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('_stamp', function(){
-        buildOptions.uglify2.compress.global_defs.VERSION = String( global['version'] );
-        grunt.log.write( 'VERSION: ' +  String( global['version'] ) );
+        dev.uglify2.compress.global_defs.VERSION = String( global['version'] );
+        replaceOptions.variables.version = String( global['version'] );
+        grunt.log.write( 'VERSION: ' +  dev.uglify2.compress.global_defs.VERSION );
     })
-
-
-
-  
 
 
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-gh-pages');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-gitinfo');
+  grunt.loadNpmTasks('grunt-replace');
 
   // Default task(s).
   grunt.registerTask( 'snap', ['gitinfo', 'index', 'copy']);
   grunt.registerTask( 'version',  ['describe:version', '_stamp'] );
-  grunt.registerTask( 'default', ['snap']);
+  grunt.registerTask( 'build',  'Build the release version of the project.', [ 'version', 'requirejs:dev', "replace" ]);
+  grunt.registerTask( 'default', ['build']);
 
 
 };
