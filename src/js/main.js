@@ -338,7 +338,7 @@ define([
 				var content = infoOverlay.children('#body');
 
 				content.children('#content').html( clicked.infoDataObject.title ); 
-				console.log( clicked.infoDataObject.user_url );
+				$('#show-more').toggleClass( "camera-button-icon", clicked.isInstagram );
 				content.children('#user-info').children('#user-name').html( "<a href='"+clicked.infoDataObject.user_info.user_url + ( clicked.isInstagram ? "/"+clicked.infoDataObject.user_info.screen_name : "" ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
 				content.children('#user-info').children('#user-id').html( clicked.infoDataObject.user_id ); 
 				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 

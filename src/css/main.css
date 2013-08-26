@@ -30,17 +30,37 @@ video{
 	cursor: pointer;
 	display: inline-block;
 	
-
+	overflow: hidden;
 	background-size: contain;
 	width: 50px;
 	height: 50px;
-	padding-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 .close-button-icon{
 	/*opacity: 0.8;*/
+
 	background: 
-		url( ../img/close-button-icon.png )
+		url( ../img/x.svg ) white
+		no-repeat;
+}
+
+a:link {text-decoration:none; color: inherit;}      /* unvisited link */
+a:visited {text-decoration:none; color: inherit;}  /* visited link */
+a:hover {text-decoration:none; color: inherit; opacity:0.7;}  /* mouse over link */
+a:active {text-decoration:none; color: inherit;}  /* selected link */
+
+.tweet-button-icon{
+	/*opacity: 0.8;*/
+	background: 
+		url( ../img/tweet.svg ) white
+		no-repeat;
+}
+
+.camera-button-icon{
+	/*opacity: 0.8;*/
+	background: 
+		url( ../img/cam.svg ) white
 		no-repeat;
 }
 
@@ -121,7 +141,7 @@ video{
 
 #info-overlay{
 	overflow: hidden;
-	display: none;
+	/*display: none;*/
 	vertical-align: top;
 	
 	position: absolute;
