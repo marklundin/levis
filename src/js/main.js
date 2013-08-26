@@ -77,7 +77,8 @@ define([
 
 			INTERSECTED;
 
-
+		infoOverlay.expanded = false
+		infoOverlay.xOffset = 0;
 		infoOverlay.fadeOut(0);
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
@@ -294,7 +295,11 @@ define([
 		$( "#show-more" ).click(function( e ){
 
 			e.preventDefault();
-			infoOverlay.children( "#body" ).toggle({direction: 'right', duration:400, onComplete:function(){
+			infoOverlay.expanded = !infoOverlay.expanded;
+			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:function( n, a, b, c ){
+				console.log( n, a, b)
+					infoOverlay.xOffset =  easing.inOutQuad( infoOverlay.expanded ? a : 1.0 - a ) * 500;//infoOverlay.width();
+				}, onComplete:function(){
 				infoOverlay.video.get(0).currentTime = 0;
 			}});
 
@@ -1083,6 +1088,7 @@ define([
 
 		var running = false;
 		var startTime, time, delta, t, firstStep = true;
+		var offsetVec = new THREE.Vector3();
 
 		function run(){
 
@@ -1110,8 +1116,10 @@ define([
 					transition.update( delta / 1000 * api.speed );
 
 					if( arrived && lastClicked ){
-						var pt = toScreenXY( lastClicked.position, camera, $('#main')  );
-						infoOverlay.css("transform", 'translate( '+ Number( pt.left + 170 ) + 'px, '+ Number( pt.top - 100 ) +'px )');
+						offsetVec.copy( lastClicked.position );
+						// offsetVec.y += 80;
+						var pt = toScreenXY( offsetVec , camera, $('#main')  );
+						infoOverlay.css("transform", 'translate( '+ Number( pt.left + 250 - infoOverlay.xOffset ) + 'px, '+ Number( pt.top - 200 ) +'px )');
 					}
 
 					render();

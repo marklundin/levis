@@ -140,6 +140,7 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 }
 
 #info-overlay{
+
 	overflow: hidden;
 	display: none;
 	vertical-align: top;
