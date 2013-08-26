@@ -338,9 +338,10 @@ define([
 				var content = infoOverlay.children('#body');
 
 				content.children('#content').html( clicked.infoDataObject.title ); 
-				content.children('#user-info').children('#user-name').html( clicked.infoDataObject.user_name ); 
+				console.log( clicked.infoDataObject.user_url );
+				content.children('#user-info').children('#user-name').html( "<a href='"+clicked.infoDataObject.user_info.user_url + ( clicked.isInstagram ? "/"+clicked.infoDataObject.user_info.screen_name : "" ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
 				content.children('#user-info').children('#user-id').html( clicked.infoDataObject.user_id ); 
-				content.children('#date').html( new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
+				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
 				// infoOverlay.fadeIn( 400 );
 				divFadeIn( infoOverlay, 400 );
 
@@ -404,7 +405,7 @@ define([
 
 					imageElem.attr( 'src', avatarUrl );
 
-					console.log( clicked.isInstagram )
+					
 					if( clicked.isInstagram ){
 						updateEnvMapWithImage( clicked.material, thumbUrl );
 					} else {
