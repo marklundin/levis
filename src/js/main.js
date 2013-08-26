@@ -426,7 +426,7 @@ define([
 					}
 
 					if( infoOverlay.video ){
-						if( clicked.isInstagram ) infoOverlay.pause();
+						if( clicked.isInstagram ) infoOverlay.video.get(0).pause();
 						infoOverlay.video.toggle( clicked.isInstagram, 0 );	
 					} 
 
