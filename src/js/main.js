@@ -1,9 +1,8 @@
-var DEBUG = false;
+// var DEBUG = false;
 
 
-define([
+require([
 	"module",
-	"utils/domReady!",
 	"jquery",
 	"libs/jquery-ui",
 	"glsl!shaders/structure.glsl",
@@ -16,7 +15,6 @@ define([
 	"utils/gui",
 	"data",
 	"textplane",
-	"pathcontrols",
 	'transition',
 	'utils/easing',
 	'glsl!shaders/clouds.glsl',
@@ -25,7 +23,7 @@ define([
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( module, DOM, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, pathcontrols, transition, easing, cloudsShader ) {
+	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader ) {
 
 
 		var pageLoad = Date.now();
@@ -35,7 +33,6 @@ define([
 			var guiContainerDom = document.getElementById('gui');
 			guiContainerDom.appendChild( gui.domElement );
 		}
-
 
 
 
@@ -257,6 +254,8 @@ define([
 			var images = [];
 			images.loadCount = 0;
 			dataTexture.image = images;
+
+			var PROXY_URL = "https://levismakeourmark.thismoment.com/v4/api/media/image_proxy.json?url=";
 			// if ( mapping !== undefined ) dataTexture.mapping = mapping;
 			// no flipping needed for cube textures
 
@@ -280,7 +279,7 @@ define([
 				cubeImage.onerror = onError;
 
 				cubeImage.crossOrigin = '';
-				cubeImage.src = module.config().proxy + array[ i ];
+				cubeImage.src = ( module.config().proxy || PROXY_URL ) + array[ i ];
 
 			}
 
@@ -298,7 +297,6 @@ define([
 		}
 
 		function updateInfoOffset( n, a ){
-			console.log( infoOverlay.expanded ? a : 1.0 - a  );
 			infoOverlay.xOffset = easing.inOutQuad( infoOverlay.expanded ? a : 1.0 - a ) * 500;
 		}
 		
@@ -596,6 +594,8 @@ define([
 				uniforms: uniforms, side: THREE.BackSide 
 			} );
 
+
+			skyMat.visible = false;
 
 			var sky = new THREE.Mesh( skyGeo, skyMat );
 			scene.add( sky );
