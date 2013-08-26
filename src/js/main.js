@@ -1,4 +1,6 @@
-// var DEBUG = false;
+if (typeof NAME    === 'undefined') NAME            = "Levis";
+if (typeof DEBUG   === 'undefined') DEBUG           = true;
+if (typeof VERSION === 'undefined') VERSION         = 'Unknown version';
 
 
 require([
@@ -24,6 +26,14 @@ require([
 	
 
 	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader ) {
+
+
+		//PROJECT INFO
+        console.log( '==============================' );
+        console.log( 'NAME:         ' + NAME );
+        console.log( 'VERSION:      ' + VERSION );
+        console.log( 'DEBUG MODE:   ' + DEBUG   );
+        console.log( '==============================' );
 
 
 		var pageLoad = Date.now();
