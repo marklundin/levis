@@ -340,7 +340,7 @@ define([
 
 				content.children('#content').html( clicked.infoDataObject.title ); 
 				$('#show-more').toggleClass( "camera-button-icon", clicked.isInstagram );
-				content.children('#user-info').children('#user-name').html( "<a href='"+clicked.infoDataObject.user_info.user_url + ( clicked.isInstagram ? "/"+clicked.infoDataObject.user_info.screen_name : "" ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
+				content.children('#user-info').children('#user-name').html( "<a href='"+( clicked.isInstagram ? "http://instagram.com/"+clicked.infoDataObject.user_info.screen_name : clicked.infoDataObject.user_info.user_url  ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
 				content.children('#user-info').children('#user-id').html(( clicked.isInstagram ? "" : "@" ) + clicked.infoDataObject.user_info.screen_name ); 
 				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
 				// infoOverlay.fadeIn( 400 );
@@ -425,7 +425,10 @@ define([
 						
 					}
 
-					if( infoOverlay.video ) infoOverlay.video.toggle( clicked.isInstagram, 0 );
+					if( infoOverlay.video ){
+						if( clicked.isInstagram ) infoOverlay.pause();
+						infoOverlay.video.toggle( clicked.isInstagram, 0 );	
+					} 
 
 				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
 
