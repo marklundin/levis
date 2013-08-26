@@ -115,6 +115,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('_stamp', function(){
+        grunt.log.write( 'VERSION: ' +  dev.uglify2.compress.global_defs.VERSION );
         dev.uglify2.compress.global_defs.VERSION = String( global['version'] );
         replaceOptions.variables.version = String( global['version'] );
         grunt.log.write( 'VERSION: ' +  dev.uglify2.compress.global_defs.VERSION );

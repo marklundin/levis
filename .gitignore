@@ -1,4 +1,4 @@
 /tools/node_modules
 /tools/.grunt
 .DS_Store
-/build
+.sublime-workspace
