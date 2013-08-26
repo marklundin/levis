@@ -1,0 +1,1 @@
+THREE.Light=function(e){THREE.Object3D.call(this);this.color=new THREE.Color(e)};THREE.Light.prototype=Object.create(THREE.Object3D.prototype);THREE.Light.prototype.clone=function(e){if(void 0===e)e=new THREE.Light;THREE.Object3D.prototype.clone.call(this,e);e.color.copy(this.color);return e};

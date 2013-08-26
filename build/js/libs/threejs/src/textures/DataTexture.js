@@ -1,0 +1,1 @@
+THREE.DataTexture=function(e,t,i,r,a,o,n,s,l,c,h){THREE.Texture.call(this,null,o,n,s,l,c,r,a,h);this.image={data:e,width:t,height:i}};THREE.DataTexture.prototype=Object.create(THREE.Texture.prototype);THREE.DataTexture.prototype.clone=function(){var e=new THREE.DataTexture;THREE.Texture.prototype.clone.call(this,e);return e};

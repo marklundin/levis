@@ -1,0 +1,1 @@
+THREE.FogExp2=function(e,t){this.name="";this.color=new THREE.Color(e);this.density=void 0!==t?t:25e-5};THREE.FogExp2.prototype.clone=function(){return new THREE.FogExp2(this.color.getHex(),this.density)};

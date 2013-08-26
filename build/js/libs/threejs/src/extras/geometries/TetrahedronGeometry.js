@@ -1,0 +1,1 @@
+THREE.TetrahedronGeometry=function(e,t){var i=[[1,1,1],[-1,-1,1],[-1,1,-1],[1,-1,-1]];var r=[[2,1,0],[0,3,2],[1,3,0],[2,3,1]];THREE.PolyhedronGeometry.call(this,i,r,e,t)};THREE.TetrahedronGeometry.prototype=Object.create(THREE.Geometry.prototype);

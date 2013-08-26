@@ -1,0 +1,1 @@
+THREE.Vertex=function(e){console.warn("THREE.Vertex has been DEPRECATED. Use THREE.Vector3 instead.");return e};

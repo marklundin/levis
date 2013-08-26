@@ -1,0 +1,192 @@
+
+body{
+	margin: 0px;
+	padding: 0px;
+	background: black;
+	font-family: "helvetica neue", arial, sans-serif;
+}
+video{
+	padding-bottom: 10px;
+}
+#search{
+	padding: 50px;
+	right: 0px;
+	position: absolute;
+	z-index: 1;
+}
+.disable-select {
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;
+}
+.button-icon{
+	margin-left: 1px;
+	background: white;
+	cursor: pointer;
+	display: inline-block;
+	
+	overflow: hidden;
+	background-size: contain;
+	width: 50px;
+	height: 50px;
+	margin-bottom: 5px;
+}
+.close-button-icon{
+	
+	background: 
+		url( ../img/x.svg ) white
+		no-repeat;
+}
+a:link {text-decoration:none; color: inherit;}      
+a:visited {text-decoration:none; color: inherit;}  
+a:hover {text-decoration:none; color: inherit; opacity:0.7;}  
+a:active {text-decoration:none; color: inherit;}  
+.tweet-button-icon{
+	
+	background: 
+		url( ../img/tweet.svg ) white
+		no-repeat;
+}
+.camera-button-icon{
+	
+	background: 
+		url( ../img/cam.svg ) white
+		no-repeat;
+}
+.down-button-icon{
+	
+	background: 
+		url( ../img/down-arrow.png )
+		no-repeat;
+}
+.up-button-icon{
+	
+	background: 
+		url( ../img/up-arrow.png )
+		no-repeat;
+}
+#info-overlay h1, h2, #date{
+	text-transform: uppercase;
+}
+#info-overlay h1, h2{
+	letter-spacing: 0.2em;
+	padding-left: 10px;
+	margin-top: 1px;
+	margin-bottom: 4px;
+}
+#info-overlay #user-info{
+	display: inline-block;
+}
+#info-overlay h1{
+	margin-top: 0px;
+	margin-top: 0px;
+	font-size: 12pt;
+}
+#info-overlay h2, h3{
+	font-size: 10pt;
+}
+#info-overlay h2, h3{	
+	font-weight: normal;
+}
+#info-overlay #date{
+	color: rgb( 114, 114, 114);
+	font-size: 8pt;
+	font-weight: normal;
+	padding-bottom: 5px;
+}
+#info-overlay #content{
+	margin-top: 10px;
+	margin-bottom: 10px
+}
+#body{
+	vertical-align: top;
+	display: inline-block;
+	background: white;
+	width: 470px;
+	padding: 15px;
+	color: black;
+	font-size: 10pt;
+}
+.close-button-icon:hover{
+	opacity:1.0;
+}
+#info-overlay #body{
+	display: none;
+	float:left;
+}
+#info-overlay{
+	overflow: hidden;
+	display: none;
+	vertical-align: top;
+	
+	position: absolute;
+	z-index: 3;
+}
+#info-overlay .buttons{
+	display: inline-block;
+	padding-left: 4px;
+	float:left;
+}
+#info-overlay .buttons #show-more{
+	display: block;
+}
+#info-overlay #image{
+	display: inline-block;
+	vertical-align: top;
+	-webkit-filter: contrast(1.1) grayscale(1) invert(0.1);
+	filter: contrast(1.1) grayscale(1) invert(0.1);
+	width: 50px;
+	height: 50px;
+}
+#search-overlay #body{
+	text-align: center;
+	background: white;
+	min-height: 75px;
+}
+#search-overlay{
+	overflow: hidden;
+	color: black;
+	display: none;
+	min-width: 470px;
+	color: white;
+	top: 30px;
+	left: 35%;
+	position: absolute;
+	z-index: 4;
+}
+#search-overlay h1, h2{
+	letter-spacing: 0.2em;
+	
+	
+	
+}
+#search-overlay h1{
+	font-size: 12pt;
+}
+#search-overlay h2{
+	font-size: 10pt;
+	
+}
+#search-field{
+	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
+	
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	font-size: 10pt;
+	-webkit-font-smoothing: subpixel-antialiased;
+	color: white;
+	border: none;
+	border-bottom: 2px white inset;
+	padding: 5px;
+	width: 250px;
+	outline: none;
+	padding-left: 0px;
+}
+#search-field::-webkit-input-placeholder{
+	color: white;
+}
+#gui{
+	position: absolute;
+	z-index: 2;
+}

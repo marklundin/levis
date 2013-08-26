@@ -1,0 +1,1 @@
+THREE.PointLight=function(e,t,i){THREE.Light.call(this,e);this.intensity=void 0!==t?t:1;this.distance=void 0!==i?i:0};THREE.PointLight.prototype=Object.create(THREE.Light.prototype);THREE.PointLight.prototype.clone=function(){var e=new THREE.PointLight;THREE.Light.prototype.clone.call(this,e);e.intensity=this.intensity;e.distance=this.distance;return e};

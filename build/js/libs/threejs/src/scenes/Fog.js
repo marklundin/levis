@@ -1,0 +1,1 @@
+THREE.Fog=function(e,t,i){this.name="";this.color=new THREE.Color(e);this.near=void 0!==t?t:1;this.far=void 0!==i?i:1e3};THREE.Fog.prototype.clone=function(){return new THREE.Fog(this.color.getHex(),this.near,this.far)};

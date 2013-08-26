@@ -1,0 +1,1 @@
+THREE.LoadingManager=function(e,t,i){var r=this;var a=0,o=0;this.onLoad=e;this.onProgress=t;this.onError=i;this.itemStart=function(){o++};this.itemEnd=function(e){a++;if(void 0!==r.onProgress)r.onProgress(e,a,o);if(a===o&&void 0!==r.onLoad)r.onLoad()}};THREE.DefaultLoadingManager=new THREE.LoadingManager;

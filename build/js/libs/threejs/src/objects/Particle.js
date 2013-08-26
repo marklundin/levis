@@ -1,0 +1,1 @@
+THREE.Particle=function(e){THREE.Object3D.call(this);this.material=e};THREE.Particle.prototype=Object.create(THREE.Object3D.prototype);THREE.Particle.prototype.clone=function(e){if(void 0===e)e=new THREE.Particle(this.material);THREE.Object3D.prototype.clone.call(this,e);return e};
