@@ -74,14 +74,12 @@ requirejs.config( {
 
 
 if (typeof NAME    	=== 'undefined' ) NAME    = "Levis";
-if (typeof DEBUG   	=== 'undefined' ) DEBUG	= true;
-if (typeof VERSION 	=== 'undefined' ) VERSION = 'c769c68';
+if (typeof DEBUG   	=== 'undefined' ) DEBUG	  = true;
+if (typeof VERSION 	=== 'undefined' ) VERSION = 'Unknown Version';
 if (typeof APP 		=== 'undefined' ) APP     = 'main';
 
 require([ "utils/domReady!",'require'], function( DOM, require ){
 	
-	console.log( APP );
 	require([ APP ]);
 
 });
-define("bootloader", function(){});

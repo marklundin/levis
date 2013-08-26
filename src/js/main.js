@@ -339,6 +339,8 @@ define('main',[
 			lastClicked.material.envMap = envMap;
 			lastClicked.material.needsUpdate = true;
 
+			resetCamera();
+
 		});
 
 
