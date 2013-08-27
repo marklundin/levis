@@ -501,8 +501,8 @@ define('main',[
 
 
 		// PSEUDO POST EFFECTS
-		
-		
+
+
 		//
 
 		// CLOUDS
@@ -526,6 +526,7 @@ define('main',[
 					"fogNear" : { type: "f", value: scene.fog.near },
 					"fogFar" : { type: "f", value: scene.fog.far },
 					opacity: { type: "f", value: 0.1 },
+					useClouds: { type: "f", value: 1.0 },
 
 				},
 				vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
@@ -549,9 +550,9 @@ define('main',[
 				plane.position.x = math.random( -1500, 1500 );
 				plane.position.y = math.random( -1500, 1500 )
 				plane.position.z = math.random( -1500, 1500 );
-				plane.scale.x = plane.scale.y = Math.random() * Math.random() * 9 + 20.0;
+				plane.oldScale = plane.scale.x = plane.scale.y = Math.random() * Math.random() * 9 + 25.0;
 				plane.currentRot = Math.random() * Math.PI;
-				plane.rotDirection = math.random( -1, 1 ) * 0.002;
+				plane.rotDirection = math.random( -1, 1 ) * 0.001;
 
 				cloudsObj3d.add( plane );
 				// THREE.GeometryUtils.merge( geometry, plane );
@@ -768,6 +769,7 @@ define('main',[
 					generate 	: generate,
 					seed 		: String( seed ),
 					camera 		: false,
+					useClouds 	: true,
 
 					background_color: '#'+renderer.getClearColor().getHexString(),
 
@@ -797,6 +799,18 @@ define('main',[
 						},
 					},
 
+					updateClouds:function(){
+						clouds.material.uniforms.useClouds.value = api.useClouds ? 1.0 : 0.0;
+						var n = cloudsObj3d.children.length;
+						var scale;
+						while( n-- > 0){
+							// cloudsObj3d.children[n].oldScale = cloudsObj3d.children[n].scale.x;
+							scale = api.useClouds ? cloudsObj3d.children[n].oldScale : 5;
+							cloudsObj3d.children[n].scale.set( scale, scale, 1 );
+							// cloudsObj3d.children[n].oldScale = scale;
+						}
+					},
+
 					dataObjects:{
 
 						refractionRatio: 0.98,
@@ -817,6 +831,7 @@ define('main',[
 							shininess	: videoContentMaterial.shininess,
 							combine 	: imageContentMaterial.combine
 						},
+						
 						updateMaterial:function(){
 
 							var n = contentObj3d.children.length;
@@ -912,6 +927,7 @@ define('main',[
 					gui.add( api, 		"generate" );
 					gui.add( skyMat, 	"visible" );
 					gui.add( api, 		"speed" );
+					gui.add( api, 		"useClouds" ).onChange( api.updateClouds );
 
 					gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
 					gui.addColor( api, "background_color" ).onChange( api.updateBackgoundColor );
@@ -1294,8 +1310,8 @@ define('main',[
 			var n = cloudsObj3d.children.length;
 			while( n-- > 0){
 				cloudsObj3d.children[n].lookAt( camera.position );
-				cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
-				cloudsObj3d.children[n].rotation.z = cloudsObj3d.children[n].currentRot; 
+				// cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
+				// cloudsObj3d.children[n].rotation.z = cloudsObj3d.children[n].currentRot; 
 			}
 
 
