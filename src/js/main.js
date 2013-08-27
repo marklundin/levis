@@ -516,14 +516,15 @@ define('main',[
 					uTime 		: { type: "f", value: 0 },
 					vignetteAmount 		: { type: "f", value: 1.0 },
 					vignetteStart 		: { type: "f", value: 0.3 },
-					vignetteEnd 		: { type: "f", value: 0.9 }
+					vignetteEnd 		: { type: "f", value: 0.9 },
+					noiseColor 			: { type: "c", value: new THREE.Color( 0x202020 ) },
 				},
 				vertexShader: postShader.vertexShader, //document.getElementById( 'vs' ).textContent,
 				fragmentShader: postShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
 				depthWrite: false,
 				depthTest: false,
 				transparent: true,
-				// blend: THREE.AdditiveBlending,
+				blend: THREE.AdditiveBlending,
 			});
 
 			var postMesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2, 1, 1 ), postMaterial );
@@ -821,7 +822,8 @@ define('main',[
 						grain:{
 							speed : 1,
 							frequency: postMaterial.uniforms.uFrequency.value,
-							opacity: postMaterial.uniforms.opacity.value	
+							opacity: postMaterial.uniforms.opacity.value,
+							color: "#"+postMaterial.uniforms.noiseColor.value.getHexString()
 						},
 						vignette:{
 							opacity: postMaterial.uniforms.vignetteAmount.value,
@@ -835,7 +837,9 @@ define('main',[
 							postMaterial.uniforms.vignetteAmount.value = api.post.vignette.opacity;
 							postMaterial.uniforms.vignetteStart.value = api.post.vignette.start;
 							postMaterial.uniforms.vignetteEnd.value = api.post.vignette.end;
-							console.log( postMaterial.uniforms.vignetteStart.value );
+							
+							postMaterial.uniforms.noiseColor.value.set( api.post.grain.color );
+
 						}
 						
 					},
@@ -992,6 +996,7 @@ define('main',[
 					var grainGUI = postGUI.addFolder( 'grain' );
 					grainGUI.add( api.post.grain, "frequency" ).onChange( api.post.update );
 					grainGUI.add( api.post.grain, "opacity" ).onChange( api.post.update );	
+					grainGUI.addColor( api.post.grain, "color" ).onChange( api.post.update );	
 					grainGUI.add( api.post.grain, "speed" );
 
 					var vignetteGUI = postGUI.addFolder( 'Vignette' );
