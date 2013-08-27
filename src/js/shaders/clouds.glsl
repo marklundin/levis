@@ -24,22 +24,17 @@ uniform float fogFar;
 
 uniform float opacity;
 uniform float useClouds;
+uniform float offset;
+uniform float exponent;
 
 varying vec2 vUv;
 
-
-float unpackDepth( const in vec4 rgba_depth ) {
-
-	const vec4 bit_shift = vec4( 1.0 / ( 256.0 * 256.0 * 256.0 ), 1.0 / ( 256.0 * 256.0 ), 1.0 / 256.0, 1.0 );
-	float depth = dot( rgba_depth, bit_shift );
-	return depth;
-
-}
 
 void main() {
 
 	float depth = gl_FragCoord.z / gl_FragCoord.w;
 	float fogFactor = smoothstep( fogNear, fogFar, depth );
+
 	// float depth = unpackDepth( texture2D( tDepth, vUv ) );
 	// gl_FragColor = vec4( vec3( depth ), 1.0 );
 	// gl_FragColor = texture2D( map, vUv );
@@ -53,7 +48,7 @@ void main() {
 	// float fogFactor = smoothstep( fogNear, fogFar, depth );
 
 	gl_FragColor = texture2D( map, vUv );
-	gl_FragColor.a *= pow( fogFactor + 0.2, 1.0 );
+	gl_FragColor.a *= pow( fogFactor + offset, exponent );
 	gl_FragColor.a *= opacity;
 	gl_FragColor = mix( vec4( 1.0, 0.0, 0.0, 1.0 ), gl_FragColor, useClouds );
 

@@ -526,7 +526,9 @@ define('main',[
 					"fogNear" : { type: "f", value: scene.fog.near },
 					"fogFar" : { type: "f", value: scene.fog.far },
 					opacity: { type: "f", value: 0.1 },
+					offset: { type: "f", value: 0.4 },
 					useClouds: { type: "f", value: 1.0 },
+					exponent: { type: "f", value: 1.0 },
 
 				},
 				vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
@@ -769,7 +771,27 @@ define('main',[
 					generate 	: generate,
 					seed 		: String( seed ),
 					camera 		: false,
-					useClouds 	: true,
+
+					clouds:{
+						debug : false,
+						opacity : clouds.material.uniforms.opacity.value,
+						offset : clouds.material.uniforms.offset.value,
+						exponent : clouds.material.uniforms.exponent.value,
+						update:function(){
+							clouds.material.uniforms.exponent.value = api.clouds.exponent;
+							clouds.material.uniforms.opacity.value = api.clouds.opacity;
+							clouds.material.uniforms.offset.value = api.clouds.offset;
+							clouds.material.uniforms.useClouds.value = api.clouds.debug ? 0.0 : 1.0;
+							var n = cloudsObj3d.children.length;
+							var scale;
+							while( n-- > 0){
+								scale = !api.clouds.debug ? cloudsObj3d.children[n].oldScale : 5;
+								cloudsObj3d.children[n].scale.set( scale, scale, 1 );
+							}
+						},
+					},
+					
+
 
 					background_color: '#'+renderer.getClearColor().getHexString(),
 
@@ -799,17 +821,7 @@ define('main',[
 						},
 					},
 
-					updateClouds:function(){
-						clouds.material.uniforms.useClouds.value = api.useClouds ? 1.0 : 0.0;
-						var n = cloudsObj3d.children.length;
-						var scale;
-						while( n-- > 0){
-							// cloudsObj3d.children[n].oldScale = cloudsObj3d.children[n].scale.x;
-							scale = api.useClouds ? cloudsObj3d.children[n].oldScale : 5;
-							cloudsObj3d.children[n].scale.set( scale, scale, 1 );
-							// cloudsObj3d.children[n].oldScale = scale;
-						}
-					},
+					
 
 					dataObjects:{
 
@@ -876,6 +888,7 @@ define('main',[
 					updateFogColor: function(){
 						scene.fog.color.set( api.fog.color );
 					}
+
 				}
 
 				if( gui ){
@@ -915,7 +928,11 @@ define('main',[
 					twitterUI.add( api.dataObjects.twitter, 'shininess' )
 					twitterUI.add( api.dataObjects.twitter, 'combine', { Multiply: THREE.MultiplyOperation, Mix: THREE.MixOperation, Add: THREE.AddOperation } ).onChange( api.dataObjects.updateMaterial );
 					
-
+					var cloudsGUI = gui.addFolder( 'clouds' );
+					cloudsGUI.add( api.clouds, "debug" ).onChange( api.clouds.update );
+					cloudsGUI.add( api.clouds, "opacity", 0, 1 ).onChange( api.clouds.update );
+					cloudsGUI.add( api.clouds, "offset", 0, 1 ).onChange( api.clouds.update );
+					cloudsGUI.add( api.clouds, "exponent", 0 ).onChange( api.clouds.update );
 
 					var fogGui = gui.addFolder( 'fog' );
 					fogGui.addColor( api.fog, "color" ).onChange( api.updateFogColor );
@@ -927,7 +944,7 @@ define('main',[
 					gui.add( api, 		"generate" );
 					gui.add( skyMat, 	"visible" );
 					gui.add( api, 		"speed" );
-					gui.add( api, 		"useClouds" ).onChange( api.updateClouds );
+
 
 					gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
 					gui.addColor( api, "background_color" ).onChange( api.updateBackgoundColor );
