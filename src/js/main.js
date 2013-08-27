@@ -502,55 +502,63 @@ define('main',[
 
 		// CLOUDS
 
-			// var clouds = {};
-			// var geometry = new THREE.Geometry();
+			var clouds = {};
+			var cloudsObj3d = new THREE.Object3D();
+			var geometry = new THREE.Geometry();
 
-			// var texture = THREE.ImageUtils.loadTexture( 'js/cloud10.png' );
+			var texture = THREE.ImageUtils.loadTexture( 'img/darkCloud.png' );
 			// texture.magFilter = THREE.LinearMipMapLinearFilter;
 			// texture.minFilter = THREE.LinearMipMapLinearFilter;
 
 
-			// clouds.material = new THREE.ShaderMaterial( {
+			clouds.material = new THREE.ShaderMaterial( {
 
-			// 	uniforms: {
+				uniforms: {
 
-			// 		// 'tDepth': { type: 't', value: depthTarget },
-			// 		"map": { type: "t", value: texture },
-			// 		"fogColor" : { type: "c", value: scene.fog.color },
-			// 		"fogNear" : { type: "f", value: scene.fog.near },
-			// 		"fogFar" : { type: "f", value: scene.fog.far },
+					// 'tDepth': { type: 't', value: depthTarget },
+					"map": { type: "t", value: texture },
+					"fogColor" : { type: "c", value: scene.fog.color },
+					"fogNear" : { type: "f", value: scene.fog.near },
+					"fogFar" : { type: "f", value: scene.fog.far },
+					opacity: { type: "f", value: 0.1 },
 
-			// 	},
-			// 	vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
-			// 	fragmentShader: cloudsShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
-			// 	// depthWrite: false,
-			// 	// depthTest: false,
-			// 	transparent: true,
-			// 	// side: THREE.DoubleSide
+				},
+				vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
+				fragmentShader: cloudsShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
+				depthWrite: false,
+				depthTest: false,
+				transparent: true,
+				blend: THREE.AdditiveBlending,
+				
 
-			// } );
-
-			// var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
-
-			// for ( var i = 0; i < 4000; i++ ) {
-
-			// 	plane.position.x = Math.random() * 1000 - 500;
-			// 	plane.position.y = - Math.random() * Math.random() * 200 - 15;
-			// 	plane.position.z = i;
-			// 	plane.rotation.z = Math.random() * Math.PI;
-			// 	plane.scale.x = plane.scale.y = Math.random() * Math.random() * 2.5 + 0.5;
+			} );
 
 
-			// 	THREE.GeometryUtils.merge( geometry, plane );
+			var planeGeom = new THREE.PlaneGeometry( 64, 64 );
+			var plane;
 
-			// }
+			for ( var i = 0; i < 50; i++ ) {
+
+				plane = new THREE.Mesh( planeGeom, clouds.material );
+
+				plane.position.x = math.random( -1500, 1500 );
+				plane.position.y = math.random( -1500, 1500 )
+				plane.position.z = math.random( -1500, 1500 );
+				plane.scale.x = plane.scale.y = Math.random() * Math.random() * 9 + 20.0;
+				plane.currentRot = Math.random() * Math.PI;
+				plane.rotDirection = math.random( -1, 1 ) * 0.002;
+
+				cloudsObj3d.add( plane );
+				// THREE.GeometryUtils.merge( geometry, plane );
+
+			}
 
 			// // var m = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ),  clouds.material );
 			// // m.position.z = -40;
 			// // m.rotation.y = Math.PI * -0.5;
 			// // camera.add( m );
 
-			// var cloudsObj3d = new THREE.Object3D();
+			
 			// clouds.material.opacity = 0.01;
 			// clouds.meshA = new THREE.Mesh( geometry, clouds.material );
 			// // mesh.position.z = - 8000;
@@ -561,7 +569,7 @@ define('main',[
 			// cloudsObj3d.add( clouds.meshB );
 
 			
-			// scene.add( cloudsObj3d );
+			scene.add( cloudsObj3d );
 
 
 		// END CLOUDS
@@ -1264,6 +1272,7 @@ define('main',[
 		}
 
 		var cubeRendered = false;
+
 		function render( delta ){
 
 			//depth pass
@@ -1276,6 +1285,13 @@ define('main',[
 			// console.time('render')
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
+
+			var n = cloudsObj3d.children.length;
+			while( n-- > 0){
+				cloudsObj3d.children[n].lookAt( camera.position );
+				cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
+				cloudsObj3d.children[n].rotation.z = cloudsObj3d.children[n].currentRot; 
+			}
 
 
 			if( !cubeRendered ){

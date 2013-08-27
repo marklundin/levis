@@ -3,7 +3,7 @@
 	[
 		{
 			"path": "/Users/marklundin/Projects/onformative/levis",
-			"folder_exclude_patterns": ["build"]
+			"folder_exclude_patterns": ["build", "versions"]
 		}
 	]
 }
