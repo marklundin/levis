@@ -126,6 +126,11 @@ define('main',[
 		var distanceTarget = controls.distance = 2000;
 		controls.distanceVel = 0;
 
+		controls.addEventListener( 'drag', function(){
+			console.log("EVENT");
+			sounds.mouseDrag.play();
+		})
+
 		camera.position.z = 2000;
 		scene.add( camera );
 
@@ -391,6 +396,8 @@ define('main',[
 				lastClicked = clicked;
 				var content = infoOverlay.children('#body');
 
+				sounds.closer.play();
+
 				content.children('#content').html( clicked.infoDataObject.title ); 
 				$('#show-more').toggleClass( "camera-button-icon", clicked.isInstagram );
 				content.children('#user-info').children('#user-name').html( "<a href='"+( clicked.isInstagram ? "http://instagram.com/"+clicked.infoDataObject.user_info.screen_name : clicked.infoDataObject.user_info.user_url  ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
@@ -429,6 +436,7 @@ define('main',[
 		function resetCamera(){
 
 			clicked = null;
+			sounds.out.play();
 			divFadeOut( infoOverlay, 400 );
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
@@ -452,6 +460,8 @@ define('main',[
 				}
 
 				clicked = INTERSECTED;
+
+				sounds.click[Math.floor(Math.random()*sounds.click.length)].play();
 
 				controls.autoRotate = true;
 				var imageElem = infoOverlay.children('#body').children( '#image' );
@@ -1051,17 +1061,21 @@ define('main',[
 							dataObject.unclickable 		= true;
 							dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
 								spring: 10,//math.random( 1, 10 ),
-								speed: math.random( 0.1, 1 ),
+								speed: math.random( 0.5, 1 ),
 								delay: n === INITIAL_NUM_ANIMATIONS ? 0 : math.random( 1.0, 8.0 )
 							});
 
-							dataObject.transition.callback = function( e, b ){
+							dataObject.transition.startCallback = function(){
+								sounds.entering.play();
+							}
 
-								dataObject.unclickable = false;
-								dataObject.transition.dispose();
-								console.log( 'Animation Completed', INITIAL_NUM_ANIMATIONS );
+							dataObject.transition.callback = function( obj ){
 
-							}.bind( this, dataObject.transition );
+								obj.unclickable = false;
+								obj.transition.dispose();
+								// console.log( 'Animation Completed', INITIAL_NUM_ANIMATIONS );
+
+							}.bind( this, dataObject );
 
 						}
 					}
@@ -1224,6 +1238,52 @@ define('main',[
 
 
 			// END DATA
+
+
+			//SOUNDS
+
+				var sounds = {};
+
+				sounds.mouseOver = new Howl({
+				  urls: ['audio/over1.mp3'],
+				  volume: 1.0,
+				});
+
+				sounds.click = [];
+				sounds.click[0] = new Howl({
+				  urls: ['audio/fly-in1.mp3'],
+				  volume: 1.0,
+				});
+				sounds.click[1] = new Howl({
+				  urls: ['audio/fly-in2.mp3'],
+				  volume: 1.0,
+				});
+				sounds.click[2] = new Howl({
+				  urls: ['audio/fly-in3.mp3'],
+				  volume: 1.0,
+				})
+
+				sounds.closer = new Howl({
+				  urls: ['audio/closer.mp3'],
+				  volume: 1.0,
+				});
+
+				sounds.out = new Howl({
+				  urls: ['audio/fly-out1.mp3'],
+				  volume: 1.0,
+				});
+
+				sounds.entering = new Howl({
+				  urls: ['audio/entering.mp3'],
+				  volume: 1.0,
+				});
+
+				sounds.mouseDrag = new Howl({
+				  urls: ['audio/turn2.mp3'],
+				  volume: 1.0,
+				});
+
+			//
 			
 			var strut;
 
@@ -1346,6 +1406,8 @@ define('main',[
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
+					sounds.mouseOver.play();
+
 					if ( INTERSECTED ){
 						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
 						selectionLight.intensity = 0;
@@ -1376,6 +1438,7 @@ define('main',[
 
 		var cubeRendered = false;
 			forward = new THREE.Vector3( 0, 0, -1 );
+			upp = new THREE.Vector3( 0, 0, -1 );
 
 		function render( delta ){
 

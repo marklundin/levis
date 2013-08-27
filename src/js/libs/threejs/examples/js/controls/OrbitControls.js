@@ -251,7 +251,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 		scope.domElement.addEventListener( 'mouseup', onMouseUp, false );
 
 	}
-
+	var notDragging = true;
+		startDragEvent = {type:'drag'};
 	function onMouseMove( event ) {
 
 		if ( scope.enabled === false ) return;
@@ -260,6 +261,13 @@ THREE.OrbitControls = function ( object, domElement ) {
 		event.preventDefault();
 
 		if ( state === STATE.ROTATE ) {
+
+			if( notDragging ){
+				notDragging = false;
+				console.log('DRAGGING');
+				scope.dispatchEvent( startDragEvent );
+			}
+			
 
 			rotateEnd.set( event.clientX, event.clientY );
 			rotateDelta.subVectors( rotateEnd, rotateStart );
@@ -314,6 +322,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 
 	function onMouseUp( event ) {
+
+		notDragging = true;
 
 		if ( scope.enabled === false ) return;
 		if ( scope.userRotate === false ) return;

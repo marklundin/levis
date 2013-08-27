@@ -22,6 +22,7 @@ define(function(){
 		
 		params.spring   = params.spring || DEFAULT_SPRING_CONSTANT;
 		params.delay 	= params.delay  || 0;
+		var started 	= false;
 
 		var velocity 	= 0,
 			totaltime 	= 0,
@@ -35,6 +36,8 @@ define(function(){
 			totaltime += delta;
 			if( totaltime >= params.delay ){
 
+				
+
 				theta 		 = b - a;
 				time  	   	 = delta * api.globalSpeed;
 				springForce  = theta * params.spring;
@@ -43,7 +46,15 @@ define(function(){
 			    velocity    += force * time;
 
 				obj[prop]   += velocity * time;
+
+				if( !started ){
+					return started = true;
+				}
+
+
 			}
+
+			return false;
 
 		};
 
@@ -54,8 +65,10 @@ define(function(){
 
 		var params   = params || {},
 			system 	 = getSystem( obj, prop, target, params ),
+			started  = false,
 			controls = {
 				callback: emptyCallback,
+				startCallback: function(){},
 				target 	: target || null,
 				arrived	: false,
 				paused	: false,
@@ -67,9 +80,13 @@ define(function(){
 
 		var update = function( t ){
 
+			started = false;
+
 			if( !controls.paused && controls.target !== null ){
 
-				system( obj[prop], controls.target, t * controls.speed );
+				started = system( obj[prop], controls.target, t * controls.speed );
+
+				if( started ) controls.startCallback();
 
 				if( !controls.arrived && Math.abs( controls.target - obj[ prop ] ) <= DEFAULT_THRESHOLD ){
 					controls.arrived = true;
@@ -102,9 +119,10 @@ define(function(){
 			vx = getSystem( v3, ['x'], target.x, params ),
 			vy = getSystem( v3, ['y'], target.y, params ),
 			vz = getSystem( v3, ['z'], target.z, params ),
-			tx, ty, tz,
+			tx, ty, tz, started = false,
 			controls = {
 				callback: emptyCallback,
+				startCallback: function(){},
 				target 	: target || null,
 				arrived	: false, 
 				paused 	: true,
@@ -116,11 +134,14 @@ define(function(){
 
 		var update = function( t ){
 
+
 			if( !controls.paused && controls.target !== null ){
 
-				vx( v3.x, controls.target.x, t * controls.speed );
-				vy( v3.y, controls.target.y, t * controls.speed );
-				vz( v3.z, controls.target.z, t * controls.speed );
+				started = vx( v3.x, controls.target.x, t * controls.speed );
+				started = vy( v3.y, controls.target.y, t * controls.speed ) && started;
+				started = vz( v3.z, controls.target.z, t * controls.speed ) && started;
+
+				if( started ) controls.startCallback();
 
 				tx = controls.target.x - v3.x;
 				ty = controls.target.y - v3.y;
