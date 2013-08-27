@@ -500,6 +500,11 @@ define('main',[
 		renderer.setSize( WIDTH, HEIGHT );
 
 
+		// PSEUDO POST EFFECTS
+		
+		
+		//
+
 		// CLOUDS
 
 			var clouds = {};
@@ -526,7 +531,7 @@ define('main',[
 				vertexShader: cloudsShader.vertexShader, //document.getElementById( 'vs' ).textContent,
 				fragmentShader: cloudsShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
 				depthWrite: false,
-				depthTest: false,
+				// depthTest: false,
 				transparent: true,
 				blend: THREE.AdditiveBlending,
 				
