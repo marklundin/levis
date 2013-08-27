@@ -72,6 +72,7 @@ define('main',[
 			timestep 	   = 0.0008,
 			controlsActive = false,
 			isActive       = true,
+			mouseFlag 	   = true,
 			clicked,
 			lastClicked,
 			showingSearchResults = false,
@@ -83,9 +84,28 @@ define('main',[
 			$(this).parent().toggleClass( 'search-focus', true );
 			$(".featured-submissions").slideDown( 50 );
 		}).blur( function(){
-			$(this).parent().toggleClass( 'search-focus', false );
-			$(".featured-submissions").slideUp( 0 );
-		})
+			if( mouseFlag ){
+				$(this).parent().toggleClass( 'search-focus', false );
+				$(".featured-submissions").slideUp( 0 );
+			}
+		});
+
+		
+		$('.vip').mousedown(function( e ){
+			mouseFlag = false;
+		});
+
+		$('.vip').mouseup(function( e ){
+			mouseFlag = true;
+			var value =  $(this).data().username;
+			$('#search-field').val( value );
+			performSearch( value );
+			$('#search-field').blur();
+		});
+
+
+
+
 
 		infoOverlay.expanded = false
 		infoOverlay.xOffset = 0;
@@ -171,7 +191,7 @@ define('main',[
 		}
 
 		function divFadeOut( jdiv, speed, callback ){
-			jdiv.fadeOut({ duration: speed || 400, complete: callback });
+			jdiv.stop().fadeOut({ duration: speed || 400, complete: callback });
 		}
 
 		function hideVisibleDataObjects(){
@@ -1028,14 +1048,13 @@ define('main',[
 				// SEARCH 
 
 
-					$( '#search-field' ).change( function(){
+					function performSearch( value ){
 
 						divFadeOut( infoOverlay, 400 );
-						console.log( 'test' );
 						clicked = null;
 
-						var value = inputField.value,
-							nPos = new THREE.Vector3(),
+						
+						var nPos = new THREE.Vector3(),
 							mesh;
 
 						$( '#search-field' ).blur();
@@ -1081,6 +1100,12 @@ define('main',[
 
 							});
 						}
+					}
+
+
+					$( '#search-field' ).change( function(){
+						var value = inputField.value;
+						performSearch( inputField.value );
 					});
 
 
