@@ -10,12 +10,97 @@ video{
 	padding-bottom: 10px;
 }
 
+ol, ul {
+
+	font-family: "helvetica neue", arial, sans-serif;
+	letter-spacing: 0.2em;
+	font-size: 10pt;
+
+	list-style: none;
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 0em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	-webkit-padding-start: 0px;
+
+	margin-before: 0em;
+	margin-after: 0em;
+	margin-start: 0px;
+	margin-end: 0px;
+	padding-start: 0px;
+}
+
+
+.featured-submissions{
+	
+	display: none;
+	
+}
+
+.featured-submissions li{
+	color: black;
+	background: rgb( 236, 236, 236 );
+	border-bottom: 1px rgb( 192, 192, 192 ) inset;
+	padding:15px;
+	cursor: pointer;
+}
+
+.featured-submissions li:hover{
+	background: white;
+}
+
+li.title{
+	cursor: none !important;
+	color: white !important;
+	background: black !important;
+}
+
 #search{
-	padding: 50px;
+	margin: 35px;
+	
 	right: 0px;
 	position: absolute;
 	z-index: 1;
 }
+
+.search-focus{
+	background: white;
+}
+
+#search-field{
+
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+
+	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
+
+	
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	font-size: 10pt;
+	/*-webkit-font-smoothing: subpixel-antialiased;*/
+	color: white;
+	border: none;
+	border-bottom: 2px white inset;
+	padding: 5px;
+	width: 250px;
+	outline: none;
+	padding-left: 0px;
+	margin: 15px;
+}
+
+
+#search-field::-webkit-input-placeholder{
+	color: white;
+}
+
+.search-focus #search-field{
+	/*border-color: black;*/
+	
+	/*background: url(../img/search-icon.png) black no-repeat scroll 99% 5px;*/
+	-webkit-filter: invert(1.0);
+	filter: invert(1.0);
+}
+
 
 .disable-select {
   -webkit-user-select: none;  
@@ -209,27 +294,7 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	/*margin-top: 4px;*/
 }
 
-#search-field{
 
-	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
-
-	
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
-	font-size: 10pt;
-	-webkit-font-smoothing: subpixel-antialiased;
-	color: white;
-	border: none;
-	border-bottom: 2px white inset;
-	padding: 5px;
-	width: 250px;
-	outline: none;
-	padding-left: 0px;
-}
-
-#search-field::-webkit-input-placeholder{
-	color: white;
-}
 
 #gui{
 	position: absolute;

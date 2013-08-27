@@ -78,6 +78,15 @@ define('main',[
 
 			INTERSECTED;
 
+
+		$('#search-field').focus(function(){
+			$(this).parent().toggleClass( 'search-focus', true );
+			$(".featured-submissions").slideDown( 50 );
+		}).blur( function(){
+			$(this).parent().toggleClass( 'search-focus', false );
+			$(".featured-submissions").slideUp( 0 );
+		})
+
 		infoOverlay.expanded = false
 		infoOverlay.xOffset = 0;
 		infoOverlay.fadeOut(0);
@@ -195,7 +204,7 @@ define('main',[
 			inputField.value = '';
 			hideVisibleDataObjects();
 			divFadeOut( searchOverlay, 400 );
-			//divFadeOut( infoOverlay, 400 );
+			divFadeOut( infoOverlay, 400 );
 			if( infoOverlay.expanded ){
 				console.log( 'hEREE ')
 				infoOverlay.expanded = false;
@@ -396,7 +405,7 @@ define('main',[
 		function resetCamera(){
 
 			clicked = null;
-			//divFadeOut( infoOverlay, 400 );
+			divFadeOut( infoOverlay, 400 );
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
 
@@ -1019,7 +1028,7 @@ define('main',[
 
 					$( '#search-field' ).change( function(){
 
-						//divFadeOut( infoOverlay, 400 );
+						divFadeOut( infoOverlay, 400 );
 						console.log( 'test' );
 						clicked = null;
 

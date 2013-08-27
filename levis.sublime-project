@@ -2,7 +2,8 @@
 	"folders":
 	[
 		{
-			"path": "/Users/marklundin/Projects/onformative/levis"
+			"path": "/Users/marklundin/Projects/onformative/levis",
+			"folder_exclude_patterns": ["build"]
 		}
 	]
 }
