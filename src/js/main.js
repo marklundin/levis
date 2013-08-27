@@ -455,10 +455,7 @@ define('main',[
 						
 					}
 
-					if( infoOverlay.video ){
-						if( clicked.isInstagram ) infoOverlay.video.get(0).pause();
-						infoOverlay.video.toggle( clicked.isInstagram, 0 );	
-					} 
+					
 
 				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
 
@@ -466,6 +463,11 @@ define('main',[
 					infoOverlay.expanded = false;
 					infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
 				}
+
+				if( infoOverlay.video ){
+					infoOverlay.video.get(0).pause();
+					// infoOverlay.video.toggle( clicked.isInstagram, 0 );	
+				} 
 				
 
 				moveCameraTo( clicked.position );
@@ -1045,7 +1047,7 @@ define('main',[
 								var results = twitterResults.concat( instagramResults );
 
 								searchOverlay.children('#body').children('#results').html(
-									'YOUR SEARCH FOR "'+value+'" RETURNED ' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + ' RESULTS' 
+									'YOUR SEARCH FOR <br/>"<b>'+value+'</b>"<br/> RETURNED <b>' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + '</b> RESULTS' 
 								);
 
 								searchOverlay.fadeIn( 400, function () {
