@@ -14,12 +14,13 @@ define('main',[
 	'transition',
 	'utils/easing',
 	'glsl!shaders/clouds.glsl',
+	'glsl!shaders/post.glsl',
 	"purl",
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
-	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader ) {
+	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader, postShader ) {
 
 
 		//PROJECT INFO
@@ -141,6 +142,9 @@ define('main',[
 
 			camera.aspect = WIDTH / HEIGHT;
 			camera.updateProjectionMatrix();
+
+			postMaterial.uniforms.uResolution.x = WIDTH;
+			postMaterial.uniforms.uResolution.y = HEIGHT;
 
 			renderer.setSize( WIDTH, HEIGHT );			
 		})
@@ -502,6 +506,28 @@ define('main',[
 
 		// PSEUDO POST EFFECTS
 
+		
+
+			var postMaterial = new THREE.ShaderMaterial({
+				uniforms:{
+					uResolution : { type: "v2", value: new THREE.Vector2( WIDTH, HEIGHT ) },
+					opacity : 	  { type: "f", value: 0.5 },
+					uFrequency : { type: "f", value: 1000.0 },
+					uTime 		: { type: "f", value: 0 },
+					vignetteAmount 		: { type: "f", value: 1.0 },
+					vignetteStart 		: { type: "f", value: 0.3 },
+					vignetteEnd 		: { type: "f", value: 0.9 }
+				},
+				vertexShader: postShader.vertexShader, //document.getElementById( 'vs' ).textContent,
+				fragmentShader: postShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
+				depthWrite: false,
+				depthTest: false,
+				transparent: true,
+				// blend: THREE.AdditiveBlending,
+			});
+
+			var postMesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2, 1, 1 ), postMaterial );
+			scene.add( postMesh );
 
 		//
 
@@ -545,14 +571,14 @@ define('main',[
 			var planeGeom = new THREE.PlaneGeometry( 64, 64 );
 			var plane;
 
-			for ( var i = 0; i < 50; i++ ) {
+			for ( var i = 0; i < 15; i++ ) {
 
 				plane = new THREE.Mesh( planeGeom, clouds.material );
 
 				plane.position.x = math.random( -1500, 1500 );
 				plane.position.y = math.random( -1500, 1500 )
 				plane.position.z = math.random( -1500, 1500 );
-				plane.oldScale = plane.scale.x = plane.scale.y = Math.random() * Math.random() * 9 + 25.0;
+				plane.oldScale = plane.scale.x = plane.scale.y = Math.random() * Math.random() * 15 + 25.0;
 				plane.currentRot = Math.random() * Math.PI;
 				plane.rotDirection = math.random( -1, 1 ) * 0.001;
 
@@ -790,6 +816,29 @@ define('main',[
 							}
 						},
 					},
+
+					post:{
+						grain:{
+							speed : 1,
+							frequency: postMaterial.uniforms.uFrequency.value,
+							opacity: postMaterial.uniforms.opacity.value	
+						},
+						vignette:{
+							opacity: postMaterial.uniforms.vignetteAmount.value,
+							start: postMaterial.uniforms.vignetteStart.value,
+							end: postMaterial.uniforms.vignetteEnd.value
+						},
+						update: function(){
+							postMaterial.uniforms.uFrequency.value = api.post.grain.frequency;
+							postMaterial.uniforms.opacity.value = api.post.grain.opacity;
+
+							postMaterial.uniforms.vignetteAmount.value = api.post.vignette.opacity;
+							postMaterial.uniforms.vignetteStart.value = api.post.vignette.start;
+							postMaterial.uniforms.vignetteEnd.value = api.post.vignette.end;
+							console.log( postMaterial.uniforms.vignetteStart.value );
+						}
+						
+					},
 					
 
 
@@ -934,10 +983,21 @@ define('main',[
 					cloudsGUI.add( api.clouds, "offset", 0, 1 ).onChange( api.clouds.update );
 					cloudsGUI.add( api.clouds, "exponent", 0 ).onChange( api.clouds.update );
 
-					var fogGui = gui.addFolder( 'fog' );
+					var fogGui = gui.addFolder( 'Fog' );
 					fogGui.addColor( api.fog, "color" ).onChange( api.updateFogColor );
 					fogGui.add( scene.fog, "near" );
 					fogGui.add( scene.fog, "far" );
+
+					var postGUI = gui.addFolder( 'Post' );
+					var grainGUI = postGUI.addFolder( 'grain' );
+					grainGUI.add( api.post.grain, "frequency" ).onChange( api.post.update );
+					grainGUI.add( api.post.grain, "opacity" ).onChange( api.post.update );	
+					grainGUI.add( api.post.grain, "speed" );
+
+					var vignetteGUI = postGUI.addFolder( 'Vignette' );
+					vignetteGUI.add( api.post.vignette, "opacity" ).onChange( api.post.update );
+					vignetteGUI.add( api.post.vignette, "start" ).onChange( api.post.update );
+					vignetteGUI.add( api.post.vignette, "end" ).onChange( api.post.update );
 					
 					gui.add( api, 		"seed" );
 					gui.add( api, 		"random" );
@@ -1225,7 +1285,7 @@ define('main',[
 						infoOverlay.css("transform", 'translate( '+ Number( pt.left + 250 - infoOverlay.xOffset ) + 'px, '+ Number( pt.top - 200 ) +'px )');
 					}
 
-					render();
+					render( delta );
 					requestAnimationFrame( animate );	
 
 
@@ -1310,6 +1370,7 @@ define('main',[
 		}
 
 		var cubeRendered = false;
+			forward = new THREE.Vector3( 0, 0, -1 );
 
 		function render( delta ){
 
@@ -1327,15 +1388,22 @@ define('main',[
 			var n = cloudsObj3d.children.length;
 			while( n-- > 0){
 				cloudsObj3d.children[n].lookAt( camera.position );
-				// cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
-				// cloudsObj3d.children[n].rotation.z = cloudsObj3d.children[n].currentRot; 
+				cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
+				cloudsObj3d.children[n].rotation.z = cloudsObj3d.children[n].currentRot; 
 			}
 
 
-			if( !cubeRendered ){
-				cubeRendered = true;
-				cubeCamera.updateCubeMap( renderer, scene );
-			}
+			postMaterial.uniforms.uTime.value += delta * 0.01 * api.post.grain.speed;
+
+			postMesh.position.copy( camera.position );
+			forward.set( 0, 0, -1 ).applyQuaternion( camera.quaternion );
+			postMesh.position.add( forward );
+
+			// if( !cubeRendered ){
+			// 	cubeRendered = true;
+			// 	cubeCamera.updateCubeMap( renderer, scene );
+			// }
+
 			renderer.render( scene, camera );
 			// console.timeEnd('render')
 
