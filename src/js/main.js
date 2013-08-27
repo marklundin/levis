@@ -1080,12 +1080,7 @@ define('main',[
 						}
 					}
 
-					var sound = new Howl({
-					  urls: ['audio/ambient.mp3'],
-					  // autoplay: true,
-					  loop: true,
-					  volume: gui ? 0 : 1.9,
-					});
+					
 					run();
 
 				}, function( twitter, instagram ){
@@ -1246,6 +1241,12 @@ define('main',[
 
 				sounds.mouseOver = new Howl({
 				  urls: ['audio/over1.mp3'],
+				  volume: 0.0,
+				});
+
+				sounds.ambient = new Howl({
+				  urls: ['audio/raum.mp3'],
+				  loop: true,
 				  volume: 1.0,
 				});
 
@@ -1325,6 +1326,7 @@ define('main',[
 			if( !running ){
 
 				running = true;
+				sounds.ambient.play();
 		
 				function animate( timeSinceLoad ){
 
