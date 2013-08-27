@@ -1408,7 +1408,7 @@ define('main',[
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
-					sounds.mouseOver.play();
+					// sounds.mouseOver.play();
 
 					if ( INTERSECTED ){
 						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
