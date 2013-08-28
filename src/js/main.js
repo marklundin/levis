@@ -128,7 +128,6 @@ define('main',[
 		controls.distanceVel = 0;
 
 		controls.addEventListener( 'drag', function(){
-			console.log("EVENT");
 			sounds.mouseDrag.play();
 		})
 
@@ -149,8 +148,6 @@ define('main',[
 			camera.aspect = WIDTH / HEIGHT;
 			camera.updateProjectionMatrix();
 
-			postMaterial.uniforms.uResolution.x = WIDTH;
-			postMaterial.uniforms.uResolution.y = HEIGHT;
 
 			renderer.setSize( WIDTH, HEIGHT );			
 		})
@@ -240,7 +237,7 @@ define('main',[
 				infoOverlay.expanded = false;
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 }, 400 );
 			}
-			setDatObjectsOpacity( 0.8 );
+			setDatObjectsOpacity( 0.75 );
 
 			resetCamera();
 
@@ -352,7 +349,8 @@ define('main',[
 			}});
 
 			if( infoOverlay.video ){
-				infoOverlay.video.get(0).paused || infoOverlay.video.get(0).currentTime === 0 ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
+				if( infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
+				infoOverlay.expanded ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
 			} 
 
 		});
@@ -522,14 +520,14 @@ define('main',[
 			var postMaterial = new THREE.ShaderMaterial({
 				uniforms:{
 					uTime 	 			: { type: "f", value: 0.0 },
-					opacity 			: { type: "f", value: 0.35 },
-					fNintensity 		: { type: "f", value: 0.35 }, // scanline intensity
-					fSintensity 		: { type: "f", value: 0.2 },  // noise intensity
-					fScount 			: { type: "f", value: 2048.0 },  // numscanlines
+					opacity 			: { type: "f", value: 0.26 },
+					fNintensity 		: { type: "f", value: 0.8 }, // scanline intensity
+					fSintensity 		: { type: "f", value: 0.7 },  // noise intensity
+					fScount 			: { type: "f", value: 2500.0 },  // numscanlines
 					vignetteAmount 		: { type: "f", value: 1.0 },
-					vignetteStart 		: { type: "f", value: 0.3 },
-					vignetteEnd 		: { type: "f", value: 0.9 },
-					noiseColor 			: { type: "c", value: new THREE.Color( 0x505050 ) },
+					vignetteStart 		: { type: "f", value: 0.2 },
+					vignetteEnd 		: { type: "f", value: 0.87 },
+					noiseColor 			: { type: "c", value: new THREE.Color( 0x282828 ) },
 					vignColor			: { type: "c", value: new THREE.Color( 0x0c0808 ) },
 				},
 				vertexShader: postShader.vertexShader, //document.getElementById( 'vs' ).textContent,
@@ -537,7 +535,7 @@ define('main',[
 				depthWrite: false,
 				depthTest: false,
 				transparent: true,
-				// blend: THREE.AdditiveBlending,
+				blend: THREE.MultiplyBlending,
 			});
 
 			var postMesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2, 1, 1 ), postMaterial );
@@ -565,7 +563,7 @@ define('main',[
 					"fogColor" : { type: "c", value: scene.fog.color },
 					"fogNear" : { type: "f", value: scene.fog.near },
 					"fogFar" : { type: "f", value: scene.fog.far },
-					opacity: { type: "f", value: 0.1 },
+					opacity: { type: "f", value: 0.18 },
 					offset: { type: "f", value: 0.4 },
 					useClouds: { type: "f", value: 1.0 },
 					exponent: { type: "f", value: 1.0 },
@@ -712,8 +710,11 @@ define('main',[
 					reflectivity: 0.3,
 					// bumpMap: bumpmap,
 					bumpScale: 0.2,
-					ambient: 0xFFFFFF,
+					color: 0x222222,
+					ambient: 0x426d84,
 					specular: 0xFFFFFF,
+					shininess: 30,
+					metal:false
 					// normalMap: normalmap,
 					// normalScale: new THREE.Vector2( 0.2, 0.2 )
 					// map: map
@@ -722,14 +723,15 @@ define('main',[
 				
 
 				var videoContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0xff2200 ),
+					color:new THREE.Color( 0x280500 ),
+					specular: 0xffffff,
 					ambient:new THREE.Color( 0xff2200 ),
 					transparent: true,
 					envMap: envMap,
 					side: THREE.DoubleSide,
 					// lights: false,
 					// blending: THREE.AdditiveBlending,
-					opacity: 0.8,
+					opacity: 0.75,
 				});
 				videoContentMaterial.originColor = new THREE.Color( 0xff2200 )
 
@@ -741,7 +743,7 @@ define('main',[
 					// map: envMap,
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
-					opacity: 0.8,
+					opacity: 0.75,
 				});
 				imageContentMaterial.originColor = new THREE.Color( 0x0033ff )
 
@@ -752,7 +754,7 @@ define('main',[
 					// envMap: cubemap,
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
-					opacity: 0.8,
+					opacity: 0.75,
 				});
 
 				function updateAllMaterial(){
@@ -901,7 +903,7 @@ define('main',[
 
 						refractionRatio: 0.98,
 						reflectivity: 1,
-						opacity: 0.8,
+						opacity: 0.75,
 						metal: false,
 						twitter:{
 							color 		: "#"+imageContentMaterial.color.getHexString(),	
@@ -915,7 +917,7 @@ define('main',[
 							specular 	: "#"+videoContentMaterial.specular.getHexString(),
 							ambient 	: "#"+videoContentMaterial.ambient.getHexString(),
 							shininess	: videoContentMaterial.shininess,
-							combine 	: imageContentMaterial.combine
+							combine 	: videoContentMaterial.combine
 						},
 						
 						updateMaterial:function(){

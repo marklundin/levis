@@ -264,7 +264,6 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 			if( notDragging ){
 				notDragging = false;
-				console.log('DRAGGING');
 				scope.dispatchEvent( startDragEvent );
 			}
 			
