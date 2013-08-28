@@ -520,21 +520,23 @@ define('main',[
 
 			var postMaterial = new THREE.ShaderMaterial({
 				uniforms:{
-					uResolution : { type: "v2", value: new THREE.Vector2( WIDTH, HEIGHT ) },
-					opacity : 	  { type: "f", value: 0.5 },
-					uFrequency : { type: "f", value: 1000.0 },
-					uTime 		: { type: "f", value: 0 },
+					uTime 	 			: { type: "f", value: 0.0 },
+					opacity 			: { type: "f", value: 0.35 },
+					fNintensity 		: { type: "f", value: 0.35 }, // scanline intensity
+					fSintensity 		: { type: "f", value: 0.2 },  // noise intensity
+					fScount 			: { type: "f", value: 2048.0 },  // numscanlines
 					vignetteAmount 		: { type: "f", value: 1.0 },
 					vignetteStart 		: { type: "f", value: 0.3 },
 					vignetteEnd 		: { type: "f", value: 0.9 },
-					noiseColor 			: { type: "c", value: new THREE.Color( 0x202020 ) },
+					noiseColor 			: { type: "c", value: new THREE.Color( 0x505050 ) },
+					vignColor			: { type: "c", value: new THREE.Color( 0x0c0808 ) },
 				},
 				vertexShader: postShader.vertexShader, //document.getElementById( 'vs' ).textContent,
 				fragmentShader: postShader.fragmentShader, //document.getElementById( 'fs' ).textContent,
 				depthWrite: false,
 				depthTest: false,
 				transparent: true,
-				blend: THREE.AdditiveBlending,
+				// blend: THREE.AdditiveBlending,
 			});
 
 			var postMesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2, 1, 1 ), postMaterial );
@@ -830,18 +832,25 @@ define('main',[
 
 					post:{
 						grain:{
-							speed : 1,
-							frequency: postMaterial.uniforms.uFrequency.value,
+							speed: 1,
 							opacity: postMaterial.uniforms.opacity.value,
+							amount: postMaterial.uniforms.fNintensity.value,
+							scanlines: postMaterial.uniforms.fSintensity.value,
+							numScanlines: postMaterial.uniforms.fScount.value,
 							color: "#"+postMaterial.uniforms.noiseColor.value.getHexString()
 						},
 						vignette:{
 							opacity: postMaterial.uniforms.vignetteAmount.value,
 							start: postMaterial.uniforms.vignetteStart.value,
-							end: postMaterial.uniforms.vignetteEnd.value
+							end: postMaterial.uniforms.vignetteEnd.value,
+							color: "#"+postMaterial.uniforms.vignColor.value.getHexString()
 						},
 						update: function(){
-							postMaterial.uniforms.uFrequency.value = api.post.grain.frequency;
+
+							postMaterial.uniforms.fNintensity.value = api.post.grain.amount;
+							postMaterial.uniforms.fSintensity.value = api.post.grain.scanlines;
+							postMaterial.uniforms.fScount.value = api.post.grain.numScanlines;
+
 							postMaterial.uniforms.opacity.value = api.post.grain.opacity;
 
 							postMaterial.uniforms.vignetteAmount.value = api.post.vignette.opacity;
@@ -849,6 +858,7 @@ define('main',[
 							postMaterial.uniforms.vignetteEnd.value = api.post.vignette.end;
 							
 							postMaterial.uniforms.noiseColor.value.set( api.post.grain.color );
+							postMaterial.uniforms.vignColor.value.set( api.post.vignette.color );
 
 						}
 						
@@ -1004,15 +1014,17 @@ define('main',[
 
 					var postGUI = gui.addFolder( 'Post' );
 					var grainGUI = postGUI.addFolder( 'grain' );
-					grainGUI.add( api.post.grain, "frequency" ).onChange( api.post.update );
-					grainGUI.add( api.post.grain, "opacity" ).onChange( api.post.update );	
+					grainGUI.add( api.post.grain, "amount" ).onChange( api.post.update );
+					grainGUI.add( api.post.grain, "scanlines" ).onChange( api.post.update );
+					grainGUI.add( api.post.grain, "numScanlines" ).onChange( api.post.update );
+					grainGUI.add( api.post.grain, "opacity" ).onChange( api.post.update );
 					grainGUI.addColor( api.post.grain, "color" ).onChange( api.post.update );	
-					grainGUI.add( api.post.grain, "speed" );
 
 					var vignetteGUI = postGUI.addFolder( 'Vignette' );
 					vignetteGUI.add( api.post.vignette, "opacity" ).onChange( api.post.update );
 					vignetteGUI.add( api.post.vignette, "start" ).onChange( api.post.update );
 					vignetteGUI.add( api.post.vignette, "end" ).onChange( api.post.update );
+					vignetteGUI.addColor( api.post.vignette, "color" ).onChange( api.post.update );
 					
 					gui.add( api, 		"seed" );
 					gui.add( api, 		"random" );
@@ -1479,7 +1491,7 @@ define('main',[
 			}
 
 
-			postMaterial.uniforms.uTime.value += delta * 0.01 * api.post.grain.speed;
+			postMaterial.uniforms.uTime.value += delta * 0.001
 
 			postMesh.position.copy( camera.position );
 			forward.set( 0, 0, -1 ).applyQuaternion( camera.quaternion );
