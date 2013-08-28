@@ -122,6 +122,7 @@ define('main',[
 		controls.userRotateSpeed = 0.4;
 		controls.userPan = false;
 		controls.userZoom = false;
+		controls.autoRotate = true;
 		controls.autoRotateSpeed = 300 * timestep;
 		var distanceTarget = controls.distance = 2000;
 		controls.distanceVel = 0;
@@ -1331,6 +1332,7 @@ define('main',[
 
 		var running = false;
 		var startTime, time, delta, t, firstStep = true;
+		var screenPos		= {};
 		// var offsetVec = new THREE.Vector3();
 
 		function run(){
@@ -1360,8 +1362,8 @@ define('main',[
 					transition.update( delta / 1000 * api.speed );
 
 					if( arrived && lastClicked ){
-						var pt = toScreenXY( lastClicked.position , camera, $('#main')  );
-						infoOverlay.css("transform", 'translate( '+ Number( pt.left + 250 - infoOverlay.xOffset ) + 'px, '+ Number( pt.top - 200 ) +'px )');
+						toScreenXY( lastClicked.position , camera, $('#main')  );
+						infoOverlay.css("transform", 'translate( '+ Number( screenPos.left + 250 - infoOverlay.xOffset ) + 'px, '+ Number( screenPos.top - 200 ) +'px )');
 					}
 
 					render( delta );
@@ -1384,6 +1386,7 @@ define('main',[
 
 		var pos 			= new THREE.Vector3(),
 			projScreenMat 	= new THREE.Matrix4();
+			
 
 		function toScreenXY ( position, camera, jqdiv ) {
 
@@ -1392,10 +1395,12 @@ define('main',[
 		    projScreenMat.copy( camera.projectionMatrix ).multiply( camera.matrixWorldInverse );
 		    pos.applyProjection( projScreenMat );
 		    
-		    return { 
-		    	left: (   pos.x + 1 ) * jqdiv.width()  / 2 ,
-		        top:  ( - pos.y + 1 ) * jqdiv.height() / 2 
-		    };
+		    // return { 
+		   	screenPos.left= (   pos.x + 1 ) * jqdiv.width()  / 2;
+		    screenPos.top=  ( - pos.y + 1 ) * jqdiv.height() / 2;
+		    // };
+
+		    return screenPos;
 
 		}
 
