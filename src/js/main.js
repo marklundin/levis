@@ -210,7 +210,8 @@ define('main',[
 
 		}
 
-		$( '#search-field' ).click( function(){
+		$( '#search-field' ).click( function(e){
+			e.stopImmediatePropagation();
 			$( this ).select();
 			$( this ).keypress( function(){
 				if( clicked ){
@@ -226,6 +227,8 @@ define('main',[
 		searchOverlay.children( ".close-button-icon" ).click(function( e ){
 
 			e.preventDefault();
+			e.stopImmediatePropagation();
+
 			showingSearchResults = false;
 
 			inputField.value = '';
@@ -343,6 +346,8 @@ define('main',[
 		$( "#show-more" ).click(function( e ){
 
 			e.preventDefault();
+			e.stopImmediatePropagation();
+
 			infoOverlay.expanded = !infoOverlay.expanded;
 			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, onComplete:function(){
 				if( !infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
@@ -359,6 +364,9 @@ define('main',[
 		infoOverlay.children('.buttons').children( ".close-button-icon" ).click(function( e ){
 
 			e.preventDefault();
+			e.stopImmediatePropagation();
+
+			console.log('BOOM')
 
 			if( !showingSearchResults ) resetCamera();
 			// infoOverlay.fadeOut( 400 );
@@ -443,13 +451,19 @@ define('main',[
 		}
 
 
-		document.addEventListener( 'mousedown', function( e ){
+		document.addEventListener( 'click', function( e ){
+
+
+
+			
 
 			if( gui ) controls.autoRotate = false;
 
 			if( INTERSECTED && INTERSECTED !== clicked ){
 
+				console.log('BOOM 2')
 				e.preventDefault();
+				e.stopImmediatePropagation();
 
 				if( showingSearchResults && searchResObj3d.children.indexOf( INTERSECTED ) === -1 ) return;
 

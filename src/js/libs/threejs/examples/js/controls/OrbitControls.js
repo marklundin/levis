@@ -255,6 +255,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 		startDragEvent = {type:'drag'};
 	function onMouseMove( event ) {
 
+		event.preventDefault();
+		event.stopImmediatePropagation();
+
 		if ( scope.enabled === false ) return;
 
 
@@ -321,6 +324,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 
 	function onMouseUp( event ) {
+
+		event.preventDefault();
+		event.stopImmediatePropagation();
 
 		notDragging = true;
 
