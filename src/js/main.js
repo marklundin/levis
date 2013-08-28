@@ -1186,7 +1186,7 @@ define('main',[
 								var results = twitterResults.concat( instagramResults );
 
 								searchOverlay.children('#body').children('#results').html(
-									'YOUR SEARCH FOR <br/>"<b>'+value+'</b>"<br/> RETURNED <b>' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + '</b> RESULTS' 
+									'YOUR SEARCH FOR <br/>"<b>'+value.toUpperCase()+'</b>"<br/> RETURNED <b>' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + '</b> RESULTS' 
 								);
 
 								searchOverlay.fadeIn( 400, function () {
@@ -1454,7 +1454,7 @@ define('main',[
 
 		function render( delta ){
 
-			//depth pass
+			// depth pass
 			// scene.overrideMaterial = depthMaterial;
 			// renderer.render( scene, camera, depthTarget );
 			// scene.overrideMaterial = null;
@@ -1466,12 +1466,9 @@ define('main',[
 			// material.uniforms.uTime.value = delta * 0.00005;
 
 			var n = cloudsObj3d.children.length;
-			// b.copy( camera.position );
-			// b.normalize();
 
 			while( n-- > 0){
 
-			
 				cloudsObj3d.children[n].up.set( 0, 1, 0 ).applyQuaternion( desRotation.copy( camera.quaternion ) );
 				cloudsObj3d.children[n].lookAt( camera.position  );
 
@@ -1494,12 +1491,9 @@ define('main',[
 			// }
 
 			renderer.render( scene, camera );
-			// console.timeEnd('render')
+			
 
 		}
-
-		
-
 
 	}
 );
