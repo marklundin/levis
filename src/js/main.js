@@ -500,7 +500,7 @@ define('main',[
 
 				if( infoOverlay.video ){
 					infoOverlay.video.get(0).pause();
-					// infoOverlay.video.toggle( clicked.isInstagram, 0 );	
+					infoOverlay.video.toggle( clicked.isInstagram, 0 );	
 				} 
 				
 
