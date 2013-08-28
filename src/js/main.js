@@ -118,7 +118,7 @@ define('main',[
 		
 
 		controls.velocity = new THREE.Vector3();
-		controls.maxPolarAngle = Math.PI / 1.62;
+		controls.maxPolarAngle = Math.PI / 1.42;
 		controls.userRotateSpeed = 0.4;
 		controls.userPan = false;
 		controls.userZoom = false;
@@ -1052,7 +1052,7 @@ define('main',[
 						dataObject.isInstagram = isInstagram;
 						contentObj3d.add( dataObject );
 
-						if( n <= INITIAL_NUM_ANIMATIONS ){
+						if( n < INITIAL_NUM_ANIMATIONS ){
 
 							var probability = Math.random();
 							var prop = probability <  1/3 ? 'x' : probability < 2/3 ? 'y' : 'z';
@@ -1073,7 +1073,7 @@ define('main',[
 
 								obj.unclickable = false;
 								obj.transition.dispose();
-								// console.log( 'Animation Completed', INITIAL_NUM_ANIMATIONS );
+								console.log( 'Animation Completed', INITIAL_NUM_ANIMATIONS );
 
 							}.bind( this, dataObject );
 
@@ -1439,8 +1439,18 @@ define('main',[
 		}
 
 		var cubeRendered = false;
-			forward = new THREE.Vector3( 0, 0, -1 );
-			upp = new THREE.Vector3( 0, 0, -1 );
+			forward 	 = new THREE.Vector3( 0, 0, -1 ),
+			normal 	     = new THREE.Vector3( 0, 0, 1 ),
+			camUp 		 = new THREE.Vector3( 0, 1, 0 ),
+			a = new THREE.Vector3(), 
+			b = new THREE.Vector3(),
+			desRotation = new THREE.Quaternion(), 
+			dAngle = 0,
+			newQuaternion = new THREE.Quaternion();
+
+
+
+
 
 		function render( delta ){
 
@@ -1456,10 +1466,19 @@ define('main',[
 			// material.uniforms.uTime.value = delta * 0.00005;
 
 			var n = cloudsObj3d.children.length;
+			// b.copy( camera.position );
+			// b.normalize();
+
 			while( n-- > 0){
-				cloudsObj3d.children[n].lookAt( camera.position );
-				cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
-				cloudsObj3d.children[n].rotation.z = cloudsObj3d.children[n].currentRot; 
+
+			
+				cloudsObj3d.children[n].up.set( 0, 1, 0 ).applyQuaternion( desRotation.copy( camera.quaternion ) );
+				cloudsObj3d.children[n].lookAt( camera.position  );
+
+				// cloudsObj3d.children[n].lookAt( camera.position );
+				// cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
+				// cloudsObj3d.children[n].rotation.z = cloudsObj3d.children[n].currentRot;
+
 			}
 
 
