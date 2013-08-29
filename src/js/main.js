@@ -113,7 +113,7 @@ define('main',[
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
-		renderer.setClearColor( 0x2f2f2f );
+		renderer.setClearColor( 0x1b2022 );
 		
 
 		controls.velocity = new THREE.Vector3();
@@ -179,6 +179,8 @@ define('main',[
 
 
 		document.addEventListener(visibilityChange, function() {
+
+			Howler.volume = document[hidden] ? 0.0 : 1.0;
 
 			if (!document[hidden]) {
 
@@ -255,23 +257,23 @@ define('main',[
 		];
 
 			
-		var bumpmap = THREE.ImageUtils.loadTexture( "img/sand-bump-map.jpg" ); // load textures
-		var normalmap = THREE.ImageUtils.loadTexture( "img/noise_normal.png" ); // load textures
-		var map = THREE.ImageUtils.loadTexture( "img/noise-bump.jpg" ); // load textures
+		// var bumpmap = THREE.ImageUtils.loadTexture( "img/sand-bump-map.jpg" ); // load textures
+		// var normalmap = THREE.ImageUtils.loadTexture( "img/noise_normal.png" ); // load textures
+		// var map = THREE.ImageUtils.loadTexture( "img/noise-bump.jpg" ); // load textures
 		
-		bumpmap.wrapS = bumpmap.wrapT = THREE.RepeatWrapping;
-		map.wrapS = map.wrapT = THREE.RepeatWrapping;
-		normalmap.wrapS = normalmap.wrapT = THREE.RepeatWrapping;
+		// bumpmap.wrapS = bumpmap.wrapT = THREE.RepeatWrapping;
+		// map.wrapS = map.wrapT = THREE.RepeatWrapping;
+		// normalmap.wrapS = normalmap.wrapT = THREE.RepeatWrapping;
 		
-		map.repeat.set( 0.2, 0.2 );
-		normalmap.repeat.set( 0.2, 0.2 );
-		bumpmap.repeat.set( 0.05, 0.05 );
+		// map.repeat.set( 0.2, 0.2 );
+		// normalmap.repeat.set( 0.2, 0.2 );
+		// bumpmap.repeat.set( 0.05, 0.05 );
 
 		// normalmap.repeat.set( 10, 1 );
 
 
 		var envMap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
-		var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 1024 );
+		// var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 1024 );
 		// envMap = cubeCamera.renderTarget;
 
 		var dataTexture = new THREE.Texture( null, new THREE.CubeRefractionMapping() );
@@ -399,7 +401,7 @@ define('main',[
 				lastClicked = clicked;
 				var content = infoOverlay.children('#body');
 
-				sounds.closer.play();
+				sounds.closer[Math.floor( Math.random() * sounds.closer.length )].play();
 
 				content.children('#content').html( clicked.infoDataObject.title ); 
 				$('#show-more').toggleClass( "camera-button-icon", clicked.isInstagram );
@@ -1136,7 +1138,7 @@ define('main',[
 
 							dataObject.transition.startCallback = function( obj ){
 								contentObj3d.add( obj );
-								sounds.entering.play();
+								sounds.entering[Math.floor( Math.random()*sounds.entering.length )].play();
 							}.bind( this, dataObject )
 
 							dataObject.transition.callback = function( obj ){
@@ -1316,9 +1318,15 @@ define('main',[
 
 				var sounds = {};
 
-				sounds.mouseOver = new Howl({
+				sounds.mouseOver = [];
+				sounds.mouseOver[0] = new Howl({
 				  urls: ['audio/over1.mp3'],
-				  volume: 0.0,
+				  volume: 1.0,
+				});
+
+				sounds.mouseOver[1] = new Howl({
+				  urls: ['audio/over2.mp3'],
+				  volume: 1.0,
 				});
 
 				sounds.ambient = new Howl({
@@ -1332,6 +1340,7 @@ define('main',[
 				  urls: ['audio/fly-in1.mp3'],
 				  volume: 1.0,
 				});
+
 				sounds.click[1] = new Howl({
 				  urls: ['audio/fly-in2.mp3'],
 				  volume: 1.0,
@@ -1341,23 +1350,40 @@ define('main',[
 				  volume: 1.0,
 				})
 
-				sounds.closer = new Howl({
-				  urls: ['audio/closer.mp3'],
+				sounds.closer = [];
+				sounds.closer[0] = new Howl({
+				  urls: ['audio/closer1.mp3'],
+				  volume: 1.0,
+				});
+
+				sounds.closer[1] = new Howl({
+				  urls: ['audio/closer2.mp3'],
+				  volume: 1.0,
+				});
+
+				sounds.closer[2] = new Howl({
+				  urls: ['audio/closer3.mp3'],
 				  volume: 1.0,
 				});
 
 				sounds.out = new Howl({
-				  urls: ['audio/fly-out1.mp3'],
+				  urls: ['audio/flyout.mp3'],
 				  volume: 1.0,
 				});
 
-				sounds.entering = new Howl({
-				  urls: ['audio/entering.mp3'],
+				sounds.entering = []
+				sounds.entering[0] = new Howl({
+				  urls: ['audio/entering1.mp3'],
+				  volume: 1.0,
+				});
+
+				sounds.entering[1] = new Howl({
+				  urls: ['audio/entering2.mp3'],
 				  volume: 1.0,
 				});
 
 				sounds.mouseDrag = new Howl({
-				  urls: ['audio/turn2.mp3'],
+				  urls: ['audio/turn.mp3'],
 				  volume: 1.0,
 				});
 
@@ -1489,7 +1515,7 @@ define('main',[
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
-					// sounds.mouseOver.play();
+					sounds.mouseOver[Math.floor( Math.random() * sounds.mouseOver.length)].play();
 
 					if ( INTERSECTED && INTERSECTED !== clicked ){
 						INTERSECTED.light.transition.paused = false;
