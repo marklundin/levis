@@ -23,7 +23,7 @@ uniform float fogNear;
 uniform float fogFar;
 
 uniform float opacity;
-uniform float useClouds;
+// uniform float useClouds;
 uniform float offset;
 uniform float exponent;
 
@@ -50,7 +50,7 @@ void main() {
 	gl_FragColor = texture2D( map, vUv );
 	gl_FragColor.a *= pow( gl_FragCoord.z + offset, exponent );
 	gl_FragColor.a *= opacity;
-	gl_FragColor = mix( vec4( 1.0, 0.0, 0.0, 1.0 ), gl_FragColor, useClouds );
+	// gl_FragColor = mix( vec4( 1.0, 0.0, 0.0, 1.0 ), gl_FragColor, useClouds );
 
 }
 
