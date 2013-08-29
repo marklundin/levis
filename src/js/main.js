@@ -738,6 +738,7 @@ define('main',[
 					reflectivity: 0.3,
 					// bumpMap: bumpmap,
 					// bumpScale: 0.2,
+					perPixel:false,
 					color: 0x222222,
 					ambient: 0x426d84,
 					specular: 0xFFFFFF,
