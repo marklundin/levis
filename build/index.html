@@ -8,9 +8,8 @@
 			----------
 
 			@authors Cedric Kiefer & Mark Lundin
-			@version 71875d0
-			@date Mon Aug 26 2013 20:04:53
-
+			@version 681c996
+			@date Thu Aug 29 2013 20:06:59
 
 		-->
 
@@ -23,12 +22,19 @@
 		<div id='gui'></div>
 		<div id="main">
 			<div id='search'>
-				<input type="text" name="fname" id='search-field' placeholder="search">
+				<div id='search-container'>
+					<input type="text" name="fname" id='search-field' placeholder="search by username">
+				</div>
+				<ul class='featured-submissions'>
+					<li class='title' >FEATURED SUBMISSIONS</li>
+					<li class='vip' data-username='S_COPPOLA' >@S_COPPOLA</li>
+					<li class='vip' data-username='DAVE_EGGERS' >@DAVE_EGGERS</li>
+					<li class='vip' data-username='S_COPPOLA' >@STEPHEN_SHORE</li>
+				</ul>
 			</div>
 			<div id='search-overlay' class='disable-select' >
 				<div id='body' >
-					<h1>SEARCH RESULTS</h1>
-					<h2 id='results'></h2>
+					<div id='results'></div>
 				</div>	
 				<div class='button-icon close-button-icon'></div>
 			</div>

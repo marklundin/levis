@@ -37,6 +37,8 @@ js/transition.js
 js/utils/easing.js
 template!shaders/clouds.glsl
 glsl!shaders/clouds.glsl
+template!shaders/libs/vignette.glsl
+template!shaders/post.glsl
+glsl!shaders/post.glsl
 js/libs/threejs/examples/js/controls/OrbitControls.js
-js/libs/threejs/examples/js/postprocessing/EffectComposer.js
 js/main.js

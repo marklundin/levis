@@ -8,11 +8,78 @@ body{
 video{
 	padding-bottom: 10px;
 }
+ol, ul {
+	font-family: "helvetica neue", arial, sans-serif;
+	letter-spacing: 0.2em;
+	font-size: 10pt;
+	list-style: none;
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 0em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	-webkit-padding-start: 0px;
+	margin-before: 0em;
+	margin-after: 0em;
+	margin-start: 0px;
+	margin-end: 0px;
+	padding-start: 0px;
+}
+.featured-submissions{
+	
+	display: none;
+	
+}
+.featured-submissions li{
+	color: black;
+	background: rgb( 236, 236, 236 );
+	border-bottom: 1px rgb( 192, 192, 192 ) inset;
+	padding:15px;
+	cursor: pointer;
+}
+.featured-submissions li:hover{
+	background: white;
+}
+li.title{
+	cursor: none !important;
+	color: white !important;
+	background: black !important;
+}
 #search{
-	padding: 50px;
+	margin: 35px;
+	
 	right: 0px;
 	position: absolute;
 	z-index: 1;
+}
+.search-focus{
+	background: white;
+}
+#search-field{
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
+	
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	font-size: 10pt;
+	
+	color: white;
+	border: none;
+	border-bottom: 2px white inset;
+	padding: 5px;
+	width: 250px;
+	outline: none;
+	padding-left: 0px;
+	margin: 15px;
+}
+#search-field::-webkit-input-placeholder{
+	color: white;
+}
+.search-focus #search-field{
+	
+	
+	
+	-webkit-filter: invert(1.0);
+	filter: invert(1.0);
 }
 .disable-select {
   -webkit-user-select: none;  
@@ -66,10 +133,10 @@ a:active {text-decoration:none; color: inherit;}
 		url( ../img/up-arrow.png )
 		no-repeat;
 }
-#info-overlay h1, h2, #date{
+#info-overlay h1, #info-overlay h2, #info-overlay #date{
 	text-transform: uppercase;
 }
-#info-overlay h1, h2{
+#info-overlay h1, #info-overlay h2{
 	letter-spacing: 0.2em;
 	padding-left: 10px;
 	margin-top: 1px;
@@ -83,10 +150,10 @@ a:active {text-decoration:none; color: inherit;}
 	margin-top: 0px;
 	font-size: 12pt;
 }
-#info-overlay h2, h3{
+#info-overlay h2, #info-overlay h3{
 	font-size: 10pt;
 }
-#info-overlay h2, h3{	
+#info-overlay h2, #info-overlay h3{	
 	font-weight: normal;
 }
 #info-overlay #date{
@@ -100,6 +167,7 @@ a:active {text-decoration:none; color: inherit;}
 	margin-bottom: 10px
 }
 #body{
+	
 	vertical-align: top;
 	display: inline-block;
 	background: white;
@@ -107,6 +175,10 @@ a:active {text-decoration:none; color: inherit;}
 	padding: 15px;
 	color: black;
 	font-size: 10pt;
+}
+#search-overlay #body{
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+	width: 260px;
 }
 .close-button-icon:hover{
 	opacity:1.0;
@@ -139,19 +211,24 @@ a:active {text-decoration:none; color: inherit;}
 	width: 50px;
 	height: 50px;
 }
+#results{
+	font-family: "helvetica neue", arial, sans-serif;
+	letter-spacing: 0.2em;
+	font-size: 10pt;
+	line-height: 1.5em;
+}
 #search-overlay #body{
 	text-align: center;
 	background: white;
-	min-height: 75px;
+	
 }
 #search-overlay{
 	overflow: hidden;
 	color: black;
 	display: none;
-	min-width: 470px;
 	color: white;
 	top: 30px;
-	left: 35%;
+	left: calc(50% - 157px);
 	position: absolute;
 	z-index: 4;
 }
@@ -167,24 +244,6 @@ a:active {text-decoration:none; color: inherit;}
 #search-overlay h2{
 	font-size: 10pt;
 	
-}
-#search-field{
-	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
-	
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
-	font-size: 10pt;
-	-webkit-font-smoothing: subpixel-antialiased;
-	color: white;
-	border: none;
-	border-bottom: 2px white inset;
-	padding: 5px;
-	width: 250px;
-	outline: none;
-	padding-left: 0px;
-}
-#search-field::-webkit-input-placeholder{
-	color: white;
 }
 #gui{
 	position: absolute;
