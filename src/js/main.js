@@ -969,7 +969,6 @@ define('main',[
 					
 							// contentObj3d.children[n].material.needsUpdate = true;
 
-					
 							n = searchResObj3d.children.length;
 							while( n-- > 0 ){
 								if( searchResObj3d.children[n].material ) {
@@ -982,8 +981,6 @@ define('main',[
 
 								}
 							}
-
-
 						}
 					},
 
@@ -1149,9 +1146,10 @@ define('main',[
 							}.bind( this, dataObject )
 
 							dataObject.transition.callback = function( obj ){
-								// console.log( 'here', INITIAL_NUM_ANIMATIONS );
+								console.log( 'here', INITIAL_NUM_ANIMATIONS );
 								obj.position[obj.targetProp] = obj.targetPosition;
 								obj.unclickable = false;
+								interactiveObjs.push( obj );
 								obj.transition.dispose();
 
 							}.bind( this, dataObject );
