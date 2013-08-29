@@ -235,7 +235,6 @@ define('main',[
 			divFadeOut( searchOverlay, 400 );
 			divFadeOut( infoOverlay, 400 );
 			if( infoOverlay.expanded ){
-				console.log( 'hEREE ')
 				infoOverlay.expanded = false;
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 }, 400 );
 			}
@@ -365,9 +364,7 @@ define('main',[
 			e.preventDefault();
 			e.stopImmediatePropagation();
 
-			console.log('BOOM')
-
-			if( !showingSearchResults ) resetCamera();
+			// if( !showingSearchResults ) resetCamera();
 			// infoOverlay.fadeOut( 400 );
 			divFadeOut( infoOverlay, 400 );
 			// if( infoOverlay.video ) infoOverlay.video.get(0).pause();
@@ -440,10 +437,20 @@ define('main',[
 
 
 		function resetCamera(){
+			// console.log( lastClicked.light.opacity, lastClicked.light.transition.target );
+			lastClicked.isSelected = false;
+			lastClicked.light.transition.target = 0;
+			// lastClicked.light.transition.reset();
+			lastClicked.light.transitionDist.target = 1;
+			lastClicked.light.transition.paused = false;
+			selectionLights.push( lastClicked.light );
+			// console.log( lastClicked.light.opacity, lastClicked.light.transition.target );
 
 			clicked = null;
 			sounds.out.play();
 			divFadeOut( infoOverlay, 400 );
+
+			
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
 
@@ -451,27 +458,32 @@ define('main',[
 
 
 		document.addEventListener( 'click', function( e ){
-
-
-
-			
+	
 
 			if( gui ) controls.autoRotate = false;
 
 			if( INTERSECTED && INTERSECTED !== clicked ){
 
-				console.log('BOOM 2')
 				e.preventDefault();
 				e.stopImmediatePropagation();
 
 				if( showingSearchResults && searchResObj3d.children.indexOf( INTERSECTED ) === -1 ) return;
 
 				if( clicked ){
+					clicked.isSelected = false;
+					clicked.light.transition.target = 0;
+					clicked.light.transition.reset();
+					clicked.light.transition.paused = false;
+					clicked.light.transitionDist.target = 1;
+					selectionLights.push( clicked.light );
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
 				}
 
 				clicked = INTERSECTED;
+				clicked.isSelected = true;
+				clicked.light.transitionDist.target = 3;
+				selectionLights.splice( selectionLights.indexOf( clicked.light ), 1 );
 
 				sounds.click[Math.floor(Math.random()*sounds.click.length)].play();
 
@@ -479,9 +491,7 @@ define('main',[
 				var imageElem = infoOverlay.children('#body').children( '#image' );
 				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
 
-
 					imageElem.attr( 'src', avatarUrl )
-
 					
 					if( clicked.isInstagram ){
 						updateEnvMapWithImage( clicked.material, thumbUrl );
@@ -489,8 +499,6 @@ define('main',[
 						var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
 						updateEnvMapWithCanvas( clicked.material, tp );
 					}
-
-
 
 					if( clicked.isInstagram && videoUrl ){
 						if( infoOverlay.video === undefined ){
@@ -1060,13 +1068,40 @@ define('main',[
 
 			// DATA 
 
-				var selectionLight 	= new THREE.PointLight( 0xFF0000, 0.0, 250 ),
+				var selectionLights = [],
 					strut,
 					instagramMesh = new THREE.Mesh( new THREE.Geometry(), videoContentMaterial  ),
 					twitterMesh   = new THREE.Mesh( new THREE.Geometry(), imageContentMaterial  ),
 					interactiveObjs = [];
 
-				scene.add( selectionLight );
+				var nl = 3, light;
+				while( nl-- > 0 ){
+					light = new THREE.PointLight( 0xFF0000, 0, 250 );
+					light.opacity = 0;
+					light.distanceCoeff = 1;
+					light.transition = transition( light, 'opacity',null, {threshold:0.01, speed: 5.0 } );
+					light.transitionDist = transition( light, 'distanceCoeff', 1, {threshold:0.01, speed: 0.1 } );
+					// light.transition.paused = true;
+					light.transition.callback = function( light ){
+
+						light.transition.arrived = false;
+						light.transition.paused = true;
+						light.opacity = light.transition.target;
+
+						if( light.transition.target < 0.5 && light.object && !light.object.isSelected ){
+							light.object.light = null;
+						}
+
+					}.bind( this, light );
+
+					selectionLights.push( light );
+					scene.add( light );
+
+				}
+
+				allLights = selectionLights.slice();
+
+				// scene.add( selectionLight );
 				scene.add( instagramMesh );
 				scene.add( twitterMesh );
 
@@ -1105,7 +1140,7 @@ define('main',[
 							}.bind( this, dataObject )
 
 							dataObject.transition.callback = function( obj ){
-								console.log( 'here', INITIAL_NUM_ANIMATIONS );
+								// console.log( 'here', INITIAL_NUM_ANIMATIONS );
 								obj.position[obj.targetProp] = obj.targetPosition;
 								obj.unclickable = false;
 								obj.transition.dispose();
@@ -1114,7 +1149,6 @@ define('main',[
 
 						}else{
 							interactiveObjs.push( dataObject );
-							console.log( dataObject.isInstagram ? "instagramMesh.geometry" : "twitterMesh.geometry" );
 							THREE.GeometryUtils.merge( dataObject.isInstagram ? instagramMesh.geometry : twitterMesh.geometry, dataObject );
 							// contentObj3d.add( dataObject );
 						}
@@ -1140,7 +1174,9 @@ define('main',[
 					
 					while( n-- > 0 ){
 						if( contentObj3d.children[n].material !== undefined ){
+
 							contentObj3d.children[n].material.opacity = opacity;
+
 							if( !contentObj3d.children[n].normalHexColor ){
 								contentObj3d.children[n].normalHexColor = contentObj3d.children[n].material.color.getHex();
 								contentObj3d.children[n].normalHexAmbientColor = contentObj3d.children[n].material.color.getHex();
@@ -1396,7 +1432,7 @@ define('main',[
 						infoOverlay.css("transform", 'translate( '+ Number( screenPos.left + 250 - infoOverlay.xOffset ) + 'px, '+ Number( screenPos.top - 200 ) +'px )');
 					}
 
-					render( delta );
+					render( delta, time );
 					requestAnimationFrame( animate );	
 
 
@@ -1425,10 +1461,8 @@ define('main',[
 		    projScreenMat.copy( camera.projectionMatrix ).multiply( camera.matrixWorldInverse );
 		    pos.applyProjection( projScreenMat );
 		    
-		    // return { 
 		   	screenPos.left= (   pos.x + 1 ) * jqdiv.width()  / 2;
-		    screenPos.top=  ( - pos.y + 1 ) * jqdiv.height() / 2;
-		    // };
+		    screenPos.top = ( - pos.y + 1 ) * jqdiv.height() / 2;
 
 		    return screenPos;
 
@@ -1455,36 +1489,64 @@ define('main',[
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
-
-
 					// sounds.mouseOver.play();
 
-					if ( INTERSECTED ){
+					if ( INTERSECTED && INTERSECTED !== clicked ){
+						INTERSECTED.light.transition.paused = false;
+						INTERSECTED.light.transition.target = 0;
 						// selectionLight.color.setHex( selectionLight.currentHex );
-						selectionLight.intensity = 0;
+						// selectionLight.intensity = 0;
 					}
 
 					if( showingSearchResults && searchResObj3d.children.indexOf( intersects[ 0 ].object ) === -1 ) return;
 
 					INTERSECTED = intersects[ 0 ].object;
 					// selectionLight.currentHex = selectionLight.color.getHex();
-					selectionLight.color.set( INTERSECTED.material.color );
-					selectionLight.color.multiplyScalar( 30 );
+
+					var isNewLight = INTERSECTED.light === null;
+					var light = INTERSECTED.light || selectionLights[selectionLights.length - selectionLights.unshift( selectionLights.pop() )];
+					INTERSECTED.light = light;
 					
-					selectionLight.intensity = 5.5;
-					selectionLight.position.copy( INTERSECTED.position );
+
+					if( isNewLight ){
+						light.opacity = 0;
+						light.transition.reset();
+					}
+
+					light.transition.target = 1;
+					light.object = INTERSECTED;
+
+
+					light.color.set( INTERSECTED.material.color ).multiplyScalar( 30 );
+					
+					// light.intensity = 5.5;
+					light.position.copy( INTERSECTED.position );
+					light.transition.paused = false;
+
 
 				}
+				
 
 			} else {
 
-				if ( INTERSECTED ){
-					// INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-					selectionLight.intensity = 0;
+				if ( INTERSECTED && INTERSECTED !== clicked ){
+					INTERSECTED.light.transition.paused = false;
+					INTERSECTED.light.transition.target = 0;
+					
 				} 
 				INTERSECTED = null;
 
+
 			}
+
+			// var nl = selectionLights.length;
+			// // console.log( INTERSECTED );
+			// while( nl-- > 0 ){
+
+			// 	if( INTERSECTED === null || selectionLights[nl] !== INTERSECTED.light ) selectionLights[nl].transition.target = 0;
+			// }
+
+			
 
 		}
 
@@ -1492,10 +1554,10 @@ define('main',[
 			forward 	 = new THREE.Vector3( 0, 0, -1 ),
 			normal 	     = new THREE.Vector3( 0, 0, 1 ),
 			camUp 		 = new THREE.Vector3( 0, 1, 0 );
-
+			range 		 = 25;
 
 		var cloudRotationQuat = new THREE.Quaternion();
-		function render( delta ){
+		function render( delta, time ){
 
 			// depth pass
 			// scene.overrideMaterial = depthMaterial;
@@ -1507,6 +1569,15 @@ define('main',[
 			// console.time('render')
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
+			var l = allLights.length;
+			while( l-- > 0 ){
+				// selectionLights[l].intensity = selectionLights[l].opacity * 5.5;
+				allLights[l].distance =  Math.sin( time * 0.0005 ) * range + range + 150;	
+				allLights[l].intensity = (( allLights[l].distance / 175 )) * ( Math.cos( time * 10.0 ) * 0.6 + 8.0 );
+				allLights[l].intensity *= allLights[l].opacity;
+				allLights[l].distance  *= allLights[l].distanceCoeff;
+			}
+
 
 			var n = cloudsObj3d.children.length;
 

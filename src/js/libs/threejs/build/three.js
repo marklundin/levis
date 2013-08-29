@@ -5,7 +5,6 @@
  */
 
 var THREE = THREE || { REVISION: '59' };
-console.log('BOOM')
 
 self.console = self.console || {
 
@@ -37873,5 +37872,3 @@ THREE.ShaderSprite = {
 	}
 
 };
-
-console.log('BOOM END')

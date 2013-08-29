@@ -31,12 +31,10 @@ define(function(){
 			time, theta;
 
 
-		return update = function( a, b, delta ){
+		return update = function( a, b, delta, reset ){
 
 			totaltime += delta;
 			if( totaltime >= params.delay ){
-
-				
 
 				theta 		 = b - a;
 				time  	   	 = delta * api.globalSpeed;
@@ -44,6 +42,7 @@ define(function(){
 			    dampingForce = -velocity * 2.0 * root;
 			    force 		 = springForce + dampingForce;
 			    velocity    += force * time;
+			    velocity     = reset ? 0 : velocity;
 
 				obj[prop]   += velocity * time;
 
@@ -65,6 +64,7 @@ define(function(){
 
 		var params   = params || {},
 			system 	 = getSystem( obj, prop, target, params ),
+			doReset  = false,
 			started  = false,
 			controls = {
 				callback: emptyCallback,
@@ -75,6 +75,9 @@ define(function(){
 				speed 	: params.speed || 1.0,
 				dispose: function(){
 					systems.splice( systems.indexOf( update ), 1 );
+				},
+				reset:function(){
+					doReset = true;
 				}
 			}
 
@@ -86,7 +89,7 @@ define(function(){
 
 			if( !controls.paused && controls.target !== null ){
 
-				started = system( obj[prop], controls.target, t * controls.speed );
+				started = system( obj[prop], controls.target, t * controls.speed, doReset );
 
 				if( started ) controls.startCallback();
 
@@ -96,6 +99,8 @@ define(function(){
 					controls.callback();
 				}
 			}
+
+			doReset  = false;
 		};
 
 		systems.push( update );
@@ -122,6 +127,7 @@ define(function(){
 			vy = getSystem( v3, ['y'], target.y, params ),
 			vz = getSystem( v3, ['z'], target.z, params ),
 			tx, ty, tz, started = false,
+			doReset = false
 			controls = {
 				callback: emptyCallback,
 				startCallback: function(){},
@@ -131,6 +137,9 @@ define(function(){
 				speed 	: params.speed || 1.0,
 				dispose: function(){
 					systems.splice( systems.indexOf( update ), 1 );
+				},
+				reset:function(){
+					doReset = true;
 				}
 			}
 
@@ -141,9 +150,9 @@ define(function(){
 
 			if( !controls.paused && controls.target !== null ){
 
-				started = vx( v3.x, controls.target.x, t * controls.speed );
-				started = vy( v3.y, controls.target.y, t * controls.speed ) && started;
-				started = vz( v3.z, controls.target.z, t * controls.speed ) && started;
+				started = vx( v3.x, controls.target.x, t * controls.speed, doReset );
+				started = vy( v3.y, controls.target.y, t * controls.speed, doReset ) && started;
+				started = vz( v3.z, controls.target.z, t * controls.speed, doReset ) && started;
 
 				if( started ) controls.startCallback();
 
@@ -158,6 +167,8 @@ define(function(){
 					controls.callback();
 				}
 			}
+
+			doReset = false;
 
 		};
 

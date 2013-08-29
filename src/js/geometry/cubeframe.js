@@ -6,6 +6,8 @@ define([
 	    return (value & (1 << bitindex)) != 0;
 	}
 
+	
+
 
 	var CustomCubeGeometry = function ( width, height, depth, xScale, yScale, zScale, widthSegments, heightSegments, depthSegments ) {
 
@@ -136,9 +138,12 @@ define([
 
 			// console.log( cornerMesh );
 
-		// strut.w.faces = strutGeom.faces.splice( 0, 4 );
+		strut.d.geometry.faces = strut.d.geometry.faces.slice( 0, 4 );
+		strut.w.geometry.faces = strut.w.geometry.faces.slice( 2 );
+		strut.h.geometry.faces.splice( 2, 2 );
 
-		// cornerMesh.geometry.faces = [cornerMesh.geometry.faces[1],cornerMesh.geometry.faces[3], cornerMesh.geometry.faces[5]]
+
+		// cornerMesh.geometry.faces = cornerMesh.geometry.faces.splice( 2, 2 );
 
 		//width
 		strut.w.position.set( 0, -hh, -hd );
@@ -182,7 +187,7 @@ define([
 
 		var ninetyDegs = Math.PI * 0.5;
 
-		// // Corner Boxes
+		// Corner Boxes
 		cornerMesh.position.set( -hw, -hh, -hd  );
 		if( isBitSet( bitflag, 0 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 4 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
@@ -199,7 +204,7 @@ define([
 		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 7 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
 
-		cornerMesh.rotation.x -= 2.0 * ninetyDegs;
+		// cornerMesh.rotation.x -= 2.0 * ninetyDegs;
 		cornerMesh.position.set( -hw, hh, -hd  );
 		if( isBitSet( bitflag, 3 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 4 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
@@ -214,6 +219,7 @@ define([
 		cornerMesh.position.set( -hw, hh,  hd  );
 		cornerMesh.rotation.y += ninetyDegs;
 		if( isBitSet( bitflag, 2 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 7 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+
 
 		return cube.geometry;
 

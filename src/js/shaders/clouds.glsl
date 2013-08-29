@@ -48,7 +48,7 @@ void main() {
 	// float fogFactor = smoothstep( fogNear, fogFar, depth );
 
 	gl_FragColor = texture2D( map, vUv );
-	gl_FragColor.a *= pow( gl_FragCoord.z + offset, exponent );
+	gl_FragColor.a *= pow( fogFactor + offset, exponent );
 	gl_FragColor.a *= opacity;
 	// gl_FragColor = mix( vec4( 1.0, 0.0, 0.0, 1.0 ), gl_FragColor, useClouds );
 
