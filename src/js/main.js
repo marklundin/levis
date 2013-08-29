@@ -613,7 +613,7 @@ define('main',[
 				plane.position.x = math.random( -1500, 1500 );
 				plane.position.y = math.random( -1500, 1500 )
 				plane.position.z = math.random( -1500, 1500 );
-				plane.oldScale = plane.scale.x = plane.scale.y = Math.random() * Math.random() * 15 + 40.0;
+				plane.oldScale = plane.scale.x = plane.scale.y = Math.random() * Math.random() * 15 + 25.0;
 				plane.currentRot = Math.random() * Math.PI;
 				plane.rotDirection = math.random( -1, 1 ) * 0.0004;
 
