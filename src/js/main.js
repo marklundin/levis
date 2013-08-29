@@ -945,24 +945,31 @@ define('main',[
 						
 						updateMaterial:function(){
 
-							var n = contentObj3d.children.length;
-							while( n-- > 0 ){
-								if( contentObj3d.children[n].material ){
+						
+							videoContentMaterial.refractionRatio = imageContentMaterial.refractionRatio = api.dataObjects.refractionRatio;
+							videoContentMaterial.reflectivity = imageContentMaterial.reflectivity = api.dataObjects.reflectivity;
+							videoContentMaterial.opacity = imageContentMaterial.opacity = api.dataObjects.opacity;
+							videoContentMaterial.metal = imageContentMaterial.metal = api.dataObjects.metal;
 
-									contentObj3d.children[n].material.refractionRatio 	= api.dataObjects.refractionRatio;
-									contentObj3d.children[n].material.reflectivity 		= api.dataObjects.reflectivity;
-									contentObj3d.children[n].material.opacity 			= api.dataObjects.opacity;
-									contentObj3d.children[n].material.metal 			= api.dataObjects.metal;
-									contentObj3d.children[n].material.color.set( contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.color : api.dataObjects.twitter.color );
-									contentObj3d.children[n].material.specular.set( contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.specular : api.dataObjects.twitter.specular );
-									contentObj3d.children[n].material.ambient.set( contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.ambient : api.dataObjects.twitter.ambient );
-									contentObj3d.children[n].material.shininess 		= contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.shininess : api.dataObjects.twitter.shininess;
-									contentObj3d.children[n].material.combine 			= contentObj3d.children[n].isInstagram ? api.dataObjects.instagram.combine : api.dataObjects.twitter.combine;
-									contentObj3d.children[n].material.needsUpdate = true;
+							videoContentMaterial.color.set( api.dataObjects.instagram.color  );
+							imageContentMaterial.color.set( api.dataObjects.twitter.color  );
 
-								} 
-							}
+							videoContentMaterial.specular.set( api.dataObjects.instagram.specular);
+							imageContentMaterial.specular.set( api.dataObjects.twitter.specular );
 
+							videoContentMaterial.ambient.set( api.dataObjects.instagram.ambient);
+							imageContentMaterial.ambient.set( api.dataObjects.twitter.ambient );
+
+							videoContentMaterial.shininess = api.dataObjects.instagram.shininess;
+							imageContentMaterial.shininess = api.dataObjects.twitter.shininess;
+
+							videoContentMaterial.combine = api.dataObjects.instagram.combine;
+							imageContentMaterial.combine = api.dataObjects.twitter.combine;
+
+					
+							// contentObj3d.children[n].material.needsUpdate = true;
+
+					
 							n = searchResObj3d.children.length;
 							while( n-- > 0 ){
 								if( searchResObj3d.children[n].material ) {
