@@ -441,11 +441,13 @@ define('main',[
 		function resetCamera(){
 			// console.log( lastClicked.light.opacity, lastClicked.light.transition.target );
 			lastClicked.isSelected = false;
-			lastClicked.light.transition.target = 0;
-			// lastClicked.light.transition.reset();
-			lastClicked.light.transitionDist.target = 1;
-			lastClicked.light.transition.paused = false;
-			selectionLights.push( lastClicked.light );
+			if( lastClicked.light ){
+				lastClicked.light.transition.target = 0;
+				// lastClicked.light.transition.reset();
+				lastClicked.light.transitionDist.target = 1;
+				lastClicked.light.transition.paused = false;
+				selectionLights.push( lastClicked.light );
+			}
 			// console.log( lastClicked.light.opacity, lastClicked.light.transition.target );
 
 			clicked = null;
@@ -462,7 +464,7 @@ define('main',[
 		document.addEventListener( 'click', function( e ){
 	
 
-			if( gui ) controls.autoRotate = false;
+			// if( gui ) controls.autoRotate = false;
 
 			if( INTERSECTED && INTERSECTED !== clicked ){
 
