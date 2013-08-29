@@ -207,6 +207,7 @@ define('main',[
 			var n = searchResObj3d.children.length;
 			while( n-- > 0 ){
 				searchResObj3d.remove( searchResObj3d.children[n] );
+				interactiveObjs.splice( interactiveObjs.indexOf( searchResObj3d.children[n] ));
 			}
 
 		}
@@ -440,8 +441,9 @@ define('main',[
 
 		function resetCamera(){
 			// console.log( lastClicked.light.opacity, lastClicked.light.transition.target );
-			lastClicked.isSelected = false;
-			if( lastClicked.light ){
+			
+			if( lastClicked && lastClicked.light ){
+				lastClicked.isSelected = false;
 				lastClicked.light.transition.target = 0;
 				// lastClicked.light.transition.reset();
 				lastClicked.light.transitionDist.target = 1;
@@ -483,6 +485,7 @@ define('main',[
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
 				}
+
 
 				clicked = INTERSECTED;
 				clicked.isSelected = true;
@@ -1280,6 +1283,7 @@ define('main',[
 
 										isInstagram = n >= twitterResults.length;
 										mesh = getDataObject( results[n], isInstagram, nPos );
+										interactiveObjs.push( mesh );
 										mesh.isInstagram = isInstagram;
 										mesh.material = searchContentMaterial/*.clone();*/
 										searchResObj3d.add( mesh );
