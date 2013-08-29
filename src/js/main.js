@@ -121,7 +121,7 @@ define('main',[
 		controls.userRotateSpeed = 0.4;
 		controls.userPan = false;
 		controls.userZoom = false;
-		controls.autoRotate = false;
+		controls.autoRotate = true;
 		controls.autoRotateSpeed = 300 * timestep;
 		var distanceTarget = controls.distance = 2000;
 		controls.distanceVel = 0;
@@ -133,8 +133,8 @@ define('main',[
 		camera.position.z = 2000;
 		scene.add( camera );
 
-		scene.add( contentObj3d );
-		contentObj3d.add( searchResObj3d );
+		// scene.add( contentObj3d );
+		scene.add( searchResObj3d );
 
 		container.appendChild( renderer.domElement );
 
@@ -746,7 +746,7 @@ define('main',[
 				
 
 				var videoContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0x280500 ),
+					color:new THREE.Color( 0x660d00 ),
 					specular: 0xffffff,
 					ambient:new THREE.Color( 0xff2200 ),
 					transparent: true,
@@ -756,10 +756,11 @@ define('main',[
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
-				videoContentMaterial.originColor = new THREE.Color( 0xff2200 )
+				videoContentMaterial.originColor = new THREE.Color( 0x660d00 )
+				videoContentMaterial.originAmbientColor = new THREE.Color( 0xff2200 )
 
 				var imageContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0x0033ff ),
+					color:new THREE.Color( 0x280500 ),
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
 					envMap: envMap,
@@ -768,7 +769,8 @@ define('main',[
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
-				imageContentMaterial.originColor = new THREE.Color( 0x0033ff )
+				imageContentMaterial.originColor = new THREE.Color( 0x280500 )
+				imageContentMaterial.originAmbientColor = new THREE.Color( 0x00fff00 )
 
 				var searchContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0xff33ff ),
@@ -1141,7 +1143,7 @@ define('main',[
 							});
 
 							dataObject.transition.startCallback = function( obj ){
-								contentObj3d.add( obj );
+								scene.add( obj );
 								sounds.entering[Math.floor( Math.random()*sounds.entering.length )].play();
 							}.bind( this, dataObject )
 
@@ -1175,35 +1177,16 @@ define('main',[
 
 				function setDatObjectsOpacity( opacity ){
 
-					var n = contentObj3d.children.length,
-					 	f
 
-					
-					while( n-- > 0 ){
-						if( contentObj3d.children[n].material !== undefined ){
+					imageContentMaterial.opacity = opacity;
+					videoContentMaterial.opacity = opacity;
 
-							contentObj3d.children[n].material.opacity = opacity;
+					imageContentMaterial.color.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.originColor );
+					imageContentMaterial.ambient.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.originAmbientColor  );
 
-							if( !contentObj3d.children[n].normalHexColor ){
-								contentObj3d.children[n].normalHexColor = contentObj3d.children[n].material.color.getHex();
-								contentObj3d.children[n].normalHexAmbientColor = contentObj3d.children[n].material.color.getHex();
-							}
+					videoContentMaterial.color.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.originColor );
+					videoContentMaterial.ambient.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.originAmbientColor  );
 
-							// f = contentObj3d.children[n].geometry.faces.length;
-							// while( f-- > 0 ){
-							// 	console.log( contentObj3d.children[n].geometry.faces[f] );
-							// 	contentObj3d.children[n].geometry.faces[f].color.setHex( opacity <= 0 ? 0x444444 : contentObj3d.children[n].normalHex );
-
-							// }
-							// geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
-
-							contentObj3d.children[n].material.color.setHex( opacity < 0.5 ? 0x444444 : contentObj3d.children[n].normalHexColor );
-							contentObj3d.children[n].material.ambient.setHex( opacity < 0.5 ? 0x444444 : contentObj3d.children[n].normalHexAmbientColor );
-							
-							// console.log( contentObj3d.children[n] );
-							contentObj3d.children[n].material.needsUpdate = true;
-						} 
-					}
 
 				}
 
@@ -1452,7 +1435,7 @@ define('main',[
 					controlsActive = lights.update( camera );
 					controls.setPauseState( controlsActive );
 					if( !controlsActive ) controls.update( camera );
-					if( gui && lastClicked ) controls.autoRotate = !controlsActive;
+					// if( gui && lastClicked ) controls.autoRotate = !controlsActive;
 
 					picking();
 					
