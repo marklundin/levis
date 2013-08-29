@@ -17,7 +17,6 @@ define('main',[
 	'glsl!shaders/post.glsl',
 	"purl",
 	"./libs/threejs/examples/js/controls/OrbitControls",
-	"libs/threejs/examples/js/postprocessing/EffectComposer"
 	
 
 	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader, postShader ) {
@@ -122,7 +121,7 @@ define('main',[
 		controls.userRotateSpeed = 0.4;
 		controls.userPan = false;
 		controls.userZoom = false;
-		controls.autoRotate = true;
+		controls.autoRotate = false;
 		controls.autoRotateSpeed = 300 * timestep;
 		var distanceTarget = controls.distance = 2000;
 		controls.distanceVel = 0;
@@ -604,9 +603,9 @@ define('main',[
 				plane.position.x = math.random( -1500, 1500 );
 				plane.position.y = math.random( -1500, 1500 )
 				plane.position.z = math.random( -1500, 1500 );
-				plane.oldScale = plane.scale.x = plane.scale.y = Math.random() * Math.random() * 15 + 25.0;
+				plane.oldScale = plane.scale.x = plane.scale.y = Math.random() * Math.random() * 15 + 40.0;
 				plane.currentRot = Math.random() * Math.PI;
-				plane.rotDirection = math.random( -1, 1 ) * 0.001;
+				plane.rotDirection = math.random( -1, 1 ) * 0.0004;
 
 				cloudsObj3d.add( plane );
 				// THREE.GeometryUtils.merge( geometry, plane );
@@ -720,10 +719,10 @@ define('main',[
 				
 				var faceMaterial = new THREE.MeshPhongMaterial({
 
-					envMap: envMap,
+					// envMap: envMap,
 					reflectivity: 0.3,
 					// bumpMap: bumpmap,
-					bumpScale: 0.2,
+					// bumpScale: 0.2,
 					color: 0x222222,
 					ambient: 0x426d84,
 					specular: 0xFFFFFF,
@@ -1062,9 +1061,14 @@ define('main',[
 			// DATA 
 
 				var selectionLight 	= new THREE.PointLight( 0xFF0000, 0.0, 250 ),
-					strut;
+					strut,
+					instagramMesh = new THREE.Mesh( new THREE.Geometry(), videoContentMaterial  ),
+					twitterMesh   = new THREE.Mesh( new THREE.Geometry(), imageContentMaterial  ),
+					interactiveObjs = [];
 
 				scene.add( selectionLight );
+				scene.add( instagramMesh );
+				scene.add( twitterMesh );
 
 				dataloader( function( twitter, instagram ){
 
@@ -1079,33 +1083,40 @@ define('main',[
 						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
 						dataObject = getDataObject( result, isInstagram )
 						dataObject.isInstagram = isInstagram;
-						contentObj3d.add( dataObject );
+						
 
 						if( n < INITIAL_NUM_ANIMATIONS ){
 
 							var probability = Math.random();
 							var prop = probability <  1/3 ? 'x' : probability < 2/3 ? 'y' : 'z';
+							dataObject.targetProp 		= prop
 							dataObject.targetPosition   = dataObject.position[prop];
-							dataObject.position[prop]  += 4000 * ( Math.round( Math.random() ) * 2 - 1 );
+							dataObject.position[prop]  += 5000 * ( Math.round( Math.random() ) * 2 - 1 );
 							dataObject.unclickable 		= true;
 							dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
-								spring: 10,//math.random( 1, 10 ),
-								speed: math.random( 0.5, 1 ),
-								delay: n === INITIAL_NUM_ANIMATIONS ? 0 : math.random( 1.0, 8.0 )
+								spring: 10,//math.random( 1, 10 ),								
+								speed: math.random( 0.5, 0.6 ),
+								delay: math.random( 2.0, 30.0 )
 							});
 
-							dataObject.transition.startCallback = function(){
+							dataObject.transition.startCallback = function( obj ){
+								contentObj3d.add( obj );
 								sounds.entering.play();
-							}
+							}.bind( this, dataObject )
 
 							dataObject.transition.callback = function( obj ){
-
+								console.log( 'here', INITIAL_NUM_ANIMATIONS );
+								obj.position[obj.targetProp] = obj.targetPosition;
 								obj.unclickable = false;
 								obj.transition.dispose();
-								console.log( 'Animation Completed', INITIAL_NUM_ANIMATIONS );
 
 							}.bind( this, dataObject );
 
+						}else{
+							interactiveObjs.push( dataObject );
+							console.log( dataObject.isInstagram ? "instagramMesh.geometry" : "twitterMesh.geometry" );
+							THREE.GeometryUtils.merge( dataObject.isInstagram ? instagramMesh.geometry : twitterMesh.geometry, dataObject );
+							// contentObj3d.add( dataObject );
 						}
 					}
 
@@ -1179,7 +1190,7 @@ define('main',[
 
 				function getDataObject( result, isInstagram, position ){
 
-					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? videoContentMaterial.clone() : imageContentMaterial.clone()  );
+					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? videoContentMaterial/*.clone()*/ : imageContentMaterial/*.clone()*/  );
 					var index = ( Math.random() * strut.volume.length )|0;
 					var item = strut.volume[index];
 
@@ -1188,6 +1199,7 @@ define('main',[
 					mesh.position.y -= 15;
 					mesh.position.z -= 15;
 					mesh.position.multiplyScalar( 100 );
+					mesh.matrixWorld.setPosition( mesh.position );
 					mesh.infoDataObject = result;
 
 					return mesh;
@@ -1241,7 +1253,7 @@ define('main',[
 										isInstagram = n >= twitterResults.length;
 										mesh = getDataObject( results[n], isInstagram, nPos );
 										mesh.isInstagram = isInstagram;
-										mesh.material = searchContentMaterial.clone();
+										mesh.material = searchContentMaterial/*.clone();*/
 										searchResObj3d.add( mesh );
 
 									}
@@ -1337,6 +1349,8 @@ define('main',[
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
+				console.log( structMesh.geometry.vertices.length, structMesh.geometry.faces.length );
+				structMesh.matrixAutoUpdate = false;
 				scene.add( structMesh );
 				
 			}
@@ -1435,26 +1449,29 @@ define('main',[
 
 			raycaster.set( camera.position, mouseVector.sub( camera.position ).normalize() );
 
-			var intersects = raycaster.intersectObjects( contentObj3d.children, true );
-			
+			var intersects = raycaster.intersectObjects( interactiveObjs, true );
+			// console.log( intersects.length  );
 			if ( intersects.length > 0 && !intersects[ 0 ].object.unclickable) {
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
+
+
 					// sounds.mouseOver.play();
 
 					if ( INTERSECTED ){
-						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+						// selectionLight.color.setHex( selectionLight.currentHex );
 						selectionLight.intensity = 0;
 					}
 
 					if( showingSearchResults && searchResObj3d.children.indexOf( intersects[ 0 ].object ) === -1 ) return;
 
 					INTERSECTED = intersects[ 0 ].object;
-					INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-					INTERSECTED.material.color.multiplyScalar( 20.3 );
+					// selectionLight.currentHex = selectionLight.color.getHex();
 					selectionLight.color.set( INTERSECTED.material.color );
-					selectionLight.intensity = 2.5;
+					selectionLight.color.multiplyScalar( 30 );
+					
+					selectionLight.intensity = 5.5;
 					selectionLight.position.copy( INTERSECTED.position );
 
 				}
@@ -1462,7 +1479,7 @@ define('main',[
 			} else {
 
 				if ( INTERSECTED ){
-					INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+					// INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
 					selectionLight.intensity = 0;
 				} 
 				INTERSECTED = null;
@@ -1474,17 +1491,10 @@ define('main',[
 		var cubeRendered = false;
 			forward 	 = new THREE.Vector3( 0, 0, -1 ),
 			normal 	     = new THREE.Vector3( 0, 0, 1 ),
-			camUp 		 = new THREE.Vector3( 0, 1, 0 ),
-			a = new THREE.Vector3(), 
-			b = new THREE.Vector3(),
-			desRotation = new THREE.Quaternion(), 
-			dAngle = 0,
-			newQuaternion = new THREE.Quaternion();
+			camUp 		 = new THREE.Vector3( 0, 1, 0 );
 
 
-
-
-
+		var cloudRotationQuat = new THREE.Quaternion();
 		function render( delta ){
 
 			// depth pass
@@ -1502,12 +1512,14 @@ define('main',[
 
 			while( n-- > 0){
 
-				cloudsObj3d.children[n].up.set( 0, 1, 0 ).applyQuaternion( desRotation.copy( camera.quaternion ) );
+				cloudsObj3d.children[n].up.set( 0, 1, 0 ).applyQuaternion( camera.quaternion );
 				cloudsObj3d.children[n].lookAt( camera.position  );
 
 				// cloudsObj3d.children[n].lookAt( camera.position );
-				// cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
-				// cloudsObj3d.children[n].rotation.z = cloudsObj3d.children[n].currentRot;
+				cloudsObj3d.children[n].currentRot += cloudsObj3d.children[n].rotDirection;
+				cloudRotationQuat.setFromAxisAngle( normal, cloudsObj3d.children[n].currentRot )
+				
+				cloudsObj3d.children[n].quaternion.multiply( cloudRotationQuat );
 
 			}
 

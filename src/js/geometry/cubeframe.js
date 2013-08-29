@@ -124,9 +124,9 @@ define([
 
 		var ratio = vThickness / thickness;
 		var strut 	    = {
-				w: new THREE.Mesh( new CustomCubeGeometry( w - thickness, 	thickness, 		thickness, 10, 1, 1			 )),
-				h: new THREE.Mesh( new CustomCubeGeometry( vThickness, 		h - thickness,	vThickness, ratio, 10, ratio )),
-				d: new THREE.Mesh( new CustomCubeGeometry( thickness, 		thickness, 		d - thickness, 1, 1, 10 	 )),	
+				w: new THREE.Mesh( new CustomCubeGeometry( w - thickness, 	thickness, 		thickness, 1, 1, 1			 )),
+				h: new THREE.Mesh( new CustomCubeGeometry( vThickness, 		h - thickness,	vThickness, ratio, 1, ratio )),
+				d: new THREE.Mesh( new CustomCubeGeometry( thickness, 		thickness, 		d - thickness, 1, 1, 1 	 )),	
 			}, 
 			cornerMesh 	= new THREE.Mesh( new THREE.CubeGeometry( thickness, thickness, thickness ));
 			hw 			= w * 0.5,

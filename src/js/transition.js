@@ -78,6 +78,8 @@ define(function(){
 				}
 			}
 
+		params.threshold = params.threshold || DEFAULT_THRESHOLD;
+
 		var update = function( t ){
 
 			started = false;
@@ -88,7 +90,7 @@ define(function(){
 
 				if( started ) controls.startCallback();
 
-				if( !controls.arrived && Math.abs( controls.target - obj[ prop ] ) <= DEFAULT_THRESHOLD ){
+				if( !controls.arrived && Math.abs( controls.target - obj[ prop ] ) <= params.threshold ){
 					controls.arrived = true;
 					// systems.splice( systems.indexOf( update ), 1 );
 					controls.callback();
@@ -132,6 +134,8 @@ define(function(){
 				}
 			}
 
+		params.threshold = params.threshold || DEFAULT_THRESHOLD;
+
 		var update = function( t ){
 
 
@@ -148,7 +152,7 @@ define(function(){
 				tz = controls.target.z - v3.z;
 
 				var l = Math.sqrt( tx*tx + ty*ty + tz*tz );
-				if( !controls.arrived && l <= DEFAULT_THRESHOLD ){
+				if( !controls.arrived && l <= params.threshold ){
 					controls.arrived = true;
 					// systems.splice( systems.indexOf( update ), 1 );
 					controls.callback();
