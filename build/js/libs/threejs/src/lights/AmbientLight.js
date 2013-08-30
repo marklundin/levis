@@ -1,1 +1,1 @@
-THREE.AmbientLight=function(e){THREE.Light.call(this,e)};THREE.AmbientLight.prototype=Object.create(THREE.Light.prototype);THREE.AmbientLight.prototype.clone=function(){var e=new THREE.AmbientLight;THREE.Light.prototype.clone.call(this,e);return e};
+THREE.AmbientLight=function(e){THREE.Light.call(this,e)},THREE.AmbientLight.prototype=Object.create(THREE.Light.prototype),THREE.AmbientLight.prototype.clone=function(){var e=new THREE.AmbientLight;return THREE.Light.prototype.clone.call(this,e),e};

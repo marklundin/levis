@@ -1,1 +1,1 @@
-THREE.WebGLRenderTargetCube=function(e,t,i){THREE.WebGLRenderTarget.call(this,e,t,i);this.activeCubeFace=0};THREE.WebGLRenderTargetCube.prototype=Object.create(THREE.WebGLRenderTarget.prototype);
+THREE.WebGLRenderTargetCube=function(e,t,i){THREE.WebGLRenderTarget.call(this,e,t,i),this.activeCubeFace=0},THREE.WebGLRenderTargetCube.prototype=Object.create(THREE.WebGLRenderTarget.prototype);

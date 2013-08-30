@@ -1,1 +1,1 @@
-var PRNG=function(){this.seed=1;this.next=function(){return this.gen()/2147483647};this.nextRange=function(e,t){return e+(t-e)*this.next()};this.gen=function(){return this.seed=16807*this.seed%2147483647}};
+var PRNG=function(){this.seed=1,this.next=function(){return this.gen()/2147483647},this.nextRange=function(e,t){return e+(t-e)*this.next()},this.gen=function(){return this.seed=16807*this.seed%2147483647}};

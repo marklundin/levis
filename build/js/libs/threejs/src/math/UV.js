@@ -1,1 +1,1 @@
-THREE.UV=function(e,t){console.warn("THREE.UV has been DEPRECATED. Use THREE.Vector2 instead.");return new THREE.Vector2(e,t)};
+THREE.UV=function(e,t){return console.warn("THREE.UV has been DEPRECATED. Use THREE.Vector2 instead."),new THREE.Vector2(e,t)};

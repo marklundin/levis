@@ -5,6 +5,9 @@ body{
 	background: black;
 	font-family: "helvetica neue", arial, sans-serif;
 }
+form{
+	margin-bottom: 0px;
+}
 video{
 	padding-bottom: 10px;
 }
@@ -193,7 +196,16 @@ a:active {text-decoration:none; color: inherit;}
 	vertical-align: top;
 	
 	position: absolute;
-	z-index: 3;
+	z-index: 5;
+}
+input[type="text"]:-moz-placeholder { 
+   color: white;  
+}
+input[type="text"]::-moz-placeholder {  
+   color: white;  
+}
+:-ms-input-placeholder {  
+   color: white;  
 }
 #info-overlay .buttons{
 	display: inline-block;

@@ -1,1 +1,1 @@
-THREE.LineCurve3=THREE.Curve.create(function(e,t){this.v1=e;this.v2=t},function(e){var t=new THREE.Vector3;t.subVectors(this.v2,this.v1);t.multiplyScalar(e);t.add(this.v1);return t});
+THREE.LineCurve3=THREE.Curve.create(function(e,t){this.v1=e,this.v2=t},function(e){var t=new THREE.Vector3;return t.subVectors(this.v2,this.v1),t.multiplyScalar(e),t.add(this.v1),t});

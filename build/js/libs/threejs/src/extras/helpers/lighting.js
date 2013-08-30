@@ -1,1 +1,1 @@
-define([],function(){return function(){var e=[];var t;var i={update:function(){t=e.length;for(;t-->0;){e[t].helper.update();e[t].control.update()}}};return i}});
+define([],function(){return function(){var e,t=[],i={update:function(){for(e=t.length;e-->0;)t[e].helper.update(),t[e].control.update()}};return i}});
