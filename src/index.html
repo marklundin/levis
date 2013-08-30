@@ -21,7 +21,25 @@
 	<body>
 		<div id='gui'></div>
 		<div id="main">
-			
+			<div id='search'>
+				<div id='search-container'>
+					<form id="search-form" >
+						<input type="text" name="fname" id='search-field' placeholder="search by username">
+					</form>
+				</div>
+				<ul class='featured-submissions'>
+					<li class='title' >FEATURED SUBMISSIONS</li>
+					<li class='vip' data-username='S_COPPOLA' >@S_COPPOLA</li>
+					<li class='vip' data-username='DAVE_EGGERS' >@DAVE_EGGERS</li>
+					<li class='vip' data-username='S_COPPOLA' >@STEPHEN_SHORE</li>
+				</ul>
+			</div>
+			<div id='search-overlay' class='disable-select' >
+				<div id='body' >
+					<div id='results'></div>
+				</div>	
+				<div class='button-icon close-button-icon'></div>
+			</div>
 			<div id='info-overlay' class='disable-select' >
 				<div id='body' >
 					<img id='image'></img>
@@ -36,23 +54,6 @@
 					<div class='button-icon close-button-icon'></div>
 					<div class='button-icon tweet-button-icon' id='show-more'></div>
 				</div>
-			</div>
-			<div id='search'>
-				<div id='search-container'>
-					<input type="text" name="fname" id='search-field' placeholder="search by username">
-				</div>
-				<ul class='featured-submissions'>
-					<li class='title' >FEATURED SUBMISSIONS</li>
-					<li class='vip' data-username='S_COPPOLA' >@S_COPPOLA</li>
-					<li class='vip' data-username='DAVE_EGGERS' >@DAVE_EGGERS</li>
-					<li class='vip' data-username='S_COPPOLA' >@STEPHEN_SHORE</li>
-				</ul>
-			</div>
-			<div id='search-overlay' class='disable-select' >
-				<div id='body' >
-					<div id='results'></div>
-				</div>	
-				<div class='button-icon close-button-icon'></div>
 			</div>
 		</div>
 	</body>

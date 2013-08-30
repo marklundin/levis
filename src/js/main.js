@@ -47,7 +47,7 @@ define('main',[
 			FPmS = 1000 / 60,
 			INITIAL_NUM_ANIMATIONS = 7,
 			MAX_SEARCH_RESULTS = 10,
-			SEARCH_RES_RADIUS = 0.3,
+			SEARCH_RES_RADIUS = 0.1,
 			DIV_SLIDE_OFFSET = 80,
 			STRUCT_SIZE = new THREE.Vector3( 1500, 1500, 1500 );
 
@@ -141,9 +141,7 @@ define('main',[
 
 		container.appendChild( renderer.domElement );
 
-
-		window.addEventListener( 'resize', function(){
-
+		function resize(){
 			WIDTH  = window.innerWidth;
 			HEIGHT = window.innerHeight;
 
@@ -151,8 +149,9 @@ define('main',[
 			camera.updateProjectionMatrix();
 
 
-			renderer.setSize( WIDTH, HEIGHT );			
-		})
+			renderer.setSize( WIDTH, HEIGHT );	
+		}
+		window.addEventListener( 'resize', resize )
 
 
 		document.addEventListener( 'mousemove', function ( event ) {
@@ -218,6 +217,7 @@ define('main',[
 		}
 
 		$( '#search-field' ).click( function(e){
+			console.log('SEARCH');
 			e.stopImmediatePropagation();
 			$( this ).select();
 			$( this ).keypress( function(){
@@ -233,6 +233,7 @@ define('main',[
 
 
 		searchOverlay.children( ".close-button-icon" ).click(function( e ){
+			console.log('CLOSE');
 
 			e.preventDefault();
 			e.stopImmediatePropagation();
@@ -404,7 +405,7 @@ define('main',[
 		var camLookTransition = transition.vec3( controls.center, new THREE.Vector3(), null, {spring:2} );
 		camLookTransition.paused = true;
 
-
+		var firstRun = true
 		camLookTransition.callback = function(){
 
 			moving = false;
@@ -421,7 +422,15 @@ define('main',[
 				content.children('#user-info').children('#user-id').html(( clicked.isInstagram ? "" : "@" ) + clicked.infoDataObject.user_info.screen_name ); 
 				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
 				// infoOverlay.fadeIn( 400 );
-				divFadeIn( infoOverlay, 400 );
+				divFadeIn( infoOverlay, 400, function(){
+					if( firstRun ){
+						firstRun = false;
+						//KLUDGE : FF SEEMS TO NEED TO REFRESH CSS IN ORDER TO GET CLICK EVENTS
+						resize();
+						console.log( 'BOOM' );
+					}
+				} );
+
 
 			}
 
@@ -1441,7 +1450,7 @@ define('main',[
 				strut.centeredVolume.sort(function(a, b){
 					return ca.set( a[0]- 15, a[1]- 15, a[2]- 15).length() - cb.set( b[0]- 15, b[1]- 15, b[2]- 15).length();
 				})
-				strut.centeredVolume = strut.centeredVolume.splice( 0, (strut.centeredVolume.length * SEARCH_RES_RADIUS )|0 );
+				strut.centeredVolume = strut.centeredVolume.splice( 0, Math.max( 40, (strut.centeredVolume.length * SEARCH_RES_RADIUS )|0 ) );
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
