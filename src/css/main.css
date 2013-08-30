@@ -286,7 +286,7 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	display: none;
 	color: white;
 	top: 30px;
-	left: calc(50% - 157infopx);
+	left: calc(50% - 157px);
 	position: absolute;
 	z-index: 4;
 }
