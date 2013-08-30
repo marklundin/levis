@@ -31,6 +31,7 @@ define('main',[
 
 
 		var pageLoad = Date.now();
+		Howler.mute();
 
 
 		if( gui ){
@@ -80,10 +81,12 @@ define('main',[
 			INTERSECTED;
 
 
-		$('#search-field').focus(function(){
+		$('#search-field').focus(function(e){
+			e.preventDefault();
 			$(this).parent().toggleClass( 'search-focus', true );
 			$(".featured-submissions").slideDown( 50 );
-		}).blur( function(){
+		}).blur( function(e){
+			e.preventDefault();
 			if( mouseFlag ){
 				$(this).parent().toggleClass( 'search-focus', false );
 				$(".featured-submissions").slideUp( 0 );
@@ -205,10 +208,12 @@ define('main',[
 		function hideVisibleDataObjects(){
 
 			var n = searchResObj3d.children.length;
+			
 			while( n-- > 0 ){
+				interactiveObjs.splice( interactiveObjs.indexOf( searchResObj3d.children[n] ), 1 );
 				searchResObj3d.remove( searchResObj3d.children[n] );
-				interactiveObjs.splice( interactiveObjs.indexOf( searchResObj3d.children[n] ));
 			}
+
 
 		}
 
@@ -219,8 +224,9 @@ define('main',[
 				if( clicked ){
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
+					resetCamera();
 				}
-				resetCamera();
+				
 			});
 		});	
 
@@ -235,6 +241,7 @@ define('main',[
 
 			inputField.value = '';
 			hideVisibleDataObjects();
+
 			divFadeOut( searchOverlay, 400 );
 			divFadeOut( infoOverlay, 400 );
 			if( infoOverlay.expanded ){
@@ -356,7 +363,8 @@ define('main',[
 
 			if( infoOverlay.video ){
 				if( infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
-				infoOverlay.expanded ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
+				console.log( clicked.isInstagram );
+				if( clicked.isInstagram ) infoOverlay.expanded ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
 			} 
 
 		});
@@ -440,7 +448,6 @@ define('main',[
 
 
 		function resetCamera(){
-			// console.log( lastClicked.light.opacity, lastClicked.light.transition.target );
 			
 			if( lastClicked && lastClicked.light ){
 				lastClicked.isSelected = false;
@@ -450,13 +457,10 @@ define('main',[
 				lastClicked.light.transition.paused = false;
 				selectionLights.push( lastClicked.light );
 			}
-			// console.log( lastClicked.light.opacity, lastClicked.light.transition.target );
 
 			clicked = null;
 			sounds.out.play();
 			divFadeOut( infoOverlay, 400 );
-
-			
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
 
@@ -762,8 +766,8 @@ define('main',[
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
-				videoContentMaterial.originColor = new THREE.Color( 0x660d00 )
-				videoContentMaterial.originAmbientColor = new THREE.Color( 0xff2200 )
+				videoContentMaterial.originColor = 0x660d00;
+				videoContentMaterial.originAmbientColor = 0xff2200;
 
 				var imageContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0x280500 ),
@@ -775,8 +779,8 @@ define('main',[
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
-				imageContentMaterial.originColor = new THREE.Color( 0x280500 )
-				imageContentMaterial.originAmbientColor = new THREE.Color( 0x00fff00 )
+				imageContentMaterial.originColor = 0x280500;
+				imageContentMaterial.originAmbientColor = 0x00fff00;
 
 				var searchContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0xff33ff ),
@@ -1093,8 +1097,9 @@ define('main',[
 					light = new THREE.PointLight( 0xFF0000, 0, 250 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
-					light.transition = transition( light, 'opacity',null, {threshold:0.01, speed: 5.0 } );
+					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
 					light.transitionDist = transition( light, 'distanceCoeff', 1, {threshold:0.01, speed: 0.1 } );
+					light.transition.target = 0;
 					// light.transition.paused = true;
 					light.transition.callback = function( light ){
 
@@ -1245,10 +1250,10 @@ define('main',[
 
 						divFadeOut( infoOverlay, 400 );
 						clicked = null;
-
 						
 						var nPos = new THREE.Vector3(),
 							mesh;
+
 
 						$( '#search-field' ).blur();
 
@@ -1297,10 +1302,18 @@ define('main',[
 					}
 
 
-					$( '#search-field' ).change( function(){
-						var value = inputField.value;
-						performSearch( inputField.value );
+					$('#search-field').keypress(function (e) {
+					  if (e.which === 13) {
+					  	event.preventDefault();
+					    performSearch( inputField.value );
+					  }
 					});
+
+					// $( '#search-form' ).submit( function( e ){
+					// 	var value = inputField.value;
+			  //           console.log("SEARCH", e );
+						
+					// });
 
 
 				// END SEARCH
@@ -1492,6 +1505,7 @@ define('main',[
 
 		var mouseVector 	= new THREE.Vector3();
 
+
 		function picking(){
 
 			// console.log( videoContentMaterial.opacity );
@@ -1506,13 +1520,13 @@ define('main',[
 
 			var intersects = raycaster.intersectObjects( interactiveObjs, true );
 			// console.log( intersects.length  );
-			if ( intersects.length > 0 && !intersects[ 0 ].object.unclickable) {
+			if ( intersects.length > 0 && !intersects[ 0 ].object.unclickable ) {
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
 					sounds.mouseOver[Math.floor( Math.random() * sounds.mouseOver.length)].play();
 
-					if ( INTERSECTED && INTERSECTED !== clicked ){
+					if ( INTERSECTED && INTERSECTED !== clicked && INTERSECTED.light ){
 						INTERSECTED.light.transition.paused = false;
 						INTERSECTED.light.transition.target = 0;
 						// selectionLight.color.setHex( selectionLight.currentHex );
@@ -1539,8 +1553,8 @@ define('main',[
 
 
 					light.color.set( INTERSECTED.material.color ).multiplyScalar( 30 );
-					
 					// light.intensity = 5.5;
+					// cocks.position.copy( INTERSECTED.position );
 					light.position.copy( INTERSECTED.position );
 					light.transition.paused = false;
 
@@ -1550,7 +1564,7 @@ define('main',[
 
 			} else {
 
-				if ( INTERSECTED && INTERSECTED !== clicked ){
+				if ( INTERSECTED && INTERSECTED !== clicked && INTERSECTED.light ){
 					INTERSECTED.light.transition.paused = false;
 					INTERSECTED.light.transition.target = 0;
 					
@@ -1590,9 +1604,12 @@ define('main',[
 			// console.time('render')
 			// console.log( material.uniforms.uTime.value );
 			// material.uniforms.uTime.value = delta * 0.00005;
+
 			var l = allLights.length;
 			while( l-- > 0 ){
-				// selectionLights[l].intensity = selectionLights[l].opacity * 5.5;
+				// console.log( allLights[l].transition.target )
+				// allLights[l].opacity = allLights[l].transition.target;
+
 				allLights[l].distance =  Math.sin( time * 0.0005 ) * range + range + 150;	
 				allLights[l].intensity = (( allLights[l].distance / 175 )) * ( Math.cos( time * 10.0 ) * 0.6 + 8.0 );
 				allLights[l].intensity *= allLights[l].opacity;

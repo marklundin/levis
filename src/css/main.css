@@ -216,6 +216,8 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	font-size: 10pt;
 }
 
+
+
 #search-overlay #body{
 	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 	width: 260px;
@@ -237,7 +239,7 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	vertical-align: top;
 	
 	position: absolute;
-	z-index: 3;
+	z-index: 5;
 }
 
 #info-overlay .buttons{
@@ -284,7 +286,7 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	display: none;
 	color: white;
 	top: 30px;
-	left: calc(50% - 157px);
+	left: calc(50% - 157infopx);
 	position: absolute;
 	z-index: 4;
 }
