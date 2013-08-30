@@ -17,10 +17,6 @@
     "uglify2": {
         "compress": {
             "drop_debugger": true,
-            "sequences": false,
-            "conditionals": false,
-            "join_vars": false,
-            "properties": false,
             "global_defs": {
                 "DEBUG": false,
                 "VERSION": "UNKNOWN"
