@@ -31,7 +31,7 @@ define('main',[
 
 
 		var pageLoad = Date.now();
-		Howler.mute();
+		if( $.url().param('mute') !== undefined ) Howler.mute();
 
 
 		if( gui ){
@@ -183,7 +183,7 @@ define('main',[
 
 		document.addEventListener(visibilityChange, function() {
 
-			Howler.volume = document[hidden] ? 0.0 : 1.0;
+			Howler.volume( document[hidden] ? 0.0 : 1.0 );
 
 			if (!document[hidden]) {
 
@@ -236,6 +236,9 @@ define('main',[
 
 			e.preventDefault();
 			e.stopImmediatePropagation();
+
+			sounds.ambient.fadeIn( 1.0, 1000 );
+			sounds.search.fadeOut( 0.0, 1000 );
 
 			showingSearchResults = false;
 
@@ -1276,6 +1279,10 @@ define('main',[
 								
 								if( results.length > 0 ){
 
+									sounds.ambient.fadeOut( 0, 1000 );
+									sounds.search.volume( 1.0 );
+									sounds.search.play();
+
 									setDatObjectsOpacity( 0.3 );
 									
 									var pos, isInstagram,
@@ -1329,70 +1336,89 @@ define('main',[
 				sounds.mouseOver = [];
 				sounds.mouseOver[0] = new Howl({
 				  urls: ['audio/over1.mp3'],
+				  loop: false,
 				  volume: 1.0,
 				});
 
 				sounds.mouseOver[1] = new Howl({
 				  urls: ['audio/over2.mp3'],
+				  loop: false,
 				  volume: 1.0,
 				});
 
 				sounds.ambient = new Howl({
 				  urls: ['audio/raum.mp3'],
 				  loop: true,
+				  volume: 1.0
+				});
+
+				sounds.search = new Howl({
+				  urls: ['audio/search.mp3'],
+				  loop: false,
 				  volume: 1.0,
 				});
+
 
 				sounds.click = [];
 				sounds.click[0] = new Howl({
 				  urls: ['audio/fly-in1.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 
 				sounds.click[1] = new Howl({
 				  urls: ['audio/fly-in2.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 				sounds.click[2] = new Howl({
 				  urls: ['audio/fly-in3.mp3'],
 				  volume: 1.0,
+				  loop: false
 				})
 
 				sounds.closer = [];
 				sounds.closer[0] = new Howl({
 				  urls: ['audio/closer1.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 
 				sounds.closer[1] = new Howl({
 				  urls: ['audio/closer2.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 
 				sounds.closer[2] = new Howl({
 				  urls: ['audio/closer3.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 
 				sounds.out = new Howl({
 				  urls: ['audio/flyout.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 
 				sounds.entering = []
 				sounds.entering[0] = new Howl({
 				  urls: ['audio/entering1.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 
 				sounds.entering[1] = new Howl({
 				  urls: ['audio/entering2.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 
 				sounds.mouseDrag = new Howl({
 				  urls: ['audio/turn.mp3'],
 				  volume: 1.0,
+				  loop: false
 				});
 
 			//
@@ -1524,7 +1550,7 @@ define('main',[
 
 				if ( INTERSECTED != intersects[ 0 ].object ) {
 
-					sounds.mouseOver[Math.floor( Math.random() * sounds.mouseOver.length)].play();
+					
 
 					if ( INTERSECTED && INTERSECTED !== clicked && INTERSECTED.light ){
 						INTERSECTED.light.transition.paused = false;
@@ -1534,12 +1560,14 @@ define('main',[
 					}
 
 					if( showingSearchResults && searchResObj3d.children.indexOf( intersects[ 0 ].object ) === -1 ) return;
+					sounds.mouseOver[Math.floor( Math.random() * sounds.mouseOver.length)].play();
 
 					INTERSECTED = intersects[ 0 ].object;
 					// selectionLight.currentHex = selectionLight.color.getHex();
 
 					var isNewLight = INTERSECTED.light === null;
 					var light = INTERSECTED.light || selectionLights[selectionLights.length - selectionLights.unshift( selectionLights.pop() )];
+					light.object = null;
 					INTERSECTED.light = light;
 					
 
@@ -1572,16 +1600,7 @@ define('main',[
 				INTERSECTED = null;
 
 
-			}
-
-			// var nl = selectionLights.length;
-			// // console.log( INTERSECTED );
-			// while( nl-- > 0 ){
-
-			// 	if( INTERSECTED === null || selectionLights[nl] !== INTERSECTED.light ) selectionLights[nl].transition.target = 0;
-			// }
-
-			
+			}			
 
 		}
 
