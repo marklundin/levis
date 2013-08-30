@@ -5,6 +5,9 @@ body{
 	background: black;
 	font-family: "helvetica neue", arial, sans-serif;
 }
+form{
+	margin-bottom: 0px;
+}
 
 video{
 	padding-bottom: 10px;
