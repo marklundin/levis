@@ -1141,6 +1141,30 @@ define('main',[
 				scene.add( instagramMesh );
 				scene.add( twitterMesh );
 
+
+				var enterLight = new THREE.PointLight( 0xFF0000, 1, 2000 );//
+				enterLight.opacity = 1;
+				enterLight.distanceCoeff = 1.0;
+				// allLights.push( enterLight );
+				enterLight.transition = transition( enterLight, 'opacity', 1 );
+				enterLight.transition.target = 1;
+				scene.add( enterLight );
+
+
+				// var enteringItems = [];
+				// var enteringPostition = {position:new THREE.Vector3()};
+				// var enteringAnim = transition( enteringPostition, 'position' );
+
+				// function nextEnterAnim(){
+
+				// 	var item = enteringItems.pop();
+
+				// 	enteringAnim.copy( enteringPostition.position );
+				// 	item.position = enteringAnim.target;
+
+				// }
+
+
 				dataloader( function( twitter, instagram ){
 
 					generate();
@@ -1154,7 +1178,6 @@ define('main',[
 						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
 						dataObject = getDataObject( result, isInstagram )
 						dataObject.isInstagram = isInstagram;
-						
 
 						if( n < INITIAL_NUM_ANIMATIONS ){
 
@@ -1166,18 +1189,26 @@ define('main',[
 							dataObject.unclickable 		= true;
 							dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
 								spring: 10,//math.random( 1, 10 ),								
-								speed: math.random( 0.5, 0.6 ),
-								delay: math.random( 2.0, 30.0 )
+								speed: 0.1,//math.random( 0.2, 0.6 ),
+								delay: 4 * n
 							});
-
+							
 							dataObject.transition.startCallback = function( obj ){
+								console.log( 'started' );
 								scene.add( obj );
+								enterLight.position = obj.position;
+								// enterLight.color.copy( obj.material.color ).multiplyScalar( 30 );
+								enterLight.transition.opacity = enterLight.transition.target = 1;
+								enterLight.transition.reset();
+								enterLight.transition.arrived = false;
 								sounds.entering[Math.floor( Math.random()*sounds.entering.length )].play();
 							}.bind( this, dataObject )
 
 							dataObject.transition.callback = function( obj ){
 								console.log( 'here', INITIAL_NUM_ANIMATIONS );
+								enterLight.transition.target = 0;
 								obj.position[obj.targetProp] = obj.targetPosition;
+								enterLight.transition.target = 0;
 								obj.unclickable = false;
 								interactiveObjs.push( obj );
 								obj.transition.dispose();
@@ -1445,7 +1476,7 @@ define('main',[
 					scene.remove( structMesh );
 					structMesh.geometry.dispose();
 				}
-				console.log( seed );
+				
 				// console.time( 'GENERATE' );
 				strut = structure( api.frequency, api.complexity, api.seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
 				strut.centeredVolume = strut.volume.slice();
@@ -1459,7 +1490,6 @@ define('main',[
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
-				console.log( structMesh.geometry.vertices.length, structMesh.geometry.faces.length );
 				structMesh.matrixAutoUpdate = false;
 				scene.add( structMesh );
 				
@@ -1506,8 +1536,9 @@ define('main',[
 						infoOverlay.css("transform", 'translate( '+ Number( screenPos.left + 250 - infoOverlay.xOffset ) + 'px, '+ Number( screenPos.top - 200 ) +'px )');
 					}
 
+					requestAnimationFrame( animate );
 					render( delta, time );
-					requestAnimationFrame( animate );	
+						
 
 
 				}

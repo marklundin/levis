@@ -242,6 +242,20 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	z-index: 5;
 }
 
+
+
+input[type="text"]:-moz-placeholder { /* Firefox 18- */
+   color: white;  
+}
+
+input[type="text"]::-moz-placeholder {  /* Firefox 19+ */
+   color: white;  
+}
+
+:-ms-input-placeholder {  
+   color: white;  
+}
+
 #info-overlay .buttons{
 	display: inline-block;
 	padding-left: 4px;
