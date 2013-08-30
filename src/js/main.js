@@ -926,6 +926,11 @@ define('main',[
 					random 	: function (){
 						seed = (Math.random() * 9999 )|0;
 						api.seed = String( seed );
+
+						for (var i in gui.__controllers) {
+   							gui.__controllers[i].updateDisplay();
+   						}
+  
 						generate();
 					},
 					updateCamera: function(){
@@ -1080,7 +1085,7 @@ define('main',[
 					vignetteGUI.add( api.post.vignette, "end" ).onChange( api.post.update );
 					vignetteGUI.addColor( api.post.vignette, "color" ).onChange( api.post.update );
 					
-					gui.add( api, 		"seed" );
+					gui.add( api, 		"seed" ).onChange( function(){ seed = parseInt( api.seed )});
 					gui.add( api, 		"random" );
 					gui.add( api, 		"generate" );
 					gui.add( skyMat, 	"visible" );
@@ -1440,9 +1445,9 @@ define('main',[
 					scene.remove( structMesh );
 					structMesh.geometry.dispose();
 				}
-
+				console.log( seed );
 				// console.time( 'GENERATE' );
-				strut = structure( api.frequency, api.complexity, seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
+				strut = structure( api.frequency, api.complexity, api.seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
 				strut.centeredVolume = strut.volume.slice();
 
 				var ca = new THREE.Vector3(),
