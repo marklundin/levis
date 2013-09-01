@@ -31,14 +31,15 @@ define('main',[
 
 
 		var pageLoad = Date.now();
-		if( $.url().param('mute') !== undefined ) Howler.mute();
+		if( DEBUG ){
+			if( $.url().param('mute') !== undefined ) Howler.mute();
+		}
 
 
 		if( gui ){
 			var guiContainerDom = document.getElementById('gui');
 			guiContainerDom.appendChild( gui.domElement );
 		}
-
 
 
 		// APP VARIABLES
@@ -1490,6 +1491,7 @@ define('main',[
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
+				console.log( structMesh.geometry.faces.length );
 				structMesh.matrixAutoUpdate = false;
 				scene.add( structMesh );
 				

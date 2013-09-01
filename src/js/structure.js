@@ -10,65 +10,20 @@ define([
 			SCALE:  	100
 		};
 
-		// var STRUT = {}
-			// STRUT.WIDTH  = 10;
-			// STRUT.LENGTH = GRID.SCALE - STRUT.WIDTH;
 
-		function isSame(a1, a2){
-			a1.sort();
-			a2.sort();
-		  return !(a1 > a2|| a1 < a2);
+		function isBitSet( value, bitindex ){
+		    return (value & (1 << bitindex)) != 0;
 		}
 
-		
-
-
-		function removeDuplicateFaces(geometry){
-		 	var i = geometry.faces.length, j,
-		 		tri, tri_2, 
-		 		inds = [],
-		 		inds_2 = [];	
-
-		 	console.log( i );
-		  while( i-- > 0 ){
-
-		    tri = geometry.faces[i];
-		    // console.log( tri );
-		    // debugger;
-		    inds[0] = tri.a;
-		    inds[1] = tri.b;
-		    inds[2] = tri.c;
-		    inds[3] = tri.d;
-		    inds.sort();
-		    j = i;
-
-		    // while( j-- > 0 ){
-
-		    // 	tri_2 = geometry.faces[j];
-
-		    // 	if( tri_2 !== undefined ){ // May have already been deleted
-		    // 		inds_2[0] = tri_2.a;
-				  //   inds_2[1] = tri_2.b;
-				  //   inds_2[2] = tri_2.c;
-				  //   inds_2[3] = tri_2.d;
-		    //   		inds_2.sort();
-		    //   		// inds.sort();
-		    //   		// inds_2.sort();
-		    //     	if( !(inds> inds_2 || inds < inds_2)){
-		    //       		geometry.faces[i] = undefined; // Sets these faces to undefined
-		    //       		// If duplicate, it is also interior, so remove both
-		    //       		geometry.faces[j] = undefined;
-		    //       		// geometry.faces.splice( j, 1 );
-		    //     	}
-		    //   	}
-		    // }
-		    console.log( 'here' );
-		  }
-		  console.log( 'got here' );
-		  geometry.faces = geometry.faces.filter( function(a){ return a===undefined });
-		  
-		  return geometry;
+		function setBit( x, value ){
+			value |= 1 << x;
+			return value;
 		}
+
+		function isBitSet( value, bitindex ){
+		    return (value & (1 << bitindex)) != 0;
+		}
+	
 
 		
 		var structure = function( frequency, complexity, seed, threshold, horizontalThickness, verticaThickness ){
@@ -81,9 +36,28 @@ define([
 				volume 		= [], 
 				empty 		= [],
 				mesh 		= new THREE.Mesh(),
-				variations 	= Math.pow( 2, 12 ) - 1, 
+				variations 	= Math.pow( 2, 12 ) - 1, cellIsEdge,
 				mesh, value, solidity, exponent = 1.3, invNoise;
 
+			function noise( x, y, z ){
+				return noise3D( x, y, z )
+			}
+
+			function isEdge( x, y, z, threshold ){
+
+				// Check surrounding cells and check if they'll be displayed.
+				// if not, then this cell is an edge
+
+				return 	//noise( x + 1, y, z ) <= threshold ||
+						noise( x - 1, y, z ) <= threshold ||
+						// noise( x, y + 1, z ) <= threshold ||
+						noise( x, y - 1, z ) <= threshold ||
+						// noise( x, y, z + 1 ) <= threshold ||
+						noise( x, y, z - 1 ) <= threshold;
+
+			}
+
+			var mutation;
 
 			// Generate noise pattern
 			while( z-- > 0 ){
@@ -93,9 +67,19 @@ define([
 					while( x-- > 0 ){
 						value = noise3D( x, y, z );
 						if( value > threshold ) {
-							volume.push( [x, y, z])
-							// solidity = Math.pow(( value - threshold ) / ( 1.0 - threshold ), exponent );
-							mesh.geometry = cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, horizontalThickness , verticaThickness, (math.random( 1, variations )|0)  );
+							volume.push( [x, y, z]);
+							cellIsEdge = isEdge( x, y, z, threshold );
+							// mutation = math.random( 1, variations )|0;
+							mutation = 0;
+							if( cellIsEdge ){
+								mutation = math.random( 1, variations )|0;
+							}else{
+								if( Math.random() < 0.8 ) mutation = setBit( 2, mutation );
+								if( Math.random() < 0.8 ) mutation = setBit( 6, mutation );
+								if( Math.random() < 0.8 ) mutation = setBit( 10, mutation );
+							}
+
+							mesh.geometry = cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, horizontalThickness , verticaThickness, mutation );
 							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							mesh.position.multiplyScalar( GRID.SCALE );
 							THREE.GeometryUtils.merge( baseGeom, mesh );
@@ -106,6 +90,7 @@ define([
 					}
 				}
 			}
+
 
 			return {
 				geometry: baseGeom,
