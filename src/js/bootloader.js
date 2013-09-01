@@ -40,6 +40,10 @@ requirejs.config( {
 			deps:['jquery']
 		},
 
+		"libs/Tween":{
+			exports:'Tween'
+		},
+
 		"libs/jquery-ui": ['jquery'],
 
 
@@ -51,7 +55,7 @@ requirejs.config( {
 		// 	"libs/threejs/examples/js/postprocessing/MaskPass"
 		// ],
 
-		"libs/threejs/examples/js/renderers/WebGLDeferredRenderer":['libs/threejs/build/three'],
+		// "libs/threejs/examples/js/renderers/WebGLDeferredRenderer":['libs/threejs/build/three'],
 
 		"libs/threejs/examples/js/controls/OrbitControls": ['libs/threejs/build/three'] ,
 		// "libs/threejs/examples/js/controls/PathControls": [

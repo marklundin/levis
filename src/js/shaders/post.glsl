@@ -33,6 +33,8 @@ uniform float fScount;
 
 uniform vec3 noiseColor;
 
+uniform float visible;
+
 {{ libs/vignette.glsl }}
 
 
@@ -65,8 +67,8 @@ void main() {
     // convert to grayscale if desired
     //cResult = vec3(cResult.r * 0.3f + cResult.g * 0.59f + cResult.b * 0.11f);
 
-    gl_FragColor = vec4( mix( cResult, vignColor, vign ), max( opacity, vign ));
-
+    gl_FragColor = vec4( mix( cResult, vignColor, vign ) * visible, mix( 1.0, max( opacity, vign ), visible ) );
+    // gl_FragColor = mix( gl_FragColor, vec4( vec3( 0.0, 1.0 ), black );
 	// gl_FragColor = color;
 
 }

@@ -48,11 +48,11 @@ define([
 				// Check surrounding cells and check if they'll be displayed.
 				// if not, then this cell is an edge
 
-				return 	//noise( x + 1, y, z ) <= threshold ||
+				return 	noise( x + 1, y, z ) <= threshold ||
 						noise( x - 1, y, z ) <= threshold ||
-						// noise( x, y + 1, z ) <= threshold ||
+						noise( x, y + 1, z ) <= threshold ||
 						noise( x, y - 1, z ) <= threshold ||
-						// noise( x, y, z + 1 ) <= threshold ||
+						noise( x, y, z + 1 ) <= threshold ||
 						noise( x, y, z - 1 ) <= threshold;
 
 			}
@@ -74,9 +74,9 @@ define([
 							if( cellIsEdge ){
 								mutation = math.random( 1, variations )|0;
 							}else{
-								if( Math.random() < 0.8 ) mutation = setBit( 2, mutation );
-								if( Math.random() < 0.8 ) mutation = setBit( 6, mutation );
-								if( Math.random() < 0.8 ) mutation = setBit( 10, mutation );
+								if( Math.random() < 0.45 ) mutation = setBit( 2, mutation );
+								if( Math.random() < 0.45 ) mutation = setBit( 6, mutation );
+								if( Math.random() < 0.45 ) mutation = setBit( 10, mutation );
 							}
 
 							mesh.geometry = cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, horizontalThickness , verticaThickness, mutation );

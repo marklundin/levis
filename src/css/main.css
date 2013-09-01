@@ -34,6 +34,16 @@ ol, ul {
 }
 
 
+.loading-icon{
+	position: absolute;
+	background: url(../img/loading.svg ) no-repeat;
+	width:100px;
+	height:30px;
+	left: calc( 50% - 30px);
+	top: calc( 50% - 30px);
+	
+}
+
 .featured-submissions{
 	
 	display: none;
@@ -59,6 +69,7 @@ li.title{
 }
 
 #search{
+	display:none;
 	margin: 35px;
 	
 	right: 0px;

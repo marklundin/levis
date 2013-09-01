@@ -15,11 +15,13 @@ define('main',[
 	'utils/easing',
 	'glsl!shaders/clouds.glsl',
 	'glsl!shaders/post.glsl',
+	'sounds',
+	'libs/Tween',
 	"purl",
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	
 
-	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader, postShader ) {
+	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader, postShader, sounds ) {
 
 
 		//PROJECT INFO
@@ -114,6 +116,7 @@ define('main',[
 		infoOverlay.expanded = false
 		infoOverlay.xOffset = 0;
 		infoOverlay.fadeOut(0);
+		$('#search').fadeOut( 0 );
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
@@ -566,6 +569,7 @@ define('main',[
 				uniforms:{
 					uTime 	 			: { type: "f", value: 0.0 },
 					opacity 			: { type: "f", value: 0.26 },
+					visible 			: { type: "f", value: 0.0 },
 					fNintensity 		: { type: "f", value: 0.8 }, // scanline intensity
 					fSintensity 		: { type: "f", value: 0.7 },  // noise intensity
 					fScount 			: { type: "f", value: 2500.0 },  // numscanlines
@@ -742,7 +746,20 @@ define('main',[
 
 
 			var contentObj3d,
-				seed = 2394,
+				seeds = [
+					2394,
+					1231,
+					1136,
+					5136,
+					6136,
+					6555,
+					6572,
+					4472,
+					8765,
+					2768,
+					6594
+				],
+				seed = Math.floor( Math.random() * seeds.length ),
 				structMesh;
 		
 
@@ -1223,8 +1240,11 @@ define('main',[
 						}
 					}
 
-					
 					run();
+					var fade = new TWEEN.Tween( postMaterial.uniforms.visible ).to({value:1}, 5000 ).delay( 1000 ).start();
+					$('.loading-icon').fadeOut( 3000 );
+					$('#search').delay( 8000 ).fadeIn( 3000 );
+
 
 				}, function( twitter, instagram ){
 
@@ -1377,96 +1397,8 @@ define('main',[
 
 			//SOUNDS
 
-				var sounds = {};
 
-				sounds.mouseOver = [];
-				sounds.mouseOver[0] = new Howl({
-				  urls: ['audio/over1.mp3'],
-				  loop: false,
-				  volume: 1.0,
-				});
-
-				sounds.mouseOver[1] = new Howl({
-				  urls: ['audio/over2.mp3'],
-				  loop: false,
-				  volume: 1.0,
-				});
-
-				sounds.ambient = new Howl({
-				  urls: ['audio/raum.mp3'],
-				  loop: true,
-				  volume: 1.0
-				});
-
-				sounds.search = new Howl({
-				  urls: ['audio/search.mp3'],
-				  loop: false,
-				  volume: 1.0,
-				});
-
-
-				sounds.click = [];
-				sounds.click[0] = new Howl({
-				  urls: ['audio/fly-in1.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-
-				sounds.click[1] = new Howl({
-				  urls: ['audio/fly-in2.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-				sounds.click[2] = new Howl({
-				  urls: ['audio/fly-in3.mp3'],
-				  volume: 1.0,
-				  loop: false
-				})
-
-				sounds.closer = [];
-				sounds.closer[0] = new Howl({
-				  urls: ['audio/closer1.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-
-				sounds.closer[1] = new Howl({
-				  urls: ['audio/closer2.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-
-				sounds.closer[2] = new Howl({
-				  urls: ['audio/closer3.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-
-				sounds.out = new Howl({
-				  urls: ['audio/flyout.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-
-				sounds.entering = []
-				sounds.entering[0] = new Howl({
-				  urls: ['audio/entering1.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-
-				sounds.entering[1] = new Howl({
-				  urls: ['audio/entering2.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-
-				sounds.mouseDrag = new Howl({
-				  urls: ['audio/turn.mp3'],
-				  volume: 1.0,
-				  loop: false
-				});
-
+				
 			//
 			
 			var strut;
@@ -1517,7 +1449,7 @@ define('main',[
 				function animate( timeSinceLoad ){
 
 
-					cloat = true;
+					TWEEN.update();
 
 					t = timeSinceLoad - startTime;
 					delta = t - time;
