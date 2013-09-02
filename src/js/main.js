@@ -1164,8 +1164,20 @@ define('main',[
 				enterLight.opacity = 1;
 				enterLight.distanceCoeff = 1.0;
 				allLights.push( enterLight );
-				enterLight.transition = transition( enterLight, 'opacity', 1 );
-				enterLight.transition.target = 1;
+				// enterLight.fadeInTween = new TWEEN.Tween( enterLight.opacity ).to( {value: 1}, 1000 );
+				enterLight.fadeOutTween = new TWEEN.Tween( enterLight ).to({"opacity": 0 }, 1000 );
+				// enterLight.fadeIn = function(){
+				// 	enterLight.opacity = 1;
+				// 	// enterLight.fadeInTween.start();
+				// 	enterLight.fadeOutTween.stop();
+				// }
+
+				enterLight.fadeOut = function(){
+					enterLight.opacity = 1;
+					enterLight.fadeOutTween.start();
+					// enterLight.fadeInTween.stop();
+				}
+				// enterLight.transition.target = 1;
 				scene.add( enterLight );
 
 
@@ -1188,7 +1200,9 @@ define('main',[
 					generate();
 
 					var n = twitter.results.length + instagram.results.length,
-						result, isInstagram, dataObject;
+						result, isInstagram, dataObject, targetPos;
+
+					var duration = 30000;
 						
 					while( n-- > 0 ){
 
@@ -1202,36 +1216,54 @@ define('main',[
 							var probability = Math.random();
 							var prop = probability <  1/3 ? 'x' : probability < 2/3 ? 'y' : 'z';
 							dataObject.targetProp 		= prop
-							dataObject.targetPosition   = dataObject.position[prop];
+							targetPos   				= dataObject.position[prop];
 							dataObject.position[prop]  += 5000 * ( Math.round( Math.random() ) * 2 - 1 );
 							dataObject.unclickable 		= true;
-							dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
-								spring: 10,//math.random( 1, 10 ),								
-								speed: 0.1,//math.random( 0.2, 0.6 ),
-								delay: 4 * n
-							});
+
+							var startPos = dataObject.position[prop] + ( 5000 * ( Math.round( Math.random() ) * 2 - 1 ));
+							var to = {};
+							to[prop] = targetPos;
+
+							new TWEEN.Tween( dataObject.position )
+
+								.to( to, duration )
+								.easing( TWEEN.Easing.Quadratic.InOut )
+								.delay(( 1500 + duration ) * n ).onComplete(function( obj ){
+
+									console.log( 'END', INITIAL_NUM_ANIMATIONS );
+									enterLight.fadeOut();
+
+									obj.unclickable = false;
+									interactiveObjs.push( obj );					
+
+								}.bind( this, dataObject )).onStart(function( obj ){
+
+									console.log( 'START' );
+									scene.add( obj );
+									
+									enterLight.position = obj.position;
+									enterLight.color.copy( obj.material.color ).multiplyScalar( 30 );
+									enterLight.opacity = 1;
+								
+									sounds.entering[Math.floor( Math.random()*sounds.entering.length )].play();
+
+								}.bind( this, dataObject )).start();
+
+							// dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
+							// 	spring: 10,//math.random( 1, 10 ),								
+							// 	speed: 0.1,//math.random( 0.2, 0.6 ),
+							// 	threshold: 5,
+							// 	delay: 4 * n
+							// });
 							
-							dataObject.transition.startCallback = function( obj ){
-								console.log( 'started' );
-								scene.add( obj );
-								enterLight.position = obj.position;
-								enterLight.color.copy( obj.material.color ).multiplyScalar( 30 );
-								enterLight.transition.opacity = enterLight.transition.target = 1;
-								enterLight.transition.reset();
-								enterLight.transition.arrived = false;
-								sounds.entering[Math.floor( Math.random()*sounds.entering.length )].play();
-							}.bind( this, dataObject )
+							// dataObject.transition.startCallback = function( obj ){
+								
+							// }.bind( this, dataObject )
 
-							dataObject.transition.callback = function( obj ){
-								console.log( 'here', INITIAL_NUM_ANIMATIONS );
-								enterLight.transition.target = 0;
-								obj.position[obj.targetProp] = obj.targetPosition;
-								enterLight.transition.target = 0;
-								obj.unclickable = false;
-								interactiveObjs.push( obj );
-								obj.transition.dispose();
+							// dataObject.transition.callback = function( obj ){
+								
 
-							}.bind( this, dataObject );
+							// }.bind( this, dataObject );
 
 						}else{
 							interactiveObjs.push( dataObject );
