@@ -763,7 +763,7 @@ define('main',[
 					2768,
 					6594
 				],
-				seed = seeds[ Math.floor( Math.random() * seeds.length )],
+				seed = Math.floor( Math.random() * seeds.length ),
 				structMesh;
 		
 
