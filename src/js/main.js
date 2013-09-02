@@ -872,7 +872,7 @@ define('main',[
 
 				var nl = 3, light;
 				while( nl-- > 0 ){
-					light = new THREE.PointLight( imageContentMaterial.originColor.getHexString(), 0, 250 );
+					light = new THREE.PointLight( 0xFF0000, 0, 250 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -925,8 +925,12 @@ define('main',[
 						update:function(){
 							var n = selectionLights.length;
 							while( n-- > 0 ){
-								selectionLights[n].color.set( api.rollLight.color ).multiplyScalar( api.rollLight.scale );
+								selectionLights[n].color.setStyle( api.rollLight.color ).multiplyScalar( api.rollLight.scale );
+								// console.log( selectionLights[n].color.getHexString(), api.rollLight.color );
+								// selectionLights[n].color
 							}
+
+							if( clicked && clicked.light ) clicked.light.color.setStyle( api.rollLight.color ).multiplyScalar( api.rollLight.scale );
 						}
 					},
 
