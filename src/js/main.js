@@ -1160,10 +1160,10 @@ define('main',[
 				scene.add( twitterMesh );
 
 
-				var enterLight = new THREE.PointLight( 0xFF0000, 1, 2000 );//
+				var enterLight = new THREE.PointLight( 0xFF0000, 0, 250 );//
 				enterLight.opacity = 1;
 				enterLight.distanceCoeff = 1.0;
-				// allLights.push( enterLight );
+				allLights.push( enterLight );
 				enterLight.transition = transition( enterLight, 'opacity', 1 );
 				enterLight.transition.target = 1;
 				scene.add( enterLight );
@@ -1215,7 +1215,7 @@ define('main',[
 								console.log( 'started' );
 								scene.add( obj );
 								enterLight.position = obj.position;
-								// enterLight.color.copy( obj.material.color ).multiplyScalar( 30 );
+								enterLight.color.copy( obj.material.color ).multiplyScalar( 30 );
 								enterLight.transition.opacity = enterLight.transition.target = 1;
 								enterLight.transition.reset();
 								enterLight.transition.arrived = false;
@@ -1605,13 +1605,15 @@ define('main',[
 
 			var l = allLights.length;
 			while( l-- > 0 ){
+
 				// console.log( allLights[l].transition.target )
 				// allLights[l].opacity = allLights[l].transition.target;
 
-				allLights[l].distance =  Math.sin( time * 0.0005 ) * range + range + 150;	
+				allLights[l].distance  =  Math.sin( time * 0.0005 ) * range + range + 150;	
 				allLights[l].intensity = (( allLights[l].distance / 175 )) * ( Math.cos( time * 10.0 ) * 0.6 + 8.0 );
 				allLights[l].intensity *= allLights[l].opacity;
 				allLights[l].distance  *= allLights[l].distanceCoeff;
+
 			}
 
 
