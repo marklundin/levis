@@ -92,12 +92,6 @@ define({
 		  urls: ['audio/entering2.mp3'],
 		  volume: 1.0,
 		  loop: false
-		}),
-
-		new Howl({
-		  urls: ['audio/turn.mp3'],
-		  volume: 1.0,
-		  loop: false
 		})
 	]
 

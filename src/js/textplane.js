@@ -40,9 +40,9 @@ define([
 
 			backgroundMargin 	= backgroundMargin || 0
 			size 				= size || 11;
-			color 				= color || 0xFFFFFF;
-			backGroundColor 	= backGroundColor || 0x000000;
-			backGroundAlpha		= backGroundAlpha || 0.0;
+			color 				= color || 0x000000;
+			backGroundColor 	= backGroundColor || 0xFFFFFF;
+			backGroundAlpha		= backGroundAlpha || 0.5;
 			
 			context.font = size + "pt Helvertica Neue, Arial, sans";
 			context.scale(-1, -1);
@@ -56,11 +56,11 @@ define([
 			context.font = size + "pt Helvertica Neue, Arial, sans";
 
 			// if(backGroundColor) {
-			// context.globalAlpha = 1.0;//backGroundAlpha
-			// context.fillStyle = ( '000000' + backGroundColor.toString( 16 ) ).slice( - 6 );;
+			context.globalAlpha = backGroundAlpha
+			context.fillStyle = ( '000000' + backGroundColor.toString( 16 ) ).slice( - 6 );
 			// context.fillRect(canvas.width / 2 - textWidth / 2 - backgroundMargin / 2, canvas.height / 2 - size / 2 - +backgroundMargin / 2, textWidth + backgroundMargin, size + backgroundMargin);
-			// context.fillRect(0, 0, canvas.width, canvas.height );
-			// context.globalAlpha = 1.0;
+			context.fillRect(0, 0, -canvas.width, -canvas.height );
+			context.globalAlpha = 1.0;
 			// }
 
 			context.textBaseline = "middle";

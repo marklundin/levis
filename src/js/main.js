@@ -534,9 +534,7 @@ define('main',[
 						} 
 						infoOverlay.video.sourceElem.attr( 'src', videoUrl );
 						
-					}
-
-					
+					}					
 
 				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
 
@@ -807,7 +805,7 @@ define('main',[
 					transparent: true,
 					envMap: envMap,
 					// map: envMap,
-					side: THREE.DoubleSide,
+					// side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
