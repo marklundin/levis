@@ -474,9 +474,17 @@ define('main',[
 				selectionLights.push( lastClicked.light );
 			}
 
+			if( !lastClicked.isInstagram ){
+				console.log( lastClicked.material.opacity );
+				lastClicked.material.opacity = 0.9;	
+				console.log( lastClicked.material.opacity );
+			} 
+
 			clicked = null;
 			sounds.out.play();
 			divFadeOut( infoOverlay, 400 );
+
+
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
 
@@ -497,6 +505,7 @@ define('main',[
 
 				if( clicked ){
 					clicked.isSelected = false;
+					if( !clicked.isInstagram ) clicked.material.opacity = 0.9;
 					clicked.light.transition.target = 0;
 					clicked.light.transition.reset();
 					clicked.light.transition.paused = false;
@@ -523,6 +532,7 @@ define('main',[
 					if( clicked.isInstagram ){
 						updateEnvMapWithImage( clicked.material, thumbUrl );
 					} else {
+						clicked.material.opacity = 0.28;
 						var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
 						updateEnvMapWithCanvas( clicked.material, tp );
 					}
@@ -767,7 +777,7 @@ define('main',[
 				var faceMaterial = new THREE.MeshPhongMaterial({
 
 					// envMap: envMap,
-					reflectivity: 0.3,
+					reflectivity: 0.5,
 					// bumpMap: bumpmap,
 					// bumpScale: 0.2,
 					perPixel:false,
@@ -790,8 +800,9 @@ define('main',[
 					transparent: true,
 					envMap: envMap,
 					side: THREE.DoubleSide,
+					combine: THREE.AddOperation,
 					// lights: false,
-					// blending: THREE.AdditiveBlending,
+					blending: THREE.AdditiveBlending,
 					opacity: 0.3,
 				});
 
@@ -806,10 +817,11 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					combine: THREE.MixOperation,
 					// map: envMap,
 					// side: THREE.DoubleSide,
 					blending: THREE.AdditiveBlending,
-					opacity: 0.3,
+					opacity: 0.9,
 				});
 				imageContentMaterial.originColor = new THREE.Color( 0x280500 );
 				imageContentMaterial.prevColor = new THREE.Color( 0x666666 );
@@ -1029,10 +1041,11 @@ define('main',[
 
 						refractionRatio: 0.98,
 						reflectivity: 1,
-						opacity: 0.4,
+						// opacity: 0.4,
 						metal: false,
 						twitter:{
 							color 		: "#"+imageContentMaterial.color.getHexString(),	
+							opacity 	: imageContentMaterial.opacity,
 							specular 	: "#"+imageContentMaterial.specular.getHexString(),
 							ambient 	: "#"+imageContentMaterial.ambient.getHexString(),
 							shininess	: imageContentMaterial.shininess,
@@ -1040,6 +1053,7 @@ define('main',[
 						},
 						instagram :{
 							color 		: "#"+videoContentMaterial.color.getHexString(),	
+							opacity 	: imageContentMaterial.opacity,
 							specular 	: "#"+videoContentMaterial.specular.getHexString(),
 							ambient 	: "#"+videoContentMaterial.ambient.getHexString(),
 							shininess	: videoContentMaterial.shininess,
@@ -1051,10 +1065,11 @@ define('main',[
 						
 							videoContentMaterial.refractionRatio = imageContentMaterial.refractionRatio = api.dataObjects.refractionRatio;
 							videoContentMaterial.reflectivity = imageContentMaterial.reflectivity = api.dataObjects.reflectivity;
-							videoContentMaterial.opacity = imageContentMaterial.opacity = api.dataObjects.opacity;
+							
 							videoContentMaterial.metal = imageContentMaterial.metal = api.dataObjects.metal;
 
-							console.log( api.dataObjects.instagram.color, api.dataObjects.twitter.color)
+							videoContentMaterial.opacity = api.dataObjects.instagram.opacity
+							imageContentMaterial.opacity = api.dataObjects.twitter.opacity;
 
 							videoContentMaterial.color.set( api.dataObjects.instagram.color  );
 							imageContentMaterial.color.set( api.dataObjects.twitter.color  );
@@ -1119,10 +1134,11 @@ define('main',[
 					var dataObgGui = gui.addFolder( 'Data Object Material');
 					dataObgGui.add( api.dataObjects, 'refractionRatio' ).onChange( api.dataObjects.updateMaterial );
 					dataObgGui.add( api.dataObjects, 'reflectivity' ).onChange( api.dataObjects.updateMaterial );
-					dataObgGui.add( api.dataObjects, 'opacity' ).onChange( api.dataObjects.updateMaterial );
+					
 					dataObgGui.add( api.dataObjects, 'metal' ).onChange( api.dataObjects.updateMaterial );
 
 					var instgramUI = dataObgGui.addFolder( 'instagram material')
+					instgramUI.add( api.dataObjects.instagram, 'opacity' ).onChange( api.dataObjects.updateMaterial );
 					instgramUI.addColor( api.dataObjects.instagram, 'color' ).onChange( api.dataObjects.updateMaterial );
 					instgramUI.addColor( api.dataObjects.instagram, 'specular' ).onChange( api.dataObjects.updateMaterial );
 					instgramUI.addColor( api.dataObjects.instagram, 'ambient' ).onChange( api.dataObjects.updateMaterial );
@@ -1130,6 +1146,7 @@ define('main',[
 					instgramUI.add( api.dataObjects.instagram, 'combine', { Multiply: THREE.MultiplyOperation, Mix: THREE.MixOperation, Add: THREE.AddOperation } ).onChange( api.dataObjects.updateMaterial );
 
 					var twitterUI = dataObgGui.addFolder( 'twitter material')
+					twitterUI.add( api.dataObjects.twitter, 'opacity' ).onChange( api.dataObjects.updateMaterial );
 					twitterUI.addColor( api.dataObjects.twitter, 'color' ).onChange( api.dataObjects.updateMaterial );
 					twitterUI.addColor( api.dataObjects.twitter, 'specular' ).onChange( api.dataObjects.updateMaterial );
 					twitterUI.addColor( api.dataObjects.twitter, 'ambient' ).onChange( api.dataObjects.updateMaterial );

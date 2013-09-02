@@ -56,11 +56,11 @@ define([
 			context.font = size + "pt Helvertica Neue, Arial, sans";
 
 			// if(backGroundColor) {
-			context.globalAlpha = backGroundAlpha
+			// context.globalAlpha = 0.0
 			context.fillStyle = ( '000000' + backGroundColor.toString( 16 ) ).slice( - 6 );
 			// context.fillRect(canvas.width / 2 - textWidth / 2 - backgroundMargin / 2, canvas.height / 2 - size / 2 - +backgroundMargin / 2, textWidth + backgroundMargin, size + backgroundMargin);
 			context.fillRect(0, 0, -canvas.width, -canvas.height );
-			context.globalAlpha = 1.0;
+			// context.globalAlpha = 1.0;
 			// }
 
 			context.textBaseline = "middle";
