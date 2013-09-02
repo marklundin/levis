@@ -123,6 +123,7 @@ define('main',[
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
 		renderer.setClearColor( 0x1b2022 );
+		renderer.physicallyBasedShading = true;
 		
 
 		controls.velocity = new THREE.Vector3();
@@ -869,10 +870,10 @@ define('main',[
 						THREE.UniformsLib[ "fog" ],
 						THREE.UniformsLib[ "lights" ],
 						{
-							"shininess": { type: "f", value: 30 },
-							opacity 					: { type: "f", value: 1.0 },
+							// "shininess": { type: "f", value: 30 },
+							opacity 					: { type: "f", value: 0.5 },
 							uCameraProjectionInverse 	: { type: "uMat4", value: camera.projectionMatrixInverse },
-							color 					 	: { type: "c", value: new THREE.Color( 0x660d00 ) },
+							color 					 	: { type: "c", value: new THREE.Color( 0xdddddd ) },
 							specular 					: { type: "c", value: new THREE.Color( 0xffffff ) },
 							ambient 					: { type: "c", value: new THREE.Color( 0xff2200 ) },
 					}]),
@@ -880,9 +881,9 @@ define('main',[
 					// blendSrc: THREE.SrcAlphaFactor,
 					// blendDst: THREE.DstAlphaFactor,
 					side : THREE.DoubleSide,
-					vertexShader: buildShaderFromTemplate( fresnelShader.vertexShader, dataObjectMaterialArgs.vert ) , //document.getElementById( 'vs' ).textContent,
+					vertexShader:   buildShaderFromTemplate( fresnelShader.vertexShader, dataObjectMaterialArgs.vert ) , //document.getElementById( 'vs' ).textContent,
 					fragmentShader: buildShaderFromTemplate( fresnelShader.fragmentShader, dataObjectMaterialArgs.frag ), //document.getElementById( 'fs' ).textContent,
-					transparent: true,
+					transparent: true
 				})
 				
 
@@ -890,14 +891,17 @@ define('main',[
 					color:new THREE.Color( 0x660d00 ),
 					specular: 0xffffff,
 					ambient:new THREE.Color( 0xff2200 ),
+					combine : THREE.MixOperation,
 					transparent: true,
 					envMap: envMap,
+					perPixel: true,
 					side: THREE.DoubleSide,
 					// lights: false,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
-				videoContentMaterial = datObjectMaterial;
+				videoContentMaterial.defines = {FLIPSIDE: true};
+				// videoContentMaterial = datObjectMaterial;
 				videoContentMaterial.originColor = 0x660d00;
 				videoContentMaterial.originAmbientColor = 0xff2200;
 
@@ -905,14 +909,17 @@ define('main',[
 				var imageContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0x280500 ),
 					ambient:new THREE.Color( 0x00fff00 ),
+					// combine : THREE.MixOperation,
 					transparent: true,
 					envMap: envMap,
+					perPixel: true,
 					// map: envMap,
+
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
-				imageContentMaterial = datObjectMaterial
+				// imageContentMaterial = datObjectMaterial
 				imageContentMaterial.originColor = 0x280500;
 				imageContentMaterial.originAmbientColor = 0x00fff00;
 				
@@ -922,7 +929,7 @@ define('main',[
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
 					// envMap: cubemap,
-					side: THREE.DoubleSide,
+					side: THREE.FlipSide,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
@@ -978,7 +985,7 @@ define('main',[
 					threshold 	: 0.68,
 					noiseAmount : 0.7,
 					complexity 	: 0.82,
-					horizontal_thickness 	: 11,
+					horizontal_thickness 	: 10,
 					vertical_thickness 	: 3,
 					generate 	: generate,
 					seed 		: String( seed ),
@@ -1098,10 +1105,10 @@ define('main',[
 						updateMaterial:function(){
 
 						
-							// videoContentMaterial.refractionRatio = imageContentMaterial.refractionRatio = api.dataObjects.refractionRatio;
-							// videoContentMaterial.reflectivity = imageContentMaterial.reflectivity = api.dataObjects.reflectivity;
-							// videoContentMaterial.opacity = imageContentMaterial.opacity = api.dataObjects.opacity;
-							// videoContentMaterial.metal = imageContentMaterial.metal = api.dataObjects.metal;
+							videoContentMaterial.refractionRatio = imageContentMaterial.refractionRatio = api.dataObjects.refractionRatio;
+							videoContentMaterial.reflectivity = imageContentMaterial.reflectivity = api.dataObjects.reflectivity;
+							videoContentMaterial.opacity = imageContentMaterial.opacity = api.dataObjects.opacity;
+							videoContentMaterial.metal = imageContentMaterial.metal = api.dataObjects.metal;
 
 							// videoContentMaterial.color.set( api.dataObjects.instagram.color  );
 							// imageContentMaterial.color.set( api.dataObjects.twitter.color  );
@@ -1376,33 +1383,42 @@ define('main',[
 				}
 
 
-				var thickness = 3;
-				var dimension = 65;
-				var cubeGeometryW = new THREE.Mesh( new THREE.CubeGeometry( dimension, dimension, thickness /*10, 10, 1*/ )),
-					cubeGeometryD = new THREE.Mesh( new THREE.CubeGeometry( thickness, dimension, dimension /*1, 10, 10*/ )),
-					cubeGeometryT = new THREE.Mesh( new THREE.CubeGeometry( dimension, thickness, dimension /*10, 1, 10*/ ));
+				var thickness = 10;
+				var dimension = 100 - ( 10 );
+				var posOffset = 50 - ( 10 * 0.5 ) - thickness;
 
-				var baseGeometry = new THREE.Geometry();
-				cubeGeometryW.position.z = -40;
-				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
-				cubeGeometryW.position.z = 40;
-				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
+				var cubeOuter = new THREE.Mesh( new THREE.CubeGeometry( dimension, dimension, dimension )),
+					cubeInner = new THREE.Mesh( new THREE.CubeGeometry( dimension - thickness, dimension - thickness, dimension - thickness ));
 
-				cubeGeometryD.position.x = -40;
-				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
-				cubeGeometryD.position.x = 40;
-				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
+				// var cubeGeometryW = new THREE.Mesh( new THREE.CubeGeometry( dimension, dimension, thickness /*10, 10, 1*/ )),
+				// 	cubeGeometryD = new THREE.Mesh( new THREE.CubeGeometry( thickness, dimension, dimension /*1, 10, 10*/ )),
+				// 	cubeGeometryT = new THREE.Mesh( new THREE.CubeGeometry( dimension, thickness, dimension /*10, 1, 10*/ ));
 
-				cubeGeometryT.position.y = -40;
-				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
-				cubeGeometryT.position.y = 40;
-				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
+				var baseGeometry = cubeOuter.geometry;
+				var baseGeometryInner = cubeInner.geometry;
+				// THREE.GeometryUtils.merge( baseGeometry, cubeInner.geometry );
+
+				// var baseGeometry = new THREE.Geometry();
+				// cubeGeometryW.position.z = -posOffset;
+				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
+				// cubeGeometryW.position.z = posOffset;
+				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
+
+				// cubeGeometryD.position.x = -posOffset;
+				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
+				// cubeGeometryD.position.x = posOffset;
+				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
+
+				// cubeGeometryT.position.y = -posOffset;
+				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
+				// cubeGeometryT.position.y = posOffset;
+				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
 
 
 
 				function getDataObject( result, isInstagram, position ){
 
-					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? datObjectMaterial/*.clone()*/ : datObjectMaterial/*.clone()*/  );
+					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? videoContentMaterial /*.clone()*/ : imageContentMaterial /*.clone()*/  );
 					var index = ( Math.random() * strut.volume.length )|0;
 					var item = strut.volume[index];
 

@@ -17,7 +17,7 @@ define({
 
 	mouseDrag: new Howl({
 	  urls: ['audio/turn.mp3'],
-	  loop: true,
+	  loop: false,
 	  volume: 1.0
 	}),
 
