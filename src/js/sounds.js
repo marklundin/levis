@@ -15,6 +15,12 @@ define({
 		})
 	],
 
+	mouseDrag: new Howl({
+	  urls: ['audio/turn.mp3'],
+	  loop: true,
+	  volume: 1.0
+	}),
+
 	ambient: new Howl({
 	  urls: ['audio/raum.mp3'],
 	  loop: true,

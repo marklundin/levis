@@ -9078,6 +9078,7 @@ THREE.Geometry.prototype = {
 
 		}
 
+		
 		for ( i = faceIndicesToRemove.length - 1; i >= 0; i -- ) {
 
 			this.faces.splice( i, 1 );

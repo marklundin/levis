@@ -1129,7 +1129,7 @@ define('main',[
 
 				var nl = 3, light;
 				while( nl-- > 0 ){
-					light = new THREE.PointLight( 0xFF0000, 0, 250 );
+					light = new THREE.PointLight( 0xFF0000, 5, 600 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -1423,7 +1423,6 @@ define('main',[
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
-				console.log( structMesh.geometry.faces.length );
 				structMesh.matrixAutoUpdate = false;
 				scene.add( structMesh );
 				

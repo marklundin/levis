@@ -220,7 +220,7 @@ define([
 		cornerMesh.rotation.y += ninetyDegs;
 		if( isBitSet( bitflag, 2 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 7 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
-
+		cube.geometry.mergeVertices();
 		return cube.geometry;
 
 	}
