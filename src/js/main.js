@@ -256,7 +256,7 @@ define('main',[
 				infoOverlay.expanded = false;
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 }, 400 );
 			}
-			setDatObjectsOpacity( 0.75 );
+			setDatObjectsOpacity( 0.3 );
 
 			resetCamera();
 
@@ -792,7 +792,7 @@ define('main',[
 					side: THREE.DoubleSide,
 					// lights: false,
 					// blending: THREE.AdditiveBlending,
-					opacity: 0.4,
+					opacity: 0.3,
 				});
 
 				videoContentMaterial.defines = {FLIP:true};
@@ -809,7 +809,7 @@ define('main',[
 					// map: envMap,
 					// side: THREE.DoubleSide,
 					blending: THREE.AdditiveBlending,
-					opacity: 0.4,
+					opacity: 0.3,
 				});
 				imageContentMaterial.originColor = new THREE.Color( 0x280500 );
 				imageContentMaterial.prevColor = new THREE.Color( 0x666666 );
@@ -872,7 +872,8 @@ define('main',[
 
 				var nl = 3, light;
 				while( nl-- > 0 ){
-					light = new THREE.PointLight( 0xFF0000, 0, 250 );
+					light = new THREE.PointLight( 0xff2618, 0, 250 );
+					light.color.multiplyScalar( 22 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -921,7 +922,7 @@ define('main',[
 
 					rollLight:{
 						color: "#"+selectionLights[0].color.getHexString(),
-						scale: 30,
+						scale: 22,
 						update:function(){
 							var n = selectionLights.length;
 							while( n-- > 0 ){
@@ -1252,12 +1253,13 @@ define('main',[
 							var to = {};
 							to[prop] = targetPos;
 
-							new TWEEN.Tween( dataObject.position )
+							dataObject.tween = new TWEEN.Tween( dataObject.position )
 
 								.to( to, duration )
 								.easing( TWEEN.Easing.Quadratic.InOut )
 								.delay(( 1500 + duration ) * n ).onComplete(function( obj ){
 
+									obj.tween.stop();
 									console.log( 'END', INITIAL_NUM_ANIMATIONS );
 									enterLight.fadeOut();
 
@@ -1409,7 +1411,7 @@ define('main',[
 									sounds.search.volume( 1.0 );
 									sounds.search.play();
 
-									setDatObjectsOpacity( 0.3 );
+									setDatObjectsOpacity( 0.2 );
 									
 									var pos, isInstagram,
 										positions = strut.centeredVolume.slice();
