@@ -784,33 +784,36 @@ define('main',[
 				
 
 				var videoContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0x660d00 ),
+					color:new THREE.Color( 0x666666 ),
 					specular: 0xffffff,
-					ambient:new THREE.Color( 0xff2200 ),
+					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
 					side: THREE.DoubleSide,
 					// lights: false,
 					// blending: THREE.AdditiveBlending,
-					opacity: 0.75,
+					opacity: 0.4,
 				});
 
 				videoContentMaterial.defines = {FLIP:true};
-				videoContentMaterial.originColor = 0x660d00;
-				videoContentMaterial.originAmbientColor = 0xff2200;
+				videoContentMaterial.originColor = new THREE.Color( 0x660d00 );
+				videoContentMaterial.prevColor = new THREE.Color( 0x666666 );
+				videoContentMaterial.prevAmbientColor = 0xffffff;
 
 				var imageContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0x280500 ),
-					ambient:new THREE.Color( 0x00fff00 ),
+					color:new THREE.Color( 0x666666 ),
+					specular: 0xffffff,
+					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
 					// map: envMap,
 					// side: THREE.DoubleSide,
-					// blending: THREE.AdditiveBlending,
-					opacity: 0.75,
+					blending: THREE.AdditiveBlending,
+					opacity: 0.4,
 				});
-				imageContentMaterial.originColor = 0x280500;
-				imageContentMaterial.originAmbientColor = 0x00fff00;
+				imageContentMaterial.originColor = new THREE.Color( 0x280500 );
+				imageContentMaterial.prevColor = new THREE.Color( 0x666666 );
+				imageContentMaterial.prevAmbientColor = 0xffffff;
 				imageContentMaterial.defines = {FLIP:true};
 
 				var searchContentMaterial = new THREE.MeshPhongMaterial({
@@ -819,8 +822,8 @@ define('main',[
 					transparent: true,
 					// envMap: cubemap,
 					side: THREE.DoubleSide,
-					// blending: THREE.AdditiveBlending,
-					opacity: 0.75,
+					blending: THREE.AdditiveBlending,
+					opacity: 0.4,
 				});
 
 				function updateAllMaterial(){
@@ -861,6 +864,42 @@ define('main',[
 
 
 
+				var selectionLights = [],
+					strut,
+					instagramMesh = new THREE.Mesh( new THREE.Geometry(), videoContentMaterial  ),
+					twitterMesh   = new THREE.Mesh( new THREE.Geometry(), imageContentMaterial  ),
+					interactiveObjs = [];
+
+				var nl = 3, light;
+				while( nl-- > 0 ){
+					light = new THREE.PointLight( imageContentMaterial.originColor.getHexString(), 0, 250 );
+					light.opacity = 0;
+					light.distanceCoeff = 1;
+					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
+					light.transitionDist = transition( light, 'distanceCoeff', 1, {threshold:0.01, speed: 0.1 } );
+					light.transition.target = 0;
+					// light.transition.paused = true;
+					light.transition.callback = function( light ){
+
+						light.transition.arrived = false;
+						light.transition.paused = true;
+						light.opacity = light.transition.target;
+
+						if( light.transition.target < 0.5 && light.object && !light.object.isSelected ){
+							light.object.light = null;
+						}
+
+					}.bind( this, light );
+
+					selectionLights.push( light );
+					scene.add( light );
+
+				}
+
+				allLights = selectionLights.slice();
+
+
+
 			// END LIGHTS
 
 
@@ -879,6 +918,17 @@ define('main',[
 					generate 	: generate,
 					seed 		: String( seed ),
 					camera 		: false,
+
+					rollLight:{
+						color: "#"+selectionLights[0].color.getHexString(),
+						scale: 30,
+						update:function(){
+							var n = selectionLights.length;
+							while( n-- > 0 ){
+								selectionLights[n].color.set( api.rollLight.color ).multiplyScalar( api.rollLight.scale );
+							}
+						}
+					},
 
 					clouds:{
 						debug : false,
@@ -974,7 +1024,7 @@ define('main',[
 
 						refractionRatio: 0.98,
 						reflectivity: 1,
-						opacity: 0.75,
+						opacity: 0.4,
 						metal: false,
 						twitter:{
 							color 		: "#"+imageContentMaterial.color.getHexString(),	
@@ -998,6 +1048,8 @@ define('main',[
 							videoContentMaterial.reflectivity = imageContentMaterial.reflectivity = api.dataObjects.reflectivity;
 							videoContentMaterial.opacity = imageContentMaterial.opacity = api.dataObjects.opacity;
 							videoContentMaterial.metal = imageContentMaterial.metal = api.dataObjects.metal;
+
+							console.log( api.dataObjects.instagram.color, api.dataObjects.twitter.color)
 
 							videoContentMaterial.color.set( api.dataObjects.instagram.color  );
 							imageContentMaterial.color.set( api.dataObjects.twitter.color  );
@@ -1110,6 +1162,9 @@ define('main',[
 					gui.add( skyMat, 	"visible" );
 					gui.add( api, 		"speed" );
 
+					gui.addColor( api.rollLight, 	"color" ).onChange( api.rollLight.update );
+					gui.add( api.rollLight, 		"scale" ).onChange( api.rollLight.update );
+
 
 					gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
 					gui.addColor( api, "background_color" ).onChange( api.updateBackgoundColor );
@@ -1122,46 +1177,14 @@ define('main',[
 
 			// DATA 
 
-				var selectionLights = [],
-					strut,
-					instagramMesh = new THREE.Mesh( new THREE.Geometry(), videoContentMaterial  ),
-					twitterMesh   = new THREE.Mesh( new THREE.Geometry(), imageContentMaterial  ),
-					interactiveObjs = [];
-
-				var nl = 3, light;
-				while( nl-- > 0 ){
-					light = new THREE.PointLight( 0xFF0000, 0, 250 );
-					light.opacity = 0;
-					light.distanceCoeff = 1;
-					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
-					light.transitionDist = transition( light, 'distanceCoeff', 1, {threshold:0.01, speed: 0.1 } );
-					light.transition.target = 0;
-					// light.transition.paused = true;
-					light.transition.callback = function( light ){
-
-						light.transition.arrived = false;
-						light.transition.paused = true;
-						light.opacity = light.transition.target;
-
-						if( light.transition.target < 0.5 && light.object && !light.object.isSelected ){
-							light.object.light = null;
-						}
-
-					}.bind( this, light );
-
-					selectionLights.push( light );
-					scene.add( light );
-
-				}
-
-				allLights = selectionLights.slice();
+				
 
 				// scene.add( selectionLight );
 				scene.add( instagramMesh );
 				scene.add( twitterMesh );
 
 
-				var enterLight = new THREE.PointLight( 0xFF0000, 0, 250 );//
+				var enterLight = selectionLights[0].clone();
 				enterLight.opacity = 1;
 				enterLight.distanceCoeff = 1.0;
 				allLights.push( enterLight );
@@ -1243,7 +1266,7 @@ define('main',[
 									scene.add( obj );
 									
 									enterLight.position = obj.position;
-									enterLight.color.copy( obj.material.color ).multiplyScalar( 30 );
+									
 									enterLight.opacity = 1;
 								
 									sounds.entering[Math.floor( Math.random()*sounds.entering.length )].play();
@@ -1294,11 +1317,11 @@ define('main',[
 					imageContentMaterial.opacity = opacity;
 					videoContentMaterial.opacity = opacity;
 
-					imageContentMaterial.color.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.originColor );
-					imageContentMaterial.ambient.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.originAmbientColor  );
+					imageContentMaterial.color.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.prevColor );
+					imageContentMaterial.ambient.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.prevAmbientColor  );
 
-					videoContentMaterial.color.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.originColor );
-					videoContentMaterial.ambient.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.originAmbientColor  );
+					videoContentMaterial.color.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.prevColor );
+					videoContentMaterial.ambient.setHex( opacity < 0.5 ? 0x444444 : imageContentMaterial.prevAmbientColor  );
 
 
 				}
@@ -1591,8 +1614,8 @@ define('main',[
 					light.transition.target = 1;
 					light.object = INTERSECTED;
 
-
-					light.color.set( INTERSECTED.material.color ).multiplyScalar( 30 );
+					// console.log( INTERSECTED.material.originColor.getHexString() );
+					// light.color.set( INTERSECTED.material.originColor ).multiplyScalar( 30 );
 					// light.intensity = 5.5;
 					// cocks.position.copy( INTERSECTED.position );
 					light.position.copy( INTERSECTED.position );
