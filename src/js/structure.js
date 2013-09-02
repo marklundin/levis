@@ -57,58 +57,6 @@ define([
 
 			}
 
-			function numericalSort( a, b ){
-				return a - b;
-			}
-			function isSame(a1, a2){
-				if( a1.sorted === undefined ){
-					a1.sorted = true;
-					a1.sort(numericalSort);
-				}else{
-					// console.log( a1, 'already sorted');
-				}
-				if( a2.sorted === undefined ){
-					a2.sorted = true
-					a2.sort(numericalSort)
-				}else{
-					// console.log( a2, 'already sorted');
-				}
-
-			  	return !(a1 > a2 || a1 < a2 );
-			}
-
-			function removeDuplicateFaces(geometry){
-				var tri, tri_2, inds = [], inds_2 = [], i, j;
-
-			  for( i=0, l=geometry.faces.length; i<l; i++ ){
-			    tri = geometry.faces[i];
-			    inds[0] = tri.a; 
-			    inds[1] = tri.b;
-			    inds[2] = tri.c;
-			    inds[3] = tri.d;
-			    inds.sort();
-			    for( j=0; j<i; j++ ){
-			      tri_2 = geometry.faces[j];
-			      if( tri_2 !== undefined ){ // May have already been deleted
-			        inds_2[0] = tri_2.a; 
-				    inds_2[1] = tri_2.b;
-				    inds_2[2] = tri_2.c;
-				    inds_2[3] = tri_2.d;
-				    inds_2.sort();
-			        if( isSame( inds, inds_2 ) ){
-			          delete geometry.faces[i]; // Sets these faces to undefined
-			          // If duplicate, it is also interior, so remove both
-			          delete geometry.faces[j];
-			        }
-			      }
-			    }
-			  }
-			  console.log('marked differences')
-			  geometry.faces = geometry.faces.filter( function(a){ return a===undefined });
-			  console.log('removed differences')
-			  return geometry;
-			}
-
 			var mutation;
 
 			// Generate noise pattern
@@ -143,10 +91,6 @@ define([
 				}
 			}
 
-			// console.log( baseGeom.vertices.length, baseGeom.faces.length );
-			baseGeom.mergeVertices();
-			// removeDuplicateFaces( baseGeom );
-			console.log( 'seed:', seed, 'geom: ', baseGeom.vertices.length, baseGeom.faces.length );
 
 			return {
 				geometry: baseGeom,

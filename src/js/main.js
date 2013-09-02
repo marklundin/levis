@@ -16,13 +16,12 @@ define('main',[
 	'glsl!shaders/clouds.glsl',
 	'glsl!shaders/post.glsl',
 	'sounds',
-	'glsl!shaders/fresnel.glsl',
 	'libs/Tween',
 	"purl",
 	"./libs/threejs/examples/js/controls/OrbitControls",
 	
 
-	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader, postShader, sounds, fresnelShader ) {
+	], function( module, jquery, jUi, structureShader, math, structure, skydome, timer, lighting, gui, dataloader, textplane, transition, easing, cloudsShader, postShader, sounds ) {
 
 
 		//PROJECT INFO
@@ -34,7 +33,6 @@ define('main',[
 
 
 		var pageLoad = Date.now();
-		console.log( DEBUG, $.url().param('mute') !== undefined  )
 		if( DEBUG ){
 			if( $.url().param('mute') !== undefined ) Howler.mute();
 		}
@@ -123,7 +121,6 @@ define('main',[
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
 		renderer.setClearColor( 0x1b2022 );
-		renderer.physicallyBasedShading = true;
 		
 
 		controls.velocity = new THREE.Vector3();
@@ -155,7 +152,6 @@ define('main',[
 			camera.aspect = WIDTH / HEIGHT;
 			camera.updateProjectionMatrix();
 
-			camera.projectionMatrixInverse.getInverse( camera.projectionMatrix );
 
 			renderer.setSize( WIDTH, HEIGHT );	
 		}
@@ -742,7 +738,7 @@ define('main',[
 			skyMat.visible = false;
 
 			var sky = new THREE.Mesh( skyGeo, skyMat );
-			// scene.add( sky );
+			scene.add( sky );
 
 
 
@@ -763,7 +759,7 @@ define('main',[
 					2768,
 					6594
 				],
-				seed = Math.floor( Math.random() * seeds.length ),
+				seed = seeds[ Math.floor( Math.random() * seeds.length )],
 				structMesh;
 		
 
@@ -776,7 +772,7 @@ define('main',[
 					reflectivity: 0.3,
 					// bumpMap: bumpmap,
 					// bumpScale: 0.2,
-					perPixel:true,
+					perPixel:false,
 					color: 0x222222,
 					ambient: 0x426d84,
 					specular: 0xFFFFFF,
@@ -787,149 +783,41 @@ define('main',[
 					// map: map
 
 				});
-
-
-				THREE.ZeroFactor = 200;
-				THREE.OneFactor = 201;
-				THREE.SrcColorFactor = 202;
-				THREE.OneMinusSrcColorFactor = 203;
-				THREE.SrcAlphaFactor = 204;
-				THREE.OneMinusSrcAlphaFactor = 205;
-				THREE.DstAlphaFactor = 206;
-				THREE.OneMinusDstAlphaFactor = 207;
-
-				function buildShaderFromTemplate( template, arr){
-					var n = arr.length;
-					while( n-- > 0 ){
-						template = template.split("{"+arr[n]+"}").join( THREE.ShaderChunk[arr[n]] );
-					}
-					return template;
-
-				}
-
-				
-				var dataObjectMaterialArgs = {
-					vert:[
-						"map_pars_vertex" ,
-						"lightmap_pars_vertex" ,
-						"envmap_pars_vertex" ,
-						"lights_phong_pars_vertex" ,
-						"color_pars_vertex" ,
-						"morphtarget_pars_vertex",
-						"skinning_pars_vertex",
-						"shadowmap_pars_vertex",
-
-						"map_vertex",
-						"lightmap_vertex",
-						"color_vertex",
-
-						"morphnormal_vertex",
-						"skinbase_vertex",
-						"skinnormal_vertex",
-						"defaultnormal_vertex",
-
-						"morphtarget_vertex",
-						"skinning_vertex",
-						"default_vertex",
-
-						"worldpos_vertex",
-						"envmap_vertex",
-						"lights_phong_vertex",
-						"shadowmap_vertex"
-					],frag:[
-						"color_pars_fragment",
-						"map_pars_fragment",
-						"lightmap_pars_fragment",
-						"envmap_pars_fragment",
-						"fog_pars_fragment",
-						"lights_phong_pars_fragment",
-						"shadowmap_pars_fragment",
-						"bumpmap_pars_fragment",
-						"normalmap_pars_fragment",
-						"specularmap_pars_fragment",
-						"map_fragment",
-						"alphatest_fragment",
-						"specularmap_fragment",
-						"lights_phong_fragment",
-						"lightmap_fragment",
-						"color_fragment",
-						"envmap_fragment",
-						"shadowmap_fragment",
-						"linear_to_gamma_fragment",
-						"fog_fragment"
-
-					]
-				}
-
-				var datObjectMaterial = new THREE.ShaderMaterial({
-					uniforms: THREE.UniformsUtils.merge( [
-
-				        THREE.UniformsLib[ "common" ],
-						THREE.UniformsLib[ "bump" ],
-						THREE.UniformsLib[ "normalmap" ],
-						THREE.UniformsLib[ "fog" ],
-						THREE.UniformsLib[ "lights" ],
-						{
-							// "shininess": { type: "f", value: 30 },
-							opacity 					: { type: "f", value: 0.5 },
-							uCameraProjectionInverse 	: { type: "uMat4", value: camera.projectionMatrixInverse },
-							color 					 	: { type: "c", value: new THREE.Color( 0xdddddd ) },
-							specular 					: { type: "c", value: new THREE.Color( 0xffffff ) },
-							ambient 					: { type: "c", value: new THREE.Color( 0xff2200 ) },
-					}]),
-					lights: true,
-					// blendSrc: THREE.SrcAlphaFactor,
-					// blendDst: THREE.DstAlphaFactor,
-					side : THREE.DoubleSide,
-					vertexShader:   buildShaderFromTemplate( fresnelShader.vertexShader, dataObjectMaterialArgs.vert ) , //document.getElementById( 'vs' ).textContent,
-					fragmentShader: buildShaderFromTemplate( fresnelShader.fragmentShader, dataObjectMaterialArgs.frag ), //document.getElementById( 'fs' ).textContent,
-					transparent: true
-				})
 				
 
 				var videoContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0x660d00 ),
 					specular: 0xffffff,
 					ambient:new THREE.Color( 0xff2200 ),
-					combine : THREE.MixOperation,
 					transparent: true,
 					envMap: envMap,
-					perPixel: true,
 					side: THREE.DoubleSide,
 					// lights: false,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
-				videoContentMaterial.defines = {FLIPSIDE: true};
-				// videoContentMaterial = datObjectMaterial;
 				videoContentMaterial.originColor = 0x660d00;
 				videoContentMaterial.originAmbientColor = 0xff2200;
-
 
 				var imageContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0x280500 ),
 					ambient:new THREE.Color( 0x00fff00 ),
-					// combine : THREE.MixOperation,
 					transparent: true,
 					envMap: envMap,
-					perPixel: true,
 					// map: envMap,
-
 					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
-				// imageContentMaterial = datObjectMaterial
 				imageContentMaterial.originColor = 0x280500;
 				imageContentMaterial.originAmbientColor = 0x00fff00;
-				
 
 				var searchContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0xff33ff ),
 					ambient:new THREE.Color( 0x00fff00 ),
 					transparent: true,
 					// envMap: cubemap,
-					side: THREE.FlipSide,
+					side: THREE.DoubleSide,
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
@@ -985,7 +873,7 @@ define('main',[
 					threshold 	: 0.68,
 					noiseAmount : 0.7,
 					complexity 	: 0.82,
-					horizontal_thickness 	: 10,
+					horizontal_thickness 	: 11,
 					vertical_thickness 	: 3,
 					generate 	: generate,
 					seed 		: String( seed ),
@@ -1088,18 +976,18 @@ define('main',[
 						opacity: 0.75,
 						metal: false,
 						twitter:{
-							// color 		: "#"+imageContentMaterial.color.getHexString(),	
-							// specular 	: "#"+imageContentMaterial.specular.getHexString(),
-							// ambient 	: "#"+imageContentMaterial.ambient.getHexString(),
-							// shininess	: imageContentMaterial.shininess,
-							// combine 	: imageContentMaterial.combine
+							color 		: "#"+imageContentMaterial.color.getHexString(),	
+							specular 	: "#"+imageContentMaterial.specular.getHexString(),
+							ambient 	: "#"+imageContentMaterial.ambient.getHexString(),
+							shininess	: imageContentMaterial.shininess,
+							combine 	: imageContentMaterial.combine
 						},
 						instagram :{
-							// color 		: "#"+videoContentMaterial.color.getHexString(),	
-							// specular 	: "#"+videoContentMaterial.specular.getHexString(),
-							// ambient 	: "#"+videoContentMaterial.ambient.getHexString(),
-							// shininess	: videoContentMaterial.shininess,
-							// combine 	: videoContentMaterial.combine
+							color 		: "#"+videoContentMaterial.color.getHexString(),	
+							specular 	: "#"+videoContentMaterial.specular.getHexString(),
+							ambient 	: "#"+videoContentMaterial.ambient.getHexString(),
+							shininess	: videoContentMaterial.shininess,
+							combine 	: videoContentMaterial.combine
 						},
 						
 						updateMaterial:function(){
@@ -1110,36 +998,36 @@ define('main',[
 							videoContentMaterial.opacity = imageContentMaterial.opacity = api.dataObjects.opacity;
 							videoContentMaterial.metal = imageContentMaterial.metal = api.dataObjects.metal;
 
-							// videoContentMaterial.color.set( api.dataObjects.instagram.color  );
-							// imageContentMaterial.color.set( api.dataObjects.twitter.color  );
+							videoContentMaterial.color.set( api.dataObjects.instagram.color  );
+							imageContentMaterial.color.set( api.dataObjects.twitter.color  );
 
-							// videoContentMaterial.specular.set( api.dataObjects.instagram.specular);
-							// imageContentMaterial.specular.set( api.dataObjects.twitter.specular );
+							videoContentMaterial.specular.set( api.dataObjects.instagram.specular);
+							imageContentMaterial.specular.set( api.dataObjects.twitter.specular );
 
-							// videoContentMaterial.ambient.set( api.dataObjects.instagram.ambient);
-							// imageContentMaterial.ambient.set( api.dataObjects.twitter.ambient );
+							videoContentMaterial.ambient.set( api.dataObjects.instagram.ambient);
+							imageContentMaterial.ambient.set( api.dataObjects.twitter.ambient );
 
-							// videoContentMaterial.shininess = api.dataObjects.instagram.shininess;
-							// imageContentMaterial.shininess = api.dataObjects.twitter.shininess;
+							videoContentMaterial.shininess = api.dataObjects.instagram.shininess;
+							imageContentMaterial.shininess = api.dataObjects.twitter.shininess;
 
-							// videoContentMaterial.combine = api.dataObjects.instagram.combine;
-							// imageContentMaterial.combine = api.dataObjects.twitter.combine;
+							videoContentMaterial.combine = api.dataObjects.instagram.combine;
+							imageContentMaterial.combine = api.dataObjects.twitter.combine;
 
 					
-							// // contentObj3d.children[n].material.needsUpdate = true;
+							// contentObj3d.children[n].material.needsUpdate = true;
 
-							// n = searchResObj3d.children.length;
-							// while( n-- > 0 ){
-							// 	if( searchResObj3d.children[n].material ) {
+							n = searchResObj3d.children.length;
+							while( n-- > 0 ){
+								if( searchResObj3d.children[n].material ) {
 
-							// 		searchResObj3d.children[n].material.refractionRatio = api.dataObjects.refractionRatio;
-							// 		searchResObj3d.children[n].material.reflectivity 	= api.dataObjects.reflectivity;
-							// 		searchResObj3d.children[n].material.opacity 		= api.dataObjects.opacity;
-							// 		contentObj3d.children[n].material.metal 			= api.dataObjects.metal;
-							// 		contentObj3d.children[n].material.needsUpdate = true;
+									searchResObj3d.children[n].material.refractionRatio = api.dataObjects.refractionRatio;
+									searchResObj3d.children[n].material.reflectivity 	= api.dataObjects.reflectivity;
+									searchResObj3d.children[n].material.opacity 		= api.dataObjects.opacity;
+									contentObj3d.children[n].material.metal 			= api.dataObjects.metal;
+									contentObj3d.children[n].material.needsUpdate = true;
 
-							// 	}
-							// }
+								}
+							}
 						}
 					},
 
@@ -1176,19 +1064,19 @@ define('main',[
 					dataObgGui.add( api.dataObjects, 'opacity' ).onChange( api.dataObjects.updateMaterial );
 					dataObgGui.add( api.dataObjects, 'metal' ).onChange( api.dataObjects.updateMaterial );
 
-					// var instgramUI = dataObgGui.addFolder( 'instagram material')
-					// instgramUI.addColor( api.dataObjects.instagram, 'color' ).onChange( api.dataObjects.updateMaterial );
-					// instgramUI.addColor( api.dataObjects.instagram, 'specular' ).onChange( api.dataObjects.updateMaterial );
-					// instgramUI.addColor( api.dataObjects.instagram, 'ambient' ).onChange( api.dataObjects.updateMaterial );
-					// instgramUI.add( api.dataObjects.instagram, 'shininess' )
-					// instgramUI.add( api.dataObjects.instagram, 'combine', { Multiply: THREE.MultiplyOperation, Mix: THREE.MixOperation, Add: THREE.AddOperation } ).onChange( api.dataObjects.updateMaterial );
+					var instgramUI = dataObgGui.addFolder( 'instagram material')
+					instgramUI.addColor( api.dataObjects.instagram, 'color' ).onChange( api.dataObjects.updateMaterial );
+					instgramUI.addColor( api.dataObjects.instagram, 'specular' ).onChange( api.dataObjects.updateMaterial );
+					instgramUI.addColor( api.dataObjects.instagram, 'ambient' ).onChange( api.dataObjects.updateMaterial );
+					instgramUI.add( api.dataObjects.instagram, 'shininess' )
+					instgramUI.add( api.dataObjects.instagram, 'combine', { Multiply: THREE.MultiplyOperation, Mix: THREE.MixOperation, Add: THREE.AddOperation } ).onChange( api.dataObjects.updateMaterial );
 
-					// var twitterUI = dataObgGui.addFolder( 'twitter material')
-					// twitterUI.addColor( api.dataObjects.twitter, 'color' ).onChange( api.dataObjects.updateMaterial );
-					// twitterUI.addColor( api.dataObjects.twitter, 'specular' ).onChange( api.dataObjects.updateMaterial );
-					// twitterUI.addColor( api.dataObjects.twitter, 'ambient' ).onChange( api.dataObjects.updateMaterial );
-					// twitterUI.add( api.dataObjects.twitter, 'shininess' )
-					// twitterUI.add( api.dataObjects.twitter, 'combine', { Multiply: THREE.MultiplyOperation, Mix: THREE.MixOperation, Add: THREE.AddOperation } ).onChange( api.dataObjects.updateMaterial );
+					var twitterUI = dataObgGui.addFolder( 'twitter material')
+					twitterUI.addColor( api.dataObjects.twitter, 'color' ).onChange( api.dataObjects.updateMaterial );
+					twitterUI.addColor( api.dataObjects.twitter, 'specular' ).onChange( api.dataObjects.updateMaterial );
+					twitterUI.addColor( api.dataObjects.twitter, 'ambient' ).onChange( api.dataObjects.updateMaterial );
+					twitterUI.add( api.dataObjects.twitter, 'shininess' )
+					twitterUI.add( api.dataObjects.twitter, 'combine', { Multiply: THREE.MultiplyOperation, Mix: THREE.MixOperation, Add: THREE.AddOperation } ).onChange( api.dataObjects.updateMaterial );
 					
 					var cloudsGUI = gui.addFolder( 'clouds' );
 					cloudsGUI.add( api.clouds, "debug" ).onChange( api.clouds.update );
@@ -1241,7 +1129,7 @@ define('main',[
 
 				var nl = 3, light;
 				while( nl-- > 0 ){
-					light = new THREE.PointLight( 0xFF0000, 5, 600 );
+					light = new THREE.PointLight( 0xFF0000, 0, 250 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -1383,42 +1271,32 @@ define('main',[
 				}
 
 
-				var thickness = 10;
-				var dimension = 100 - ( 10 );
-				var posOffset = 50 - ( 10 * 0.5 ) - thickness;
+				var thickness = 5;
+				var cubeGeometryW = new THREE.Mesh( new THREE.CubeGeometry( 85, 85, thickness, 10, 10, 1 )),
+					cubeGeometryD = new THREE.Mesh( new THREE.CubeGeometry( thickness, 85, 85, 1, 10, 10 )),
+					cubeGeometryT = new THREE.Mesh( new THREE.CubeGeometry( 85, thickness, 85, 10, 1, 10 ));
 
-				var cubeOuter = new THREE.Mesh( new THREE.CubeGeometry( dimension, dimension, dimension )),
-					cubeInner = new THREE.Mesh( new THREE.CubeGeometry( dimension - thickness, dimension - thickness, dimension - thickness ));
+				var baseGeometry = new THREE.Geometry();
+				cubeGeometryW.position.z = -50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
+				cubeGeometryW.position.z = 50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
 
-				// var cubeGeometryW = new THREE.Mesh( new THREE.CubeGeometry( dimension, dimension, thickness /*10, 10, 1*/ )),
-				// 	cubeGeometryD = new THREE.Mesh( new THREE.CubeGeometry( thickness, dimension, dimension /*1, 10, 10*/ )),
-				// 	cubeGeometryT = new THREE.Mesh( new THREE.CubeGeometry( dimension, thickness, dimension /*10, 1, 10*/ ));
+				cubeGeometryD.position.x = -50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
+				cubeGeometryD.position.x = 50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
 
-				var baseGeometry = cubeOuter.geometry;
-				var baseGeometryInner = cubeInner.geometry;
-				// THREE.GeometryUtils.merge( baseGeometry, cubeInner.geometry );
-
-				// var baseGeometry = new THREE.Geometry();
-				// cubeGeometryW.position.z = -posOffset;
-				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
-				// cubeGeometryW.position.z = posOffset;
-				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryW );
-
-				// cubeGeometryD.position.x = -posOffset;
-				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
-				// cubeGeometryD.position.x = posOffset;
-				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryD );
-
-				// cubeGeometryT.position.y = -posOffset;
-				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
-				// cubeGeometryT.position.y = posOffset;
-				// THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
+				cubeGeometryT.position.y = -50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
+				cubeGeometryT.position.y = 50;
+				THREE.GeometryUtils.merge( baseGeometry, cubeGeometryT );
 
 
 
 				function getDataObject( result, isInstagram, position ){
 
-					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? videoContentMaterial /*.clone()*/ : imageContentMaterial /*.clone()*/  );
+					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? videoContentMaterial/*.clone()*/ : imageContentMaterial/*.clone()*/  );
 					var index = ( Math.random() * strut.volume.length )|0;
 					var item = strut.volume[index];
 
@@ -1545,6 +1423,7 @@ define('main',[
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
+				console.log( structMesh.geometry.faces.length );
 				structMesh.matrixAutoUpdate = false;
 				scene.add( structMesh );
 				

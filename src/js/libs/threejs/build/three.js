@@ -9078,7 +9078,6 @@ THREE.Geometry.prototype = {
 
 		}
 
-		
 		for ( i = faceIndicesToRemove.length - 1; i >= 0; i -- ) {
 
 			this.faces.splice( i, 1 );
@@ -16587,15 +16586,13 @@ THREE.ShaderChunk = {
 
 	envmap_fragment: [
 
-
 		"#ifdef USE_ENVMAP",
 
 			"vec3 reflectVec;",
 
-			"vec3 cameraToVertex = normalize( vWorldPosition - cameraPosition );",
-
 			"#if defined( USE_BUMPMAP ) || defined( USE_NORMALMAP )",
 
+				"vec3 cameraToVertex = normalize( vWorldPosition - cameraPosition );",
 
 				"if ( useRefract ) {",
 
@@ -16630,25 +16627,17 @@ THREE.ShaderChunk = {
 
 			"#endif",
 
-			"reflectance = reflectivity;",
-
-			"#ifdef FLIPSIDE",
-				"float rTheta = clamp( dot( cameraToVertex, normal ), 0.0, 1.0 );",
-	 			"reflectance = 0.2 * pow( rTheta , 4.0 );",
-	 			// "reflectance = 0.0;",
- 			"#endif",
-
 			"if ( combine == 1 ) {",
 
-				"gl_FragColor.xyz = mix( gl_FragColor.xyz, cubeColor.xyz, specularStrength * reflectance );",
+				"gl_FragColor.xyz = mix( gl_FragColor.xyz, cubeColor.xyz, specularStrength * reflectivity );",
 
 			"} else if ( combine == 2 ) {",
 
-				"gl_FragColor.xyz += cubeColor.xyz * specularStrength * reflectance;",
+				"gl_FragColor.xyz += cubeColor.xyz * specularStrength * reflectivity;",
 
 			"} else {",
 
-				"gl_FragColor.xyz = mix( gl_FragColor.xyz, gl_FragColor.xyz * cubeColor.xyz, specularStrength * reflectance );",
+				"gl_FragColor.xyz = mix( gl_FragColor.xyz, gl_FragColor.xyz * cubeColor.xyz, specularStrength * reflectivity );",
 
 			"}",
 
@@ -17236,11 +17225,11 @@ THREE.ShaderChunk = {
 
 		"#endif",
 
-		// "#if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )",
+		"#if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )",
 
 			"varying vec3 vWorldPosition;",
 
-		// "#endif"
+		"#endif"
 
 	].join("\n"),
 
@@ -17285,11 +17274,11 @@ THREE.ShaderChunk = {
 
 		"#endif",
 
-		// "#if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )",
+		"#if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )",
 
 			"vWorldPosition = worldPosition.xyz;",
 
-		// "#endif"
+		"#endif"
 
 	].join("\n"),
 
@@ -17349,11 +17338,11 @@ THREE.ShaderChunk = {
 
 		"#endif",
 
-		// "#if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )",
+		"#if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )",
 
 			"varying vec3 vWorldPosition;",
 
-		// "#endif",
+		"#endif",
 
 		"#ifdef WRAP_AROUND",
 
@@ -17368,11 +17357,8 @@ THREE.ShaderChunk = {
 
 	lights_phong_fragment: [
 
-		"float reflectance = 1.0;",
-
 		"vec3 normal = normalize( vNormal );",
 		"vec3 viewPosition = normalize( vViewPosition );",
-
 
 		"#ifdef DOUBLE_SIDED",
 
@@ -17428,15 +17414,7 @@ THREE.ShaderChunk = {
 
 				"#else",
 
-					"#ifdef FLIPSIDE",
-
-						"float pointDiffuseWeight = abs( dotProduct );",
-
-					"#else",
-
-						"float pointDiffuseWeight = max( dotProduct, 0.0 );",
-
-					"#endif",
+					"float pointDiffuseWeight = max( dotProduct, 0.0 );",
 
 				"#endif",
 
@@ -17445,16 +17423,7 @@ THREE.ShaderChunk = {
 				// specular
 
 				"vec3 pointHalfVector = normalize( lVector + viewPosition );",
-				"#ifdef FLIPSIDE",
-
-					"float pointDotNormalHalf = abs( dot( normal, pointHalfVector ));",
-
-				"#else",
-
-					"float pointDotNormalHalf = max( dot( normal, pointHalfVector ), 0.0 );",
-
-				"#endif",
-				
+				"float pointDotNormalHalf = max( dot( normal, pointHalfVector ), 0.0 );",
 				"float pointSpecularWeight = specularStrength * max( pow( pointDotNormalHalf, shininess ), 0.0 );",
 
 				"#ifdef PHYSICALLY_BASED_SHADING",
@@ -17722,8 +17691,7 @@ THREE.ShaderChunk = {
 
 			"gl_FragColor.xyz = gl_FragColor.xyz * ( emissive + totalDiffuse + ambientLightColor * ambient ) + totalSpecular;",
 
-		"#endif",
-
+		"#endif"
 
 	].join("\n"),
 
@@ -18736,8 +18704,6 @@ THREE.ShaderLib = {
 				THREE.ShaderChunk[ "lights_phong_vertex" ],
 				THREE.ShaderChunk[ "shadowmap_vertex" ],
 
-
-
 			"}"
 
 		].join("\n"),
@@ -18781,12 +18747,6 @@ THREE.ShaderLib = {
 				THREE.ShaderChunk[ "linear_to_gamma_fragment" ],
 
 				THREE.ShaderChunk[ "fog_fragment" ],
-
-				"#ifdef FLIPSIDE",
-
-					"gl_FragColor = vec4( vec3( reflectance ), 1.0 );",
-
-				"#endif",
 
 			"}"
 
@@ -19503,7 +19463,7 @@ THREE.ShaderLib = {
 
 					"#endif",
 
-					"gl_FragColor.xyz = mix( gl_FragColor.xyz, cubeColor.xyz, specularTex.r * uReflectivity * reflectance );",
+					"gl_FragColor.xyz = mix( gl_FragColor.xyz, cubeColor.xyz, specularTex.r * uReflectivity );",
 
 				"}",
 
