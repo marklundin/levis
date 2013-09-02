@@ -17414,7 +17414,15 @@ THREE.ShaderChunk = {
 
 				"#else",
 
-					"float pointDiffuseWeight = max( dotProduct, 0.0 );",
+					"#ifdef FLIP",
+
+						"float pointDiffuseWeight = abs( dotProduct );",
+
+					"#else",
+
+						"float pointDiffuseWeight = max( dotProduct, 0.0 );",
+
+					"#endif",
 
 				"#endif",
 
@@ -17423,7 +17431,15 @@ THREE.ShaderChunk = {
 				// specular
 
 				"vec3 pointHalfVector = normalize( lVector + viewPosition );",
-				"float pointDotNormalHalf = max( dot( normal, pointHalfVector ), 0.0 );",
+				"#ifdef FLIP",
+
+					"float pointDotNormalHalf = abs( dot( normal, pointHalfVector ) );",
+
+				"#else",
+
+					"float pointDotNormalHalf = max( dot( normal, pointHalfVector ), 0.0 );",
+
+				"#endif",
 				"float pointSpecularWeight = specularStrength * max( pow( pointDotNormalHalf, shininess ), 0.0 );",
 
 				"#ifdef PHYSICALLY_BASED_SHADING",

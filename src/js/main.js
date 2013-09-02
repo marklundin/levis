@@ -796,6 +796,8 @@ define('main',[
 					// blending: THREE.AdditiveBlending,
 					opacity: 0.75,
 				});
+
+				videoContentMaterial.defines = {FLIP:true};
 				videoContentMaterial.originColor = 0x660d00;
 				videoContentMaterial.originAmbientColor = 0xff2200;
 
@@ -811,6 +813,7 @@ define('main',[
 				});
 				imageContentMaterial.originColor = 0x280500;
 				imageContentMaterial.originAmbientColor = 0x00fff00;
+				imageContentMaterial.defines = {FLIP:true};
 
 				var searchContentMaterial = new THREE.MeshPhongMaterial({
 					color:new THREE.Color( 0xff33ff ),
