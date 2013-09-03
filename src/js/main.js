@@ -348,12 +348,20 @@ define('main',[
 		}
 
 		function updateEnvMapWithImage( material, url ){
-			material.envMap = loadTexture( [url, url, url, url, url, url ]);
+			console.log( 'CHANGING TEXTURE' );
+			loadTexture( [url, url, url, url, url, url ], function( texture ){
+				if( clicked && clicked.material === material ){
+					console.log( 'SWAP' );
+					clicked.material.opacity = 0.28;
+					clicked.material.envMap = texture;
+				}
+			})
 		}
 
 		function updateEnvMapWithCanvas( material, canvas ){
 			textTexture.image 	= [canvas, canvas, canvas, canvas, canvas, canvas ];
 			textTexture.needsUpdate = true;
+			material.opacity = 0.28;
 			material.envMap 	= textTexture;
 		}
 
@@ -482,9 +490,11 @@ define('main',[
 
 			if( !lastClicked.isInstagram ){
 				console.log( lastClicked.material.opacity );
-				lastClicked.material.opacity = 0.9;	
+				
 				console.log( lastClicked.material.opacity );
 			} 
+
+			lastClicked.material.opacity = 0.9;	
 
 			clicked = null;
 			sounds.out.play();
@@ -511,7 +521,7 @@ define('main',[
 
 				if( clicked ){
 					clicked.isSelected = false;
-					if( !clicked.isInstagram ) clicked.material.opacity = 0.9;
+					clicked.material.opacity = 0.9;
 					clicked.light.transition.target = 0;
 					clicked.light.transition.reset();
 					clicked.light.transition.paused = false;
@@ -535,10 +545,11 @@ define('main',[
 
 					imageElem.attr( 'src', avatarUrl )
 					
+					// clicked.material.opacity = 0.28;
 					if( clicked.isInstagram ){
 						updateEnvMapWithImage( clicked.material, thumbUrl );
 					} else {
-						clicked.material.opacity = 0.28;
+						
 						var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
 						updateEnvMapWithCanvas( clicked.material, tp );
 					}
@@ -806,10 +817,10 @@ define('main',[
 					transparent: true,
 					envMap: envMap,
 					side: THREE.DoubleSide,
-					combine: THREE.AddOperation,
+					combine: THREE.MixOperation,
 					// lights: false,
 					blending: THREE.AdditiveBlending,
-					opacity: 0.3,
+					opacity: 0.9,
 				});
 
 				videoContentMaterial.defines = {FLIP:true};
@@ -1139,7 +1150,7 @@ define('main',[
 
 					var dataObgGui = gui.addFolder( 'Data Object Material');
 					dataObgGui.add( api.dataObjects, 'refractionRatio' ).onChange( api.dataObjects.updateMaterial );
-					dataObgGui.add( api.dataObjects, 'reflectivity' ).onChange( api.dataObjects.updateMaterial );
+					dataObgGui.add( api.dataObjects, 'reflectivity', 0, 1 ).onChange( api.dataObjects.updateMaterial );
 					
 					dataObgGui.add( api.dataObjects, 'metal' ).onChange( api.dataObjects.updateMaterial );
 
