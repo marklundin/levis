@@ -386,6 +386,7 @@ define('main',[
 
 			if( infoOverlay.video ){
 				if( infoOverlay.expanded ) infoOverlay.video.currentTime( 0 );
+				infoOverlay.video.play();
 				if( clicked.isInstagram ) infoOverlay.expanded ? infoOverlay.video.play() : infoOverlay.video.pause();
 			} 
 
@@ -558,7 +559,11 @@ define('main',[
 
 					if( clicked.isInstagram && videoUrl ){
 						
-						infoOverlay.video.src( videoUrl );
+						var source = [];
+					      source[0]={};
+					      source[0].src = videoUrl
+					      source[0].type = "video/mp4";
+						infoOverlay.video.src( source );
 						
 					}					
 
