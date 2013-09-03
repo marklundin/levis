@@ -30,8 +30,8 @@ define(['module'], function (module) {
 	    		twitterData.loaded 		= twitterData.status === 'OK';
 	    		instagramData.loaded 	= instagramData.status === 'OK';
 	    		var loaded = instagramData.loaded && twitterData.loaded;
-
-	    		if( loaded ) callback( twitterData.results.search_results, instagramData.results.search_results )
+	    		console.log( twitterData.results, instagramData.results );
+	    		if( loaded ) callback( twitterData.results, instagramData.results )
 	    		else errCallback( instagramData, twitterData );
 
 	    });

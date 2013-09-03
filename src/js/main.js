@@ -48,7 +48,7 @@ define('main',[
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
 			FPmS = 1000 / 60,
-			INITIAL_NUM_ANIMATIONS = 7,
+			INITIAL_NUM_ANIMATIONS = 30,
 			MAX_SEARCH_RESULTS = 10,
 			SEARCH_RES_RADIUS = 0.1,
 			DIV_SLIDE_OFFSET = 80,
@@ -230,8 +230,8 @@ define('main',[
 				if( clicked ){
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
-					resetCamera();
 				}
+				resetCamera();
 				
 			});
 		});	
@@ -1488,7 +1488,8 @@ define('main',[
 
 					$('#search-field').keypress(function (e) {
 					  if (e.which === 13) {
-					  	event.preventDefault();
+					  	e.preventDefault();
+					  	e.stopImmediatePropagation();
 					    performSearch( inputField.value );
 					  }
 					});
