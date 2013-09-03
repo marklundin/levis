@@ -48,7 +48,7 @@ define('main',[
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
 			FPmS = 1000 / 60,
-			INITIAL_NUM_ANIMATIONS = 7,
+			INITIAL_NUM_ANIMATIONS = 30,
 			MAX_SEARCH_RESULTS = 10,
 			SEARCH_RES_RADIUS = 0.1,
 			DIV_SLIDE_OFFSET = 80,
@@ -230,8 +230,8 @@ define('main',[
 				if( clicked ){
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
-					resetCamera();
 				}
+				resetCamera();
 				
 			});
 		});	
@@ -258,7 +258,7 @@ define('main',[
 				infoOverlay.expanded = false;
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 }, 400 );
 			}
-			setDatObjectsOpacity( 0.3 );
+			setDatObjectsOpacity( 0.9 );
 
 			resetCamera();
 
@@ -490,7 +490,7 @@ define('main',[
 				selectionLights.push( lastClicked.light );
 			}
 
-			lastClicked.material.opacity = 0.9;	
+			if( lastClicked ) lastClicked.material.opacity = 0.9;	
 
 			clicked = null;
 			sounds.out.play();
@@ -810,6 +810,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					// refractionRatio: 1.25,
 					side: THREE.DoubleSide,
 					combine: THREE.MixOperation,
 					// lights: false,
@@ -828,6 +829,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					// refractionRatio: 1.25,
 					combine: THREE.MixOperation,
 					// map: envMap,
 					// side: THREE.DoubleSide,
@@ -845,6 +847,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					// refractionRatio: 1.25,
 					combine: THREE.MixOperation,
 					// map: envMap,
 					// side: THREE.DoubleSide,
@@ -900,6 +903,8 @@ define('main',[
 				while( nl-- > 0 ){
 					light = new THREE.PointLight( 0xff2618, 0, 250 );
 					light.color.multiplyScalar( 22 );
+					light.originalColor = new THREE.Color( light.color.clone() );
+					light.blueColor = new THREE.Color( 0x1ec5c5 ).multiplyScalar( 30 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -1053,7 +1058,7 @@ define('main',[
 
 					dataObjects:{
 
-						refractionRatio: 0.98,
+						refractionRatio: 1.25,
 						reflectivity: 1,
 						// opacity: 0.4,
 						metal: false,
@@ -1483,16 +1488,16 @@ define('main',[
 
 					$('#search-field').keypress(function (e) {
 					  if (e.which === 13) {
-					  	event.preventDefault();
+					  	e.preventDefault();
+					  	e.stopImmediatePropagation();
 					    performSearch( inputField.value );
 					  }
 					});
 
-					// $( '#search-form' ).submit( function( e ){
-					// 	var value = inputField.value;
-			  //           console.log("SEARCH", e );
+					$( '#search-form' ).submit( function( e ){
+						e.preventDefault();
 						
-					// });
+					});
 
 
 				// END SEARCH
@@ -1655,6 +1660,7 @@ define('main',[
 					}
 
 					light.transition.target = 1;
+					light.color.set( showingSearchResults ? light.blueColor : light.originalColor );
 					light.object = INTERSECTED;
 
 					// console.log( INTERSECTED.material.originColor.getHexString() );
