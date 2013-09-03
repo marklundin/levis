@@ -434,6 +434,8 @@ define('main',[
 				content.children('#user-info').children('#user-name').html( "<a href='"+( clicked.isInstagram ? "http://instagram.com/"+clicked.infoDataObject.user_info.screen_name : clicked.infoDataObject.user_info.user_url  ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
 				content.children('#user-info').children('#user-id').html(( clicked.isInstagram ? "" : "@" ) + clicked.infoDataObject.user_info.screen_name ); 
 				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date.slice( 0, 10 )).toDateString().slice( 4 ) ); 
+
+
 				// infoOverlay.fadeIn( 400 );
 				// content.hide( 0 );
 				infoOverlay.stop().fadeIn( 400 );
@@ -488,19 +490,11 @@ define('main',[
 				selectionLights.push( lastClicked.light );
 			}
 
-			if( !lastClicked.isInstagram ){
-				console.log( lastClicked.material.opacity );
-				
-				console.log( lastClicked.material.opacity );
-			} 
-
 			lastClicked.material.opacity = 0.9;	
 
 			clicked = null;
 			sounds.out.play();
 			divFadeOut( infoOverlay, 400 );
-
-
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
 
@@ -1274,7 +1268,7 @@ define('main',[
 
 						isInstagram = n >= twitter.results.length;
 						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
-						dataObject = getDataObject( result, isInstagram )
+						dataObject = getDataObject( result, isInstagram, null, strut.volume );
 						dataObject.isInstagram = isInstagram;
 
 						if( n < INITIAL_NUM_ANIMATIONS ){
@@ -1393,11 +1387,11 @@ define('main',[
 
 
 
-				function getDataObject( result, isInstagram, position ){
+				function getDataObject( result, isInstagram, position, volume ){
 
 					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? videoContentMaterial/*.clone()*/ : imageContentMaterial/*.clone()*/  );
-					var index = ( Math.random() * strut.volume.length )|0;
-					var item = strut.volume[index];
+					var index = ( Math.random() * volume.length )|0;
+					var item = volume.splice( index, 1 )[0];
 
 					position ? mesh.position.copy( position ) : mesh.position.set( item[0], item[1], item[2] );
 					mesh.position.x -= 15;
@@ -1439,8 +1433,21 @@ define('main',[
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
+							  	results.sort(function( a, b ){	
+							  		return Math.random() < 0.5;
+							  	})
+
 								showingSearchResults = true;
 								hideVisibleDataObjects();
+
+								strut.centeredVolume = strut.volume.slice();
+
+								var ca = new THREE.Vector3(),
+									cb = new THREE.Vector3();
+								strut.centeredVolume.sort(function(a, b){
+									return ca.set( a[0]- 15, a[1]- 15, a[2]- 15).length() - cb.set( b[0]- 15, b[1]- 15, b[2]- 15).length();
+								})
+								strut.centeredVolume = strut.centeredVolume.splice( 0, Math.max( 40, (strut.centeredVolume.length * SEARCH_RES_RADIUS )|0 ) );
 								
 								if( results.length > 0 ){
 
@@ -1460,7 +1467,7 @@ define('main',[
 										nPos.set( pos[0], pos[1], pos[2] );
 
 										isInstagram = n >= twitterResults.length;
-										mesh = getDataObject( results[n], isInstagram, nPos );
+										mesh = getDataObject( results[n], isInstagram, nPos, strut.centeredVolume );
 										interactiveObjs.push( mesh );
 										mesh.isInstagram = isInstagram;
 										mesh.material = searchContentMaterial/*.clone();*/
@@ -1511,14 +1518,7 @@ define('main',[
 				
 				// console.time( 'GENERATE' );
 				strut = structure( api.frequency, api.complexity, api.seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
-				strut.centeredVolume = strut.volume.slice();
-
-				var ca = new THREE.Vector3(),
-					cb = new THREE.Vector3();
-				strut.centeredVolume.sort(function(a, b){
-					return ca.set( a[0]- 15, a[1]- 15, a[2]- 15).length() - cb.set( b[0]- 15, b[1]- 15, b[2]- 15).length();
-				})
-				strut.centeredVolume = strut.centeredVolume.splice( 0, Math.max( 40, (strut.centeredVolume.length * SEARCH_RES_RADIUS )|0 ) );
+				
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
