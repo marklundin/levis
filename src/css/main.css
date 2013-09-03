@@ -214,6 +214,28 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	padding-bottom: 5px;
 }
 
+.videoWrapper{
+	width: 100%;
+	height: auto;
+}
+
+.vjs-tech{
+	width: 100%;
+	height: auto;	
+}
+
+.vjs-default-skin{
+	display:none!important;
+}
+
+.vjs-control-bar{
+	display: none !important;
+}
+
+.vjs-lock-showing{
+	display: none !important;	
+}
+
 #info-overlay #content{
 	margin-top: 10px;
 	margin-bottom: 10px

@@ -32,6 +32,7 @@ define('main',[
         console.log( '==============================' );
 
 
+
 		var pageLoad = Date.now();
 		if( DEBUG ){
 			if( $.url().param('mute') !== undefined ) Howler.mute();
@@ -119,6 +120,18 @@ define('main',[
 		// console.log( infoOverlay.children( "#body" ) )
 		// infoOverlay.children( "#body" ).toggle( false );
 		$('#search').fadeOut( 0 );
+		$( '.videoWrapper' ).append( infoOverlay.vidElement = $('<video  id="infoVid" ></video>'));	
+		// infoOverlay.video = ;/
+		videojs("infoVid", {"techOrder": ["html5", "flash"], width:"100%", height:"auto"}).ready(function(){
+
+	      var myPlayer = this;
+	      infoOverlay.video = this;
+
+	      console.log( 'VIDEO LOADED' );
+	      // EXAMPLE: Start playing the video.
+	      // myPlayer.play();
+
+	    });
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
@@ -368,12 +381,12 @@ define('main',[
 
 			infoOverlay.expanded = !infoOverlay.expanded;
 			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, onComplete:function(){
-				if( !infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
+				if( !infoOverlay.expanded ) infoOverlay.video.currentTime( 0 );
 			}});
 
 			if( infoOverlay.video ){
-				if( infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
-				if( clicked.isInstagram ) infoOverlay.expanded ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
+				if( infoOverlay.expanded ) infoOverlay.video.currentTime( 0 );
+				if( clicked.isInstagram ) infoOverlay.expanded ? infoOverlay.video.play() : infoOverlay.video.pause();
 			} 
 
 		});
@@ -393,7 +406,7 @@ define('main',[
 				infoOverlay.expanded = false;
 				console.log( 'test' );
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
-				if( lastClicked.isInstagram ) infoOverlay.video.get(0).pause();
+				if( lastClicked.isInstagram ) infoOverlay.video.pause();
 			}
 
 			// if( infoOverlay.video ) infoOverlay.remove( infoOverlay.video );
@@ -544,25 +557,24 @@ define('main',[
 					}
 
 					if( clicked.isInstagram && videoUrl ){
-						if( infoOverlay.video === undefined ){
-							$( '#date' ).before( infoOverlay.video = $('<video width="100%" height="auto" ></video>'));	
-							infoOverlay.video.sourceElem = infoOverlay.video.append('<source type="video/mp4" />');//.appendTo(infoOverlay.children('#body'));
-						} 
-						infoOverlay.video.sourceElem.attr( 'src', videoUrl );
+						
+						infoOverlay.video.src( videoUrl );
 						
 					}					
 
 				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
+
+				if( infoOverlay.video ){
+					// infoOverlay.video.pause();
+					// infoOverlay.vidElement.toggle( clicked.isInstagram, 0 );	
+				} 
 
 				if( infoOverlay.expanded ){
 					infoOverlay.expanded = false;
 					infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
 				}
 
-				if( infoOverlay.video ){
-					infoOverlay.video.get(0).pause();
-					infoOverlay.video.toggle( clicked.isInstagram, 0 );	
-				} 
+				
 				
 
 				moveCameraTo( clicked.position );
