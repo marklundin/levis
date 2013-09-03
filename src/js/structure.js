@@ -75,10 +75,10 @@ define([
 							mutations[z][y][x] = mutation;
 
 							pXMut = mutations[z][y][x+1] || 0;
-							pYMut = mutations[z][y+1][x] || 0;
-							pZMut = mutations[z+1][y][x] || 0;
+							pYMut = ( mutations[z][y+1] ) ? mutations[z][y+1][x] || 0 : 0;
+							pZMut = ( mutations[z+1] && mutations[z+1][y] ) ? mutations[z+1][y][x] || 0 : 0;
 
-
+							// console.log( pXMut, pYMut, pZMut );
 							volume.push( [x, y, z] );
 							
 
@@ -94,6 +94,7 @@ define([
 				}
 			}
 
+			console.log( "SAVED FACED", facesSaved );
 
 			return {
 				geometry: baseGeom,
