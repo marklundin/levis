@@ -490,7 +490,7 @@ define('main',[
 				selectionLights.push( lastClicked.light );
 			}
 
-			lastClicked.material.opacity = 0.9;	
+			if( lastClicked ) lastClicked.material.opacity = 0.9;	
 
 			clicked = null;
 			sounds.out.play();
@@ -903,6 +903,8 @@ define('main',[
 				while( nl-- > 0 ){
 					light = new THREE.PointLight( 0xff2618, 0, 250 );
 					light.color.multiplyScalar( 22 );
+					light.originalColor = new THREE.Color( light.color.clone() );
+					light.blueColor = new THREE.Color( 0x1ec5c5 ).multiplyScalar( 30 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -1658,6 +1660,7 @@ define('main',[
 					}
 
 					light.transition.target = 1;
+					light.color.set( showingSearchResults ? light.blueColor : light.originalColor );
 					light.object = INTERSECTED;
 
 					// console.log( INTERSECTED.material.originColor.getHexString() );
