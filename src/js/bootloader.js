@@ -13,11 +13,11 @@ requirejs.config( {
 			
 			instagram:{
 				feed: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&sort=1&gallery_id=4&category_id=28",
-				search: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&gallery_id=4&category_id=28&user_id="
+				search: "https://levismakeourmark.thismoment.com/v4/api/search/content.jsonp?environment=1&gallery_id=4&category_id=28&query="
 			},
 			twitter:{
 				feed: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&sort=1&gallery_id=4&category_id=29",
-				search: "https://levismakeourmark.thismoment.com/v4/api/gallery/get.jsonp?environment=1&gallery_id=4&category_id=29&user_id="
+				search: "https://levismakeourmark.thismoment.com/v4/api/search/content.jsonp?environment=1&gallery_id=4&category_id=29&query="
 			}
 		}
 	},

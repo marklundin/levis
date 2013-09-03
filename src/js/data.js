@@ -31,7 +31,7 @@ define(['module'], function (module) {
 	    		instagramData.loaded 	= instagramData.status === 'OK';
 	    		var loaded = instagramData.loaded && twitterData.loaded;
 
-	    		if( loaded ) callback( twitterData.results, instagramData.results )
+	    		if( loaded ) callback( twitterData.results.search_results, instagramData.results.search_results );
 	    		else errCallback( instagramData, twitterData );
 
 	    });
