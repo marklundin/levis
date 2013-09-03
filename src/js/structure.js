@@ -58,15 +58,23 @@ define([
 			}
 
 			var mutation;
+			var mutations = [];
 
 			// Generate noise pattern
 			while( z-- > 0 ){
+				mutations[z] = [];
 				y = GRID.DIMENSION;
 				while( y-- > 0 ){
+					mutations[z][y] = [];
 					x = GRID.DIMENSION;
 					while( x-- > 0 ){
+						
+						mutations[z][y][x] = 0;
 						value = noise3D( x, y, z );
 						if( value > threshold ) {
+							mutation = math.random( 1, variations )|0;
+							mutations[z][y][x] = mutation;
+							
 							volume.push( [x, y, z]);
 							cellIsEdge = isEdge( x, y, z, threshold );
 							// mutation = math.random( 1, variations )|0;
