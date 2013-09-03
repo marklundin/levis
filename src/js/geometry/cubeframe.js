@@ -122,7 +122,7 @@ define([
 	CustomCubeGeometry.prototype = Object.create( THREE.Geometry.prototype );
 
 
-	return function ( w,h,d, thickness, vThickness, bitflag ){
+	return function ( w,h,d, thickness, vThickness, bitflag, px, py, pz ){
 
 		var ratio = vThickness / thickness;
 		var strut 	    = {
@@ -144,6 +144,8 @@ define([
 
 
 		// cornerMesh.geometry.faces = cornerMesh.geometry.faces.splice( 2, 2 );
+
+		var wFlag = bitflag;
 
 		//width
 		strut.w.position.set( 0, -hh, -hd );

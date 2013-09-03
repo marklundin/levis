@@ -16627,6 +16627,7 @@ THREE.ShaderChunk = {
 
 			"#endif",
 
+
 			"if ( combine == 1 ) {",
 
 				"gl_FragColor.xyz = mix( gl_FragColor.xyz, cubeColor.xyz, specularStrength * reflectivity );",
