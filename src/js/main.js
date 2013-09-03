@@ -810,7 +810,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
-					// refractionRatio: 1.25,
+					refractionRatio: 1.25,
 					side: THREE.DoubleSide,
 					combine: THREE.MixOperation,
 					// lights: false,
@@ -829,7 +829,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
-					// refractionRatio: 1.25,
+					refractionRatio: 1.25,
 					combine: THREE.MixOperation,
 					// map: envMap,
 					// side: THREE.DoubleSide,
@@ -847,13 +847,14 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
-					// refractionRatio: 1.25,
+					refractionRatio: 1.25,
 					combine: THREE.MixOperation,
 					// map: envMap,
 					// side: THREE.DoubleSide,
 					blending: THREE.AdditiveBlending,
 					opacity: 0.9,
 				});
+				searchContentMaterial.defines = {FLIP:true};
 
 				function updateAllMaterial(){
 					var n = contentObj3d.children.length;
@@ -904,7 +905,7 @@ define('main',[
 					light = new THREE.PointLight( 0xff2618, 0, 250 );
 					light.color.multiplyScalar( 22 );
 					light.originalColor = new THREE.Color( light.color.clone() );
-					light.blueColor = new THREE.Color( 0x1ec5c5 ).multiplyScalar( 30 );
+					light.blueColor = new THREE.Color( 0x6342cd ).multiplyScalar( 30 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -1460,7 +1461,7 @@ define('main',[
 									sounds.search.volume( 1.0 );
 									sounds.search.play();
 
-									setDatObjectsOpacity( 0.2 );
+									setDatObjectsOpacity( 0.08 );
 									
 									var pos, isInstagram,
 										positions = strut.centeredVolume.slice();
