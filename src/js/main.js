@@ -433,7 +433,7 @@ define('main',[
 				$('#show-more').toggleClass( "camera-button-icon", clicked.isInstagram );
 				content.children('#user-info').children('#user-name').html( "<a href='"+( clicked.isInstagram ? "http://instagram.com/"+clicked.infoDataObject.user_info.screen_name : clicked.infoDataObject.user_info.user_url  ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
 				content.children('#user-info').children('#user-id').html(( clicked.isInstagram ? "" : "@" ) + clicked.infoDataObject.user_info.screen_name ); 
-				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
+				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date.slice( 0, 10 )).toDateString().slice( 4 ) ); 
 				// infoOverlay.fadeIn( 400 );
 				// content.hide( 0 );
 				infoOverlay.stop().fadeIn( 400 );
@@ -846,13 +846,16 @@ define('main',[
 				imageContentMaterial.defines = {FLIP:true};
 
 				var searchContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0xff33ff ),
-					ambient:new THREE.Color( 0x00fff00 ),
+					color:new THREE.Color( 0x666666 ),
+					specular: 0xffffff,
+					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
-					// envMap: cubemap,
-					side: THREE.DoubleSide,
+					envMap: envMap,
+					combine: THREE.MixOperation,
+					// map: envMap,
+					// side: THREE.DoubleSide,
 					blending: THREE.AdditiveBlending,
-					opacity: 0.4,
+					opacity: 0.9,
 				});
 
 				function updateAllMaterial(){
