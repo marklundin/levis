@@ -359,7 +359,6 @@ define('main',[
 
 		function updateInfoOffset( n, a ){
 			infoOverlay.xOffset = easing.inOutQuad( infoOverlay.expanded ? a : 1.0 - a ) * 500;
-			console.log( infoOverlay.xOffset );
 		}
 		
 		$( "#show-more" ).click(function( e ){
@@ -430,7 +429,11 @@ define('main',[
 				// infoOverlay.fadeIn( 400 );
 				// content.hide( 0 );
 				infoOverlay.stop().fadeIn( 400 );
-				infoOverlay.children( "#body" ).hide( {direction: 'right', progress:updateInfoOffset, duration:1 } );
+				infoOverlay.expanded = false;
+				infoOverlay.children( "#body" ).hide( {direction: 'right', progress:updateInfoOffset, duration:1, complete:function(){
+					infoOverlay.expanded = false;
+					updateInfoOffset( 1, 1 );
+				} } );
 
 				// divFadeIn( infoOverlay, 400, function(){
 				// 	console.log( 'here' );
