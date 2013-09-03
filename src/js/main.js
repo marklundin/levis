@@ -810,6 +810,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					refractionRatio: 1.25,
 					side: THREE.DoubleSide,
 					combine: THREE.MixOperation,
 					// lights: false,
@@ -828,6 +829,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					refractionRatio: 1.25,
 					combine: THREE.MixOperation,
 					// map: envMap,
 					// side: THREE.DoubleSide,
@@ -845,6 +847,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					refractionRatio: 1.25,
 					combine: THREE.MixOperation,
 					// map: envMap,
 					// side: THREE.DoubleSide,
@@ -1053,7 +1056,7 @@ define('main',[
 
 					dataObjects:{
 
-						refractionRatio: 0.98,
+						refractionRatio: 1.25,
 						reflectivity: 1,
 						// opacity: 0.4,
 						metal: false,
