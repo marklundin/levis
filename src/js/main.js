@@ -258,7 +258,7 @@ define('main',[
 				infoOverlay.expanded = false;
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 }, 400 );
 			}
-			setDatObjectsOpacity( 0.3 );
+			setDatObjectsOpacity( 0.9 );
 
 			resetCamera();
 
@@ -1494,11 +1494,10 @@ define('main',[
 					  }
 					});
 
-					// $( '#search-form' ).submit( function( e ){
-					// 	var value = inputField.value;
-			  //           console.log("SEARCH", e );
+					$( '#search-form' ).submit( function( e ){
+						e.preventDefault();
 						
-					// });
+					});
 
 
 				// END SEARCH
