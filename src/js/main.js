@@ -115,7 +115,9 @@ define('main',[
 
 		infoOverlay.expanded = false
 		infoOverlay.xOffset = 0;
-		infoOverlay.fadeOut(0);
+		// divFadeIn( infoOverlay, 0 );
+		// console.log( infoOverlay.children( "#body" ) )
+		// infoOverlay.children( "#body" ).toggle( false );
 		$('#search').fadeOut( 0 );
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
@@ -357,6 +359,7 @@ define('main',[
 
 		function updateInfoOffset( n, a ){
 			infoOverlay.xOffset = easing.inOutQuad( infoOverlay.expanded ? a : 1.0 - a ) * 500;
+			console.log( infoOverlay.xOffset );
 		}
 		
 		$( "#show-more" ).click(function( e ){
@@ -371,7 +374,6 @@ define('main',[
 
 			if( infoOverlay.video ){
 				if( infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
-				console.log( clicked.isInstagram );
 				if( clicked.isInstagram ) infoOverlay.expanded ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
 			} 
 
@@ -390,6 +392,7 @@ define('main',[
 
 			if( infoOverlay.expanded ){
 				infoOverlay.expanded = false;
+				console.log( 'test' );
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
 				if( lastClicked.isInstagram ) infoOverlay.video.get(0).pause();
 			}
@@ -419,21 +422,21 @@ define('main',[
 				var content = infoOverlay.children('#body');
 
 				sounds.closer[Math.floor( Math.random() * sounds.closer.length )].play();
-
 				content.children('#content').html( clicked.infoDataObject.title ); 
 				$('#show-more').toggleClass( "camera-button-icon", clicked.isInstagram );
 				content.children('#user-info').children('#user-name').html( "<a href='"+( clicked.isInstagram ? "http://instagram.com/"+clicked.infoDataObject.user_info.screen_name : clicked.infoDataObject.user_info.user_url  ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
 				content.children('#user-info').children('#user-id').html(( clicked.isInstagram ? "" : "@" ) + clicked.infoDataObject.user_info.screen_name ); 
 				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
 				// infoOverlay.fadeIn( 400 );
-				divFadeIn( infoOverlay, 400, function(){
-					if( firstRun ){
-						firstRun = false;
-						//KLUDGE : FF SEEMS TO NEED TO REFRESH CSS IN ORDER TO GET CLICK EVENTS
-						resize();
-						console.log( 'BOOM' );
-					}
-				} );
+				// content.hide( 0 );
+				infoOverlay.stop().fadeIn( 400 );
+				infoOverlay.children( "#body" ).hide( {direction: 'right', progress:updateInfoOffset, duration:1 } );
+
+				// divFadeIn( infoOverlay, 400, function(){
+				// 	console.log( 'here' );
+				// 	content.toggle( false );
+				// } );
+				// content.toggle( false );
 
 
 			}

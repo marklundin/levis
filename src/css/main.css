@@ -242,7 +242,6 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 }
 
 #info-overlay #body{
-	display: none;
 	float:left;
 }
 
@@ -255,7 +254,6 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 	position: absolute;
 	z-index: 5;
 }
-
 
 
 input[type="text"]:-moz-placeholder { /* Firefox 18- */
