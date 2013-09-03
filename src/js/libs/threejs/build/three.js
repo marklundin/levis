@@ -16627,6 +16627,12 @@ THREE.ShaderChunk = {
 
 			"#endif",
 
+			"#ifdef FLIP",
+
+				"cubeColor.rgb = vec3( cubeColor.r + cubeColor.g + cubeColor.b ) * 0.3333;",
+
+			"#endif",
+
 
 			"if ( combine == 1 ) {",
 
