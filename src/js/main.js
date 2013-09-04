@@ -32,6 +32,7 @@ define('main',[
         console.log( '==============================' );
 
 
+
 		var pageLoad = Date.now();
 		if( DEBUG ){
 			if( $.url().param('mute') !== undefined ) Howler.mute();
@@ -77,6 +78,7 @@ define('main',[
 			controlsActive = false,
 			isActive       = true,
 			mouseFlag 	   = true,
+			searchHasFocus = false,
 			clicked,
 			lastClicked,
 			showingSearchResults = false,
@@ -89,6 +91,7 @@ define('main',[
 			$(this).parent().toggleClass( 'search-focus', true );
 			$(".featured-submissions").slideDown( 50 );
 		}).blur( function(e){
+			searchHasFocus = false;
 			e.preventDefault();
 			if( mouseFlag ){
 				$(this).parent().toggleClass( 'search-focus', false );
@@ -119,6 +122,14 @@ define('main',[
 		// console.log( infoOverlay.children( "#body" ) )
 		// infoOverlay.children( "#body" ).toggle( false );
 		$('#search').fadeOut( 0 );
+		infoOverlay.vidElement = $( '.videoWrapper' )
+		infoOverlay.vidElement.append( $('<video  id="infoVid" ></video>'));	
+		// infoOverlay.video = ;/
+		videojs("infoVid", {"techOrder": ["html5", "flash"], width:"100%", height:"auto"}).ready(function(){
+
+	      infoOverlay.video = this;
+
+	    });
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
@@ -222,16 +233,22 @@ define('main',[
 
 		}
 
+		
 		$( '#search-field' ).click( function(e){
-			console.log('SEARCH');
+			
 			e.stopImmediatePropagation();
 			$( this ).select();
+			
 			$( this ).keypress( function(){
+				if( !searchHasFocus ){
+					resetCamera();
+				}
+				searchHasFocus = true;
 				if( clicked ){
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
 				}
-				resetCamera();
+				
 				
 			});
 		});	
@@ -239,7 +256,6 @@ define('main',[
 
 
 		searchOverlay.children( ".close-button-icon" ).click(function( e ){
-			console.log('CLOSE');
 
 			e.preventDefault();
 			e.stopImmediatePropagation();
@@ -373,14 +389,50 @@ define('main',[
 			e.stopImmediatePropagation();
 
 			infoOverlay.expanded = !infoOverlay.expanded;
-			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, onComplete:function(){
-				if( !infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
+			
+			infoOverlay.vidElement.toggle( clicked.isInstagram, 0 );	
+			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, complete:function(){
+
+				// console.log( infoOverlay.expanded && clicked.isInstagram )	
+				if( infoOverlay.expanded && clicked.isInstagram ){
+					// infoOverlay.vidElement.remove( 'infoVid' );
+					infoOverlay.vidElement.append( $('<video  id="infoVid" ></video>'));	
+					videojs( "infoVid", {"techOrder": ["html5", "flash"],width:"100%", height:"470px"}).ready(function(){
+
+				      infoOverlay.video = this;
+				      var source = [];
+					      source[0]= {};
+					      source[0].src = clicked.infoDataObject.media[0].video_url;
+					      source[0].type = "video/mp4";
+
+					      // infoOverlay.video.on( "loadedmetadata", function(){
+					      	
+					      // });
+
+						
+
+						setTimeout(function(){
+							infoOverlay.video.src( source );
+							infoOverlay.video.play();
+						},100)
+						
+						
+
+				    });
+					
+						
+				}
 			}});
 
-			if( infoOverlay.video ){
-				if( infoOverlay.expanded ) infoOverlay.video.get(0).currentTime = 0;
-				if( clicked.isInstagram ) infoOverlay.expanded ? infoOverlay.video.get(0).play() : infoOverlay.video.get(0).pause();
+			// if( infoOverlay.video ){
+			// 	// if( infoOverlay.expanded ) infoOverlay.video.currentTime( 0 );
+			// 	// infoOverlay.video.play();
+
+			if( !infoOverlay.expanded && clicked.isInstagram ){
+				infoOverlay.video.dispose();
 			} 
+
+			// } 
 
 		});
 
@@ -397,9 +449,9 @@ define('main',[
 
 			if( infoOverlay.expanded ){
 				infoOverlay.expanded = false;
-				console.log( 'test' );
+				if( lastClicked.isInstagram && infoOverlay.video ) infoOverlay.video.pause();
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
-				if( lastClicked.isInstagram ) infoOverlay.video.get(0).pause();
+				
 			}
 
 			// if( infoOverlay.video ) infoOverlay.remove( infoOverlay.video );
@@ -488,6 +540,8 @@ define('main',[
 				selectionLights.push( lastClicked.light );
 			}
 
+			lastClicked.material.envMap = envMap;
+
 			if( lastClicked ) lastClicked.material.opacity = 0.9;	
 
 			clicked = null;
@@ -533,6 +587,12 @@ define('main',[
 
 				controls.autoRotate = true;
 				var imageElem = infoOverlay.children('#body').children( '#image' );
+
+				if( infoOverlay.expanded && infoOverlay.video && infoOverlay.video.pause ){
+					infoOverlay.video.pause();
+					debugger;
+				} 
+
 				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
 
 					imageElem.attr( 'src', avatarUrl )
@@ -544,28 +604,19 @@ define('main',[
 						
 						var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
 						updateEnvMapWithCanvas( clicked.material, tp );
+
 					}
 
-					if( clicked.isInstagram && videoUrl ){
-						if( infoOverlay.video === undefined ){
-							$( '#date' ).before( infoOverlay.video = $('<video width="100%" height="auto" ></video>'));	
-							infoOverlay.video.sourceElem = infoOverlay.video.append('<source type="video/mp4" />');//.appendTo(infoOverlay.children('#body'));
-						} 
-						infoOverlay.video.sourceElem.attr( 'src', videoUrl );
-						
-					}					
-
 				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
+
+				
 
 				if( infoOverlay.expanded ){
 					infoOverlay.expanded = false;
 					infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
 				}
 
-				if( infoOverlay.video ){
-					infoOverlay.video.get(0).pause();
-					infoOverlay.video.toggle( clicked.isInstagram, 0 );	
-				} 
+				
 				
 
 				moveCameraTo( clicked.position );
@@ -1251,15 +1302,18 @@ define('main',[
 						results[n].isInstagram = n >= twitter.results.length
 					}
 
-					results.sort(function(){return Math.random()})
+					results.sort(function(){return Math.random() - 0.5})
 						
 					n = results.length;
 					while( n-- > 0 ){
-
+						
 						// isInstagram = n >= twitter.results.length;
 						result = results[n];//isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
+						
 						dataObject = getDataObject( result, result.isInstagram, null, strut.volume );
 						dataObject.isInstagram = result.isInstagram;
+
+
 
 						if( n < INITIAL_NUM_ANIMATIONS ){
 
@@ -1405,7 +1459,7 @@ define('main',[
 								var n = results.length;
 								while( n-- > 0 ){
 									results[n].isInstagram = n >= twitterResults.length;
-									console.log( results[n].isInstagram, results[n].attribution_url );
+
 								}
 
 
@@ -1417,7 +1471,7 @@ define('main',[
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
-							  	results.sort(function(){return Math.random()})
+							  	results.sort(function(){return Math.random()-0.5})
 
 								showingSearchResults = true;
 								hideVisibleDataObjects();
@@ -1448,10 +1502,10 @@ define('main',[
 										pos = positions[ ( Math.random() * positions.length)|0 ];
 										nPos.set( pos[0], pos[1], pos[2] );
 
-										isInstagram = n >= twitterResults.length;
-										mesh = getDataObject( results[n], isInstagram, nPos, strut.centeredVolume );
+										// isInstagram = n >= twitterResults.length;
+										mesh = getDataObject( results[n], results[n].isInstagram, nPos, strut.centeredVolume );
 										interactiveObjs.push( mesh );
-										mesh.isInstagram = isInstagram;
+										mesh.isInstagram = results[n].isInstagram;
 										mesh.material = searchContentMaterial/*.clone();*/
 										searchResObj3d.add( mesh );
 
