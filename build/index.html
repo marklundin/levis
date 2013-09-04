@@ -9,8 +9,8 @@
 			----------
 
 			@authors Cedric Kiefer & Mark Lundin
-			@version e052be1
-			@date Tue Sep 03 2013 21:43:12
+			@version 4e60662
+			@date Wed Sep 04 2013 20:16:04
 
 		-->
 
@@ -20,8 +20,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link href="css/video-js.css" rel="stylesheet">
+		<script src="http://vjs.zencdn.net/4.1/video.js"></script>
 		<script src='js/libs/howler.js'></script>
 		<script data-main="js/bootloader" src='js/require.js'></script>
+		
 
 	</head>
 	<body>
@@ -37,9 +40,8 @@
 				</div>
 				<ul class='featured-submissions'>
 					<li class='title' >FEATURED SUBMISSIONS</li>
-					<li class='vip' data-username='S_COPPOLA' >@S_COPPOLA</li>
-					<li class='vip' data-username='DAVE_EGGERS' >@DAVE_EGGERS</li>
-					<li class='vip' data-username='S_COPPOLA' >@STEPHEN_SHORE</li>
+					<li class='vip' data-username='826NATIONAL' >DAVE_EGGERS<h2>(@826NATIONAL)</h2></li>
+					<li class='vip' data-username='LEVIS' >@STEPHEN_SHORE<h2>(VIA @LEVIS)</h2></li>
 				</ul>
 			</div>
 			<div id='search-overlay' class='disable-select' >
@@ -56,6 +58,7 @@
 						<h2 id='user-id'></h2>
 					</div>
 					<div id='content'></div>
+					<div class="videoWrapper"></div>
 					<div id='date'></div>
 				</div>
 				<div class='buttons'>

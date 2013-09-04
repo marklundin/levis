@@ -3,6 +3,10 @@ css/main.css
 ----------------
 css/main.css
 
+css/video-js.css
+----------------
+css/video-js.css
+
 js/bootloader.js
 ----------------
 js/utils/domReady.js
