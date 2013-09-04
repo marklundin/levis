@@ -78,6 +78,7 @@ define('main',[
 			controlsActive = false,
 			isActive       = true,
 			mouseFlag 	   = true,
+			searchHasFocus = false,
 			clicked,
 			lastClicked,
 			showingSearchResults = false,
@@ -90,6 +91,7 @@ define('main',[
 			$(this).parent().toggleClass( 'search-focus', true );
 			$(".featured-submissions").slideDown( 50 );
 		}).blur( function(e){
+			searchHasFocus = false;
 			e.preventDefault();
 			if( mouseFlag ){
 				$(this).parent().toggleClass( 'search-focus', false );
@@ -231,16 +233,22 @@ define('main',[
 
 		}
 
+		
 		$( '#search-field' ).click( function(e){
 			
 			e.stopImmediatePropagation();
 			$( this ).select();
+			
 			$( this ).keypress( function(){
+				if( !searchHasFocus ){
+					resetCamera();
+				}
+				searchHasFocus = true;
 				if( clicked ){
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
 				}
-				resetCamera();
+				
 				
 			});
 		});	
@@ -531,6 +539,8 @@ define('main',[
 				lastClicked.light.transition.paused = false;
 				selectionLights.push( lastClicked.light );
 			}
+
+			lastClicked.material.envMap = envMap;
 
 			if( lastClicked ) lastClicked.material.opacity = 0.9;	
 
