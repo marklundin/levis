@@ -483,7 +483,7 @@ define('main',[
 				lastClicked.isSelected = false;
 				lastClicked.light.transition.target = 0;
 				// lastClicked.light.transition.reset();
-				lastClicked.light.transitionDist.target = 1;
+				lastClicked.light.transitionDist.target = showingSearchResults ?  4 : 1;
 				lastClicked.light.transition.paused = false;
 				selectionLights.push( lastClicked.light );
 			}
@@ -517,7 +517,7 @@ define('main',[
 					clicked.light.transition.target = 0;
 					clicked.light.transition.reset();
 					clicked.light.transition.paused = false;
-					clicked.light.transitionDist.target = 1;
+					clicked.light.transitionDist.target = showingSearchResults ?  5 : 1;
 					selectionLights.push( clicked.light );
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
@@ -526,7 +526,7 @@ define('main',[
 
 				clicked = INTERSECTED;
 				clicked.isSelected = true;
-				clicked.light.transitionDist.target = 3;
+				clicked.light.transitionDist.target = showingSearchResults ?  5.5 : 3;
 				selectionLights.splice( selectionLights.indexOf( clicked.light ), 1 );
 
 				sounds.click[Math.floor(Math.random()*sounds.click.length)].play();
@@ -1438,7 +1438,7 @@ define('main',[
 								var results = twitterResults.concat( instagramResults );
 								var n = results.length;
 								while( n-- > 0 ){
-									results[n].isInstagram = n >= twitter.results.length;
+									results[n].isInstagram = n >= twitterResults.length;
 									console.log( results[n].isInstagram, results[n].attribution_url );
 								}
 
