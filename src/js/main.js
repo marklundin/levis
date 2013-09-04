@@ -387,8 +387,9 @@ define('main',[
 
 				// console.log( infoOverlay.expanded && clicked.isInstagram )	
 				if( infoOverlay.expanded && clicked.isInstagram ){
+					// infoOverlay.vidElement.remove( 'infoVid' );
 					infoOverlay.vidElement.append( $('<video  id="infoVid" ></video>'));	
-					videojs( "infoVid", {/*"techOrder": ["html5", "flash"],*/width:"100%", height:"470px"}).ready(function(){
+					videojs( "infoVid", {"techOrder": ["html5", "flash"],width:"100%", height:"470px"}).ready(function(){
 
 				      infoOverlay.video = this;
 				      var source = [];
@@ -396,8 +397,18 @@ define('main',[
 					      source[0].src = clicked.infoDataObject.media[0].video_url;
 					      source[0].type = "video/mp4";
 
-						infoOverlay.video.src( source );
-						infoOverlay.video.play();
+					      // infoOverlay.video.on( "loadedmetadata", function(){
+					      	
+					      // });
+
+						
+
+						setTimeout(function(){
+							infoOverlay.video.src( source );
+							infoOverlay.video.play();
+						},100)
+						
+						
 
 				    });
 					
@@ -567,8 +578,9 @@ define('main',[
 				controls.autoRotate = true;
 				var imageElem = infoOverlay.children('#body').children( '#image' );
 
-				if( infoOverlay.video ){
+				if( infoOverlay.expanded && infoOverlay.video && infoOverlay.video.pause ){
 					infoOverlay.video.pause();
+					debugger;
 				} 
 
 				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
@@ -1304,15 +1316,18 @@ define('main',[
 						results[n].isInstagram = n >= twitter.results.length
 					}
 
-					results.sort(function(){return Math.random()})
+					results.sort(function(){return Math.random() - 0.5})
 						
 					n = results.length;
 					while( n-- > 0 ){
-
+						
 						// isInstagram = n >= twitter.results.length;
 						result = results[n];//isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
+						
 						dataObject = getDataObject( result, result.isInstagram, null, strut.volume );
 						dataObject.isInstagram = result.isInstagram;
+
+
 
 						if( n < INITIAL_NUM_ANIMATIONS ){
 
@@ -1468,7 +1483,7 @@ define('main',[
 								var n = results.length;
 								while( n-- > 0 ){
 									results[n].isInstagram = n >= twitterResults.length;
-									console.log( results[n].isInstagram, results[n].attribution_url );
+
 								}
 
 
@@ -1480,7 +1495,7 @@ define('main',[
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
-							  	results.sort(function(){return Math.random()})
+							  	results.sort(function(){return Math.random()-0.5})
 
 								showingSearchResults = true;
 								hideVisibleDataObjects();
@@ -1511,10 +1526,10 @@ define('main',[
 										pos = positions[ ( Math.random() * positions.length)|0 ];
 										nPos.set( pos[0], pos[1], pos[2] );
 
-										isInstagram = n >= twitterResults.length;
-										mesh = getDataObject( results[n], isInstagram, nPos, strut.centeredVolume );
+										// isInstagram = n >= twitterResults.length;
+										mesh = getDataObject( results[n], results[n].isInstagram, nPos, strut.centeredVolume );
 										interactiveObjs.push( mesh );
-										mesh.isInstagram = isInstagram;
+										mesh.isInstagram = results[n].isInstagram;
 										mesh.material = searchContentMaterial/*.clone();*/
 										searchResObj3d.add( mesh );
 
