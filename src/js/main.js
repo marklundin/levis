@@ -356,10 +356,8 @@ define('main',[
 		}
 
 		function updateEnvMapWithImage( material, url ){
-			console.log( 'CHANGING TEXTURE' );
 			loadTexture( [url, url, url, url, url, url ], function( texture ){
 				if( clicked && clicked.material === material ){
-					console.log( 'SWAP' );
 					clicked.material.opacity = 0.28;
 					clicked.material.envMap = texture;
 				}
@@ -518,7 +516,7 @@ define('main',[
 				lastClicked.isSelected = false;
 				lastClicked.light.transition.target = 0;
 				// lastClicked.light.transition.reset();
-				lastClicked.light.transitionDist.target = 1;
+				lastClicked.light.transitionDist.target = showingSearchResults ?  4 : 1;
 				lastClicked.light.transition.paused = false;
 				selectionLights.push( lastClicked.light );
 			}
@@ -552,7 +550,7 @@ define('main',[
 					clicked.light.transition.target = 0;
 					clicked.light.transition.reset();
 					clicked.light.transition.paused = false;
-					clicked.light.transitionDist.target = 1;
+					clicked.light.transitionDist.target = showingSearchResults ?  5 : 1;
 					selectionLights.push( clicked.light );
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
@@ -561,7 +559,7 @@ define('main',[
 
 				clicked = INTERSECTED;
 				clicked.isSelected = true;
-				clicked.light.transitionDist.target = 3;
+				clicked.light.transitionDist.target = showingSearchResults ?  5.5 : 3;
 				selectionLights.splice( selectionLights.indexOf( clicked.light ), 1 );
 
 				sounds.click[Math.floor(Math.random()*sounds.click.length)].play();
@@ -1294,17 +1292,27 @@ define('main',[
 
 					generate();
 
-					var n = twitter.results.length + instagram.results.length,
+					var results = twitter.results.concat( instagram.results ),
+						n = results.length,
 						result, isInstagram, dataObject, targetPos;
 
 					var duration = 30000;
+
+
+
+					while( n-- > 0 ){
+						results[n].isInstagram = n >= twitter.results.length
+					}
+
+					results.sort(function(){return Math.random()})
 						
+					n = results.length;
 					while( n-- > 0 ){
 
-						isInstagram = n >= twitter.results.length;
-						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
-						dataObject = getDataObject( result, isInstagram, null, strut.volume );
-						dataObject.isInstagram = isInstagram;
+						// isInstagram = n >= twitter.results.length;
+						result = results[n];//isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
+						dataObject = getDataObject( result, result.isInstagram, null, strut.volume );
+						dataObject.isInstagram = result.isInstagram;
 
 						if( n < INITIAL_NUM_ANIMATIONS ){
 
@@ -1326,7 +1334,6 @@ define('main',[
 								.delay(( 1500 + duration ) * n ).onComplete(function( obj ){
 
 									obj.tween.stop();
-									console.log( 'END', INITIAL_NUM_ANIMATIONS );
 									enterLight.fadeOut();
 
 									obj.unclickable = false;
@@ -1334,7 +1341,6 @@ define('main',[
 
 								}.bind( this, dataObject )).onStart(function( obj ){
 
-									console.log( 'START' );
 									scene.add( obj );
 									
 									enterLight.position = obj.position;
@@ -1459,6 +1465,12 @@ define('main',[
 							dataloader.search( value, function( twitterResults, instagramResults ){
 
 								var results = twitterResults.concat( instagramResults );
+								var n = results.length;
+								while( n-- > 0 ){
+									results[n].isInstagram = n >= twitterResults.length;
+									console.log( results[n].isInstagram, results[n].attribution_url );
+								}
+
 
 								searchOverlay.children('#body').children('#results').html(
 									'YOUR SEARCH FOR <br/>"<b>'+value.toUpperCase()+'</b>"<br/> RETURNED <b>' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + '</b> RESULTS' 
@@ -1468,9 +1480,7 @@ define('main',[
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
-							  	results.sort(function( a, b ){	
-							  		return Math.random() < 0.5;
-							  	})
+							  	results.sort(function(){return Math.random()})
 
 								showingSearchResults = true;
 								hideVisibleDataObjects();
