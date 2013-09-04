@@ -49,7 +49,7 @@ define('main',[
 		var WIDTH 	= window.innerWidth,
 			HEIGHT 	= window.innerHeight,
 			FPmS = 1000 / 60,
-			INITIAL_NUM_ANIMATIONS = 7,
+			INITIAL_NUM_ANIMATIONS = 30,
 			MAX_SEARCH_RESULTS = 10,
 			SEARCH_RES_RADIUS = 0.1,
 			DIV_SLIDE_OFFSET = 80,
@@ -243,8 +243,8 @@ define('main',[
 				if( clicked ){
 					clicked.material.envMap = envMap;
 					clicked.material.needsUpdate = true;
-					resetCamera();
 				}
+				resetCamera();
 				
 			});
 		});	
@@ -271,7 +271,7 @@ define('main',[
 				infoOverlay.expanded = false;
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 }, 400 );
 			}
-			setDatObjectsOpacity( 0.3 );
+			setDatObjectsOpacity( 0.9 );
 
 			resetCamera();
 
@@ -361,12 +361,20 @@ define('main',[
 		}
 
 		function updateEnvMapWithImage( material, url ){
-			material.envMap = loadTexture( [url, url, url, url, url, url ]);
+			console.log( 'CHANGING TEXTURE' );
+			loadTexture( [url, url, url, url, url, url ], function( texture ){
+				if( clicked && clicked.material === material ){
+					console.log( 'SWAP' );
+					clicked.material.opacity = 0.28;
+					clicked.material.envMap = texture;
+				}
+			})
 		}
 
 		function updateEnvMapWithCanvas( material, canvas ){
 			textTexture.image 	= [canvas, canvas, canvas, canvas, canvas, canvas ];
 			textTexture.needsUpdate = true;
+			material.opacity = 0.28;
 			material.envMap 	= textTexture;
 		}
 
@@ -439,7 +447,9 @@ define('main',[
 				$('#show-more').toggleClass( "camera-button-icon", clicked.isInstagram );
 				content.children('#user-info').children('#user-name').html( "<a href='"+( clicked.isInstagram ? "http://instagram.com/"+clicked.infoDataObject.user_info.screen_name : clicked.infoDataObject.user_info.user_url  ) +"' target='_blank'>"+clicked.infoDataObject.user_name+"</a>" ); 
 				content.children('#user-info').children('#user-id').html(( clicked.isInstagram ? "" : "@" ) + clicked.infoDataObject.user_info.screen_name ); 
-				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date).toDateString().slice( 4 ) ); 
+				content.children('#date').html( "Posted via " + ( clicked.isInstagram ? "Instagram" : "Twitter") + " on " + new Date( clicked.infoDataObject.add_date.slice( 0, 10 )).toDateString().slice( 4 ) ); 
+
+
 				// infoOverlay.fadeIn( 400 );
 				// content.hide( 0 );
 				infoOverlay.stop().fadeIn( 400 );
@@ -494,17 +504,11 @@ define('main',[
 				selectionLights.push( lastClicked.light );
 			}
 
-			if( !lastClicked.isInstagram ){
-				console.log( lastClicked.material.opacity );
-				lastClicked.material.opacity = 0.9;	
-				console.log( lastClicked.material.opacity );
-			} 
+			if( lastClicked ) lastClicked.material.opacity = 0.9;	
 
 			clicked = null;
 			sounds.out.play();
 			divFadeOut( infoOverlay, 400 );
-
-
 
 			moveCameraTo( camTarget.set( 0, 0, 0 ), 2000, 0.4 );
 
@@ -525,7 +529,7 @@ define('main',[
 
 				if( clicked ){
 					clicked.isSelected = false;
-					if( !clicked.isInstagram ) clicked.material.opacity = 0.9;
+					clicked.material.opacity = 0.9;
 					clicked.light.transition.target = 0;
 					clicked.light.transition.reset();
 					clicked.light.transition.paused = false;
@@ -549,10 +553,11 @@ define('main',[
 
 					imageElem.attr( 'src', avatarUrl )
 					
+					// clicked.material.opacity = 0.28;
 					if( clicked.isInstagram ){
 						updateEnvMapWithImage( clicked.material, thumbUrl );
 					} else {
-						clicked.material.opacity = 0.28;
+						
 						var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
 						updateEnvMapWithCanvas( clicked.material, tp );
 					}
@@ -822,11 +827,12 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					refractionRatio: 1.25,
 					side: THREE.DoubleSide,
-					combine: THREE.AddOperation,
+					combine: THREE.MixOperation,
 					// lights: false,
 					blending: THREE.AdditiveBlending,
-					opacity: 0.3,
+					opacity: 0.9,
 				});
 
 				videoContentMaterial.defines = {FLIP:true};
@@ -840,6 +846,7 @@ define('main',[
 					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
 					envMap: envMap,
+					refractionRatio: 1.25,
 					combine: THREE.MixOperation,
 					// map: envMap,
 					// side: THREE.DoubleSide,
@@ -852,14 +859,19 @@ define('main',[
 				imageContentMaterial.defines = {FLIP:true};
 
 				var searchContentMaterial = new THREE.MeshPhongMaterial({
-					color:new THREE.Color( 0xff33ff ),
-					ambient:new THREE.Color( 0x00fff00 ),
+					color:new THREE.Color( 0x666666 ),
+					specular: 0xffffff,
+					ambient:new THREE.Color( 0xffffff ),
 					transparent: true,
-					// envMap: cubemap,
-					side: THREE.DoubleSide,
+					envMap: envMap,
+					refractionRatio: 1.25,
+					combine: THREE.MixOperation,
+					// map: envMap,
+					// side: THREE.DoubleSide,
 					blending: THREE.AdditiveBlending,
-					opacity: 0.4,
+					opacity: 0.9,
 				});
+				searchContentMaterial.defines = {FLIP:true};
 
 				function updateAllMaterial(){
 					var n = contentObj3d.children.length;
@@ -909,6 +921,8 @@ define('main',[
 				while( nl-- > 0 ){
 					light = new THREE.PointLight( 0xff2618, 0, 250 );
 					light.color.multiplyScalar( 22 );
+					light.originalColor = new THREE.Color( light.color.clone() );
+					light.blueColor = new THREE.Color( 0x6342cd ).multiplyScalar( 30 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -1062,7 +1076,7 @@ define('main',[
 
 					dataObjects:{
 
-						refractionRatio: 0.98,
+						refractionRatio: 1.25,
 						reflectivity: 1,
 						// opacity: 0.4,
 						metal: false,
@@ -1156,7 +1170,7 @@ define('main',[
 
 					var dataObgGui = gui.addFolder( 'Data Object Material');
 					dataObgGui.add( api.dataObjects, 'refractionRatio' ).onChange( api.dataObjects.updateMaterial );
-					dataObgGui.add( api.dataObjects, 'reflectivity' ).onChange( api.dataObjects.updateMaterial );
+					dataObgGui.add( api.dataObjects, 'reflectivity', 0, 1 ).onChange( api.dataObjects.updateMaterial );
 					
 					dataObgGui.add( api.dataObjects, 'metal' ).onChange( api.dataObjects.updateMaterial );
 
@@ -1277,7 +1291,7 @@ define('main',[
 
 						isInstagram = n >= twitter.results.length;
 						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
-						dataObject = getDataObject( result, isInstagram )
+						dataObject = getDataObject( result, isInstagram, null, strut.volume );
 						dataObject.isInstagram = isInstagram;
 
 						if( n < INITIAL_NUM_ANIMATIONS ){
@@ -1396,11 +1410,11 @@ define('main',[
 
 
 
-				function getDataObject( result, isInstagram, position ){
+				function getDataObject( result, isInstagram, position, volume ){
 
 					var mesh = new THREE.Mesh( baseGeometry, isInstagram ? videoContentMaterial/*.clone()*/ : imageContentMaterial/*.clone()*/  );
-					var index = ( Math.random() * strut.volume.length )|0;
-					var item = strut.volume[index];
+					var index = ( Math.random() * volume.length )|0;
+					var item = volume.splice( index, 1 )[0];
 
 					position ? mesh.position.copy( position ) : mesh.position.set( item[0], item[1], item[2] );
 					mesh.position.x -= 15;
@@ -1442,8 +1456,21 @@ define('main',[
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
+							  	results.sort(function( a, b ){	
+							  		return Math.random() < 0.5;
+							  	})
+
 								showingSearchResults = true;
 								hideVisibleDataObjects();
+
+								strut.centeredVolume = strut.volume.slice();
+
+								var ca = new THREE.Vector3(),
+									cb = new THREE.Vector3();
+								strut.centeredVolume.sort(function(a, b){
+									return ca.set( a[0]- 15, a[1]- 15, a[2]- 15).length() - cb.set( b[0]- 15, b[1]- 15, b[2]- 15).length();
+								})
+								strut.centeredVolume = strut.centeredVolume.splice( 0, Math.max( 40, (strut.centeredVolume.length * SEARCH_RES_RADIUS )|0 ) );
 								
 								if( results.length > 0 ){
 
@@ -1451,7 +1478,7 @@ define('main',[
 									sounds.search.volume( 1.0 );
 									sounds.search.play();
 
-									setDatObjectsOpacity( 0.2 );
+									setDatObjectsOpacity( 0.08 );
 									
 									var pos, isInstagram,
 										positions = strut.centeredVolume.slice();
@@ -1463,7 +1490,7 @@ define('main',[
 										nPos.set( pos[0], pos[1], pos[2] );
 
 										isInstagram = n >= twitterResults.length;
-										mesh = getDataObject( results[n], isInstagram, nPos );
+										mesh = getDataObject( results[n], isInstagram, nPos, strut.centeredVolume );
 										interactiveObjs.push( mesh );
 										mesh.isInstagram = isInstagram;
 										mesh.material = searchContentMaterial/*.clone();*/
@@ -1479,16 +1506,16 @@ define('main',[
 
 					$('#search-field').keypress(function (e) {
 					  if (e.which === 13) {
-					  	event.preventDefault();
+					  	e.preventDefault();
+					  	e.stopImmediatePropagation();
 					    performSearch( inputField.value );
 					  }
 					});
 
-					// $( '#search-form' ).submit( function( e ){
-					// 	var value = inputField.value;
-			  //           console.log("SEARCH", e );
+					$( '#search-form' ).submit( function( e ){
+						e.preventDefault();
 						
-					// });
+					});
 
 
 				// END SEARCH
@@ -1514,14 +1541,7 @@ define('main',[
 				
 				// console.time( 'GENERATE' );
 				strut = structure( api.frequency, api.complexity, api.seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
-				strut.centeredVolume = strut.volume.slice();
-
-				var ca = new THREE.Vector3(),
-					cb = new THREE.Vector3();
-				strut.centeredVolume.sort(function(a, b){
-					return ca.set( a[0]- 15, a[1]- 15, a[2]- 15).length() - cb.set( b[0]- 15, b[1]- 15, b[2]- 15).length();
-				})
-				strut.centeredVolume = strut.centeredVolume.splice( 0, Math.max( 40, (strut.centeredVolume.length * SEARCH_RES_RADIUS )|0 ) );
+				
 				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
@@ -1658,6 +1678,7 @@ define('main',[
 					}
 
 					light.transition.target = 1;
+					light.color.set( showingSearchResults ? light.blueColor : light.originalColor );
 					light.object = INTERSECTED;
 
 					// console.log( INTERSECTED.material.originColor.getHexString() );

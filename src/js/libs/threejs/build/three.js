@@ -16627,6 +16627,13 @@ THREE.ShaderChunk = {
 
 			"#endif",
 
+			"#ifdef FLIP",
+
+				"cubeColor.rgb = vec3( max((cubeColor.r + cubeColor.g + cubeColor.b ) * 0.3333, 0.15 )) ;",
+
+			"#endif",
+
+
 			"if ( combine == 1 ) {",
 
 				"gl_FragColor.xyz = mix( gl_FragColor.xyz, cubeColor.xyz, specularStrength * reflectivity );",

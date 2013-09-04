@@ -3,6 +3,7 @@ body{
 	margin: 0px;
 	padding: 0px;
 	background: black;
+	overflow:hidden;
 	font-family: "helvetica neue", arial, sans-serif;
 }
 form{
@@ -11,21 +12,38 @@ form{
 video{
 	padding-bottom: 10px;
 }
+.clear {clear:both;}
 ol, ul {
 	font-family: "helvetica neue", arial, sans-serif;
 	letter-spacing: 0.2em;
 	font-size: 10pt;
+	margin-top: 0px;
 	list-style: none;
 	-webkit-margin-before: 0em;
 	-webkit-margin-after: 0em;
 	-webkit-margin-start: 0px;
 	-webkit-margin-end: 0px;
 	-webkit-padding-start: 0px;
+	-moz-margin-before: 0em;
+	-moz-margin-after: 0em;
+	-moz-margin-start: 0px;
+	-moz-margin-end: 0px;
+	-moz-padding-start: 0px;
+	-moz-padding-end: 0px;
 	margin-before: 0em;
 	margin-after: 0em;
 	margin-start: 0px;
 	margin-end: 0px;
 	padding-start: 0px;
+}
+.loading-icon{
+	position: absolute;
+	background: url(../img/loading.svg ) no-repeat;
+	width:100px;
+	height:30px;
+	left: calc( 50% - 30px);
+	top: calc( 50% - 30px);
+	
 }
 .featured-submissions{
 	
@@ -48,6 +66,7 @@ li.title{
 	background: black !important;
 }
 #search{
+	display:none;
 	margin: 35px;
 	
 	right: 0px;
@@ -59,7 +78,7 @@ li.title{
 }
 #search-field{
 	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
-	background: url(../img/search-icon.png) no-repeat scroll 99% 5px;
+	background: url(../img/searchwhite.svg) no-repeat calc( 100% + 5px ) -13px;
 	
 	text-transform: uppercase;
 	letter-spacing: 0.2em;
@@ -74,16 +93,10 @@ li.title{
 	padding-left: 0px;
 	margin: 15px;
 }
-#search-field::-webkit-input-placeholder{
-	color: white;
-}
-.search-focus #search-field{
 	
 	
 	
-	-webkit-filter: invert(1.0);
-	filter: invert(1.0);
-}
+	
 .disable-select {
   -webkit-user-select: none;  
   -moz-user-select: none;    
@@ -187,7 +200,6 @@ a:active {text-decoration:none; color: inherit;}
 	opacity:1.0;
 }
 #info-overlay #body{
-	display: none;
 	float:left;
 }
 #info-overlay{
@@ -198,13 +210,30 @@ a:active {text-decoration:none; color: inherit;}
 	position: absolute;
 	z-index: 5;
 }
-input[type="text"]:-moz-placeholder { 
+.search-focus input::-webkit-input-placeholder {
+	color: black;
+}
+.search-focus input::-moz-placeholder {
+	color: black;
+}
+.search-focus input:-moz-placeholder {
+	color: black;
+}
+.search-focus input::-webkit-input-placeholder {
+	color: black;
+}
+.search-focus #search-field{
+	border-bottom: 2px black inset;
+	color: black;
+	background: url(../img/searchblack.svg) no-repeat calc( 100% + 5px ) -13px;
+}
+input::-webkit-input-placeholder {
+   color: white;
+}
+input::-moz-placeholder {  
    color: white;  
 }
-input[type="text"]::-moz-placeholder {  
-   color: white;  
-}
-:-ms-input-placeholder {  
+input:-moz-placeholder { 
    color: white;  
 }
 #info-overlay .buttons{

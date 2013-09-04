@@ -1,3 +1,5 @@
+var facesSaved = 0;
+
 define([
 	'libs/threejs/build/three'
 	],function(){
@@ -122,7 +124,7 @@ define([
 	CustomCubeGeometry.prototype = Object.create( THREE.Geometry.prototype );
 
 
-	return function ( w,h,d, thickness, vThickness, bitflag ){
+	return function ( w,h,d, thickness, vThickness, bitflag, px, py, pz ){
 
 		var ratio = vThickness / thickness;
 		var strut 	    = {
@@ -145,45 +147,51 @@ define([
 
 		// cornerMesh.geometry.faces = cornerMesh.geometry.faces.splice( 2, 2 );
 
+		var wFlag = bitflag;
+
 		//width
 		strut.w.position.set( 0, -hh, -hd );
 		if( isBitSet( bitflag, 0 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
 
 		strut.w.position.set( 0, -hh,  hd );
-		if( isBitSet( bitflag, 1 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		if( !isBitSet( pz, 0 ) && isBitSet( bitflag, 1 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
 
 		strut.w.position.set( 0,  hh,  hd );
-		if( isBitSet( bitflag, 2 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		if( !isBitSet( py, 1 ) && !isBitSet( pz, 3 ) && isBitSet( bitflag, 2 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
 
 		strut.w.position.set( 0,  hh, -hd );
-		if( isBitSet( bitflag, 3 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		if( !isBitSet( py, 0 ) && isBitSet( bitflag, 3 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
 
 		// height
 		strut.h.position.set( -hw, 0, -hd  );
 		if( isBitSet( bitflag, 4 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );
 
 		strut.h.position.set(  hw, 0, -hd  );
-		if( isBitSet( bitflag, 5 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
+		if( !isBitSet( px, 4 ) && isBitSet( bitflag, 5 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
 
 		strut.h.position.set(  hw, 0,  hd  );
-		if( isBitSet( bitflag, 6 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
+		if( !isBitSet( pz, 5 ) && !isBitSet( px, 7 ) && isBitSet( bitflag, 6 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
+		if( (isBitSet( pz, 5 ) || isBitSet( px, 7 )) && isBitSet( bitflag, 6 ))facesSaved++;
 
 		strut.h.position.set( -hw, 0,  hd  );
-		if( isBitSet( bitflag, 7 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );
+		if( !isBitSet( pz, 4 ) && isBitSet( bitflag, 7 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );
+		if( isBitSet( pz, 4 ) && isBitSet( bitflag, 7 ))facesSaved++
 
 		//depth
 		strut.d.position.set( -hw, -hh, 0  );
 		if( isBitSet( bitflag, 8 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );
 
 		strut.d.position.set(  hw, -hh, 0  );
-		if( isBitSet( bitflag, 9 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
+		if( !isBitSet( px, 8 ) && isBitSet( bitflag, 9 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
+		if( isBitSet( px, 8 ) && isBitSet( bitflag, 9 ))facesSaved++
 
 		strut.d.position.set(  hw,  hh, 0  );
-		if( isBitSet( bitflag, 10 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
+		if( !isBitSet( py, 9 ) && !isBitSet( px, 11 ) && isBitSet( bitflag, 10 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );								
+		if( (isBitSet( py, 9 ) || isBitSet( px, 11 )) && isBitSet( bitflag, 10 )) facesSaved++;
 
 		strut.d.position.set( -hw,  hh, 0  );
-		if( isBitSet( bitflag, 11 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );
-
+		if( !isBitSet( py, 8 ) && isBitSet( bitflag, 11 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );
+		if( isBitSet( py, 8 ) && isBitSet( bitflag, 11 ) ) facesSaved++
 
 		var ninetyDegs = Math.PI * 0.5;
 

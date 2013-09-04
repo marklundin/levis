@@ -40,5 +40,7 @@ glsl!shaders/clouds.glsl
 template!shaders/libs/vignette.glsl
 template!shaders/post.glsl
 glsl!shaders/post.glsl
+js/sounds.js
+js/libs/Tween.js
 js/libs/threejs/examples/js/controls/OrbitControls.js
 js/main.js

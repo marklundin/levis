@@ -20,9 +20,6 @@ define([
 			return value;
 		}
 
-		function isBitSet( value, bitindex ){
-		    return (value & (1 << bitindex)) != 0;
-		}
 	
 
 		
@@ -57,29 +54,35 @@ define([
 
 			}
 
-			var mutation;
+			var mutation, pXMut, pYMut, pZMut;
+			var mutations = [];
 
 			// Generate noise pattern
 			while( z-- > 0 ){
+				mutations[z] = [];
 				y = GRID.DIMENSION;
 				while( y-- > 0 ){
+					mutations[z][y] = [];
 					x = GRID.DIMENSION;
 					while( x-- > 0 ){
+						
+						mutations[z][y][x] = 0;
 						value = noise3D( x, y, z );
-						if( value > threshold ) {
-							volume.push( [x, y, z]);
-							cellIsEdge = isEdge( x, y, z, threshold );
-							// mutation = math.random( 1, variations )|0;
-							mutation = 0;
-							if( cellIsEdge ){
-								mutation = math.random( 1, variations )|0;
-							}else{
-								if( Math.random() < 0.45 ) mutation = setBit( 2, mutation );
-								if( Math.random() < 0.45 ) mutation = setBit( 6, mutation );
-								if( Math.random() < 0.45 ) mutation = setBit( 10, mutation );
-							}
 
-							mesh.geometry = cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, horizontalThickness , verticaThickness, mutation );
+						if( value > threshold ) {
+
+							mutation = math.random( 1, variations )|0;
+							mutations[z][y][x] = mutation;
+
+							pXMut = mutations[z][y][x+1] || 0;
+							pYMut = ( mutations[z][y+1] ) ? mutations[z][y+1][x] || 0 : 0;
+							pZMut = ( mutations[z+1] && mutations[z+1][y] ) ? mutations[z+1][y][x] || 0 : 0;
+
+							// console.log( pXMut, pYMut, pZMut );
+							volume.push( [x, y, z] );
+							
+
+							mesh.geometry = cube( GRID.SCALE, GRID.SCALE, GRID.SCALE, horizontalThickness , verticaThickness, mutation, pXMut, pYMut, pZMut );
 							mesh.position.set( -hDIM + x, -hDIM + y, -hDIM + z );
 							mesh.position.multiplyScalar( GRID.SCALE );
 							THREE.GeometryUtils.merge( baseGeom, mesh );
@@ -91,6 +94,7 @@ define([
 				}
 			}
 
+			console.log( "SAVED FACED", facesSaved );
 
 			return {
 				geometry: baseGeom,
