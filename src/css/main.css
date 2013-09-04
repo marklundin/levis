@@ -85,9 +85,10 @@ li.title{
 	display:none;
 	margin: 35px;
 	
-	right: 0px;
+	right: 70px;
 	position: absolute;
 	z-index: 1;
+	margin-top: 20px;
 }
 
 .search-focus{
