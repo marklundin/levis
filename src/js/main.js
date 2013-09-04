@@ -956,7 +956,7 @@ define('main',[
 						update:function(){
 							var n = selectionLights.length;
 							while( n-- > 0 ){
-								selectionLights[n].color.setStyle( api.rollLight.color ).multiplyScalar( api.rollLight.scale );
+								selectionLights[n].originalColor.setStyle( api.rollLight.color ).multiplyScalar( api.rollLight.scale );
 								// console.log( selectionLights[n].color.getHexString(), api.rollLight.color );
 								// selectionLights[n].color
 							}
