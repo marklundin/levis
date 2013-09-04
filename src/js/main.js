@@ -120,16 +120,12 @@ define('main',[
 		// console.log( infoOverlay.children( "#body" ) )
 		// infoOverlay.children( "#body" ).toggle( false );
 		$('#search').fadeOut( 0 );
-		$( '.videoWrapper' ).append( infoOverlay.vidElement = $('<video  id="infoVid" ></video>'));	
+		infoOverlay.vidElement = $( '.videoWrapper' )
+		infoOverlay.vidElement.append( $('<video  id="infoVid" ></video>'));	
 		// infoOverlay.video = ;/
 		videojs("infoVid", {"techOrder": ["html5", "flash"], width:"100%", height:"auto"}).ready(function(){
 
-	      var myPlayer = this;
 	      infoOverlay.video = this;
-
-	      console.log( 'VIDEO LOADED' );
-	      // EXAMPLE: Start playing the video.
-	      // myPlayer.play();
 
 	    });
 			
@@ -236,7 +232,7 @@ define('main',[
 		}
 
 		$( '#search-field' ).click( function(e){
-			console.log('SEARCH');
+			
 			e.stopImmediatePropagation();
 			$( this ).select();
 			$( this ).keypress( function(){
@@ -252,7 +248,6 @@ define('main',[
 
 
 		searchOverlay.children( ".close-button-icon" ).click(function( e ){
-			console.log('CLOSE');
 
 			e.preventDefault();
 			e.stopImmediatePropagation();
@@ -388,15 +383,39 @@ define('main',[
 			e.stopImmediatePropagation();
 
 			infoOverlay.expanded = !infoOverlay.expanded;
-			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, onComplete:function(){
-				if( !infoOverlay.expanded ) infoOverlay.video.currentTime( 0 );
+			
+			infoOverlay.vidElement.toggle( clicked.isInstagram, 0 );	
+			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, complete:function(){
+
+				// console.log( infoOverlay.expanded && clicked.isInstagram )	
+				if( infoOverlay.expanded && clicked.isInstagram ){
+					infoOverlay.vidElement.append( $('<video  id="infoVid" ></video>'));	
+					videojs( "infoVid", {/*"techOrder": ["html5", "flash"],*/width:"100%", height:"470px"}).ready(function(){
+
+				      infoOverlay.video = this;
+				      var source = [];
+					      source[0]= {};
+					      source[0].src = clicked.infoDataObject.media[0].video_url;
+					      source[0].type = "video/mp4";
+
+						infoOverlay.video.src( source );
+						infoOverlay.video.play();
+
+				    });
+					
+						
+				}
 			}});
 
-			if( infoOverlay.video ){
-				if( infoOverlay.expanded ) infoOverlay.video.currentTime( 0 );
-				infoOverlay.video.play();
-				if( clicked.isInstagram ) infoOverlay.expanded ? infoOverlay.video.play() : infoOverlay.video.pause();
+			// if( infoOverlay.video ){
+			// 	// if( infoOverlay.expanded ) infoOverlay.video.currentTime( 0 );
+			// 	// infoOverlay.video.play();
+
+			if( !infoOverlay.expanded && clicked.isInstagram ){
+				infoOverlay.video.dispose();
 			} 
+
+			// } 
 
 		});
 
@@ -413,9 +432,9 @@ define('main',[
 
 			if( infoOverlay.expanded ){
 				infoOverlay.expanded = false;
-				console.log( 'test' );
+				if( lastClicked.isInstagram && infoOverlay.video ) infoOverlay.video.pause();
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
-				if( lastClicked.isInstagram ) infoOverlay.video.pause();
+				
 			}
 
 			// if( infoOverlay.video ) infoOverlay.remove( infoOverlay.video );
@@ -549,6 +568,11 @@ define('main',[
 
 				controls.autoRotate = true;
 				var imageElem = infoOverlay.children('#body').children( '#image' );
+
+				if( infoOverlay.video ){
+					infoOverlay.video.pause();
+				} 
+
 				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
 
 					imageElem.attr( 'src', avatarUrl )
@@ -560,24 +584,12 @@ define('main',[
 						
 						var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
 						updateEnvMapWithCanvas( clicked.material, tp );
-					}
 
-					if( clicked.isInstagram && videoUrl ){
-						
-						var source = [];
-					      source[0]={};
-					      source[0].src = videoUrl
-					      source[0].type = "video/mp4";
-						infoOverlay.video.src( source );
-						
-					}					
+					}
 
 				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
 
-				if( infoOverlay.video ){
-					// infoOverlay.video.pause();
-					// infoOverlay.vidElement.toggle( clicked.isInstagram, 0 );	
-				} 
+				
 
 				if( infoOverlay.expanded ){
 					infoOverlay.expanded = false;

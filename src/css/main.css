@@ -11,9 +11,6 @@ form{
 	margin-bottom: 0px;
 }
 
-video{
-	padding-bottom: 10px;
-}
 
 .clear {clear:both;}
 
@@ -241,7 +238,9 @@ a:active {text-decoration:none; color: inherit;}  /* selected link */
 
 .videoWrapper{
 	width: 100%;
-	height: auto;
+	padding-bottom: 10px;
+	height: 470px;
+	overflow: hidden;
 }
 
 .vjs-tech{
