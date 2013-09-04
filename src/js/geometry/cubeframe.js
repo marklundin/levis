@@ -201,32 +201,56 @@ define([
 
 		cornerMesh.position.set(  hw, -hh, -hd  );
 		cornerMesh.rotation.y -= ninetyDegs;
-		if( isBitSet( bitflag, 0 ) || isBitSet( bitflag, 9 ) || isBitSet( bitflag, 5 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+		if( isBitSet( bitflag, 0 ) || isBitSet( bitflag, 9 ) || isBitSet( bitflag, 5 ) &&
+			!( isBitSet( px, 0 ) || isBitSet( px, 8 ) || isBitSet( px, 4 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
 		cornerMesh.position.set( hw, -hh,  hd  );
 		cornerMesh.rotation.y -= ninetyDegs;
-		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 9 ) || isBitSet( bitflag, 6 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 9 ) || isBitSet( bitflag, 6 ) &&
+			!( isBitSet( px, 8 ) || isBitSet( px, 7 ) || isBitSet( px, 9 )) &&
+			!( isBitSet( pz, 0 ) || isBitSet( pz, 5 ) || isBitSet( pz, 9 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+
+		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 9 ) || isBitSet( bitflag, 6 ) && !( isBitSet( px, 8 ) || isBitSet( px, 7 ) || isBitSet( px, 9 )) &&
+			!( isBitSet( pz, 0 ) || isBitSet( pz, 5 ) || isBitSet( pz, 9 ))) {
+			// console.log( 'SAVED ')
+			facesSaved++
+	}
 
 		cornerMesh.position.set( -hw, -hh,  hd  );
 		cornerMesh.rotation.y -= ninetyDegs;
-		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 7 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 7 ) &&
+			!( isBitSet( pz, 0 ) || isBitSet( pz, 4 ) || isBitSet( pz, 8 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+
+		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 7 ) &&
+			!( isBitSet( pz, 0 ) || isBitSet( pz, 4 ) || isBitSet( pz, 8 ))){
+			// console.log( 'SAVED ')
+			facesSaved++
+		}
 
 
 		// cornerMesh.rotation.x -= 2.0 * ninetyDegs;
 		cornerMesh.position.set( -hw, hh, -hd  );
-		if( isBitSet( bitflag, 3 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 4 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+		if( isBitSet( bitflag, 3 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 4 ) &&
+			!( isBitSet( py, 0 ) || isBitSet( py, 4 ) || isBitSet( py, 8 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
 		cornerMesh.position.set(  hw, hh, -hd  );
 		cornerMesh.rotation.y += ninetyDegs;
-		if( isBitSet( bitflag, 3 ) || isBitSet( bitflag, 10 ) || isBitSet( bitflag, 5 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+		if( isBitSet( bitflag, 3 ) || isBitSet( bitflag, 10 ) || isBitSet( bitflag, 5 ) &&
+			!( isBitSet( px, 4 ) || isBitSet( px, 3 ) || isBitSet( px, 11 )) && 
+			!( isBitSet( py, 0 ) || isBitSet( py, 5 ) || isBitSet( py, 3 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
 		cornerMesh.position.set( hw, hh,  hd  );
 		cornerMesh.rotation.y += ninetyDegs;
-		if( isBitSet( bitflag, 2 ) || isBitSet( bitflag, 10 ) || isBitSet( bitflag, 6 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+		if( isBitSet( bitflag, 2 ) || isBitSet( bitflag, 10 ) || isBitSet( bitflag, 6 ) &&
+			!( isBitSet( px, 2 ) || isBitSet( px, 7 ) || isBitSet( px, 11 )) && 
+			!( isBitSet( py, 1 ) || isBitSet( py, 6 ) || isBitSet( py, 9 )) &&
+			!( isBitSet( pz, 10 ) || isBitSet( pz, 3 ) || isBitSet( pz, 5 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
 		cornerMesh.position.set( -hw, hh,  hd  );
 		cornerMesh.rotation.y += ninetyDegs;
-		if( isBitSet( bitflag, 2 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 7 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+		if( isBitSet( bitflag, 2 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 7 ) &&
+			!( isBitSet( py, 8 ) || isBitSet( py, 1 ) || isBitSet( py, 7 )) && 
+			!( isBitSet( pz, 4 ) || isBitSet( pz, 3 ) || isBitSet( pz, 11 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
 
 		return cube.geometry;

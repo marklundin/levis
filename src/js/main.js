@@ -773,7 +773,7 @@ define('main',[
 					6572,
 					4472,
 					8765,
-					2768,
+					6773,
 					6594
 				],
 				seed = seeds[ Math.floor( Math.random() * seeds.length )],
