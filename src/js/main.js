@@ -540,9 +540,12 @@ define('main',[
 				selectionLights.push( lastClicked.light );
 			}
 
-			lastClicked.material.envMap = envMap;
+			
 
-			if( lastClicked ) lastClicked.material.opacity = 0.9;	
+			if( lastClicked ){
+				lastClicked.material.envMap = envMap;
+				lastClicked.material.opacity = 0.9;	
+			} 
 
 			clicked = null;
 			sounds.out.play();
