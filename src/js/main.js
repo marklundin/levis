@@ -348,10 +348,8 @@ define('main',[
 		}
 
 		function updateEnvMapWithImage( material, url ){
-			console.log( 'CHANGING TEXTURE' );
 			loadTexture( [url, url, url, url, url, url ], function( texture ){
 				if( clicked && clicked.material === material ){
-					console.log( 'SWAP' );
 					clicked.material.opacity = 0.28;
 					clicked.material.envMap = texture;
 				}
@@ -1265,17 +1263,27 @@ define('main',[
 
 					generate();
 
-					var n = twitter.results.length + instagram.results.length,
+					var results = twitter.results.concat( instagram.results ),
+						n = results.length,
 						result, isInstagram, dataObject, targetPos;
 
 					var duration = 30000;
+
+
+
+					while( n-- > 0 ){
+						results[n].isInstagram = n >= twitter.results.length
+					}
+
+					results.sort(function(){return Math.random()})
 						
+					n = results.length;
 					while( n-- > 0 ){
 
-						isInstagram = n >= twitter.results.length;
-						result = isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
-						dataObject = getDataObject( result, isInstagram, null, strut.volume );
-						dataObject.isInstagram = isInstagram;
+						// isInstagram = n >= twitter.results.length;
+						result = results[n];//isInstagram ? instagram.results[n-twitter.results.length] : twitter.results[n];
+						dataObject = getDataObject( result, result.isInstagram, null, strut.volume );
+						dataObject.isInstagram = result.isInstagram;
 
 						if( n < INITIAL_NUM_ANIMATIONS ){
 
@@ -1297,7 +1305,6 @@ define('main',[
 								.delay(( 1500 + duration ) * n ).onComplete(function( obj ){
 
 									obj.tween.stop();
-									console.log( 'END', INITIAL_NUM_ANIMATIONS );
 									enterLight.fadeOut();
 
 									obj.unclickable = false;
@@ -1305,7 +1312,6 @@ define('main',[
 
 								}.bind( this, dataObject )).onStart(function( obj ){
 
-									console.log( 'START' );
 									scene.add( obj );
 									
 									enterLight.position = obj.position;
@@ -1430,6 +1436,12 @@ define('main',[
 							dataloader.search( value, function( twitterResults, instagramResults ){
 
 								var results = twitterResults.concat( instagramResults );
+								var n = results.length;
+								while( n-- > 0 ){
+									results[n].isInstagram = n >= twitter.results.length;
+									console.log( results[n].isInstagram, results[n].attribution_url );
+								}
+
 
 								searchOverlay.children('#body').children('#results').html(
 									'YOUR SEARCH FOR <br/>"<b>'+value.toUpperCase()+'</b>"<br/> RETURNED <b>' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + '</b> RESULTS' 
@@ -1439,9 +1451,7 @@ define('main',[
 								    if( results.length === 0 ) $( this ).delay( 5000 ).fadeOut( 400 );
 							  	});
 
-							  	results.sort(function( a, b ){	
-							  		return Math.random() < 0.5;
-							  	})
+							  	results.sort(function(){return Math.random()})
 
 								showingSearchResults = true;
 								hideVisibleDataObjects();
