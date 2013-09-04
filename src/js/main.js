@@ -955,6 +955,7 @@ define('main',[
 					light.color.multiplyScalar( 22 );
 					light.originalColor = new THREE.Color( light.color.clone() );
 					light.blueColor = new THREE.Color( 0x6342cd ).multiplyScalar( 30 );
+					light.twitterLightColor = new THREE.Color( 0x0f1860 ).multiplyScalar( 30 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
 					light.transition = transition( light, 'opacity', 0, {threshold:0.01, speed: 5.0 } );
@@ -1352,6 +1353,7 @@ define('main',[
 									// if( enterLight.fadeTween ) enterLight.fadeTween.stop();
 									
 									enterLight.position = obj.position;
+									enterLight.color.set( obj.isInstagram ? light.originalColor : light.twitterLightColor );
 									enterLight.distanceCoeff = 3;
 								
 									sounds.entering[Math.floor( Math.random()*sounds.entering.length )].play();
@@ -1693,7 +1695,7 @@ define('main',[
 					}
 
 					light.transition.target = 1;
-					light.color.set( showingSearchResults ? light.blueColor : light.originalColor );
+					light.color.set( showingSearchResults ? light.blueColor : INTERSECTED.isInstagram ? light.originalColor : light.twitterLightColor );
 					light.object = INTERSECTED;
 
 					// console.log( INTERSECTED.material.originColor.getHexString() );
