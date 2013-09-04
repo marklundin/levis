@@ -1226,37 +1226,13 @@ define('main',[
 
 				var enterLight = selectionLights[0].clone();
 				enterLight.opacity = 1;
-				enterLight.distanceCoeff = 1.0;
+				enterLight.distanceCoeff = 0.01;
 				allLights.push( enterLight );
-				// enterLight.fadeInTween = new TWEEN.Tween( enterLight.opacity ).to( {value: 1}, 1000 );
-				enterLight.fadeOutTween = new TWEEN.Tween( enterLight ).to({"opacity": 0 }, 1000 );
-				// enterLight.fadeIn = function(){
-				// 	enterLight.opacity = 1;
-				// 	// enterLight.fadeInTween.start();
-				// 	enterLight.fadeOutTween.stop();
-				// }
 
-				enterLight.fadeOut = function(){
-					enterLight.opacity = 1;
-					enterLight.fadeOutTween.start();
-					// enterLight.fadeInTween.stop();
-				}
 				// enterLight.transition.target = 1;
 				scene.add( enterLight );
 
 
-				// var enteringItems = [];
-				// var enteringPostition = {position:new THREE.Vector3()};
-				// var enteringAnim = transition( enteringPostition, 'position' );
-
-				// function nextEnterAnim(){
-
-				// 	var item = enteringItems.pop();
-
-				// 	enteringAnim.copy( enteringPostition.position );
-				// 	item.position = enteringAnim.target;
-
-				// }
 
 
 				dataloader( function( twitter, instagram ){
@@ -1302,41 +1278,31 @@ define('main',[
 
 								.to( to, duration )
 								.easing( TWEEN.Easing.Quadratic.InOut )
-								.delay(( 1500 + duration ) * n ).onComplete(function( obj ){
+								.delay(( 3000 + duration ) * n ).onComplete(function( obj ){
 
-									obj.tween.stop();
-									enterLight.fadeOut();
+									
+									enterLight.fadeTween = new TWEEN.Tween( enterLight ).to({distanceCoeff: 0.001 }, 2000 ).onComplete(function(){
+										obj.tween.stop();
+										enterLight.fadeTween.stop();
+										enterLight.distanceCoeff = 0.001;
+									}).start( time );
 
 									obj.unclickable = false;
 									interactiveObjs.push( obj );					
 
 								}.bind( this, dataObject )).onStart(function( obj ){
 
+
 									scene.add( obj );
+
+									// if( enterLight.fadeTween ) enterLight.fadeTween.stop();
 									
 									enterLight.position = obj.position;
-									
-									enterLight.opacity = 1;
+									enterLight.distanceCoeff = 3;
 								
 									sounds.entering[Math.floor( Math.random()*sounds.entering.length )].play();
 
-								}.bind( this, dataObject )).start();
-
-							// dataObject.transition = transition( dataObject.position, prop, dataObject.targetPosition, {
-							// 	spring: 10,//math.random( 1, 10 ),								
-							// 	speed: 0.1,//math.random( 0.2, 0.6 ),
-							// 	threshold: 5,
-							// 	delay: 4 * n
-							// });
-							
-							// dataObject.transition.startCallback = function( obj ){
-								
-							// }.bind( this, dataObject )
-
-							// dataObject.transition.callback = function( obj ){
-								
-
-							// }.bind( this, dataObject );
+								}.bind( this, dataObject )).start( time );
 
 						}else{
 							interactiveObjs.push( dataObject );
@@ -1346,7 +1312,7 @@ define('main',[
 					}
 
 					run();
-					var fade = new TWEEN.Tween( postMaterial.uniforms.visible ).to({value:1}, 5000 ).delay( 1000 ).start();
+					var fade = new TWEEN.Tween( postMaterial.uniforms.visible ).to({value:1}, 5000 ).delay( 1000 ).start( time );
 					$('.loading-icon').fadeOut( 3000 );
 					$('#search').delay( 8000 ).fadeIn( 3000 );
 
@@ -1564,12 +1530,14 @@ define('main',[
 				function animate( timeSinceLoad ){
 
 
-					TWEEN.update();
+					
 
 					t = timeSinceLoad - startTime;
 					delta = t - time;
 					delta = delta > FPmS ? FPmS : delta
 					time = t;
+
+					TWEEN.update( time );
 					
 					controlsActive = lights.update( camera );
 					controls.setPauseState( controlsActive );
