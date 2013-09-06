@@ -1469,7 +1469,7 @@ define('main',[
 
 
 								searchOverlay.children('#body').children('#results').html(
-									'YOUR SEARCH FOR <br/>"<b>'+value.toUpperCase()+'</b>"<br/> RETURNED <b>' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + '</b> RESULTS' 
+									'YOUR SEARCH RETURNED <b>' + ( results.length === 0 ? "NO" : Math.min( results.length, MAX_SEARCH_RESULTS ) ) + '</b> SUBMISSIONS' 
 								);
 
 								searchOverlay.fadeIn( 400, function () {
