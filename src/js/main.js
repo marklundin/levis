@@ -126,6 +126,7 @@ define('main',[
 		});
 
 		$(".search-button").mouseup(function( e ){
+			mouseFlag = true;
 			performSearch( $('#search-field').val() );
 			$('#search-field').blur();
 		});
@@ -1562,7 +1563,10 @@ define('main',[
 						}
 					}
 
-					$("#clear-search").click(clearSearch);
+					$("#clear-search").click(function(){
+						clearSearch();
+						$( '#search-field' ).blur();
+					});
 
 
 					$('.search-button').click(function(e){
