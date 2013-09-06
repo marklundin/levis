@@ -1,4 +1,4 @@
-var facesSaved = 0;
+
 
 define([
 	'libs/threejs/build/three'
@@ -171,11 +171,9 @@ define([
 
 		strut.h.position.set(  hw, 0,  hd  );
 		if( !isBitSet( pz, 5 ) && !isBitSet( px, 7 ) && isBitSet( bitflag, 6 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
-		if( (isBitSet( pz, 5 ) || isBitSet( px, 7 )) && isBitSet( bitflag, 6 ))facesSaved++;
 
 		strut.h.position.set( -hw, 0,  hd  );
 		if( !isBitSet( pz, 4 ) && isBitSet( bitflag, 7 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );
-		if( isBitSet( pz, 4 ) && isBitSet( bitflag, 7 ))facesSaved++
 
 		//depth
 		strut.d.position.set( -hw, -hh, 0  );
@@ -183,15 +181,12 @@ define([
 
 		strut.d.position.set(  hw, -hh, 0  );
 		if( !isBitSet( px, 8 ) && isBitSet( bitflag, 9 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
-		if( isBitSet( px, 8 ) && isBitSet( bitflag, 9 ))facesSaved++
 
 		strut.d.position.set(  hw,  hh, 0  );
 		if( !isBitSet( py, 9 ) && !isBitSet( px, 11 ) && isBitSet( bitflag, 10 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );								
-		if( (isBitSet( py, 9 ) || isBitSet( px, 11 )) && isBitSet( bitflag, 10 )) facesSaved++;
 
 		strut.d.position.set( -hw,  hh, 0  );
 		if( !isBitSet( py, 8 ) && isBitSet( bitflag, 11 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );
-		if( isBitSet( py, 8 ) && isBitSet( bitflag, 11 ) ) facesSaved++
 
 		var ninetyDegs = Math.PI * 0.5;
 
@@ -210,22 +205,11 @@ define([
 			!( isBitSet( px, 8 ) || isBitSet( px, 7 ) || isBitSet( px, 9 )) &&
 			!( isBitSet( pz, 0 ) || isBitSet( pz, 5 ) || isBitSet( pz, 9 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
-		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 9 ) || isBitSet( bitflag, 6 ) && !( isBitSet( px, 8 ) || isBitSet( px, 7 ) || isBitSet( px, 9 )) &&
-			!( isBitSet( pz, 0 ) || isBitSet( pz, 5 ) || isBitSet( pz, 9 ))) {
-			// console.log( 'SAVED ')
-			facesSaved++
-	}
 
 		cornerMesh.position.set( -hw, -hh,  hd  );
 		cornerMesh.rotation.y -= ninetyDegs;
 		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 7 ) &&
 			!( isBitSet( pz, 0 ) || isBitSet( pz, 4 ) || isBitSet( pz, 8 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
-
-		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 7 ) &&
-			!( isBitSet( pz, 0 ) || isBitSet( pz, 4 ) || isBitSet( pz, 8 ))){
-			// console.log( 'SAVED ')
-			facesSaved++
-		}
 
 
 		// cornerMesh.rotation.x -= 2.0 * ninetyDegs;

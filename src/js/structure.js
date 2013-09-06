@@ -94,7 +94,6 @@ define([
 				}
 			}
 
-			console.log( "SAVED FACED", facesSaved );
 
 			return {
 				geometry: baseGeom,

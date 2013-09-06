@@ -1467,7 +1467,6 @@ define('main',[
 
 				function disableActiveLight(){
 					if( clicked ){
-						console.log( 'RESTING LIGHT');
 						clicked.isSelected = false;
 						clicked.material.opacity = 0.9;
 						clicked.light.transition.target = 0;
