@@ -8,6 +8,13 @@ body{
 }
 form{
 	margin-bottom: 0px;
+	border-bottom: 2px white inset;
+}
+ .search-focus > #search-form{
+	border-bottom: 2px black inset;
+}
+#clear-search:link{
+	text-decoration: underline;
 }
 .clear {clear:both;}
 ol, ul {
@@ -48,7 +55,7 @@ ol, ul {
 	
 }
 .featured-submissions li{
-	font-weight: bold;
+	
 	color: black;
 	background: rgb( 236, 236, 236 );
 	border-bottom: 1px rgb( 192, 192, 192 ) inset;
@@ -57,7 +64,7 @@ ol, ul {
 }
 li h2{
 	font-size: 12px;
-	
+	font-weight: normal;
 	color: grey;
 	margin-bottom: 0px;
 	-webkit-margin-before: 0.83em;
@@ -81,26 +88,35 @@ li.title{
 	position: absolute;
 	z-index: 1;
 	margin-top: 20px;
+	width: 280px;
 }
 .search-focus{
 	background: white;
 }
+.search-button{
+	border:0;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	background: url(../img/searchwhite.svg) no-repeat center;
+	cursor: pointer;
+}
+#search-container{
+	padding: 15px;
+}
 #search-field{
 	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
-	background: url(../img/searchwhite.svg) no-repeat calc( 100% + 5px ) -13px;
-	
+	background: none;
 	text-transform: uppercase;
 	letter-spacing: 0.2em;
 	font-size: 10pt;
 	
 	color: white;
 	border: none;
-	border-bottom: 2px white inset;
 	padding: 5px;
-	width: 250px;
+	width: calc( 100% - 22px );
 	outline: none;
 	padding-left: 0px;
-	margin: 15px;
 }
 	
 	
@@ -221,10 +237,6 @@ a:active {text-decoration:none; color: inherit;}
 	color: black;
 	font-size: 10pt;
 }
-#search-overlay #body{
-	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
-	width: 260px;
-}
 .close-button-icon:hover{
 	opacity:1.0;
 }
@@ -252,9 +264,10 @@ a:active {text-decoration:none; color: inherit;}
 	color: black;
 }
 .search-focus #search-field{
-	border-bottom: 2px black inset;
 	color: black;
-	background: url(../img/searchblack.svg) no-repeat calc( 100% + 5px ) -13px;
+}
+.search-focus .search-button{
+	background: url(../img/searchblack.svg) no-repeat center;
 }
 input::-webkit-input-placeholder {
    color: white;
@@ -280,26 +293,18 @@ input:-moz-placeholder {
 	width: 50px;
 	height: 50px;
 }
-#results{
+#search-overlay{
+	margin-top: 2px;
+	color: black;
+	display: none;
+	text-align: center;
+	background: white;
 	font-family: "helvetica neue", arial, sans-serif;
 	letter-spacing: 0.2em;
 	font-size: 10pt;
 	line-height: 1.5em;
-}
-#search-overlay #body{
-	text-align: center;
-	background: white;
-	
-}
-#search-overlay{
-	overflow: hidden;
-	color: black;
-	display: none;
-	color: white;
-	top: 30px;
-	left: calc(50% - 157px);
-	position: absolute;
-	z-index: 4;
+	padding: 15px;
+	text-transform: uppercase;
 }
 #search-overlay h1, h2{
 	letter-spacing: 0.2em;
