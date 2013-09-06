@@ -574,6 +574,51 @@ define('main',[
 
 		}
 
+		function selectItem( item ){
+			
+			clicked = item;
+			clicked.isSelected = true;
+			clicked.light.transitionDist.target = showingSearchResults ?  5.5 : 3;
+			selectionLights.splice( selectionLights.indexOf( clicked.light ), 1 );
+
+			sounds.click[Math.floor(Math.random()*sounds.click.length)].play();
+
+			controls.autoRotate = true;
+			var imageElem = infoOverlay.children('#body').children( '#image' );
+
+			if( infoOverlay.expanded && infoOverlay.video && infoOverlay.video.pause ){
+				infoOverlay.video.pause();
+			} 
+
+			divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
+
+				imageElem.attr( 'src', avatarUrl )
+				
+				// clicked.material.opacity = 0.28;
+				if( clicked.isInstagram ){
+					updateEnvMapWithImage( clicked.material, thumbUrl );
+				} else {
+					
+					var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
+					updateEnvMapWithCanvas( clicked.material, tp );
+
+				}
+
+			}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
+
+			
+
+			if( infoOverlay.expanded ){
+				infoOverlay.expanded = false;
+				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
+			}
+
+			
+			
+
+			moveCameraTo( clicked.position );
+		}
+
 
 		document.addEventListener( 'click', function( e ){
 	
@@ -600,47 +645,8 @@ define('main',[
 				}
 
 
-				clicked = INTERSECTED;
-				clicked.isSelected = true;
-				clicked.light.transitionDist.target = showingSearchResults ?  5.5 : 3;
-				selectionLights.splice( selectionLights.indexOf( clicked.light ), 1 );
-
-				sounds.click[Math.floor(Math.random()*sounds.click.length)].play();
-
-				controls.autoRotate = true;
-				var imageElem = infoOverlay.children('#body').children( '#image' );
-
-				if( infoOverlay.expanded && infoOverlay.video && infoOverlay.video.pause ){
-					infoOverlay.video.pause();
-				} 
-
-				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
-
-					imageElem.attr( 'src', avatarUrl )
-					
-					// clicked.material.opacity = 0.28;
-					if( clicked.isInstagram ){
-						updateEnvMapWithImage( clicked.material, thumbUrl );
-					} else {
-						
-						var tp = textplane( clicked.infoDataObject.title.toUpperCase(), 20 );
-						updateEnvMapWithCanvas( clicked.material, tp );
-
-					}
-
-				}.bind( this, clicked.infoDataObject.attribution_avatar, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].large : undefined, clicked.infoDataObject.media.length > 0 ? clicked.infoDataObject.media[0].video_url : undefined ));
-
+				selectItem( INTERSECTED );
 				
-
-				if( infoOverlay.expanded ){
-					infoOverlay.expanded = false;
-					infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
-				}
-
-				
-				
-
-				moveCameraTo( clicked.position );
 
 			} 
 
@@ -1557,6 +1563,9 @@ define('main',[
 										searchResObj3d.add( mesh );
 
 									}
+
+									moveCameraTo( searchResObj3d.children[0].position );
+
 								}
 
 							});
