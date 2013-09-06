@@ -611,7 +611,6 @@ define('main',[
 
 				if( infoOverlay.expanded && infoOverlay.video && infoOverlay.video.pause ){
 					infoOverlay.video.pause();
-					debugger;
 				} 
 
 				divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
