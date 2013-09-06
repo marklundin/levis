@@ -1476,7 +1476,7 @@ define('main',[
 
 				// SEARCH 
 
-
+					
 					function performSearch( value ){
 
 						divFadeOut( infoOverlay, 400 );
