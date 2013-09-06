@@ -1564,6 +1564,8 @@ define('main',[
 
 									}
 
+									addLightToObj( searchResObj3d.children[0] );
+									selectItem( searchResObj3d.children[0] );
 									moveCameraTo( searchResObj3d.children[0].position );
 
 								}
@@ -1722,6 +1724,30 @@ define('main',[
 
 		var mouseVector 	= new THREE.Vector3();
 
+		function addLightToObj( obj ){
+			var isNewLight = obj.light === null;
+			var light = obj.light || selectionLights[selectionLights.length - selectionLights.unshift( selectionLights.pop() )];
+			light.object = null;
+			obj.light = light;
+			
+
+			if( isNewLight ){
+				light.opacity = 0;
+				light.transition.reset();
+			}
+
+			light.transition.target = 1;
+			light.color.set( showingSearchResults ? light.blueColor : obj.isInstagram ? light.originalColor : light.twitterLightColor );
+			light.object = obj;
+
+			// console.log( INTERSECTED.material.originColor.getHexString() );
+			// light.color.set( INTERSECTED.material.originColor ).multiplyScalar( 30 );
+			// light.intensity = 5.5;
+			// cocks.position.copy( INTERSECTED.position );
+			light.position.copy( obj.position );
+			light.transition.paused = false;
+		}
+
 
 		function picking(){
 
@@ -1756,28 +1782,7 @@ define('main',[
 					INTERSECTED = intersects[ 0 ].object;
 					// selectionLight.currentHex = selectionLight.color.getHex();
 
-					var isNewLight = INTERSECTED.light === null;
-					var light = INTERSECTED.light || selectionLights[selectionLights.length - selectionLights.unshift( selectionLights.pop() )];
-					light.object = null;
-					INTERSECTED.light = light;
-					
-
-					if( isNewLight ){
-						light.opacity = 0;
-						light.transition.reset();
-					}
-
-					light.transition.target = 1;
-					light.color.set( showingSearchResults ? light.blueColor : INTERSECTED.isInstagram ? light.originalColor : light.twitterLightColor );
-					light.object = INTERSECTED;
-
-					// console.log( INTERSECTED.material.originColor.getHexString() );
-					// light.color.set( INTERSECTED.material.originColor ).multiplyScalar( 30 );
-					// light.intensity = 5.5;
-					// cocks.position.copy( INTERSECTED.position );
-					light.position.copy( INTERSECTED.position );
-					light.transition.paused = false;
-
+					addLightToObj( INTERSECTED );
 
 				}
 				
