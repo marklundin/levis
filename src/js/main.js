@@ -974,7 +974,7 @@ define('main',[
 					light = new THREE.PointLight( 0xff2618, 0, 250 );
 					light.color.multiplyScalar( 22 );
 					light.originalColor = new THREE.Color( light.color.clone() );
-					light.blueColor = new THREE.Color( 0x6342cd ).multiplyScalar( 30 );
+					light.blueColor = new THREE.Color( 0x090514 ).multiplyScalar( 30 );
 					light.twitterLightColor = new THREE.Color( 0x0f1860 ).multiplyScalar( 30 );
 					light.opacity = 0;
 					light.distanceCoeff = 1;
@@ -1476,7 +1476,7 @@ define('main',[
 
 				// SEARCH 
 
-					
+
 					function performSearch( value ){
 
 						divFadeOut( infoOverlay, 400 );
