@@ -1627,6 +1627,7 @@ define('main',[
 		var running = false;
 		var startTime, time, delta, t, firstStep = true;
 		var screenPos		= {};
+		var yPOss;
 		// var offsetVec = new THREE.Vector3();
 
 		function run(){
@@ -1659,7 +1660,10 @@ define('main',[
 
 					if( arrived && lastClicked ){
 						toScreenXY( lastClicked.position , camera, $('#main')  );
-						infoOverlay.css("transform", 'translate( '+ Number( screenPos.left + 250 - infoOverlay.xOffset ) + 'px, '+ Number( screenPos.top - 200 ) +'px )');
+						yPOss = Number( screenPos.top - 200 );
+						yPOss -= Math.max( 0, yPOss + infoOverlay.height() - window.innerHeight + 10 );
+						yPOss = Math.max( 0, yPOss );
+						infoOverlay.css("transform", 'translate( '+ Number( screenPos.left + 250 - infoOverlay.xOffset ) + 'px, '+ yPOss +'px )');
 					}
 
 					requestAnimationFrame( animate );
