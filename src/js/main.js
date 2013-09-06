@@ -564,6 +564,7 @@ define('main',[
 				lastClicked.material.opacity = 0.9;	
 			} 
 
+			disableActiveLight();
 			clicked = null;
 			sounds.out.play();
 			divFadeOut( infoOverlay, 400 );
@@ -594,7 +595,7 @@ define('main',[
 					clicked.light.transitionDist.target = showingSearchResults ?  5 : 1;
 					selectionLights.push( clicked.light );
 					clicked.material.envMap = envMap;
-					clicked.material.needsUpdate = true;
+					// clicked.material.needsUpdate = true;
 				}
 
 
@@ -1458,6 +1459,21 @@ define('main',[
 					return mesh;
 				}
 
+				function disableActiveLight(){
+					if( clicked ){
+						console.log( 'RESTING LIGHT');
+						clicked.isSelected = false;
+						clicked.material.opacity = 0.9;
+						clicked.light.transition.target = 0;
+						clicked.light.transition.reset();
+						clicked.light.transition.paused = false;
+						clicked.light.transitionDist.target = showingSearchResults ?  5 : 1;
+						selectionLights.push( clicked.light );
+						clicked.material.envMap = envMap;
+						clicked.material.needsUpdate = true;
+					}
+				}
+
 
 				// SEARCH 
 
@@ -1465,6 +1481,8 @@ define('main',[
 					function performSearch( value ){
 
 						divFadeOut( infoOverlay, 400 );
+						
+						disableActiveLight();
 						clicked = null;
 						
 						var nPos = new THREE.Vector3(),
