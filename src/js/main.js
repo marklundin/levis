@@ -39,7 +39,7 @@ define('main',[
 		}
 
 
-		if( gui ){
+		if( DEBUG ){
 			var guiContainerDom = document.getElementById('gui');
 			guiContainerDom.appendChild( gui.domElement );
 		}
@@ -593,7 +593,6 @@ define('main',[
 		function selectItem( item ){
 
 			if( infoOverlay.expanded && infoOverlay.video && clicked && clicked.isInstagram ){
-				console.log('disposing');
 				infoOverlay.video.dispose();
 			} 
 			
