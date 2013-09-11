@@ -39,7 +39,7 @@ define('main',[
 		}
 
 
-		if( DEBUG ){
+		if( gui ){
 			var guiContainerDom = document.getElementById('gui');
 			guiContainerDom.appendChild( gui.domElement );
 		}
