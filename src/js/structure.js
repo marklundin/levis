@@ -94,6 +94,7 @@ define([
 				}
 			}
 
+			baseGeom.mergeVertices();
 
 			return {
 				geometry: baseGeom,
