@@ -1,1 +1,154 @@
-THREE.MeshPhongMaterial=function(e){THREE.Material.call(this),this.color=new THREE.Color(16777215),this.ambient=new THREE.Color(16777215),this.emissive=new THREE.Color(0),this.specular=new THREE.Color(1118481),this.shininess=30,this.metal=!1,this.perPixel=!0,this.wrapAround=!1,this.wrapRGB=new THREE.Vector3(1,1,1),this.map=null,this.lightMap=null,this.bumpMap=null,this.bumpScale=1,this.normalMap=null,this.normalScale=new THREE.Vector2(1,1),this.specularMap=null,this.envMap=null,this.combine=THREE.MultiplyOperation,this.reflectivity=1,this.refractionRatio=.98,this.fog=!0,this.shading=THREE.SmoothShading,this.wireframe=!1,this.wireframeLinewidth=1,this.wireframeLinecap="round",this.wireframeLinejoin="round",this.vertexColors=THREE.NoColors,this.skinning=!1,this.morphTargets=!1,this.morphNormals=!1,this.setValues(e)},THREE.MeshPhongMaterial.prototype=Object.create(THREE.Material.prototype),THREE.MeshPhongMaterial.prototype.clone=function(){var e=new THREE.MeshPhongMaterial;return THREE.Material.prototype.clone.call(this,e),e.color.copy(this.color),e.ambient.copy(this.ambient),e.emissive.copy(this.emissive),e.specular.copy(this.specular),e.shininess=this.shininess,e.metal=this.metal,e.perPixel=this.perPixel,e.wrapAround=this.wrapAround,e.wrapRGB.copy(this.wrapRGB),e.map=this.map,e.lightMap=this.lightMap,e.bumpMap=this.bumpMap,e.bumpScale=this.bumpScale,e.normalMap=this.normalMap,e.normalScale.copy(this.normalScale),e.specularMap=this.specularMap,e.envMap=this.envMap,e.combine=this.combine,e.reflectivity=this.reflectivity,e.refractionRatio=this.refractionRatio,e.fog=this.fog,e.shading=this.shading,e.wireframe=this.wireframe,e.wireframeLinewidth=this.wireframeLinewidth,e.wireframeLinecap=this.wireframeLinecap,e.wireframeLinejoin=this.wireframeLinejoin,e.vertexColors=this.vertexColors,e.skinning=this.skinning,e.morphTargets=this.morphTargets,e.morphNormals=this.morphNormals,e};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  ambient: <hex>,
+ *  emissive: <hex>,
+ *  specular: <hex>,
+ *  shininess: <float>,
+ *  opacity: <float>,
+ *
+ *  map: new THREE.Texture( <Image> ),
+ *
+ *  lightMap: new THREE.Texture( <Image> ),
+ *
+ *  bumpMap: new THREE.Texture( <Image> ),
+ *  bumpScale: <float>,
+ *
+ *  normalMap: new THREE.Texture( <Image> ),
+ *  normalScale: <Vector2>,
+ *
+ *  specularMap: new THREE.Texture( <Image> ),
+ *
+ *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
+ *  combine: THREE.Multiply,
+ *  reflectivity: <float>,
+ *  refractionRatio: <float>,
+ *
+ *  shading: THREE.SmoothShading,
+ *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ *  depthWrite: <bool>,
+ *
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>,
+ *
+ *  vertexColors: THREE.NoColors / THREE.VertexColors / THREE.FaceColors,
+ *
+ *  skinning: <bool>,
+ *  morphTargets: <bool>,
+ *  morphNormals: <bool>,
+ *
+ *	fog: <bool>
+ * }
+ */
+
+THREE.MeshPhongMaterial = function ( parameters ) {
+
+	THREE.Material.call( this );
+
+	this.color = new THREE.Color( 0xffffff ); // diffuse
+	this.ambient = new THREE.Color( 0xffffff );
+	this.emissive = new THREE.Color( 0x000000 );
+	this.specular = new THREE.Color( 0x111111 );
+	this.shininess = 30;
+
+	this.metal = false;
+	this.perPixel = true;
+
+	this.wrapAround = false;
+	this.wrapRGB = new THREE.Vector3( 1, 1, 1 );
+
+	this.map = null;
+
+	this.lightMap = null;
+
+	this.bumpMap = null;
+	this.bumpScale = 1;
+
+	this.normalMap = null;
+	this.normalScale = new THREE.Vector2( 1, 1 );
+
+	this.specularMap = null;
+
+	this.envMap = null;
+	this.combine = THREE.MultiplyOperation;
+	this.reflectivity = 1;
+	this.refractionRatio = 0.98;
+
+	this.fog = true;
+
+	this.shading = THREE.SmoothShading;
+
+	this.wireframe = false;
+	this.wireframeLinewidth = 1;
+	this.wireframeLinecap = 'round';
+	this.wireframeLinejoin = 'round';
+
+	this.vertexColors = THREE.NoColors;
+
+	this.skinning = false;
+	this.morphTargets = false;
+	this.morphNormals = false;
+
+	this.setValues( parameters );
+
+};
+
+THREE.MeshPhongMaterial.prototype = Object.create( THREE.Material.prototype );
+
+THREE.MeshPhongMaterial.prototype.clone = function () {
+
+	var material = new THREE.MeshPhongMaterial();
+
+	THREE.Material.prototype.clone.call( this, material );
+
+	material.color.copy( this.color );
+	material.ambient.copy( this.ambient );
+	material.emissive.copy( this.emissive );
+	material.specular.copy( this.specular );
+	material.shininess = this.shininess;
+
+	material.metal = this.metal;
+	material.perPixel = this.perPixel;
+
+	material.wrapAround = this.wrapAround;
+	material.wrapRGB.copy( this.wrapRGB );
+
+	material.map = this.map;
+
+	material.lightMap = this.lightMap;
+
+	material.bumpMap = this.bumpMap;
+	material.bumpScale = this.bumpScale;
+
+	material.normalMap = this.normalMap;
+	material.normalScale.copy( this.normalScale );
+
+	material.specularMap = this.specularMap;
+
+	material.envMap = this.envMap;
+	material.combine = this.combine;
+	material.reflectivity = this.reflectivity;
+	material.refractionRatio = this.refractionRatio;
+
+	material.fog = this.fog;
+
+	material.shading = this.shading;
+
+	material.wireframe = this.wireframe;
+	material.wireframeLinewidth = this.wireframeLinewidth;
+	material.wireframeLinecap = this.wireframeLinecap;
+	material.wireframeLinejoin = this.wireframeLinejoin;
+
+	material.vertexColors = this.vertexColors;
+
+	material.skinning = this.skinning;
+	material.morphTargets = this.morphTargets;
+	material.morphNormals = this.morphNormals;
+
+	return material;
+
+};

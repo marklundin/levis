@@ -1,1 +1,57 @@
-THREE.Bone=function(e){THREE.Object3D.call(this),this.skin=e,this.skinMatrix=new THREE.Matrix4},THREE.Bone.prototype=Object.create(THREE.Object3D.prototype),THREE.Bone.prototype.update=function(e,t){this.matrixAutoUpdate&&(t|=this.updateMatrix()),(t||this.matrixWorldNeedsUpdate)&&(e?this.skinMatrix.multiplyMatrices(e,this.matrix):this.skinMatrix.copy(this.matrix),this.matrixWorldNeedsUpdate=!1,t=!0);var i,r=this.children.length;for(i=0;r>i;i++)this.children[i].update(this.skinMatrix,t)};
+/**
+ * @author mikael emtinger / http://gomo.se/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.Bone = function( belongsToSkin ) {
+
+	THREE.Object3D.call( this );
+
+	this.skin = belongsToSkin;
+	this.skinMatrix = new THREE.Matrix4();
+
+};
+
+THREE.Bone.prototype = Object.create( THREE.Object3D.prototype );
+
+THREE.Bone.prototype.update = function ( parentSkinMatrix, forceUpdate ) {
+
+	// update local
+
+	if ( this.matrixAutoUpdate ) {
+
+		forceUpdate |= this.updateMatrix();
+
+	}
+
+	// update skin matrix
+
+	if ( forceUpdate || this.matrixWorldNeedsUpdate ) {
+
+		if( parentSkinMatrix ) {
+
+			this.skinMatrix.multiplyMatrices( parentSkinMatrix, this.matrix );
+
+		} else {
+
+			this.skinMatrix.copy( this.matrix );
+
+		}
+
+		this.matrixWorldNeedsUpdate = false;
+		forceUpdate = true;
+
+	}
+
+	// update children
+
+	var child, i, l = this.children.length;
+
+	for ( i = 0; i < l; i ++ ) {
+
+		this.children[ i ].update( this.skinMatrix, forceUpdate );
+
+	}
+
+};
+

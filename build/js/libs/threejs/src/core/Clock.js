@@ -1,1 +1,72 @@
-THREE.Clock=function(e){this.autoStart=void 0!==e?e:!0,this.startTime=0,this.oldTime=0,this.elapsedTime=0,this.running=!1},THREE.Clock.prototype={constructor:THREE.Clock,start:function(){this.startTime=void 0!==self.performance&&void 0!==self.performance.now?self.performance.now():Date.now(),this.oldTime=this.startTime,this.running=!0},stop:function(){this.getElapsedTime(),this.running=!1},getElapsedTime:function(){return this.getDelta(),this.elapsedTime},getDelta:function(){var e=0;if(this.autoStart&&!this.running&&this.start(),this.running){var t=void 0!==self.performance&&void 0!==self.performance.now?self.performance.now():Date.now();e=.001*(t-this.oldTime),this.oldTime=t,this.elapsedTime+=e}return e}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.Clock = function ( autoStart ) {
+
+	this.autoStart = ( autoStart !== undefined ) ? autoStart : true;
+
+	this.startTime = 0;
+	this.oldTime = 0;
+	this.elapsedTime = 0;
+
+	this.running = false;
+
+};
+
+THREE.Clock.prototype = {
+
+	constructor: THREE.Clock,
+
+	start: function () {
+
+		this.startTime = self.performance !== undefined && self.performance.now !== undefined
+					? self.performance.now()
+					: Date.now();
+
+		this.oldTime = this.startTime;
+		this.running = true;
+	},
+
+	stop: function () {
+
+		this.getElapsedTime();
+		this.running = false;
+
+	},
+
+	getElapsedTime: function () {
+
+		this.getDelta();
+		return this.elapsedTime;
+
+	},
+
+	getDelta: function () {
+
+		var diff = 0;
+
+		if ( this.autoStart && ! this.running ) {
+
+			this.start();
+
+		}
+
+		if ( this.running ) {
+
+			var newTime = self.performance !== undefined && self.performance.now !== undefined
+					? self.performance.now()
+					: Date.now();
+
+			diff = 0.001 * ( newTime - this.oldTime );
+			this.oldTime = newTime;
+
+			this.elapsedTime += diff;
+
+		}
+
+		return diff;
+
+	}
+
+};

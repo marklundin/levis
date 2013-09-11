@@ -1,1 +1,65 @@
-THREE.ImageLoader=function(e){this.manager=void 0!==e?e:THREE.DefaultLoadingManager},THREE.ImageLoader.prototype={constructor:THREE.ImageLoader,load:function(e,t,i,r){var o=this,n=document.createElement("img");void 0!==t&&n.addEventListener("load",function(){o.manager.itemEnd(e),t(this)},!1),void 0!==i&&n.addEventListener("progress",function(e){i(e)},!1),void 0!==r&&n.addEventListener("error",function(e){r(e)},!1),void 0!==this.crossOrigin&&(n.crossOrigin=this.crossOrigin),n.src=e,o.manager.itemStart(e)},setCrossOrigin:function(e){this.crossOrigin=e}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.ImageLoader = function ( manager ) {
+
+	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+
+};
+
+THREE.ImageLoader.prototype = {
+
+	constructor: THREE.ImageLoader,
+
+	load: function ( url, onLoad, onProgress, onError ) {
+
+		var scope = this;
+		var image = document.createElement( 'img' );
+
+		if ( onLoad !== undefined ) {
+
+			image.addEventListener( 'load', function ( event ) {
+
+				scope.manager.itemEnd( url );
+				onLoad( this );
+
+			}, false );
+
+		}
+
+		if ( onProgress !== undefined ) {
+
+			image.addEventListener( 'progress', function ( event ) {
+
+				onProgress( event );
+
+			}, false );
+
+		}
+
+		if ( onError !== undefined ) {
+
+			image.addEventListener( 'error', function ( event ) {
+
+				onError( event );
+
+			}, false );
+
+		}
+
+		if ( this.crossOrigin !== undefined ) image.crossOrigin = this.crossOrigin;
+
+		image.src = url;
+
+		scope.manager.itemStart( url );
+
+	},
+
+	setCrossOrigin: function ( value ) {
+
+		this.crossOrigin = value;
+
+	}
+
+}

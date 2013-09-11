@@ -1,1 +1,185 @@
-THREE.CameraHelper=function(e){function t(e,t,r){i(e,r),i(t,r)}function i(e,t){r.vertices.push(new THREE.Vector3),r.colors.push(new THREE.Color(t)),void 0===n[e]&&(n[e]=[]),n[e].push(r.vertices.length-1)}var r=new THREE.Geometry,o=new THREE.LineBasicMaterial({color:16777215,vertexColors:THREE.FaceColors}),n={},a=16755200,s=16711680,l=43775,c=16777215,h=3355443;t("n1","n2",a),t("n2","n4",a),t("n4","n3",a),t("n3","n1",a),t("f1","f2",a),t("f2","f4",a),t("f4","f3",a),t("f3","f1",a),t("n1","f1",a),t("n2","f2",a),t("n3","f3",a),t("n4","f4",a),t("p","n1",s),t("p","n2",s),t("p","n3",s),t("p","n4",s),t("u1","u2",l),t("u2","u3",l),t("u3","u1",l),t("c","t",c),t("p","c",h),t("cn1","cn2",h),t("cn3","cn4",h),t("cf1","cf2",h),t("cf3","cf4",h),THREE.Line.call(this,r,o,THREE.LinePieces),this.camera=e,this.matrixWorld=e.matrixWorld,this.matrixAutoUpdate=!1,this.pointMap=n,this.update()},THREE.CameraHelper.prototype=Object.create(THREE.Line.prototype),THREE.CameraHelper.prototype.update=function(){var e=new THREE.Vector3,t=new THREE.Camera,i=new THREE.Projector;return function(){function r(r,n,a,s){e.set(n,a,s),i.unprojectVector(e,t);var l=o.pointMap[r];if(void 0!==l)for(var c=0,h=l.length;h>c;c++)o.geometry.vertices[l[c]].copy(e)}var o=this,n=1,a=1;t.projectionMatrix.copy(this.camera.projectionMatrix),r("c",0,0,-1),r("t",0,0,1),r("n1",-n,-a,-1),r("n2",n,-a,-1),r("n3",-n,a,-1),r("n4",n,a,-1),r("f1",-n,-a,1),r("f2",n,-a,1),r("f3",-n,a,1),r("f4",n,a,1),r("u1",.7*n,1.1*a,-1),r("u2",.7*-n,1.1*a,-1),r("u3",0,2*a,-1),r("cf1",-n,0,1),r("cf2",n,0,1),r("cf3",0,-a,1),r("cf4",0,a,1),r("cn1",-n,0,-1),r("cn2",n,0,-1),r("cn3",0,-a,-1),r("cn4",0,a,-1),this.geometry.verticesNeedUpdate=!0}}();
+/**
+ * @author alteredq / http://alteredqualia.com/
+ *
+ *	- shows frustum, line of sight and up of the camera
+ *	- suitable for fast updates
+ * 	- based on frustum visualization in lightgl.js shadowmap example
+ *		http://evanw.github.com/lightgl.js/tests/shadowmap.html
+ */
+
+THREE.CameraHelper = function ( camera ) {
+
+	var geometry = new THREE.Geometry();
+	var material = new THREE.LineBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } );
+
+	var pointMap = {};
+
+	// colors
+
+	var hexFrustum = 0xffaa00;
+	var hexCone = 0xff0000;
+	var hexUp = 0x00aaff;
+	var hexTarget = 0xffffff;
+	var hexCross = 0x333333;
+
+	// near
+
+	addLine( "n1", "n2", hexFrustum );
+	addLine( "n2", "n4", hexFrustum );
+	addLine( "n4", "n3", hexFrustum );
+	addLine( "n3", "n1", hexFrustum );
+
+	// far
+
+	addLine( "f1", "f2", hexFrustum );
+	addLine( "f2", "f4", hexFrustum );
+	addLine( "f4", "f3", hexFrustum );
+	addLine( "f3", "f1", hexFrustum );
+
+	// sides
+
+	addLine( "n1", "f1", hexFrustum );
+	addLine( "n2", "f2", hexFrustum );
+	addLine( "n3", "f3", hexFrustum );
+	addLine( "n4", "f4", hexFrustum );
+
+	// cone
+
+	addLine( "p", "n1", hexCone );
+	addLine( "p", "n2", hexCone );
+	addLine( "p", "n3", hexCone );
+	addLine( "p", "n4", hexCone );
+
+	// up
+
+	addLine( "u1", "u2", hexUp );
+	addLine( "u2", "u3", hexUp );
+	addLine( "u3", "u1", hexUp );
+
+	// target
+
+	addLine( "c", "t", hexTarget );
+	addLine( "p", "c", hexCross );
+
+	// cross
+
+	addLine( "cn1", "cn2", hexCross );
+	addLine( "cn3", "cn4", hexCross );
+
+	addLine( "cf1", "cf2", hexCross );
+	addLine( "cf3", "cf4", hexCross );
+
+	function addLine( a, b, hex ) {
+
+		addPoint( a, hex );
+		addPoint( b, hex );
+
+	}
+
+	function addPoint( id, hex ) {
+
+		geometry.vertices.push( new THREE.Vector3() );
+		geometry.colors.push( new THREE.Color( hex ) );
+
+		if ( pointMap[ id ] === undefined ) {
+
+			pointMap[ id ] = [];
+
+		}
+
+		pointMap[ id ].push( geometry.vertices.length - 1 );
+
+	}
+
+	THREE.Line.call( this, geometry, material, THREE.LinePieces );
+
+	this.camera = camera;
+	this.matrixWorld = camera.matrixWorld;
+	this.matrixAutoUpdate = false;
+
+	this.pointMap = pointMap;
+
+	this.update();
+
+};
+
+THREE.CameraHelper.prototype = Object.create( THREE.Line.prototype );
+
+THREE.CameraHelper.prototype.update = function () {
+
+	var vector = new THREE.Vector3();
+	var camera = new THREE.Camera();
+	var projector = new THREE.Projector();
+
+	return function () {
+
+		var scope = this;
+
+		var w = 1, h = 1;
+
+		// we need just camera projection matrix
+		// world matrix must be identity
+
+		camera.projectionMatrix.copy( this.camera.projectionMatrix );
+
+		// center / target
+
+		setPoint( "c", 0, 0, -1 );
+		setPoint( "t", 0, 0,  1 );
+
+		// near
+
+		setPoint( "n1", -w, -h, -1 );
+		setPoint( "n2",  w, -h, -1 );
+		setPoint( "n3", -w,  h, -1 );
+		setPoint( "n4",  w,  h, -1 );
+
+		// far
+
+		setPoint( "f1", -w, -h, 1 );
+		setPoint( "f2",  w, -h, 1 );
+		setPoint( "f3", -w,  h, 1 );
+		setPoint( "f4",  w,  h, 1 );
+
+		// up
+
+		setPoint( "u1",  w * 0.7, h * 1.1, -1 );
+		setPoint( "u2", -w * 0.7, h * 1.1, -1 );
+		setPoint( "u3",        0, h * 2,   -1 );
+
+		// cross
+
+		setPoint( "cf1", -w,  0, 1 );
+		setPoint( "cf2",  w,  0, 1 );
+		setPoint( "cf3",  0, -h, 1 );
+		setPoint( "cf4",  0,  h, 1 );
+
+		setPoint( "cn1", -w,  0, -1 );
+		setPoint( "cn2",  w,  0, -1 );
+		setPoint( "cn3",  0, -h, -1 );
+		setPoint( "cn4",  0,  h, -1 );
+
+		function setPoint( point, x, y, z ) {
+
+			vector.set( x, y, z );
+			projector.unprojectVector( vector, camera );
+
+			var points = scope.pointMap[ point ];
+
+			if ( points !== undefined ) {
+
+				for ( var i = 0, il = points.length; i < il; i ++ ) {
+
+					scope.geometry.vertices[ points[ i ] ].copy( vector );
+
+				}
+
+			}
+
+		}
+
+		this.geometry.verticesNeedUpdate = true;
+
+	};
+
+}();

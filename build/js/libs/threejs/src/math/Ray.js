@@ -1,1 +1,306 @@
-THREE.Ray=function(e,t){this.origin=void 0!==e?e:new THREE.Vector3,this.direction=void 0!==t?t:new THREE.Vector3},THREE.Ray.prototype={constructor:THREE.Ray,set:function(e,t){return this.origin.copy(e),this.direction.copy(t),this},copy:function(e){return this.origin.copy(e.origin),this.direction.copy(e.direction),this},at:function(e,t){var i=t||new THREE.Vector3;return i.copy(this.direction).multiplyScalar(e).add(this.origin)},recast:function(){var e=new THREE.Vector3;return function(t){return this.origin.copy(this.at(t,e)),this}}(),closestPointToPoint:function(e,t){var i=t||new THREE.Vector3;i.subVectors(e,this.origin);var r=i.dot(this.direction);return 0>r?i.copy(this.origin):i.copy(this.direction).multiplyScalar(r).add(this.origin)},distanceToPoint:function(){var e=new THREE.Vector3;return function(t){var i=e.subVectors(t,this.origin).dot(this.direction);return 0>i?this.origin.distanceTo(t):(e.copy(this.direction).multiplyScalar(i).add(this.origin),e.distanceTo(t))}}(),distanceSqToSegment:function(e,t,i,r){var o,n,a,s,l=e.clone().add(t).multiplyScalar(.5),c=t.clone().sub(e).normalize(),h=.5*e.distanceTo(t),u=this.origin.clone().sub(l),d=-this.direction.dot(c),p=u.dot(this.direction),f=-u.dot(c),m=u.lengthSq(),g=Math.abs(1-d*d);if(g>=0)if(o=d*f-p,n=d*p-f,s=h*g,o>=0)if(n>=-s)if(s>=n){var v=1/g;o*=v,n*=v,a=o*(o+d*n+2*p)+n*(d*o+n+2*f)+m}else n=h,o=Math.max(0,-(d*n+p)),a=-o*o+n*(n+2*f)+m;else n=-h,o=Math.max(0,-(d*n+p)),a=-o*o+n*(n+2*f)+m;else-s>=n?(o=Math.max(0,-(-d*h+p)),n=o>0?-h:Math.min(Math.max(-h,-f),h),a=-o*o+n*(n+2*f)+m):s>=n?(o=0,n=Math.min(Math.max(-h,-f),h),a=n*(n+2*f)+m):(o=Math.max(0,-(d*h+p)),n=o>0?h:Math.min(Math.max(-h,-f),h),a=-o*o+n*(n+2*f)+m);else n=d>0?-h:h,o=Math.max(0,-(d*n+p)),a=-o*o+n*(n+2*f)+m;return i&&i.copy(this.direction.clone().multiplyScalar(o).add(this.origin)),r&&r.copy(c.clone().multiplyScalar(n).add(l)),a},isIntersectionSphere:function(e){return this.distanceToPoint(e.center)<=e.radius},isIntersectionPlane:function(e){var t=e.distanceToPoint(this.origin);if(0===t)return!0;var i=e.normal.dot(this.direction);return 0>i*t?!0:!1},distanceToPlane:function(e){var t=e.normal.dot(this.direction);if(0==t)return 0==e.distanceToPoint(this.origin)?0:null;var i=-(this.origin.dot(e.normal)+e.constant)/t;return i>=0?i:null},intersectPlane:function(e,t){var i=this.distanceToPlane(e);return null===i?null:this.at(i,t)},applyMatrix4:function(e){return this.direction.add(this.origin).applyMatrix4(e),this.origin.applyMatrix4(e),this.direction.sub(this.origin),this},equals:function(e){return e.origin.equals(this.origin)&&e.direction.equals(this.direction)},clone:function(){return(new THREE.Ray).copy(this)}};
+/**
+ * @author bhouston / http://exocortex.com
+ */
+
+THREE.Ray = function ( origin, direction ) {
+
+	this.origin = ( origin !== undefined ) ? origin : new THREE.Vector3();
+	this.direction = ( direction !== undefined ) ? direction : new THREE.Vector3();
+
+};
+
+THREE.Ray.prototype = {
+
+	constructor: THREE.Ray,
+
+	set: function ( origin, direction ) {
+
+		this.origin.copy( origin );
+		this.direction.copy( direction );
+
+		return this;
+
+	},
+
+	copy: function ( ray ) {
+
+		this.origin.copy( ray.origin );
+		this.direction.copy( ray.direction );
+
+		return this;
+
+	},
+
+	at: function ( t, optionalTarget ) {
+
+		var result = optionalTarget || new THREE.Vector3();
+
+		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
+
+	},
+
+	recast: function () {
+
+		var v1 = new THREE.Vector3();
+
+		return function ( t ) {
+
+			this.origin.copy( this.at( t, v1 ) );
+
+			return this;
+
+		};
+
+	}(),
+
+	closestPointToPoint: function ( point, optionalTarget ) {
+
+		var result = optionalTarget || new THREE.Vector3();
+		result.subVectors( point, this.origin );
+		var directionDistance = result.dot( this.direction );
+
+		if ( directionDistance < 0 ) {
+
+			return result.copy( this.origin );
+
+		}
+
+		return result.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+
+	},
+
+	distanceToPoint: function () {
+
+		var v1 = new THREE.Vector3();
+
+		return function ( point ) {
+
+			var directionDistance = v1.subVectors( point, this.origin ).dot( this.direction );
+
+			// point behind the ray
+
+			if ( directionDistance < 0 ) {
+
+				return this.origin.distanceTo( point );
+
+			}
+
+			v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+
+			return v1.distanceTo( point );
+
+		};
+
+	}(),
+
+	distanceSqToSegment: function( v0, v1, optionalPointOnRay, optionalPointOnSegment ) {
+
+		// from http://www.geometrictools.com/LibMathematics/Distance/Wm5DistRay3Segment3.cpp
+		// It returns the min distance between the ray and the segment
+		// defined by v0 and v1
+		// It can also set two optional targets :
+		// - The closest point on the ray
+		// - The closest point on the segment
+
+		var segCenter = v0.clone().add( v1 ).multiplyScalar( 0.5 );
+		var segDir = v1.clone().sub( v0 ).normalize();
+		var segExtent = v0.distanceTo( v1 ) * 0.5;
+		var diff = this.origin.clone().sub( segCenter );
+		var a01 = - this.direction.dot( segDir );
+		var b0 = diff.dot( this.direction );
+		var b1 = - diff.dot( segDir );
+		var c = diff.lengthSq();
+		var det = Math.abs( 1 - a01 * a01 );
+		var s0, s1, sqrDist, extDet;
+
+		if ( det >= 0 ) {
+
+			// The ray and segment are not parallel.
+
+			s0 = a01 * b1 - b0;
+			s1 = a01 * b0 - b1;
+			extDet = segExtent * det;
+
+			if ( s0 >= 0 ) {
+
+				if ( s1 >= - extDet ) {
+
+					if ( s1 <= extDet ) {
+
+						// region 0
+						// Minimum at interior points of ray and segment.
+
+						var invDet = 1 / det;
+						s0 *= invDet;
+						s1 *= invDet;
+						sqrDist = s0 * ( s0 + a01 * s1 + 2 * b0 ) + s1 * ( a01 * s0 + s1 + 2 * b1 ) + c;
+
+					} else {
+
+						// region 1
+
+						s1 = segExtent;
+						s0 = Math.max( 0, - ( a01 * s1 + b0) );
+						sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+					}
+
+				} else {
+
+					// region 5
+
+					s1 = - segExtent;
+					s0 = Math.max( 0, - ( a01 * s1 + b0) );
+					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+				}
+
+			} else {
+
+				if ( s1 <= - extDet) {
+
+					// region 4
+
+					s0 = Math.max( 0, - ( - a01 * segExtent + b0 ) );
+					s1 = ( s0 > 0 ) ? - segExtent : Math.min( Math.max( - segExtent, - b1 ), segExtent );
+					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+				} else if ( s1 <= extDet ) {
+
+					// region 3
+
+					s0 = 0;
+					s1 = Math.min( Math.max( - segExtent, - b1 ), segExtent );
+					sqrDist = s1 * ( s1 + 2 * b1 ) + c;
+
+				} else {
+
+					// region 2
+
+					s0 = Math.max( 0, - ( a01 * segExtent + b0 ) );
+					s1 = ( s0 > 0 ) ? segExtent : Math.min( Math.max( - segExtent, - b1 ), segExtent );
+					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+				}
+
+			}
+
+		} else {
+
+			// Ray and segment are parallel.
+
+			s1 = ( a01 > 0 ) ? - segExtent : segExtent;
+			s0 = Math.max( 0, - ( a01 * s1 + b0 ) );
+			sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+		}
+
+		if ( optionalPointOnRay ) {
+
+			optionalPointOnRay.copy( this.direction.clone().multiplyScalar( s0 ).add( this.origin ) );
+
+		}
+
+		if ( optionalPointOnSegment ) {
+
+			optionalPointOnSegment.copy( segDir.clone().multiplyScalar( s1 ).add( segCenter ) );
+
+		}
+
+		return sqrDist;
+
+	},
+
+	isIntersectionSphere: function ( sphere ) {
+
+		return this.distanceToPoint( sphere.center ) <= sphere.radius;
+
+	},
+
+	isIntersectionPlane: function ( plane ) {
+
+		// check if the ray lies on the plane first
+
+		var distToPoint = plane.distanceToPoint( this.origin );
+
+		if ( distToPoint === 0 ) {
+
+			return true;
+
+		}
+
+		var denominator = plane.normal.dot( this.direction );
+
+		if ( denominator * distToPoint < 0 ) {
+
+			return true
+
+		}
+
+		// ray origin is behind the plane (and is pointing behind it)
+
+		return false;
+
+	},
+
+	distanceToPlane: function ( plane ) {
+
+		var denominator = plane.normal.dot( this.direction );
+		if ( denominator == 0 ) {
+
+			// line is coplanar, return origin
+			if( plane.distanceToPoint( this.origin ) == 0 ) {
+
+				return 0;
+
+			}
+
+			// Null is preferable to undefined since undefined means.... it is undefined
+
+			return null;
+
+		}
+
+		var t = - ( this.origin.dot( plane.normal ) + plane.constant ) / denominator;
+
+		// Return if the ray never intersects the plane
+
+		return t >= 0 ? t :  null;
+
+	},
+
+	intersectPlane: function ( plane, optionalTarget ) {
+
+		var t = this.distanceToPlane( plane );
+
+		if ( t === null ) {
+
+			return null;
+		}
+
+		return this.at( t, optionalTarget );
+
+	},
+
+	applyMatrix4: function ( matrix4 ) {
+
+		this.direction.add( this.origin ).applyMatrix4( matrix4 );
+		this.origin.applyMatrix4( matrix4 );
+		this.direction.sub( this.origin );
+
+		return this;
+	},
+
+	equals: function ( ray ) {
+
+		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
+
+	},
+
+	clone: function () {
+
+		return new THREE.Ray().copy( this );
+
+	}
+
+};

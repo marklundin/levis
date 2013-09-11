@@ -1,1 +1,37 @@
-THREE.LineCurve=function(e,t){this.v1=e,this.v2=t},THREE.LineCurve.prototype=Object.create(THREE.Curve.prototype),THREE.LineCurve.prototype.getPoint=function(e){var t=this.v2.clone().sub(this.v1);return t.multiplyScalar(e).add(this.v1),t},THREE.LineCurve.prototype.getPointAt=function(e){return this.getPoint(e)},THREE.LineCurve.prototype.getTangent=function(){var e=this.v2.clone().sub(this.v1);return e.normalize()};
+/**************************************************************
+ *	Line
+ **************************************************************/
+
+THREE.LineCurve = function ( v1, v2 ) {
+
+	this.v1 = v1;
+	this.v2 = v2;
+
+};
+
+THREE.LineCurve.prototype = Object.create( THREE.Curve.prototype );
+
+THREE.LineCurve.prototype.getPoint = function ( t ) {
+
+	var point = this.v2.clone().sub(this.v1);
+	point.multiplyScalar( t ).add( this.v1 );
+
+	return point;
+
+};
+
+// Line curve is linear, so we can overwrite default getPointAt
+
+THREE.LineCurve.prototype.getPointAt = function ( u ) {
+
+	return this.getPoint( u );
+
+};
+
+THREE.LineCurve.prototype.getTangent = function( t ) {
+
+	var tangent = this.v2.clone().sub(this.v1);
+
+	return tangent.normalize();
+
+};

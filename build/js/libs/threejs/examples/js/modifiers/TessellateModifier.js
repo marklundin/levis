@@ -1,1 +1,441 @@
-THREE.TessellateModifier=function(e){this.maxEdgeLength=e},THREE.TessellateModifier.prototype.modify=function(e){var t,i,r,n,o,a,s,l,h,c,u,d,p,f,m,g,v,E,y,_,T,b,x,w,R,H,S,M,C,A,D,L,P,k=[],N=[],I=this.maxEdgeLength;for(t=0,i=e.faceVertexUvs.length;i>t;t++)N[t]=[];for(t=0,i=e.faces.length;i>t;t++)if(r=e.faces[t],r instanceof THREE.Face3)if(n=r.a,o=r.b,a=r.c,l=e.vertices[n],h=e.vertices[o],c=e.vertices[a],d=l.distanceTo(h),p=h.distanceTo(c),f=l.distanceTo(c),d>I||p>I||f>I){v=e.vertices.length,C=r.clone(),A=r.clone(),d>=p&&d>=f?(_=l.clone(),_.lerp(h,.5),C.a=n,C.b=v,C.c=a,A.a=v,A.b=o,A.c=a,3===r.vertexNormals.length&&(x=r.vertexNormals[0].clone(),x.lerp(r.vertexNormals[1],.5),C.vertexNormals[1].copy(x),A.vertexNormals[0].copy(x)),3===r.vertexColors.length&&(H=r.vertexColors[0].clone(),H.lerp(r.vertexColors[1],.5),C.vertexColors[1].copy(H),A.vertexColors[0].copy(H)),P=0):p>=d&&p>=f?(_=h.clone(),_.lerp(c,.5),C.a=n,C.b=o,C.c=v,A.a=v,A.b=a,A.c=n,3===r.vertexNormals.length&&(x=r.vertexNormals[1].clone(),x.lerp(r.vertexNormals[2],.5),C.vertexNormals[2].copy(x),A.vertexNormals[0].copy(x),A.vertexNormals[1].copy(r.vertexNormals[2]),A.vertexNormals[2].copy(r.vertexNormals[0])),3===r.vertexColors.length&&(H=r.vertexColors[1].clone(),H.lerp(r.vertexColors[2],.5),C.vertexColors[2].copy(H),A.vertexColors[0].copy(H),A.vertexColors[1].copy(r.vertexColors[2]),A.vertexColors[2].copy(r.vertexColors[0])),P=1):(_=l.clone(),_.lerp(c,.5),C.a=n,C.b=o,C.c=v,A.a=v,A.b=o,A.c=a,3===r.vertexNormals.length&&(x=r.vertexNormals[0].clone(),x.lerp(r.vertexNormals[2],.5),C.vertexNormals[2].copy(x),A.vertexNormals[0].copy(x)),3===r.vertexColors.length&&(H=r.vertexColors[0].clone(),H.lerp(r.vertexColors[2],.5),C.vertexColors[2].copy(H),A.vertexColors[0].copy(H)),P=2),k.push(C,A),e.vertices.push(_);var O,F,z,V,B,U,j,W,G;for(O=0,F=e.faceVertexUvs.length;F>O;O++)e.faceVertexUvs[O].length&&(z=e.faceVertexUvs[O][t],V=z[0],B=z[1],U=z[2],0===P?(j=V.clone(),j.lerp(B,.5),W=[V.clone(),j.clone(),U.clone()],G=[j.clone(),B.clone(),U.clone()]):1===P?(j=B.clone(),j.lerp(U,.5),W=[V.clone(),B.clone(),j.clone()],G=[j.clone(),U.clone(),V.clone()]):(j=V.clone(),j.lerp(U,.5),W=[V.clone(),B.clone(),j.clone()],G=[j.clone(),B.clone(),U.clone()]),N[O].push(W,G))}else for(k.push(r),O=0,F=e.faceVertexUvs.length;F>O;O++)N[O].push(e.faceVertexUvs[O][t]);else if(n=r.a,o=r.b,a=r.c,s=r.d,l=e.vertices[n],h=e.vertices[o],c=e.vertices[a],u=e.vertices[s],d=l.distanceTo(h),p=h.distanceTo(c),m=c.distanceTo(u),g=l.distanceTo(u),d>I||p>I||m>I||g>I){E=e.vertices.length,y=e.vertices.length+1,D=r.clone(),L=r.clone(),d>=p&&d>=m&&d>=g||m>=p&&m>=d&&m>=g?(T=l.clone(),T.lerp(h,.5),b=c.clone(),b.lerp(u,.5),D.a=n,D.b=E,D.c=y,D.d=s,L.a=E,L.b=o,L.c=a,L.d=y,4===r.vertexNormals.length&&(w=r.vertexNormals[0].clone(),w.lerp(r.vertexNormals[1],.5),R=r.vertexNormals[2].clone(),R.lerp(r.vertexNormals[3],.5),D.vertexNormals[1].copy(w),D.vertexNormals[2].copy(R),L.vertexNormals[0].copy(w),L.vertexNormals[3].copy(R)),4===r.vertexColors.length&&(S=r.vertexColors[0].clone(),S.lerp(r.vertexColors[1],.5),M=r.vertexColors[2].clone(),M.lerp(r.vertexColors[3],.5),D.vertexColors[1].copy(S),D.vertexColors[2].copy(M),L.vertexColors[0].copy(S),L.vertexColors[3].copy(M)),P=0):(T=h.clone(),T.lerp(c,.5),b=u.clone(),b.lerp(l,.5),D.a=n,D.b=o,D.c=E,D.d=y,L.a=y,L.b=E,L.c=a,L.d=s,4===r.vertexNormals.length&&(w=r.vertexNormals[1].clone(),w.lerp(r.vertexNormals[2],.5),R=r.vertexNormals[3].clone(),R.lerp(r.vertexNormals[0],.5),D.vertexNormals[2].copy(w),D.vertexNormals[3].copy(R),L.vertexNormals[0].copy(R),L.vertexNormals[1].copy(w)),4===r.vertexColors.length&&(S=r.vertexColors[1].clone(),S.lerp(r.vertexColors[2],.5),M=r.vertexColors[3].clone(),M.lerp(r.vertexColors[0],.5),D.vertexColors[2].copy(S),D.vertexColors[3].copy(M),L.vertexColors[0].copy(M),L.vertexColors[1].copy(S)),P=1),k.push(D,L),e.vertices.push(T,b);var O,F,z,V,B,U,X,Y,q,K,Z;for(O=0,F=e.faceVertexUvs.length;F>O;O++)e.faceVertexUvs[O].length&&(z=e.faceVertexUvs[O][t],V=z[0],B=z[1],U=z[2],X=z[3],0===P?(Y=V.clone(),Y.lerp(B,.5),q=U.clone(),q.lerp(X,.5),K=[V.clone(),Y.clone(),q.clone(),X.clone()],Z=[Y.clone(),B.clone(),U.clone(),q.clone()]):(Y=B.clone(),Y.lerp(U,.5),q=X.clone(),q.lerp(V,.5),K=[V.clone(),B.clone(),Y.clone(),q.clone()],Z=[q.clone(),Y.clone(),U.clone(),X.clone()]),N[O].push(K,Z))}else for(k.push(r),O=0,F=e.faceVertexUvs.length;F>O;O++)N[O].push(e.faceVertexUvs[O][t]);e.faces=k,e.faceVertexUvs=N};
+/**
+ * Break faces with edges longer than maxEdgeLength
+ * - not recursive
+ *
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.TessellateModifier = function ( maxEdgeLength ) {
+
+	this.maxEdgeLength = maxEdgeLength;
+
+};
+
+THREE.TessellateModifier.prototype.modify = function ( geometry ) {
+
+	var i, il, face,
+	a, b, c, d,
+	va, vb, vc, vd,
+	dab, dbc, dac, dcd, dad,
+	m, m1, m2,
+	vm, vm1, vm2,
+	vnm, vnm1, vnm2,
+	vcm, vcm1, vcm2,
+	triA, triB,
+	quadA, quadB,
+	edge;
+
+	var faces = [];
+	var faceVertexUvs = [];
+	var maxEdgeLength = this.maxEdgeLength;
+
+	for ( i = 0, il = geometry.faceVertexUvs.length; i < il; i ++ ) {
+
+		faceVertexUvs[ i ] = [];
+
+	}
+
+	for ( i = 0, il = geometry.faces.length; i < il; i ++ ) {
+
+		face = geometry.faces[ i ];
+
+		if ( face instanceof THREE.Face3 ) {
+
+			a = face.a;
+			b = face.b;
+			c = face.c;
+
+			va = geometry.vertices[ a ];
+			vb = geometry.vertices[ b ];
+			vc = geometry.vertices[ c ];
+
+			dab = va.distanceTo( vb );
+			dbc = vb.distanceTo( vc );
+			dac = va.distanceTo( vc );
+
+			if ( dab > maxEdgeLength || dbc > maxEdgeLength || dac > maxEdgeLength ) {
+
+				m = geometry.vertices.length;
+
+				triA = face.clone();
+				triB = face.clone();
+
+				if ( dab >= dbc && dab >= dac ) {
+
+					vm = va.clone();
+					vm.lerp( vb, 0.5 );
+
+					triA.a = a;
+					triA.b = m;
+					triA.c = c;
+
+					triB.a = m;
+					triB.b = b;
+					triB.c = c;
+
+					if ( face.vertexNormals.length === 3 ) {
+
+						vnm = face.vertexNormals[ 0 ].clone();
+						vnm.lerp( face.vertexNormals[ 1 ], 0.5 );
+
+						triA.vertexNormals[ 1 ].copy( vnm );
+						triB.vertexNormals[ 0 ].copy( vnm );
+
+					}
+
+					if ( face.vertexColors.length === 3 ) {
+
+						vcm = face.vertexColors[ 0 ].clone();
+						vcm.lerp( face.vertexColors[ 1 ], 0.5 );
+
+						triA.vertexColors[ 1 ].copy( vcm );
+						triB.vertexColors[ 0 ].copy( vcm );
+
+					}
+
+					edge = 0;
+
+				} else if ( dbc >= dab && dbc >= dac ) {
+
+					vm = vb.clone();
+					vm.lerp( vc, 0.5 );
+
+					triA.a = a;
+					triA.b = b;
+					triA.c = m;
+
+					triB.a = m;
+					triB.b = c;
+					triB.c = a;
+
+					if ( face.vertexNormals.length === 3 ) {
+
+						vnm = face.vertexNormals[ 1 ].clone();
+						vnm.lerp( face.vertexNormals[ 2 ], 0.5 );
+
+						triA.vertexNormals[ 2 ].copy( vnm );
+
+						triB.vertexNormals[ 0 ].copy( vnm );
+						triB.vertexNormals[ 1 ].copy( face.vertexNormals[ 2 ] );
+						triB.vertexNormals[ 2 ].copy( face.vertexNormals[ 0 ] );
+
+					}
+
+					if ( face.vertexColors.length === 3 ) {
+
+						vcm = face.vertexColors[ 1 ].clone();
+						vcm.lerp( face.vertexColors[ 2 ], 0.5 );
+
+						triA.vertexColors[ 2 ].copy( vcm );
+
+						triB.vertexColors[ 0 ].copy( vcm );
+						triB.vertexColors[ 1 ].copy( face.vertexColors[ 2 ] );
+						triB.vertexColors[ 2 ].copy( face.vertexColors[ 0 ] );
+
+					}
+
+					edge = 1;
+
+				} else {
+
+					vm = va.clone();
+					vm.lerp( vc, 0.5 );
+
+					triA.a = a;
+					triA.b = b;
+					triA.c = m;
+
+					triB.a = m;
+					triB.b = b;
+					triB.c = c;
+
+					if ( face.vertexNormals.length === 3 ) {
+
+						vnm = face.vertexNormals[ 0 ].clone();
+						vnm.lerp( face.vertexNormals[ 2 ], 0.5 );
+
+						triA.vertexNormals[ 2 ].copy( vnm );
+						triB.vertexNormals[ 0 ].copy( vnm );
+
+					}
+
+					if ( face.vertexColors.length === 3 ) {
+
+						vcm = face.vertexColors[ 0 ].clone();
+						vcm.lerp( face.vertexColors[ 2 ], 0.5 );
+
+						triA.vertexColors[ 2 ].copy( vcm );
+						triB.vertexColors[ 0 ].copy( vcm );
+
+					}
+
+					edge = 2;
+
+				}
+
+				faces.push( triA, triB );
+				geometry.vertices.push( vm );
+
+				var j, jl, uvs, uvA, uvB, uvC, uvM, uvsTriA, uvsTriB;
+
+				for ( j = 0, jl = geometry.faceVertexUvs.length; j < jl; j ++ ) {
+
+					if ( geometry.faceVertexUvs[ j ].length ) {
+
+						uvs = geometry.faceVertexUvs[ j ][ i ];
+
+						uvA = uvs[ 0 ];
+						uvB = uvs[ 1 ];
+						uvC = uvs[ 2 ];
+
+						// AB
+
+						if ( edge === 0 ) {
+
+							uvM = uvA.clone();
+							uvM.lerp( uvB, 0.5 );
+
+							uvsTriA = [ uvA.clone(), uvM.clone(), uvC.clone() ];
+							uvsTriB = [ uvM.clone(), uvB.clone(), uvC.clone() ];
+
+						// BC
+
+						} else if ( edge === 1 ) {
+
+							uvM = uvB.clone();
+							uvM.lerp( uvC, 0.5 );
+
+							uvsTriA = [ uvA.clone(), uvB.clone(), uvM.clone() ];
+							uvsTriB = [ uvM.clone(), uvC.clone(), uvA.clone() ];
+
+						// AC
+
+						} else {
+
+							uvM = uvA.clone();
+							uvM.lerp( uvC, 0.5 );
+
+							uvsTriA = [ uvA.clone(), uvB.clone(), uvM.clone() ];
+							uvsTriB = [ uvM.clone(), uvB.clone(), uvC.clone() ];
+
+						}
+
+						faceVertexUvs[ j ].push( uvsTriA, uvsTriB );
+
+					}
+
+				}
+
+			} else {
+
+				faces.push( face );
+
+				for ( j = 0, jl = geometry.faceVertexUvs.length; j < jl; j ++ ) {
+
+					faceVertexUvs[ j ].push( geometry.faceVertexUvs[ j ][ i ] );
+
+				}
+
+			}
+
+		} else {
+
+			a = face.a;
+			b = face.b;
+			c = face.c;
+			d = face.d;
+
+			va = geometry.vertices[ a ];
+			vb = geometry.vertices[ b ];
+			vc = geometry.vertices[ c ];
+			vd = geometry.vertices[ d ];
+
+			dab = va.distanceTo( vb );
+			dbc = vb.distanceTo( vc );
+			dcd = vc.distanceTo( vd );
+			dad = va.distanceTo( vd );
+
+			if ( dab > maxEdgeLength || dbc > maxEdgeLength || dcd > maxEdgeLength || dad > maxEdgeLength ) {
+
+				m1 = geometry.vertices.length;
+				m2 = geometry.vertices.length + 1;
+
+				quadA = face.clone();
+				quadB = face.clone();
+
+				if ( ( dab >= dbc && dab >= dcd && dab >= dad ) || ( dcd >= dbc && dcd >= dab && dcd >= dad ) ) {
+
+					vm1 = va.clone();
+					vm1.lerp( vb, 0.5 );
+
+					vm2 = vc.clone();
+					vm2.lerp( vd, 0.5 );
+
+					quadA.a = a;
+					quadA.b = m1;
+					quadA.c = m2;
+					quadA.d = d;
+
+					quadB.a = m1;
+					quadB.b = b;
+					quadB.c = c;
+					quadB.d = m2;
+
+					if ( face.vertexNormals.length === 4 ) {
+
+						vnm1 = face.vertexNormals[ 0 ].clone();
+						vnm1.lerp( face.vertexNormals[ 1 ], 0.5 );
+
+						vnm2 = face.vertexNormals[ 2 ].clone();
+						vnm2.lerp( face.vertexNormals[ 3 ], 0.5 );
+
+						quadA.vertexNormals[ 1 ].copy( vnm1 );
+						quadA.vertexNormals[ 2 ].copy( vnm2 );
+
+						quadB.vertexNormals[ 0 ].copy( vnm1 );
+						quadB.vertexNormals[ 3 ].copy( vnm2 );
+
+					}
+
+					if ( face.vertexColors.length === 4 ) {
+
+						vcm1 = face.vertexColors[ 0 ].clone();
+						vcm1.lerp( face.vertexColors[ 1 ], 0.5 );
+
+						vcm2 = face.vertexColors[ 2 ].clone();
+						vcm2.lerp( face.vertexColors[ 3 ], 0.5 );
+
+						quadA.vertexColors[ 1 ].copy( vcm1 );
+						quadA.vertexColors[ 2 ].copy( vcm2 );
+
+						quadB.vertexColors[ 0 ].copy( vcm1 );
+						quadB.vertexColors[ 3 ].copy( vcm2 );
+
+					}
+
+					edge = 0;
+
+				} else {
+
+					vm1 = vb.clone();
+					vm1.lerp( vc, 0.5 );
+
+					vm2 = vd.clone();
+					vm2.lerp( va, 0.5 );
+
+					quadA.a = a;
+					quadA.b = b;
+					quadA.c = m1;
+					quadA.d = m2;
+
+					quadB.a = m2;
+					quadB.b = m1;
+					quadB.c = c;
+					quadB.d = d;
+
+					if ( face.vertexNormals.length === 4 ) {
+
+						vnm1 = face.vertexNormals[ 1 ].clone();
+						vnm1.lerp( face.vertexNormals[ 2 ], 0.5 );
+
+						vnm2 = face.vertexNormals[ 3 ].clone();
+						vnm2.lerp( face.vertexNormals[ 0 ], 0.5 );
+
+						quadA.vertexNormals[ 2 ].copy( vnm1 );
+						quadA.vertexNormals[ 3 ].copy( vnm2 );
+
+						quadB.vertexNormals[ 0 ].copy( vnm2 );
+						quadB.vertexNormals[ 1 ].copy( vnm1 );
+
+					}
+
+					if ( face.vertexColors.length === 4 ) {
+
+						vcm1 = face.vertexColors[ 1 ].clone();
+						vcm1.lerp( face.vertexColors[ 2 ], 0.5 );
+
+						vcm2 = face.vertexColors[ 3 ].clone();
+						vcm2.lerp( face.vertexColors[ 0 ], 0.5 );
+
+						quadA.vertexColors[ 2 ].copy( vcm1 );
+						quadA.vertexColors[ 3 ].copy( vcm2 );
+
+						quadB.vertexColors[ 0 ].copy( vcm2 );
+						quadB.vertexColors[ 1 ].copy( vcm1 );
+
+					}
+
+					edge = 1;
+
+				}
+
+				faces.push( quadA, quadB );
+				geometry.vertices.push( vm1, vm2 );
+
+				var j, jl, uvs, uvA, uvB, uvC, uvD, uvM1, uvM2, uvsQuadA, uvsQuadB;
+
+				for ( j = 0, jl = geometry.faceVertexUvs.length; j < jl; j ++ ) {
+
+					if ( geometry.faceVertexUvs[ j ].length ) {
+
+						uvs = geometry.faceVertexUvs[ j ][ i ];
+
+						uvA = uvs[ 0 ];
+						uvB = uvs[ 1 ];
+						uvC = uvs[ 2 ];
+						uvD = uvs[ 3 ];
+
+						// AB + CD
+
+						if ( edge === 0 ) {
+
+							uvM1 = uvA.clone();
+							uvM1.lerp( uvB, 0.5 );
+
+							uvM2 = uvC.clone();
+							uvM2.lerp( uvD, 0.5 );
+
+							uvsQuadA = [ uvA.clone(), uvM1.clone(), uvM2.clone(), uvD.clone() ];
+							uvsQuadB = [ uvM1.clone(), uvB.clone(), uvC.clone(), uvM2.clone() ];
+
+						// BC + AD
+
+						} else {
+
+							uvM1 = uvB.clone();
+							uvM1.lerp( uvC, 0.5 );
+
+							uvM2 = uvD.clone();
+							uvM2.lerp( uvA, 0.5 );
+
+							uvsQuadA = [ uvA.clone(), uvB.clone(), uvM1.clone(), uvM2.clone() ];
+							uvsQuadB = [ uvM2.clone(), uvM1.clone(), uvC.clone(), uvD.clone() ];
+
+						}
+
+						faceVertexUvs[ j ].push( uvsQuadA, uvsQuadB );
+
+					}
+
+				}
+
+			} else {
+
+				faces.push( face );
+
+				for ( j = 0, jl = geometry.faceVertexUvs.length; j < jl; j ++ ) {
+
+					faceVertexUvs[ j ].push( geometry.faceVertexUvs[ j ][ i ] );
+
+				}
+
+			}
+
+		}
+
+	}
+
+	geometry.faces = faces;
+	geometry.faceVertexUvs = faceVertexUvs;
+
+}

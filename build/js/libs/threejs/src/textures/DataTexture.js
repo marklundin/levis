@@ -1,1 +1,23 @@
-THREE.DataTexture=function(e,t,i,r,o,n,a,s,l,c,h){THREE.Texture.call(this,null,n,a,s,l,c,r,o,h),this.image={data:e,width:t,height:i}},THREE.DataTexture.prototype=Object.create(THREE.Texture.prototype),THREE.DataTexture.prototype.clone=function(){var e=new THREE.DataTexture;return THREE.Texture.prototype.clone.call(this,e),e};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.DataTexture = function ( data, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy ) {
+
+	THREE.Texture.call( this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
+
+	this.image = { data: data, width: width, height: height };
+
+};
+
+THREE.DataTexture.prototype = Object.create( THREE.Texture.prototype );
+
+THREE.DataTexture.prototype.clone = function () {
+
+	var texture = new THREE.DataTexture();
+
+	THREE.Texture.prototype.clone.call( this, texture );
+
+	return texture;
+
+};

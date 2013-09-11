@@ -1,1 +1,66 @@
-THREE.XHRLoader=function(e){this.manager=void 0!==e?e:THREE.DefaultLoadingManager},THREE.XHRLoader.prototype={constructor:THREE.XHRLoader,load:function(e,t,i,r){var o=this,n=new XMLHttpRequest;void 0!==t&&n.addEventListener("load",function(i){o.manager.itemEnd(e),t(i.target.responseText)},!1),void 0!==i&&n.addEventListener("progress",function(e){i(e)},!1),void 0!==r&&n.addEventListener("error",function(e){r(e)},!1),void 0!==this.crossOrigin&&(n.crossOrigin=this.crossOrigin),n.open("GET",e,!0),n.send(null),o.manager.itemStart(e)},setCrossOrigin:function(e){this.crossOrigin=e}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.XHRLoader = function ( manager ) {
+
+	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+
+};
+
+THREE.XHRLoader.prototype = {
+
+	constructor: THREE.XHRLoader,
+
+	load: function ( url, onLoad, onProgress, onError ) {
+
+		var scope = this;
+		var request = new XMLHttpRequest();
+
+		if ( onLoad !== undefined ) {
+
+			request.addEventListener( 'load', function ( event ) {
+
+				scope.manager.itemEnd( url );
+				onLoad( event.target.responseText );
+
+			}, false );
+
+		}
+
+		if ( onProgress !== undefined ) {
+
+			request.addEventListener( 'progress', function ( event ) {
+
+				onProgress( event );
+
+			}, false );
+
+		}
+
+		if ( onError !== undefined ) {
+
+			request.addEventListener( 'error', function ( event ) {
+
+				onError( event );
+
+			}, false );
+
+		}
+
+		if ( this.crossOrigin !== undefined ) request.crossOrigin = this.crossOrigin;
+
+		request.open( 'GET', url, true );
+		request.send( null );
+
+		scope.manager.itemStart( url );
+
+	},
+
+	setCrossOrigin: function ( value ) {
+
+		this.crossOrigin = value;
+
+	}
+
+};

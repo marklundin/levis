@@ -1,1 +1,380 @@
-THREE.Animation=function(e,t,i){this.root=e,this.data=THREE.AnimationHandler.get(t),this.hierarchy=THREE.AnimationHandler.parse(e),this.currentTime=0,this.timeScale=1,this.isPlaying=!1,this.isPaused=!0,this.loop=!0,this.interpolationType=void 0!==i?i:THREE.AnimationHandler.LINEAR,this.points=[],this.target=new THREE.Vector3},THREE.Animation.prototype.play=function(e,t){if(this.isPlaying===!1){this.isPlaying=!0,this.loop=void 0!==e?e:!0,this.currentTime=void 0!==t?t:0;var i,r,n=this.hierarchy.length;for(i=0;n>i;i++){r=this.hierarchy[i],r.matrixAutoUpdate=!0,void 0===r.animationCache&&(r.animationCache={},r.animationCache.prevKey={pos:0,rot:0,scl:0},r.animationCache.nextKey={pos:0,rot:0,scl:0},r.animationCache.originalMatrix=r instanceof THREE.Bone?r.skinMatrix:r.matrix);var o=r.animationCache.prevKey,a=r.animationCache.nextKey;o.pos=this.data.hierarchy[i].keys[0],o.rot=this.data.hierarchy[i].keys[0],o.scl=this.data.hierarchy[i].keys[0],a.pos=this.getNextKeyWith("pos",i,1),a.rot=this.getNextKeyWith("rot",i,1),a.scl=this.getNextKeyWith("scl",i,1)}this.update(0)}this.isPaused=!1,THREE.AnimationHandler.addToUpdate(this)},THREE.Animation.prototype.pause=function(){this.isPaused===!0?THREE.AnimationHandler.addToUpdate(this):THREE.AnimationHandler.removeFromUpdate(this),this.isPaused=!this.isPaused},THREE.Animation.prototype.stop=function(){this.isPlaying=!1,this.isPaused=!1,THREE.AnimationHandler.removeFromUpdate(this)},THREE.Animation.prototype.update=function(e){if(this.isPlaying!==!1){var t,i,r,n,o,a,s,l,c,h,u=["pos","rot","scl"];this.data.JIT.hierarchy;var d,p,f,m,v;this.currentTime+=e*this.timeScale,p=this.currentTime,d=this.currentTime=this.currentTime%this.data.length,h=parseInt(Math.min(d*this.data.fps,this.data.length*this.data.fps),10);for(var g=0,E=this.hierarchy.length;E>g;g++){l=this.hierarchy[g],c=l.animationCache;for(var y=0;3>y;y++){if(t=u[y],a=c.prevKey[t],s=c.nextKey[t],s.time<=p){if(p>d){if(!this.loop)return this.stop(),void 0;for(a=this.data.hierarchy[g].keys[0],s=this.getNextKeyWith(t,g,1);s.time<d;)a=s,s=this.getNextKeyWith(t,g,s.index+1)}else do a=s,s=this.getNextKeyWith(t,g,s.index+1);while(s.time<d);c.prevKey[t]=a,c.nextKey[t]=s}l.matrixAutoUpdate=!0,l.matrixWorldNeedsUpdate=!0,i=(d-a.time)/(s.time-a.time),n=a[t],o=s[t],(0>i||i>1)&&(console.log("THREE.Animation.update: Warning! Scale out of bounds:"+i+" on bone "+g),i=0>i?0:1),"pos"===t?(r=l.position,this.interpolationType===THREE.AnimationHandler.LINEAR?(r.x=n[0]+(o[0]-n[0])*i,r.y=n[1]+(o[1]-n[1])*i,r.z=n[2]+(o[2]-n[2])*i):(this.interpolationType===THREE.AnimationHandler.CATMULLROM||this.interpolationType===THREE.AnimationHandler.CATMULLROM_FORWARD)&&(this.points[0]=this.getPrevKeyWith("pos",g,a.index-1).pos,this.points[1]=n,this.points[2]=o,this.points[3]=this.getNextKeyWith("pos",g,s.index+1).pos,i=.33*i+.33,f=this.interpolateCatmullRom(this.points,i),r.x=f[0],r.y=f[1],r.z=f[2],this.interpolationType===THREE.AnimationHandler.CATMULLROM_FORWARD&&(m=this.interpolateCatmullRom(this.points,1.01*i),this.target.set(m[0],m[1],m[2]),this.target.sub(r),this.target.y=0,this.target.normalize(),v=Math.atan2(this.target.x,this.target.z),l.rotation.set(0,v,0)))):"rot"===t?THREE.Quaternion.slerp(n,o,l.quaternion,i):"scl"===t&&(r=l.scale,r.x=n[0]+(o[0]-n[0])*i,r.y=n[1]+(o[1]-n[1])*i,r.z=n[2]+(o[2]-n[2])*i)}}}},THREE.Animation.prototype.interpolateCatmullRom=function(e,t){var i,r,n,o,a,s,l,c,h,u=[],d=[];return i=(e.length-1)*t,r=Math.floor(i),n=i-r,u[0]=0===r?r:r-1,u[1]=r,u[2]=r>e.length-2?r:r+1,u[3]=r>e.length-3?r:r+2,s=e[u[0]],l=e[u[1]],c=e[u[2]],h=e[u[3]],o=n*n,a=n*o,d[0]=this.interpolate(s[0],l[0],c[0],h[0],n,o,a),d[1]=this.interpolate(s[1],l[1],c[1],h[1],n,o,a),d[2]=this.interpolate(s[2],l[2],c[2],h[2],n,o,a),d},THREE.Animation.prototype.interpolate=function(e,t,i,r,n,o,a){var s=.5*(i-e),l=.5*(r-t);return(2*(t-i)+s+l)*a+(-3*(t-i)-2*s-l)*o+s*n+t},THREE.Animation.prototype.getNextKeyWith=function(e,t,i){var r=this.data.hierarchy[t].keys;for(this.interpolationType===THREE.AnimationHandler.CATMULLROM||this.interpolationType===THREE.AnimationHandler.CATMULLROM_FORWARD?i=i<r.length-1?i:r.length-1:i%=r.length;i<r.length;i++)if(void 0!==r[i][e])return r[i];return this.data.hierarchy[t].keys[0]},THREE.Animation.prototype.getPrevKeyWith=function(e,t,i){var r=this.data.hierarchy[t].keys;for(i=this.interpolationType===THREE.AnimationHandler.CATMULLROM||this.interpolationType===THREE.AnimationHandler.CATMULLROM_FORWARD?i>0?i:0:i>=0?i:i+r.length;i>=0;i--)if(void 0!==r[i][e])return r[i];return this.data.hierarchy[t].keys[r.length-1]};
+/**
+ * @author mikael emtinger / http://gomo.se/
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.Animation = function ( root, name, interpolationType ) {
+
+	this.root = root;
+	this.data = THREE.AnimationHandler.get( name );
+	this.hierarchy = THREE.AnimationHandler.parse( root );
+
+	this.currentTime = 0;
+	this.timeScale = 1;
+
+	this.isPlaying = false;
+	this.isPaused = true;
+	this.loop = true;
+
+	this.interpolationType = interpolationType !== undefined ? interpolationType : THREE.AnimationHandler.LINEAR;
+
+	this.points = [];
+	this.target = new THREE.Vector3();
+
+};
+
+THREE.Animation.prototype.play = function ( loop, startTimeMS ) {
+
+	if ( this.isPlaying === false ) {
+
+		this.isPlaying = true;
+		this.loop = loop !== undefined ? loop : true;
+		this.currentTime = startTimeMS !== undefined ? startTimeMS : 0;
+
+		// reset key cache
+
+		var h, hl = this.hierarchy.length,
+			object;
+
+		for ( h = 0; h < hl; h ++ ) {
+
+			object = this.hierarchy[ h ];
+
+			object.matrixAutoUpdate = true;
+
+			if ( object.animationCache === undefined ) {
+
+				object.animationCache = {};
+				object.animationCache.prevKey = { pos: 0, rot: 0, scl: 0 };
+				object.animationCache.nextKey = { pos: 0, rot: 0, scl: 0 };
+				object.animationCache.originalMatrix = object instanceof THREE.Bone ? object.skinMatrix : object.matrix;
+
+			}
+
+			var prevKey = object.animationCache.prevKey;
+			var nextKey = object.animationCache.nextKey;
+
+			prevKey.pos = this.data.hierarchy[ h ].keys[ 0 ];
+			prevKey.rot = this.data.hierarchy[ h ].keys[ 0 ];
+			prevKey.scl = this.data.hierarchy[ h ].keys[ 0 ];
+
+			nextKey.pos = this.getNextKeyWith( "pos", h, 1 );
+			nextKey.rot = this.getNextKeyWith( "rot", h, 1 );
+			nextKey.scl = this.getNextKeyWith( "scl", h, 1 );
+
+		}
+
+		this.update( 0 );
+
+	}
+
+	this.isPaused = false;
+
+	THREE.AnimationHandler.addToUpdate( this );
+
+};
+
+
+THREE.Animation.prototype.pause = function() {
+
+	if ( this.isPaused === true ) {
+
+		THREE.AnimationHandler.addToUpdate( this );
+
+	} else {
+
+		THREE.AnimationHandler.removeFromUpdate( this );
+
+	}
+
+	this.isPaused = !this.isPaused;
+
+};
+
+
+THREE.Animation.prototype.stop = function() {
+
+	this.isPlaying = false;
+	this.isPaused  = false;
+	THREE.AnimationHandler.removeFromUpdate( this );
+
+};
+
+
+THREE.Animation.prototype.update = function ( deltaTimeMS ) {
+
+	// early out
+
+	if ( this.isPlaying === false ) return;
+
+
+	// vars
+
+	var types = [ "pos", "rot", "scl" ];
+	var type;
+	var scale;
+	var vector;
+	var prevXYZ, nextXYZ;
+	var prevKey, nextKey;
+	var object;
+	var animationCache;
+	var frame;
+	var JIThierarchy = this.data.JIT.hierarchy;
+	var currentTime, unloopedCurrentTime;
+	var currentPoint, forwardPoint, angle;
+
+
+	this.currentTime += deltaTimeMS * this.timeScale;
+
+	unloopedCurrentTime = this.currentTime;
+	currentTime = this.currentTime = this.currentTime % this.data.length;
+	frame = parseInt( Math.min( currentTime * this.data.fps, this.data.length * this.data.fps ), 10 );
+
+
+	for ( var h = 0, hl = this.hierarchy.length; h < hl; h ++ ) {
+
+		object = this.hierarchy[ h ];
+		animationCache = object.animationCache;
+
+		// loop through pos/rot/scl
+
+		for ( var t = 0; t < 3; t ++ ) {
+
+			// get keys
+
+			type    = types[ t ];
+			prevKey = animationCache.prevKey[ type ];
+			nextKey = animationCache.nextKey[ type ];
+
+			// switch keys?
+
+			if ( nextKey.time <= unloopedCurrentTime ) {
+
+				// did we loop?
+
+				if ( currentTime < unloopedCurrentTime ) {
+
+					if ( this.loop ) {
+
+						prevKey = this.data.hierarchy[ h ].keys[ 0 ];
+						nextKey = this.getNextKeyWith( type, h, 1 );
+
+						while( nextKey.time < currentTime ) {
+
+							prevKey = nextKey;
+							nextKey = this.getNextKeyWith( type, h, nextKey.index + 1 );
+
+						}
+
+					} else {
+
+						this.stop();
+						return;
+
+					}
+
+				} else {
+
+					do {
+
+						prevKey = nextKey;
+						nextKey = this.getNextKeyWith( type, h, nextKey.index + 1 );
+
+					} while( nextKey.time < currentTime )
+
+				}
+
+				animationCache.prevKey[ type ] = prevKey;
+				animationCache.nextKey[ type ] = nextKey;
+
+			}
+
+
+			object.matrixAutoUpdate = true;
+			object.matrixWorldNeedsUpdate = true;
+
+			scale = ( currentTime - prevKey.time ) / ( nextKey.time - prevKey.time );
+			prevXYZ = prevKey[ type ];
+			nextXYZ = nextKey[ type ];
+
+
+			// check scale error
+
+			if ( scale < 0 || scale > 1 ) {
+
+				console.log( "THREE.Animation.update: Warning! Scale out of bounds:" + scale + " on bone " + h );
+				scale = scale < 0 ? 0 : 1;
+
+			}
+
+			// interpolate
+
+			if ( type === "pos" ) {
+
+				vector = object.position;
+
+				if ( this.interpolationType === THREE.AnimationHandler.LINEAR ) {
+
+					vector.x = prevXYZ[ 0 ] + ( nextXYZ[ 0 ] - prevXYZ[ 0 ] ) * scale;
+					vector.y = prevXYZ[ 1 ] + ( nextXYZ[ 1 ] - prevXYZ[ 1 ] ) * scale;
+					vector.z = prevXYZ[ 2 ] + ( nextXYZ[ 2 ] - prevXYZ[ 2 ] ) * scale;
+
+				} else if ( this.interpolationType === THREE.AnimationHandler.CATMULLROM ||
+						    this.interpolationType === THREE.AnimationHandler.CATMULLROM_FORWARD ) {
+
+					this.points[ 0 ] = this.getPrevKeyWith( "pos", h, prevKey.index - 1 )[ "pos" ];
+					this.points[ 1 ] = prevXYZ;
+					this.points[ 2 ] = nextXYZ;
+					this.points[ 3 ] = this.getNextKeyWith( "pos", h, nextKey.index + 1 )[ "pos" ];
+
+					scale = scale * 0.33 + 0.33;
+
+					currentPoint = this.interpolateCatmullRom( this.points, scale );
+
+					vector.x = currentPoint[ 0 ];
+					vector.y = currentPoint[ 1 ];
+					vector.z = currentPoint[ 2 ];
+
+					if ( this.interpolationType === THREE.AnimationHandler.CATMULLROM_FORWARD ) {
+
+						forwardPoint = this.interpolateCatmullRom( this.points, scale * 1.01 );
+
+						this.target.set( forwardPoint[ 0 ], forwardPoint[ 1 ], forwardPoint[ 2 ] );
+						this.target.sub( vector );
+						this.target.y = 0;
+						this.target.normalize();
+
+						angle = Math.atan2( this.target.x, this.target.z );
+						object.rotation.set( 0, angle, 0 );
+
+					}
+
+				}
+
+			} else if ( type === "rot" ) {
+
+				THREE.Quaternion.slerp( prevXYZ, nextXYZ, object.quaternion, scale );
+
+			} else if ( type === "scl" ) {
+
+				vector = object.scale;
+
+				vector.x = prevXYZ[ 0 ] + ( nextXYZ[ 0 ] - prevXYZ[ 0 ] ) * scale;
+				vector.y = prevXYZ[ 1 ] + ( nextXYZ[ 1 ] - prevXYZ[ 1 ] ) * scale;
+				vector.z = prevXYZ[ 2 ] + ( nextXYZ[ 2 ] - prevXYZ[ 2 ] ) * scale;
+
+			}
+
+		}
+
+	}
+
+};
+
+// Catmull-Rom spline
+
+THREE.Animation.prototype.interpolateCatmullRom = function ( points, scale ) {
+
+	var c = [], v3 = [],
+	point, intPoint, weight, w2, w3,
+	pa, pb, pc, pd;
+
+	point = ( points.length - 1 ) * scale;
+	intPoint = Math.floor( point );
+	weight = point - intPoint;
+
+	c[ 0 ] = intPoint === 0 ? intPoint : intPoint - 1;
+	c[ 1 ] = intPoint;
+	c[ 2 ] = intPoint > points.length - 2 ? intPoint : intPoint + 1;
+	c[ 3 ] = intPoint > points.length - 3 ? intPoint : intPoint + 2;
+
+	pa = points[ c[ 0 ] ];
+	pb = points[ c[ 1 ] ];
+	pc = points[ c[ 2 ] ];
+	pd = points[ c[ 3 ] ];
+
+	w2 = weight * weight;
+	w3 = weight * w2;
+
+	v3[ 0 ] = this.interpolate( pa[ 0 ], pb[ 0 ], pc[ 0 ], pd[ 0 ], weight, w2, w3 );
+	v3[ 1 ] = this.interpolate( pa[ 1 ], pb[ 1 ], pc[ 1 ], pd[ 1 ], weight, w2, w3 );
+	v3[ 2 ] = this.interpolate( pa[ 2 ], pb[ 2 ], pc[ 2 ], pd[ 2 ], weight, w2, w3 );
+
+	return v3;
+
+};
+
+THREE.Animation.prototype.interpolate = function ( p0, p1, p2, p3, t, t2, t3 ) {
+
+	var v0 = ( p2 - p0 ) * 0.5,
+		v1 = ( p3 - p1 ) * 0.5;
+
+	return ( 2 * ( p1 - p2 ) + v0 + v1 ) * t3 + ( - 3 * ( p1 - p2 ) - 2 * v0 - v1 ) * t2 + v0 * t + p1;
+
+};
+
+
+
+// Get next key with
+
+THREE.Animation.prototype.getNextKeyWith = function ( type, h, key ) {
+
+	var keys = this.data.hierarchy[ h ].keys;
+
+	if ( this.interpolationType === THREE.AnimationHandler.CATMULLROM ||
+		 this.interpolationType === THREE.AnimationHandler.CATMULLROM_FORWARD ) {
+
+		key = key < keys.length - 1 ? key : keys.length - 1;
+
+	} else {
+
+		key = key % keys.length;
+
+	}
+
+	for ( ; key < keys.length; key++ ) {
+
+		if ( keys[ key ][ type ] !== undefined ) {
+
+			return keys[ key ];
+
+		}
+
+	}
+
+	return this.data.hierarchy[ h ].keys[ 0 ];
+
+};
+
+// Get previous key with
+
+THREE.Animation.prototype.getPrevKeyWith = function ( type, h, key ) {
+
+	var keys = this.data.hierarchy[ h ].keys;
+
+	if ( this.interpolationType === THREE.AnimationHandler.CATMULLROM ||
+		 this.interpolationType === THREE.AnimationHandler.CATMULLROM_FORWARD ) {
+
+		key = key > 0 ? key : 0;
+
+	} else {
+
+		key = key >= 0 ? key : key + keys.length;
+
+	}
+
+
+	for ( ; key >= 0; key -- ) {
+
+		if ( keys[ key ][ type ] !== undefined ) {
+
+			return keys[ key ];
+
+		}
+
+	}
+
+	return this.data.hierarchy[ h ].keys[ keys.length - 1 ];
+
+};

@@ -1,1 +1,157 @@
-THREE.Math={PI2:2*Math.PI,generateUUID:function(){var e,t="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(""),i=new Array(36),r=0;return function(){for(var o=0;36>o;o++)8==o||13==o||18==o||23==o?i[o]="-":14==o?i[o]="4":(2>=r&&(r=0|33554432+16777216*Math.random()),e=15&r,r>>=4,i[o]=t[19==o?8|3&e:e]);return i.join("")}}(),clamp:function(e,t,i){return t>e?t:e>i?i:e},clampBottom:function(e,t){return t>e?t:e},mapLinear:function(e,t,i,r,o){return r+(e-t)*(o-r)/(i-t)},smoothstep:function(e,t,i){return t>=e?0:e>=i?1:(e=(e-t)/(i-t),e*e*(3-2*e))},smootherstep:function(e,t,i){return t>=e?0:e>=i?1:(e=(e-t)/(i-t),e*e*e*(e*(6*e-15)+10))},random16:function(){return(65280*Math.random()+255*Math.random())/65535},randInt:function(e,t){return e+Math.floor(Math.random()*(t-e+1))},randFloat:function(e,t){return e+Math.random()*(t-e)},randFloatSpread:function(e){return e*(.5-Math.random())},sign:function(e){return 0>e?-1:e>0?1:0},degToRad:function(){var e=Math.PI/180;return function(t){return t*e}}(),radToDeg:function(){var e=180/Math.PI;return function(t){return t*e}}()};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.Math = {
+
+	PI2: Math.PI * 2,
+
+	generateUUID: function () {
+
+		// http://www.broofa.com/Tools/Math.uuid.htm
+		
+		var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+		var uuid = new Array(36);
+		var rnd = 0, r;
+
+		return function () {
+
+			for ( var i = 0; i < 36; i ++ ) {
+
+				if ( i == 8 || i == 13 || i == 18 || i == 23 ) {
+			
+					uuid[ i ] = '-';
+			
+				} else if ( i == 14 ) {
+			
+					uuid[ i ] = '4';
+			
+				} else {
+			
+					if (rnd <= 0x02) rnd = 0x2000000 + (Math.random()*0x1000000)|0;
+					r = rnd & 0xf;
+					rnd = rnd >> 4;
+					uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+
+				}
+			}
+			
+			return uuid.join('');
+
+		};
+
+	}(),
+
+	// Clamp value to range <a, b>
+
+	clamp: function ( x, a, b ) {
+
+		return ( x < a ) ? a : ( ( x > b ) ? b : x );
+
+	},
+
+	// Clamp value to range <a, inf)
+
+	clampBottom: function ( x, a ) {
+
+		return x < a ? a : x;
+
+	},
+
+	// Linear mapping from range <a1, a2> to range <b1, b2>
+
+	mapLinear: function ( x, a1, a2, b1, b2 ) {
+
+		return b1 + ( x - a1 ) * ( b2 - b1 ) / ( a2 - a1 );
+
+	},
+
+	// http://en.wikipedia.org/wiki/Smoothstep
+
+	smoothstep: function ( x, min, max ) {
+
+		if ( x <= min ) return 0;
+		if ( x >= max ) return 1;
+
+		x = ( x - min )/( max - min );
+
+		return x*x*(3 - 2*x);
+
+	},
+
+	smootherstep: function ( x, min, max ) {
+
+		if ( x <= min ) return 0;
+		if ( x >= max ) return 1;
+
+		x = ( x - min )/( max - min );
+
+		return x*x*x*(x*(x*6 - 15) + 10);
+
+	},
+
+	// Random float from <0, 1> with 16 bits of randomness
+	// (standard Math.random() creates repetitive patterns when applied over larger space)
+
+	random16: function () {
+
+		return ( 65280 * Math.random() + 255 * Math.random() ) / 65535;
+
+	},
+
+	// Random integer from <low, high> interval
+
+	randInt: function ( low, high ) {
+
+		return low + Math.floor( Math.random() * ( high - low + 1 ) );
+
+	},
+
+	// Random float from <low, high> interval
+
+	randFloat: function ( low, high ) {
+
+		return low + Math.random() * ( high - low );
+
+	},
+
+	// Random float from <-range/2, range/2> interval
+
+	randFloatSpread: function ( range ) {
+
+		return range * ( 0.5 - Math.random() );
+
+	},
+
+	sign: function ( x ) {
+
+		return ( x < 0 ) ? -1 : ( ( x > 0 ) ? 1 : 0 );
+
+	},
+
+	degToRad: function() {
+
+		var degreeToRadiansFactor = Math.PI / 180;
+
+		return function ( degrees ) {
+
+			return degrees * degreeToRadiansFactor;
+
+		};
+
+	}(),
+
+	radToDeg: function() {
+
+		var radianToDegreesFactor = 180 / Math.PI;
+
+		return function ( radians ) {
+
+			return radians * radianToDegreesFactor;
+
+		};
+
+	}()
+
+};

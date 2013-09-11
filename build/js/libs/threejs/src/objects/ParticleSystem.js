@@ -1,1 +1,29 @@
-THREE.ParticleSystem=function(e,t){THREE.Object3D.call(this),this.geometry=void 0!==e?e:new THREE.Geometry,this.material=void 0!==t?t:new THREE.ParticleBasicMaterial({color:16777215*Math.random()}),this.sortParticles=!1,this.frustumCulled=!1},THREE.ParticleSystem.prototype=Object.create(THREE.Object3D.prototype),THREE.ParticleSystem.prototype.clone=function(e){return void 0===e&&(e=new THREE.ParticleSystem(this.geometry,this.material)),e.sortParticles=this.sortParticles,THREE.Object3D.prototype.clone.call(this,e),e};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.ParticleSystem = function ( geometry, material ) {
+
+	THREE.Object3D.call( this );
+
+	this.geometry = geometry !== undefined ? geometry : new THREE.Geometry();
+	this.material = material !== undefined ? material : new THREE.ParticleBasicMaterial( { color: Math.random() * 0xffffff } );
+
+	this.sortParticles = false;
+	this.frustumCulled = false;
+
+};
+
+THREE.ParticleSystem.prototype = Object.create( THREE.Object3D.prototype );
+
+THREE.ParticleSystem.prototype.clone = function ( object ) {
+
+	if ( object === undefined ) object = new THREE.ParticleSystem( this.geometry, this.material );
+
+	object.sortParticles = this.sortParticles;
+
+	THREE.Object3D.prototype.clone.call( this, object );
+
+	return object;
+
+};

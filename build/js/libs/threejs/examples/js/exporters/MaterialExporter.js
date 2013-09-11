@@ -1,1 +1,78 @@
-THREE.MaterialExporter=function(){},THREE.MaterialExporter.prototype={constructor:THREE.MaterialExporter,parse:function(e){var t={metadata:{version:4.2,type:"material",generator:"MaterialExporter"}};return t.uuid=e.uuid,""!==e.name&&(t.name=e.name),e instanceof THREE.MeshBasicMaterial?(t.type="MeshBasicMaterial",t.color=e.color.getHex(),e.vertexColors!==THREE.NoColors&&(t.vertexColors=e.vertexColors),t.opacity=e.opacity,t.transparent=e.transparent,t.wireframe=e.wireframe):e instanceof THREE.MeshLambertMaterial?(t.type="MeshLambertMaterial",t.color=e.color.getHex(),t.ambient=e.ambient.getHex(),t.emissive=e.emissive.getHex(),e.vertexColors!==THREE.NoColors&&(t.vertexColors=e.vertexColors),t.opacity=e.opacity,t.transparent=e.transparent,t.wireframe=e.wireframe):e instanceof THREE.MeshPhongMaterial?(t.type="MeshPhongMaterial",t.color=e.color.getHex(),t.ambient=e.ambient.getHex(),t.emissive=e.emissive.getHex(),t.specular=e.specular.getHex(),t.shininess=e.shininess,e.vertexColors!==THREE.NoColors&&(t.vertexColors=e.vertexColors),t.opacity=e.opacity,t.transparent=e.transparent,t.wireframe=e.wireframe):e instanceof THREE.MeshNormalMaterial?(t.type="MeshNormalMaterial",t.opacity=e.opacity,t.transparent=e.transparent,t.wireframe=e.wireframe):e instanceof THREE.MeshDepthMaterial&&(t.type="MeshDepthMaterial",t.opacity=e.opacity,t.transparent=e.transparent,t.wireframe=e.wireframe),t}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.MaterialExporter = function () {};
+
+THREE.MaterialExporter.prototype = {
+
+	constructor: THREE.MaterialExporter,
+
+	parse: function ( material ) {
+
+		var output = {
+			metadata: {
+				version: 4.2,
+				type: 'material',
+				generator: 'MaterialExporter'
+			}
+		};
+
+		output.uuid = material.uuid;
+
+		if ( material.name !== "" ) output.name = material.name;
+
+		if ( material instanceof THREE.MeshBasicMaterial ) {
+
+			output.type = 'MeshBasicMaterial';
+			output.color = material.color.getHex();
+			if ( material.vertexColors !== THREE.NoColors ) output.vertexColors = material.vertexColors;
+			output.opacity = material.opacity;
+			output.transparent = material.transparent;
+			output.wireframe = material.wireframe;
+
+		} else if ( material instanceof THREE.MeshLambertMaterial ) {
+
+			output.type = 'MeshLambertMaterial';
+			output.color = material.color.getHex();
+			output.ambient = material.ambient.getHex();
+			output.emissive = material.emissive.getHex();
+			if ( material.vertexColors !== THREE.NoColors ) output.vertexColors = material.vertexColors;
+			output.opacity = material.opacity;
+			output.transparent = material.transparent;
+			output.wireframe = material.wireframe;
+
+		} else if ( material instanceof THREE.MeshPhongMaterial ) {
+
+			output.type = 'MeshPhongMaterial';
+			output.color = material.color.getHex();
+			output.ambient = material.ambient.getHex();
+			output.emissive = material.emissive.getHex();
+			output.specular = material.specular.getHex();
+			output.shininess = material.shininess;
+			if ( material.vertexColors !== THREE.NoColors ) output.vertexColors = material.vertexColors;
+			output.opacity = material.opacity;
+			output.transparent = material.transparent;
+			output.wireframe = material.wireframe;
+
+		} else if ( material instanceof THREE.MeshNormalMaterial ) {
+
+			output.type = 'MeshNormalMaterial';
+			output.opacity = material.opacity;
+			output.transparent = material.transparent;
+			output.wireframe = material.wireframe;
+
+		} else if ( material instanceof THREE.MeshDepthMaterial ) {
+
+			output.type = 'MeshDepthMaterial';
+			output.opacity = material.opacity;
+			output.transparent = material.transparent;
+			output.wireframe = material.wireframe;
+
+		}
+
+		return output;
+
+	}
+
+};

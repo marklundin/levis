@@ -1,1 +1,96 @@
-THREE.SphereGeometry=function(e,t,i,r,n,o,a){THREE.Geometry.call(this),this.radius=e=e||50,this.widthSegments=t=Math.max(3,Math.floor(t)||8),this.heightSegments=i=Math.max(2,Math.floor(i)||6),this.phiStart=r=void 0!==r?r:0,this.phiLength=n=void 0!==n?n:2*Math.PI,this.thetaStart=o=void 0!==o?o:0,this.thetaLength=a=void 0!==a?a:Math.PI;var s,l,c=[],h=[];for(l=0;i>=l;l++){var u=[],d=[];for(s=0;t>=s;s++){var p=s/t,f=l/i,m=new THREE.Vector3;m.x=-e*Math.cos(r+p*n)*Math.sin(o+f*a),m.y=e*Math.cos(o+f*a),m.z=e*Math.sin(r+p*n)*Math.sin(o+f*a),this.vertices.push(m),u.push(this.vertices.length-1),d.push(new THREE.Vector2(p,1-f))}c.push(u),h.push(d)}for(l=0;l<this.heightSegments;l++)for(s=0;s<this.widthSegments;s++){var v=c[l][s+1],g=c[l][s],E=c[l+1][s],y=c[l+1][s+1],T=this.vertices[v].clone().normalize(),x=this.vertices[g].clone().normalize(),_=this.vertices[E].clone().normalize(),b=this.vertices[y].clone().normalize(),R=h[l][s+1].clone(),w=h[l][s].clone(),H=h[l+1][s].clone(),S=h[l+1][s+1].clone();Math.abs(this.vertices[v].y)===this.radius?(this.faces.push(new THREE.Face3(v,E,y,[T,_,b])),this.faceVertexUvs[0].push([R,H,S])):Math.abs(this.vertices[E].y)===this.radius?(this.faces.push(new THREE.Face3(v,g,E,[T,x,_])),this.faceVertexUvs[0].push([R,w,H])):(this.faces.push(new THREE.Face4(v,g,E,y,[T,x,_,b])),this.faceVertexUvs[0].push([R,w,H,S]))}this.computeCentroids(),this.computeFaceNormals(),this.boundingSphere=new THREE.Sphere(new THREE.Vector3,e)},THREE.SphereGeometry.prototype=Object.create(THREE.Geometry.prototype);
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.SphereGeometry = function ( radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength ) {
+
+	THREE.Geometry.call( this );
+
+	this.radius = radius = radius || 50;
+
+	this.widthSegments = widthSegments = Math.max( 3, Math.floor( widthSegments ) || 8 );
+	this.heightSegments = heightSegments = Math.max( 2, Math.floor( heightSegments ) || 6 );
+
+	this.phiStart = phiStart = phiStart !== undefined ? phiStart : 0;
+	this.phiLength = phiLength = phiLength !== undefined ? phiLength : Math.PI * 2;
+
+	this.thetaStart = thetaStart = thetaStart !== undefined ? thetaStart : 0;
+	this.thetaLength = thetaLength = thetaLength !== undefined ? thetaLength : Math.PI;
+
+	var x, y, vertices = [], uvs = [];
+
+	for ( y = 0; y <= heightSegments; y ++ ) {
+
+		var verticesRow = [];
+		var uvsRow = [];
+
+		for ( x = 0; x <= widthSegments; x ++ ) {
+
+			var u = x / widthSegments;
+			var v = y / heightSegments;
+
+			var vertex = new THREE.Vector3();
+			vertex.x = - radius * Math.cos( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
+			vertex.y = radius * Math.cos( thetaStart + v * thetaLength );
+			vertex.z = radius * Math.sin( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
+
+			this.vertices.push( vertex );
+
+			verticesRow.push( this.vertices.length - 1 );
+			uvsRow.push( new THREE.Vector2( u, 1 - v ) );
+
+		}
+
+		vertices.push( verticesRow );
+		uvs.push( uvsRow );
+
+	}
+
+	for ( y = 0; y < this.heightSegments; y ++ ) {
+
+		for ( x = 0; x < this.widthSegments; x ++ ) {
+
+			var v1 = vertices[ y ][ x + 1 ];
+			var v2 = vertices[ y ][ x ];
+			var v3 = vertices[ y + 1 ][ x ];
+			var v4 = vertices[ y + 1 ][ x + 1 ];
+
+			var n1 = this.vertices[ v1 ].clone().normalize();
+			var n2 = this.vertices[ v2 ].clone().normalize();
+			var n3 = this.vertices[ v3 ].clone().normalize();
+			var n4 = this.vertices[ v4 ].clone().normalize();
+
+			var uv1 = uvs[ y ][ x + 1 ].clone();
+			var uv2 = uvs[ y ][ x ].clone();
+			var uv3 = uvs[ y + 1 ][ x ].clone();
+			var uv4 = uvs[ y + 1 ][ x + 1 ].clone();
+
+			if ( Math.abs( this.vertices[ v1 ].y ) === this.radius ) {
+
+				this.faces.push( new THREE.Face3( v1, v3, v4, [ n1, n3, n4 ] ) );
+				this.faceVertexUvs[ 0 ].push( [ uv1, uv3, uv4 ] );
+
+			} else if ( Math.abs( this.vertices[ v3 ].y ) === this.radius ) {
+
+				this.faces.push( new THREE.Face3( v1, v2, v3, [ n1, n2, n3 ] ) );
+				this.faceVertexUvs[ 0 ].push( [ uv1, uv2, uv3 ] );
+
+			} else {
+
+				this.faces.push( new THREE.Face4( v1, v2, v3, v4, [ n1, n2, n3, n4 ] ) );
+				this.faceVertexUvs[ 0 ].push( [ uv1, uv2, uv3, uv4 ] );
+
+			}
+
+		}
+
+	}
+
+	this.computeCentroids();
+	this.computeFaceNormals();
+
+	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );
+
+};
+
+THREE.SphereGeometry.prototype = Object.create( THREE.Geometry.prototype );

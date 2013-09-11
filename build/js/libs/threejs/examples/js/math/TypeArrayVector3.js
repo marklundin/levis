@@ -1,1 +1,128 @@
-THREE.TypeArrayVector3=function(e,t,i){this.elements=new Float64Array(3),this.set(e,t,i)},THREE.TypeArrayVector3.prototype={constructor:THREE.TypeArrayVector3,get x(){return this.elements[0]},set x(e){this.elements[0]=e},get y(){return this.elements[1]},set y(e){this.elements[1]=e},get z(){return this.elements[2]},set z(e){this.elements[2]=e},set:function(e,t,i){var r=this.elements;return r[0]=e,r[1]=t,r[2]=i,this},copy:function(e){var t=this.elements,i=e.elements;return t[0]=i[0],t[1]=i[1],t[2]=i[2],this},add:function(e){var t=this.elements,i=e.elements;return t[0]+=i[0],t[1]+=i[1],t[2]+=i[2],this},addVectors:function(e,t){var i=this.elements,r=e.elements,n=t.elements;return i[0]=r[0]+n[0],i[1]=r[1]+n[1],i[2]=r[2]+n[2],this},sub:function(e){var t=this.elements,i=e.elements;return t[0]-=i[0],t[1]-=i[1],t[2]-=i[2],this},subVectors:function(e,t){var i=this.elements,r=e.elements,n=t.elements;return i[0]=r[0]-n[0],i[1]=r[1]-n[1],i[2]=r[2]-n[2],this}};
+THREE.TypeArrayVector3 = function ( x, y, z ) {
+
+	this.elements = new Float64Array( 3 );
+	this.set( x, y, z );
+
+};
+
+
+THREE.TypeArrayVector3.prototype = {
+
+	constructor: THREE.TypeArrayVector3,
+
+	get x() {
+
+		return this.elements[ 0 ];
+
+	},
+
+	set x( value ) {
+
+		this.elements[ 0 ] = value;
+
+	},
+
+	get y() {
+
+		return this.elements[ 1 ];
+
+	},
+
+	set y( value ) {
+
+		this.elements[ 1 ] = value;
+
+	},
+
+	get z() {
+
+		return this.elements[ 2 ];
+
+	},
+
+	set z( value ) {
+
+		this.elements[ 2 ] = value;
+
+	},
+
+	set: function ( x, y, z ) {
+
+		var elements = this.elements;
+
+		elements[ 0 ] = x;
+		elements[ 1 ] = y;
+		elements[ 2 ] = z;
+
+		return this;
+
+	},
+
+	copy: function ( v ) {
+
+		var elements = this.elements;
+		var velements = v.elements;
+
+		elements[ 0 ] = velements[ 0 ];
+		elements[ 1 ] = velements[ 1 ];
+		elements[ 2 ] = velements[ 2 ];
+
+		return this;
+
+	},
+
+	add: function ( v ) {
+
+		var elements = this.elements;
+		var velements = v.elements;
+
+		elements[ 0 ] += velements[ 0 ];
+		elements[ 1 ] += velements[ 1 ];
+		elements[ 2 ] += velements[ 2 ];
+
+		return this;
+
+	},
+
+	addVectors: function ( a, b ) {
+
+		var elements = this.elements;
+		var aelements = a.elements;
+		var belements = b.elements;
+
+		elements[ 0 ] = aelements[ 0 ] + belements[ 0 ];
+		elements[ 1 ] = aelements[ 1 ] + belements[ 1 ];
+		elements[ 2 ] = aelements[ 2 ] + belements[ 2 ];
+
+		return this;
+
+	},
+
+	sub: function ( v, w ) {
+
+		var elements = this.elements;
+		var velements = v.elements;
+
+		elements[ 0 ] -= velements[ 0 ];
+		elements[ 1 ] -= velements[ 1 ];
+		elements[ 2 ] -= velements[ 2 ];
+
+		return this;
+
+	},
+
+	subVectors: function ( a, b ) {
+
+		var elements = this.elements;
+		var aelements = a.elements;
+		var belements = b.elements;
+
+		elements[ 0 ] = aelements[ 0 ] - belements[ 0 ];
+		elements[ 1 ] = aelements[ 1 ] - belements[ 1 ];
+		elements[ 2 ] = aelements[ 2 ] - belements[ 2 ];
+
+		return this;
+
+	}
+
+}

@@ -1,1 +1,87 @@
-THREE.BoxHelper=function(e){var t=[new THREE.Vector3(1,1,1),new THREE.Vector3(-1,1,1),new THREE.Vector3(-1,-1,1),new THREE.Vector3(1,-1,1),new THREE.Vector3(1,1,-1),new THREE.Vector3(-1,1,-1),new THREE.Vector3(-1,-1,-1),new THREE.Vector3(1,-1,-1)];this.vertices=t;var i=new THREE.Geometry;i.vertices.push(t[0],t[1],t[1],t[2],t[2],t[3],t[3],t[0],t[4],t[5],t[5],t[6],t[6],t[7],t[7],t[4],t[0],t[4],t[1],t[5],t[2],t[6],t[3],t[7]),THREE.Line.call(this,i,new THREE.LineBasicMaterial({color:16776960}),THREE.LinePieces),void 0!==e&&this.update(e)},THREE.BoxHelper.prototype=Object.create(THREE.Line.prototype),THREE.BoxHelper.prototype.update=function(e){var t=e.geometry;null===t.boundingBox&&t.computeBoundingBox();var i=t.boundingBox.min,r=t.boundingBox.max,o=this.vertices;o[0].set(r.x,r.y,r.z),o[1].set(i.x,r.y,r.z),o[2].set(i.x,i.y,r.z),o[3].set(r.x,i.y,r.z),o[4].set(r.x,r.y,i.z),o[5].set(i.x,r.y,i.z),o[6].set(i.x,i.y,i.z),o[7].set(r.x,i.y,i.z),this.geometry.computeBoundingSphere(),this.geometry.verticesNeedUpdate=!0,this.matrixAutoUpdate=!1,this.matrixWorld=e.matrixWorld};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.BoxHelper = function ( object ) {
+
+	//   5____4
+	// 1/___0/|
+	// | 6__|_7
+	// 2/___3/
+
+	var vertices = [
+		new THREE.Vector3(   1,   1,   1 ),
+		new THREE.Vector3( - 1,   1,   1 ),
+		new THREE.Vector3( - 1, - 1,   1 ),
+		new THREE.Vector3(   1, - 1,   1 ),
+
+		new THREE.Vector3(   1,   1, - 1 ),
+		new THREE.Vector3( - 1,   1, - 1 ),
+		new THREE.Vector3( - 1, - 1, - 1 ),
+		new THREE.Vector3(   1, - 1, - 1 )
+	];
+
+	this.vertices = vertices;
+
+	// TODO: Wouldn't be nice if Line had .segments?
+
+	var geometry = new THREE.Geometry();
+	geometry.vertices.push(
+		vertices[ 0 ], vertices[ 1 ],
+		vertices[ 1 ], vertices[ 2 ],
+		vertices[ 2 ], vertices[ 3 ],
+		vertices[ 3 ], vertices[ 0 ],
+
+		vertices[ 4 ], vertices[ 5 ],
+		vertices[ 5 ], vertices[ 6 ],
+		vertices[ 6 ], vertices[ 7 ],
+		vertices[ 7 ], vertices[ 4 ],
+
+		vertices[ 0 ], vertices[ 4 ],
+		vertices[ 1 ], vertices[ 5 ],
+		vertices[ 2 ], vertices[ 6 ],
+		vertices[ 3 ], vertices[ 7 ]
+	);
+
+	THREE.Line.call( this, geometry, new THREE.LineBasicMaterial( { color: 0xffff00 } ), THREE.LinePieces );
+
+	if ( object !== undefined ) {
+
+		this.update( object );
+
+	}
+
+};
+
+THREE.BoxHelper.prototype = Object.create( THREE.Line.prototype );
+
+THREE.BoxHelper.prototype.update = function ( object ) {
+
+	var geometry = object.geometry;
+
+	if ( geometry.boundingBox === null ) {
+
+		geometry.computeBoundingBox();
+
+	}
+
+	var min = geometry.boundingBox.min;
+	var max = geometry.boundingBox.max;
+	var vertices = this.vertices;
+
+	vertices[ 0 ].set( max.x, max.y, max.z );
+	vertices[ 1 ].set( min.x, max.y, max.z );
+	vertices[ 2 ].set( min.x, min.y, max.z );
+	vertices[ 3 ].set( max.x, min.y, max.z );
+	vertices[ 4 ].set( max.x, max.y, min.z );
+	vertices[ 5 ].set( min.x, max.y, min.z );
+	vertices[ 6 ].set( min.x, min.y, min.z );
+	vertices[ 7 ].set( max.x, min.y, min.z );
+
+	this.geometry.computeBoundingSphere();
+	this.geometry.verticesNeedUpdate = true;
+
+	this.matrixAutoUpdate = false;
+	this.matrixWorld = object.matrixWorld;
+
+};

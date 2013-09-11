@@ -1,1 +1,112 @@
-THREE.CubeGeometry=function(e,t,i,r,n,o){function a(e,t,i,r,n,o,a,l){var c,h,u,d=s.widthSegments,p=s.heightSegments,f=n/2,m=o/2,v=s.vertices.length;"x"===e&&"y"===t||"y"===e&&"x"===t?c="z":"x"===e&&"z"===t||"z"===e&&"x"===t?(c="y",p=s.depthSegments):("z"===e&&"y"===t||"y"===e&&"z"===t)&&(c="x",d=s.depthSegments);var g=d+1,E=p+1,y=n/d,T=o/p,x=new THREE.Vector3;for(x[c]=a>0?1:-1,u=0;E>u;u++)for(h=0;g>h;h++){var _=new THREE.Vector3;_[e]=(h*y-f)*i,_[t]=(u*T-m)*r,_[c]=a,s.vertices.push(_)}for(u=0;p>u;u++)for(h=0;d>h;h++){var b=h+g*u,R=h+g*(u+1),w=h+1+g*(u+1),H=h+1+g*u,S=new THREE.Face4(b+v,R+v,w+v,H+v);S.normal.copy(x),S.vertexNormals.push(x.clone(),x.clone(),x.clone(),x.clone()),S.materialIndex=l,s.faces.push(S),s.faceVertexUvs[0].push([new THREE.Vector2(h/d,1-u/p),new THREE.Vector2(h/d,1-(u+1)/p),new THREE.Vector2((h+1)/d,1-(u+1)/p),new THREE.Vector2((h+1)/d,1-u/p)])}}THREE.Geometry.call(this);var s=this;this.width=e,this.height=t,this.depth=i,this.widthSegments=r||1,this.heightSegments=n||1,this.depthSegments=o||1;var l=this.width/2,c=this.height/2,h=this.depth/2;a("z","y",-1,-1,this.depth,this.height,l,0),a("z","y",1,-1,this.depth,this.height,-l,1),a("x","z",1,1,this.width,this.depth,c,2),a("x","z",1,-1,this.width,this.depth,-c,3),a("x","y",1,-1,this.width,this.height,h,4),a("x","y",-1,-1,this.width,this.height,-h,5),this.computeCentroids(),this.mergeVertices()},THREE.CubeGeometry.prototype=Object.create(THREE.Geometry.prototype);
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Cube.as
+ */
+
+THREE.CubeGeometry = function ( width, height, depth, widthSegments, heightSegments, depthSegments ) {
+
+	THREE.Geometry.call( this );
+
+	var scope = this;
+
+	this.width = width;
+	this.height = height;
+	this.depth = depth;
+
+	this.widthSegments = widthSegments || 1;
+	this.heightSegments = heightSegments || 1;
+	this.depthSegments = depthSegments || 1;
+
+	var width_half = this.width / 2;
+	var height_half = this.height / 2;
+	var depth_half = this.depth / 2;
+
+	buildPlane( 'z', 'y', - 1, - 1, this.depth, this.height, width_half, 0 ); // px
+	buildPlane( 'z', 'y',   1, - 1, this.depth, this.height, - width_half, 1 ); // nx
+	buildPlane( 'x', 'z',   1,   1, this.width, this.depth, height_half, 2 ); // py
+	buildPlane( 'x', 'z',   1, - 1, this.width, this.depth, - height_half, 3 ); // ny
+	buildPlane( 'x', 'y',   1, - 1, this.width, this.height, depth_half, 4 ); // pz
+	buildPlane( 'x', 'y', - 1, - 1, this.width, this.height, - depth_half, 5 ); // nz
+
+	function buildPlane( u, v, udir, vdir, width, height, depth, materialIndex ) {
+
+		var w, ix, iy,
+		gridX = scope.widthSegments,
+		gridY = scope.heightSegments,
+		width_half = width / 2,
+		height_half = height / 2,
+		offset = scope.vertices.length;
+
+		if ( ( u === 'x' && v === 'y' ) || ( u === 'y' && v === 'x' ) ) {
+
+			w = 'z';
+
+		} else if ( ( u === 'x' && v === 'z' ) || ( u === 'z' && v === 'x' ) ) {
+
+			w = 'y';
+			gridY = scope.depthSegments;
+
+		} else if ( ( u === 'z' && v === 'y' ) || ( u === 'y' && v === 'z' ) ) {
+
+			w = 'x';
+			gridX = scope.depthSegments;
+
+		}
+
+		var gridX1 = gridX + 1,
+		gridY1 = gridY + 1,
+		segment_width = width / gridX,
+		segment_height = height / gridY,
+		normal = new THREE.Vector3();
+
+		normal[ w ] = depth > 0 ? 1 : - 1;
+
+		for ( iy = 0; iy < gridY1; iy ++ ) {
+
+			for ( ix = 0; ix < gridX1; ix ++ ) {
+
+				var vector = new THREE.Vector3();
+				vector[ u ] = ( ix * segment_width - width_half ) * udir;
+				vector[ v ] = ( iy * segment_height - height_half ) * vdir;
+				vector[ w ] = depth;
+
+				scope.vertices.push( vector );
+
+			}
+
+		}
+
+		for ( iy = 0; iy < gridY; iy++ ) {
+
+			for ( ix = 0; ix < gridX; ix++ ) {
+
+				var a = ix + gridX1 * iy;
+				var b = ix + gridX1 * ( iy + 1 );
+				var c = ( ix + 1 ) + gridX1 * ( iy + 1 );
+				var d = ( ix + 1 ) + gridX1 * iy;
+
+				var face = new THREE.Face4( a + offset, b + offset, c + offset, d + offset );
+				face.normal.copy( normal );
+				face.vertexNormals.push( normal.clone(), normal.clone(), normal.clone(), normal.clone() );
+				face.materialIndex = materialIndex;
+
+				scope.faces.push( face );
+				scope.faceVertexUvs[ 0 ].push( [
+							new THREE.Vector2( ix / gridX, 1 - iy / gridY ),
+							new THREE.Vector2( ix / gridX, 1 - ( iy + 1 ) / gridY ),
+							new THREE.Vector2( ( ix + 1 ) / gridX, 1- ( iy + 1 ) / gridY ),
+							new THREE.Vector2( ( ix + 1 ) / gridX, 1 - iy / gridY )
+						] );
+
+			}
+
+		}
+
+	}
+
+	this.computeCentroids();
+	this.mergeVertices();
+
+};
+
+THREE.CubeGeometry.prototype = Object.create( THREE.Geometry.prototype );

@@ -1,1 +1,218 @@
-THREE.AnimationMorphTarget=function(e,t){this.root=e,this.data=THREE.AnimationHandler.get(t),this.hierarchy=THREE.AnimationHandler.parse(e),this.currentTime=0,this.timeScale=1,this.isPlaying=!1,this.isPaused=!0,this.loop=!0,this.influence=1},THREE.AnimationMorphTarget.prototype.play=function(e,t){if(!this.isPlaying){this.isPlaying=!0,this.loop=void 0!==e?e:!0,this.currentTime=void 0!==t?t:0;for(var i=0;i<this.hierarchy.length;i++)void 0===this.hierarchy[i].animationCache&&(this.hierarchy[i].animationCache={},this.hierarchy[i].animationCache.prevKey=0,this.hierarchy[i].animationCache.nextKey=0),this.hierarchy[i].animationCache.prevKey=this.data.hierarchy[i].keys[0],this.hierarchy[i].animationCache.nextKey=this.data.hierarchy[i].keys[1];this.update(0)}this.isPaused=!1,THREE.AnimationHandler.addToUpdate(this)},THREE.AnimationMorphTarget.prototype.pause=function(){this.isPaused?THREE.AnimationHandler.addToUpdate(this):THREE.AnimationHandler.removeFromUpdate(this),this.isPaused=!this.isPaused},THREE.AnimationMorphTarget.prototype.stop=function(){this.isPlaying=!1,this.isPaused=!1,THREE.AnimationHandler.removeFromUpdate(this);for(var e=0;e<this.hierarchy.length;e++)void 0!==this.hierarchy[e].animationCache&&delete this.hierarchy[e].animationCache},THREE.AnimationMorphTarget.prototype.update=function(e){if(this.isPlaying){var t,i,r,n,o,a,s;this.currentTime+=e*this.timeScale,s=this.currentTime,a=this.currentTime=this.currentTime%this.data.length;for(var l=0,c=this.hierarchy.length;c>l;l++){if(n=this.hierarchy[l],o=n.animationCache,i=o.prevKey,r=o.nextKey,r.time<=s){if(s>a){if(!this.loop)return this.stop(),void 0;for(i=this.data.hierarchy[l].keys[0],r=this.data.hierarchy[l].keys[1];r.time<a;)i=r,r=this.data.hierarchy[l].keys[r.index+1]}else do i=r,r=this.data.hierarchy[l].keys[r.index+1];while(r.time<a);o.prevKey=i,o.nextKey=r}t=(a-i.time)/(r.time-i.time),(0>t||t>1)&&(console.log("THREE.AnimationMorphTarget.update: Warning! Scale out of bounds:"+t),t=0>t?0:1);var h,u,d,p,f=i.morphTargetsInfluences,m=r.morphTargetsInfluences;for(d in f)h=f[d],u=m[d],p=this.root.getMorphTargetIndexByName(d),this.root.morphTargetInfluences[p]=(h+(u-h)*t)*this.influence}}};
+/**
+ * @author mikael emtinger / http://gomo.se/
+ */
+
+THREE.AnimationMorphTarget = function( root, data ) {
+
+	this.root = root;
+	this.data = THREE.AnimationHandler.get( data );
+	this.hierarchy = THREE.AnimationHandler.parse( root );
+	this.currentTime = 0;
+	this.timeScale = 1;
+	this.isPlaying = false;
+	this.isPaused = true;
+	this.loop = true;
+	this.influence = 1;
+}
+
+/*
+ * Play
+ */
+
+THREE.AnimationMorphTarget.prototype.play = function( loop, startTimeMS ) {
+
+	if( !this.isPlaying ) {
+
+		this.isPlaying = true;
+		this.loop = loop !== undefined ? loop : true;
+		this.currentTime = startTimeMS !== undefined ? startTimeMS : 0;
+
+
+		// reset key cache
+
+		for ( var h = 0; h < this.hierarchy.length; h++ ) {
+
+			if ( this.hierarchy[ h ].animationCache === undefined ) {
+
+				this.hierarchy[ h ].animationCache = {};
+				this.hierarchy[ h ].animationCache.prevKey = 0;
+				this.hierarchy[ h ].animationCache.nextKey = 0;
+			}
+
+			this.hierarchy[ h ].animationCache.prevKey = this.data.hierarchy[ h ].keys[ 0 ];
+			this.hierarchy[ h ].animationCache.nextKey = this.data.hierarchy[ h ].keys[ 1 ];
+		}
+
+		this.update( 0 );
+	}
+
+	this.isPaused = false;
+	THREE.AnimationHandler.addToUpdate( this );
+}
+
+
+/*
+ * Pause
+ */
+
+THREE.AnimationMorphTarget.prototype.pause = function() {
+
+	if( this.isPaused ) {
+		
+		THREE.AnimationHandler.addToUpdate( this );
+		
+	} else {
+		
+		THREE.AnimationHandler.removeFromUpdate( this );
+		
+	}
+	
+	this.isPaused = !this.isPaused;
+}
+
+
+/*
+ * Stop
+ */
+
+THREE.AnimationMorphTarget.prototype.stop = function() {
+
+	this.isPlaying = false;
+	this.isPaused  = false;
+	
+	THREE.AnimationHandler.removeFromUpdate( this );
+	
+	
+	// reset JIT matrix and remove cache
+	
+	for ( var h = 0; h < this.hierarchy.length; h++ ) {
+		
+		if ( this.hierarchy[ h ].animationCache !== undefined ) {
+			
+			delete this.hierarchy[ h ].animationCache;	
+		}
+
+	}
+
+}
+
+
+/*
+ * Update
+ */
+
+THREE.AnimationMorphTarget.prototype.update = function( deltaTimeMS ) {
+
+	// early out
+
+	if( !this.isPlaying ) return;
+
+
+	// vars
+
+	var scale;
+	var vector;
+	var prevXYZ, nextXYZ;
+	var prevKey, nextKey;
+	var object;
+	var animationCache;
+	var currentTime, unloopedCurrentTime;
+	
+
+	// update time
+	
+	this.currentTime += deltaTimeMS * this.timeScale;
+
+	unloopedCurrentTime = this.currentTime;
+	currentTime         = this.currentTime = this.currentTime % this.data.length;
+
+
+	// update
+
+	for ( var h = 0, hl = this.hierarchy.length; h < hl; h++ ) {
+
+		object = this.hierarchy[ h ];
+		animationCache = object.animationCache;
+
+
+		// get keys
+
+		prevKey = animationCache.prevKey;
+		nextKey = animationCache.nextKey;
+
+
+		// switch keys?
+
+		if ( nextKey.time <= unloopedCurrentTime ) {
+
+			// did we loop?
+
+			if ( currentTime < unloopedCurrentTime ) {
+
+				if ( this.loop ) {
+
+					prevKey = this.data.hierarchy[ h ].keys[ 0 ];
+					nextKey = this.data.hierarchy[ h ].keys[ 1 ];
+
+					while( nextKey.time < currentTime ) {
+
+						prevKey = nextKey;
+						nextKey = this.data.hierarchy[ h ].keys[ nextKey.index + 1 ];
+
+					}
+
+				} else {
+
+					this.stop();
+					return;
+
+				}
+
+			} else {
+
+				do {
+
+					prevKey = nextKey;
+					nextKey = this.data.hierarchy[ h ].keys[ nextKey.index + 1 ];
+
+				} while( nextKey.time < currentTime )
+
+			}
+
+			animationCache.prevKey = prevKey;
+			animationCache.nextKey = nextKey;
+
+		}
+
+
+		// calc scale and check for error
+
+		scale = ( currentTime - prevKey.time ) / ( nextKey.time - prevKey.time );
+
+		if ( scale < 0 || scale > 1 ) {
+
+			console.log( "THREE.AnimationMorphTarget.update: Warning! Scale out of bounds:" + scale ); 
+			scale = scale < 0 ? 0 : 1;
+
+		}
+
+
+		// interpolate
+		
+		var pi, pmti = prevKey.morphTargetsInfluences;
+		var ni, nmti = nextKey.morphTargetsInfluences;
+		var mt, i;
+		
+		for( mt in pmti ) {
+			
+			pi = pmti[ mt ];
+			ni = nmti[ mt ];
+			i = this.root.getMorphTargetIndexByName( mt );
+			
+			this.root.morphTargetInfluences[ i ] = ( pi + ( ni - pi ) * scale ) * this.influence;
+		}
+
+	}
+
+};
+

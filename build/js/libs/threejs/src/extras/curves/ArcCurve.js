@@ -1,1 +1,10 @@
-THREE.ArcCurve=function(e,t,i,r,n,o){THREE.EllipseCurve.call(this,e,t,i,i,r,n,o)},THREE.ArcCurve.prototype=Object.create(THREE.EllipseCurve.prototype);
+/**************************************************************
+ *	Arc curve
+ **************************************************************/
+
+THREE.ArcCurve = function ( aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise ) {
+
+	THREE.EllipseCurve.call( this, aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise );
+};
+
+THREE.ArcCurve.prototype = Object.create( THREE.EllipseCurve.prototype );

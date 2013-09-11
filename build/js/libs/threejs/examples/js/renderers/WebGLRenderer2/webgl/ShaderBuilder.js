@@ -1,1 +1,413 @@
-THREE.WebGLRenderer.ShaderBuilder=function(e,t){this.renderer=e,this.info=t,this.programs=[],this.programs_counter=0},THREE.extend(THREE.WebGLRenderer.ShaderBuilder.prototype,{buildProgram:function(e,t,i,r,n,o,a){var s,l,c,h,u,d=this.renderer,p=[];e?p.push(e):(p.push(t),p.push(i));for(c in o)p.push(c),p.push(o[c]);for(s in a)p.push(s),p.push(a[s]);for(u=p.join(),s=0,l=this.programs.length;l>s;s++){var f=this.programs[s];if(f.code===u)return f.usedTimes++,f.program}var m="SHADOWMAP_TYPE_BASIC";a.shadowMapType===THREE.PCFShadowMap?m="SHADOWMAP_TYPE_PCF":a.shadowMapType===THREE.PCFSoftShadowMap&&(m="SHADOWMAP_TYPE_PCF_SOFT");var g=this.generateDefines(o),v=["precision "+d.precision+" float;",g,d.supportsVertexTextures?"#define VERTEX_TEXTURES":"",a.gammaInput?"#define GAMMA_INPUT":"",a.gammaOutput?"#define GAMMA_OUTPUT":"",a.physicallyBasedShading?"#define PHYSICALLY_BASED_SHADING":"","#define MAX_DIR_LIGHTS "+a.maxDirLights,"#define MAX_POINT_LIGHTS "+a.maxPointLights,"#define MAX_SPOT_LIGHTS "+a.maxSpotLights,"#define MAX_HEMI_LIGHTS "+a.maxHemiLights,"#define MAX_SHADOWS "+a.maxShadows,"#define MAX_BONES "+a.maxBones,a.map?"#define USE_MAP":"",a.envMap?"#define USE_ENVMAP":"",a.lightMap?"#define USE_LIGHTMAP":"",a.bumpMap?"#define USE_BUMPMAP":"",a.normalMap?"#define USE_NORMALMAP":"",a.specularMap?"#define USE_SPECULARMAP":"",a.vertexColors?"#define USE_COLOR":"",a.skinning?"#define USE_SKINNING":"",a.useVertexTexture?"#define BONE_TEXTURE":"",a.boneTextureWidth?"#define N_BONE_PIXEL_X "+a.boneTextureWidth.toFixed(1):"",a.boneTextureHeight?"#define N_BONE_PIXEL_Y "+a.boneTextureHeight.toFixed(1):"",a.morphTargets?"#define USE_MORPHTARGETS":"",a.morphNormals?"#define USE_MORPHNORMALS":"",a.perPixel?"#define PHONG_PER_PIXEL":"",a.wrapAround?"#define WRAP_AROUND":"",a.doubleSided?"#define DOUBLE_SIDED":"",a.flipSided?"#define FLIP_SIDED":"",a.shadowMapEnabled?"#define USE_SHADOWMAP":"",a.shadowMapEnabled?"#define "+m:"",a.shadowMapDebug?"#define SHADOWMAP_DEBUG":"",a.shadowMapCascade?"#define SHADOWMAP_CASCADE":"",a.sizeAttenuation?"#define USE_SIZEATTENUATION":"","uniform mat4 modelMatrix;","uniform mat4 modelViewMatrix;","uniform mat4 projectionMatrix;","uniform mat4 viewMatrix;","uniform mat3 normalMatrix;","uniform vec3 cameraPosition;","attribute vec3 position;","attribute vec3 normal;","attribute vec2 uv;","attribute vec2 uv2;","#ifdef USE_COLOR","attribute vec3 color;","#endif","#ifdef USE_MORPHTARGETS","attribute vec3 morphTarget0;","attribute vec3 morphTarget1;","attribute vec3 morphTarget2;","attribute vec3 morphTarget3;","#ifdef USE_MORPHNORMALS","attribute vec3 morphNormal0;","attribute vec3 morphNormal1;","attribute vec3 morphNormal2;","attribute vec3 morphNormal3;","#else","attribute vec3 morphTarget4;","attribute vec3 morphTarget5;","attribute vec3 morphTarget6;","attribute vec3 morphTarget7;","#endif","#endif","#ifdef USE_SKINNING","attribute vec4 skinIndex;","attribute vec4 skinWeight;","#endif",""].join("\n"),E=["precision "+d.precision+" float;",a.bumpMap||a.normalMap?"#extension GL_OES_standard_derivatives : enable":"",g,"#define MAX_DIR_LIGHTS "+a.maxDirLights,"#define MAX_POINT_LIGHTS "+a.maxPointLights,"#define MAX_SPOT_LIGHTS "+a.maxSpotLights,"#define MAX_HEMI_LIGHTS "+a.maxHemiLights,"#define MAX_SHADOWS "+a.maxShadows,a.alphaTest?"#define ALPHATEST "+a.alphaTest:"",a.gammaInput?"#define GAMMA_INPUT":"",a.gammaOutput?"#define GAMMA_OUTPUT":"",a.physicallyBasedShading?"#define PHYSICALLY_BASED_SHADING":"",a.useFog&&a.fog?"#define USE_FOG":"",a.useFog&&a.fogExp?"#define FOG_EXP2":"",a.map?"#define USE_MAP":"",a.envMap?"#define USE_ENVMAP":"",a.lightMap?"#define USE_LIGHTMAP":"",a.bumpMap?"#define USE_BUMPMAP":"",a.normalMap?"#define USE_NORMALMAP":"",a.specularMap?"#define USE_SPECULARMAP":"",a.vertexColors?"#define USE_COLOR":"",a.metal?"#define METAL":"",a.perPixel?"#define PHONG_PER_PIXEL":"",a.wrapAround?"#define WRAP_AROUND":"",a.doubleSided?"#define DOUBLE_SIDED":"",a.flipSided?"#define FLIP_SIDED":"",a.shadowMapEnabled?"#define USE_SHADOWMAP":"",a.shadowMapEnabled?"#define "+m:"",a.shadowMapDebug?"#define SHADOWMAP_DEBUG":"",a.shadowMapCascade?"#define SHADOWMAP_CASCADE":"","uniform mat4 viewMatrix;","uniform vec3 cameraPosition;",""].join("\n");h=d.compileShader(v+i,E+t),h.uniforms={},h.attributes={};var y,T,_,b;y=["viewMatrix","modelViewMatrix","projectionMatrix","normalMatrix","modelMatrix","cameraPosition","morphTargetInfluences"],a.useVertexTexture?y.push("boneTexture"):y.push("boneGlobalMatrices");for(T in r)y.push(T);for(this.cacheUniformLocations(h,y),y=["position","normal","uv","uv2","tangent","color","skinIndex","skinWeight","lineDistance"],b=0;b<a.maxMorphTargets;b++)y.push("morphTarget"+b);for(b=0;b<a.maxMorphNormals;b++)y.push("morphNormal"+b);for(_ in n)y.push(_);return this.cacheAttributeLocations(h,y),h.id=this.programs_counter++,this.programs.push({program:h,code:u,usedTimes:1}),this.info.memory.programs=this.programs.length,h},generateDefines:function(e){var t,i,r=[];for(var n in e)t=e[n],t!==!1&&(i="#define "+n+" "+t,r.push(i));return r.join("\n")},cacheUniformLocations:function(e,t){var i,r,n,o=this.renderer;for(i=0,r=t.length;r>i;i++)n=t[i],e.uniforms[n]=o.getUniformLocation(e,n)},cacheAttributeLocations:function(e,t){var i,r,n,o=this.renderer;for(i=0,r=t.length;r>i;i++)n=t[i],e.attributes[n]=o.getAttribLocation(e,n)},removeProgram:function(e){var t,i,r,n=!1,o=this.programs;for(t=0,i=o.length;i>t;t++)if(r=o[t],r.program===e){r.usedTimes--,0===r.usedTimes&&(n=!0);break}if(n===!0){var a=[];for(t=0,i=o.length;i>t;t++)r=o[t],r.program!==e&&a.push(r);this.programs=a,this.renderer.deleteProgram(e),this.info.memory.programs--}}});
+
+THREE.WebGLRenderer.ShaderBuilder = function ( renderer, info ) {
+
+	this.renderer = renderer;
+	this.info = info;
+	this.programs = [],
+	this.programs_counter = 0;
+
+};
+
+THREE.extend( THREE.WebGLRenderer.ShaderBuilder.prototype, {
+
+	buildProgram: function ( shaderID, fragmentShader, vertexShader, uniforms, attributes, defines, parameters ) {
+
+		var renderer = this.renderer;
+		var p, pl, d, program, code;
+		var chunks = [];
+
+		// Generate code
+
+		if ( shaderID ) {
+
+			chunks.push( shaderID );
+
+		} else {
+
+			chunks.push( fragmentShader );
+			chunks.push( vertexShader );
+
+		}
+
+		for ( d in defines ) {
+
+			chunks.push( d );
+			chunks.push( defines[ d ] );
+
+		}
+
+		for ( p in parameters ) {
+
+			chunks.push( p );
+			chunks.push( parameters[ p ] );
+
+		}
+
+		code = chunks.join();
+
+		// Check if code has been already compiled
+
+		for ( p = 0, pl = this.programs.length; p < pl; p ++ ) {
+
+			var programInfo = this.programs[ p ];
+
+			if ( programInfo.code === code ) {
+
+				//console.log( "Code already compiled." /*: \n\n" + code*/ );
+
+				programInfo.usedTimes ++;
+
+				return programInfo.program;
+
+			}
+
+		}
+
+		var shadowMapTypeDefine = "SHADOWMAP_TYPE_BASIC";
+
+		if ( parameters.shadowMapType === THREE.PCFShadowMap ) {
+
+			shadowMapTypeDefine = "SHADOWMAP_TYPE_PCF";
+
+		} else if ( parameters.shadowMapType === THREE.PCFSoftShadowMap ) {
+
+			shadowMapTypeDefine = "SHADOWMAP_TYPE_PCF_SOFT";
+
+		}
+
+		//console.log( "building new program " );
+
+		//
+
+		var customDefines = this.generateDefines( defines );
+
+		//
+
+		var prefix_vertex = [
+
+			"precision " + renderer.precision + " float;",
+
+			customDefines,
+
+			renderer.supportsVertexTextures ? "#define VERTEX_TEXTURES" : "",
+
+			parameters.gammaInput ? "#define GAMMA_INPUT" : "",
+			parameters.gammaOutput ? "#define GAMMA_OUTPUT" : "",
+			parameters.physicallyBasedShading ? "#define PHYSICALLY_BASED_SHADING" : "",
+
+			"#define MAX_DIR_LIGHTS " + parameters.maxDirLights,
+			"#define MAX_POINT_LIGHTS " + parameters.maxPointLights,
+			"#define MAX_SPOT_LIGHTS " + parameters.maxSpotLights,
+			"#define MAX_HEMI_LIGHTS " + parameters.maxHemiLights,
+
+			"#define MAX_SHADOWS " + parameters.maxShadows,
+
+			"#define MAX_BONES " + parameters.maxBones,
+
+			parameters.map ? "#define USE_MAP" : "",
+			parameters.envMap ? "#define USE_ENVMAP" : "",
+			parameters.lightMap ? "#define USE_LIGHTMAP" : "",
+			parameters.bumpMap ? "#define USE_BUMPMAP" : "",
+			parameters.normalMap ? "#define USE_NORMALMAP" : "",
+			parameters.specularMap ? "#define USE_SPECULARMAP" : "",
+			parameters.vertexColors ? "#define USE_COLOR" : "",
+
+			parameters.skinning ? "#define USE_SKINNING" : "",
+			parameters.useVertexTexture ? "#define BONE_TEXTURE" : "",
+			parameters.boneTextureWidth ? "#define N_BONE_PIXEL_X " + parameters.boneTextureWidth.toFixed( 1 ) : "",
+			parameters.boneTextureHeight ? "#define N_BONE_PIXEL_Y " + parameters.boneTextureHeight.toFixed( 1 ) : "",
+
+			parameters.morphTargets ? "#define USE_MORPHTARGETS" : "",
+			parameters.morphNormals ? "#define USE_MORPHNORMALS" : "",
+			parameters.perPixel ? "#define PHONG_PER_PIXEL" : "",
+			parameters.wrapAround ? "#define WRAP_AROUND" : "",
+			parameters.doubleSided ? "#define DOUBLE_SIDED" : "",
+			parameters.flipSided ? "#define FLIP_SIDED" : "",
+
+			parameters.shadowMapEnabled ? "#define USE_SHADOWMAP" : "",
+			parameters.shadowMapEnabled ? "#define " + shadowMapTypeDefine : "",
+			parameters.shadowMapDebug ? "#define SHADOWMAP_DEBUG" : "",
+			parameters.shadowMapCascade ? "#define SHADOWMAP_CASCADE" : "",
+
+			parameters.sizeAttenuation ? "#define USE_SIZEATTENUATION" : "",
+
+			"uniform mat4 modelMatrix;",
+			"uniform mat4 modelViewMatrix;",
+			"uniform mat4 projectionMatrix;",
+			"uniform mat4 viewMatrix;",
+			"uniform mat3 normalMatrix;",
+			"uniform vec3 cameraPosition;",
+
+			"attribute vec3 position;",
+			"attribute vec3 normal;",
+			"attribute vec2 uv;",
+			"attribute vec2 uv2;",
+
+			"#ifdef USE_COLOR",
+
+				"attribute vec3 color;",
+
+			"#endif",
+
+			"#ifdef USE_MORPHTARGETS",
+
+				"attribute vec3 morphTarget0;",
+				"attribute vec3 morphTarget1;",
+				"attribute vec3 morphTarget2;",
+				"attribute vec3 morphTarget3;",
+
+				"#ifdef USE_MORPHNORMALS",
+
+					"attribute vec3 morphNormal0;",
+					"attribute vec3 morphNormal1;",
+					"attribute vec3 morphNormal2;",
+					"attribute vec3 morphNormal3;",
+
+				"#else",
+
+					"attribute vec3 morphTarget4;",
+					"attribute vec3 morphTarget5;",
+					"attribute vec3 morphTarget6;",
+					"attribute vec3 morphTarget7;",
+
+				"#endif",
+
+			"#endif",
+
+			"#ifdef USE_SKINNING",
+
+				"attribute vec4 skinIndex;",
+				"attribute vec4 skinWeight;",
+
+			"#endif",
+
+			""
+
+		].join("\n");
+
+		var prefix_fragment = [
+
+			"precision " + renderer.precision + " float;",
+
+			( parameters.bumpMap || parameters.normalMap ) ? "#extension GL_OES_standard_derivatives : enable" : "",
+
+			customDefines,
+
+			"#define MAX_DIR_LIGHTS " + parameters.maxDirLights,
+			"#define MAX_POINT_LIGHTS " + parameters.maxPointLights,
+			"#define MAX_SPOT_LIGHTS " + parameters.maxSpotLights,
+			"#define MAX_HEMI_LIGHTS " + parameters.maxHemiLights,
+
+			"#define MAX_SHADOWS " + parameters.maxShadows,
+
+			parameters.alphaTest ? "#define ALPHATEST " + parameters.alphaTest: "",
+
+			parameters.gammaInput ? "#define GAMMA_INPUT" : "",
+			parameters.gammaOutput ? "#define GAMMA_OUTPUT" : "",
+    		parameters.physicallyBasedShading ? "#define PHYSICALLY_BASED_SHADING" : "",
+
+			( parameters.useFog && parameters.fog ) ? "#define USE_FOG" : "",
+			( parameters.useFog && parameters.fogExp ) ? "#define FOG_EXP2" : "",
+
+			parameters.map ? "#define USE_MAP" : "",
+			parameters.envMap ? "#define USE_ENVMAP" : "",
+			parameters.lightMap ? "#define USE_LIGHTMAP" : "",
+			parameters.bumpMap ? "#define USE_BUMPMAP" : "",
+			parameters.normalMap ? "#define USE_NORMALMAP" : "",
+			parameters.specularMap ? "#define USE_SPECULARMAP" : "",
+			parameters.vertexColors ? "#define USE_COLOR" : "",
+
+			parameters.metal ? "#define METAL" : "",
+			parameters.perPixel ? "#define PHONG_PER_PIXEL" : "",
+			parameters.wrapAround ? "#define WRAP_AROUND" : "",
+			parameters.doubleSided ? "#define DOUBLE_SIDED" : "",
+			parameters.flipSided ? "#define FLIP_SIDED" : "",
+
+			parameters.shadowMapEnabled ? "#define USE_SHADOWMAP" : "",
+			parameters.shadowMapEnabled ? "#define " + shadowMapTypeDefine : "",
+			parameters.shadowMapDebug ? "#define SHADOWMAP_DEBUG" : "",
+			parameters.shadowMapCascade ? "#define SHADOWMAP_CASCADE" : "",
+
+			"uniform mat4 viewMatrix;",
+			"uniform vec3 cameraPosition;",
+			""
+
+		].join("\n");
+
+		program = renderer.compileShader(prefix_vertex + vertexShader, prefix_fragment + fragmentShader);
+
+		//console.log( prefix_fragment + fragmentShader );
+		//console.log( prefix_vertex + vertexShader );
+
+		program.uniforms = {};
+		program.attributes = {};
+
+		var identifiers, u, a, i;
+
+		// cache uniform locations
+
+		identifiers = [
+
+			'viewMatrix', 'modelViewMatrix', 'projectionMatrix', 'normalMatrix', 'modelMatrix', 'cameraPosition',
+			'morphTargetInfluences'
+
+		];
+
+		if ( parameters.useVertexTexture ) {
+
+			identifiers.push( 'boneTexture' );
+
+		} else {
+
+			identifiers.push( 'boneGlobalMatrices' );
+
+		}
+
+		for ( u in uniforms ) {
+
+			identifiers.push( u );
+
+		}
+
+		this.cacheUniformLocations( program, identifiers );
+
+		// cache attributes locations
+
+		identifiers = [
+
+			"position", "normal", "uv", "uv2", "tangent", "color",
+			"skinIndex", "skinWeight", "lineDistance"
+
+		];
+
+		for ( i = 0; i < parameters.maxMorphTargets; i ++ ) {
+
+			identifiers.push( "morphTarget" + i );
+
+		}
+
+		for ( i = 0; i < parameters.maxMorphNormals; i ++ ) {
+
+			identifiers.push( "morphNormal" + i );
+
+		}
+
+		for ( a in attributes ) {
+
+			identifiers.push( a );
+
+		}
+
+		this.cacheAttributeLocations( program, identifiers );
+
+		program.id = this.programs_counter ++;
+
+		this.programs.push( { program: program, code: code, usedTimes: 1 } );
+
+		this.info.memory.programs = this.programs.length;
+
+		return program;
+
+	},
+
+	generateDefines: function ( defines ) {
+
+		var value, chunk, chunks = [];
+
+		for ( var d in defines ) {
+
+			value = defines[ d ];
+			if ( value === false ) continue;
+
+			chunk = "#define " + d + " " + value;
+			chunks.push( chunk );
+
+		}
+
+		return chunks.join( "\n" );
+
+	},
+
+	// Shader parameters cache
+
+	cacheUniformLocations: function ( program, identifiers ) {
+
+		var i, l, id, renderer = this.renderer;
+
+		for ( i = 0, l = identifiers.length; i < l; i ++ ) {
+
+			id = identifiers[ i ];
+			program.uniforms[ id ] = renderer.getUniformLocation( program, id );
+
+		}
+
+	},
+
+	cacheAttributeLocations: function ( program, identifiers ) {
+
+		var i, l, id, renderer = this.renderer;
+
+		for( i = 0, l = identifiers.length; i < l; i ++ ) {
+
+			id = identifiers[ i ];
+			program.attributes[ id ] = renderer.getAttribLocation( program, id );
+
+		}
+
+	},
+
+	removeProgram: function ( program ) {
+
+		var i, il, programInfo;
+		var deleteProgram = false;
+		var programs = this.programs;
+
+		for ( i = 0, il = programs.length; i < il; i ++ ) {
+
+			programInfo = programs[ i ];
+
+			if ( programInfo.program === program ) {
+
+				programInfo.usedTimes --;
+
+				if ( programInfo.usedTimes === 0 ) {
+
+					deleteProgram = true;
+
+				}
+
+				break;
+
+			}
+
+		}
+
+		if ( deleteProgram === true ) {
+
+			// avoid using array.splice, this is costlier than creating new array from scratch
+
+			var newPrograms = [];
+
+			for ( i = 0, il = programs.length; i < il; i ++ ) {
+
+				programInfo = programs[ i ];
+
+				if ( programInfo.program !== program ) {
+
+					newPrograms.push( programInfo );
+
+				}
+
+			}
+
+			this.programs = newPrograms;
+
+			this.renderer.deleteProgram( program );
+
+			this.info.memory.programs --;
+
+		}
+
+	}
+
+} );

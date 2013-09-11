@@ -1,1 +1,41 @@
-THREE.LoadingManager=function(e,t,i){var r=this,o=0,n=0;this.onLoad=e,this.onProgress=t,this.onError=i,this.itemStart=function(){n++},this.itemEnd=function(e){o++,void 0!==r.onProgress&&r.onProgress(e,o,n),o===n&&void 0!==r.onLoad&&r.onLoad()}},THREE.DefaultLoadingManager=new THREE.LoadingManager;
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.LoadingManager = function ( onLoad, onProgress, onError ) {
+
+	var scope = this;
+
+	var loaded = 0, total = 0;
+
+	this.onLoad = onLoad;
+	this.onProgress = onProgress;
+	this.onError = onError;
+
+	this.itemStart = function ( url ) {
+
+		total ++;
+
+	};
+
+	this.itemEnd = function ( url ) {
+
+		loaded ++;
+
+		if ( scope.onProgress !== undefined ) {
+
+			scope.onProgress( url, loaded, total );
+
+		}
+
+		if ( loaded === total && scope.onLoad !== undefined ) {
+
+			scope.onLoad();
+
+		}
+
+	};
+
+};
+
+THREE.DefaultLoadingManager = new THREE.LoadingManager();

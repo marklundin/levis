@@ -1,1 +1,258 @@
-THREE.AnimationHandler=function(){var e=[],t={},i={};i.update=function(t){for(var i=0;i<e.length;i++)e[i].update(t)},i.addToUpdate=function(t){-1===e.indexOf(t)&&e.push(t)},i.removeFromUpdate=function(t){var i=e.indexOf(t);-1!==i&&e.splice(i,1)},i.add=function(e){void 0!==t[e.name]&&console.log("THREE.AnimationHandler.add: Warning! "+e.name+" already exists in library. Overwriting."),t[e.name]=e,n(e)},i.get=function(e){return"string"==typeof e?t[e]?t[e]:(console.log("THREE.AnimationHandler.get: Couldn't find animation "+e),null):void 0},i.parse=function(e){var t=[];if(e instanceof THREE.SkinnedMesh)for(var i=0;i<e.bones.length;i++)t.push(e.bones[i]);else r(e,t);return t};var r=function(e,t){t.push(e);for(var i=0;i<e.children.length;i++)r(e.children[i],t)},n=function(e){if(e.initialized!==!0){for(var t=0;t<e.hierarchy.length;t++){for(var i=0;i<e.hierarchy[t].keys.length;i++)if(e.hierarchy[t].keys[i].time<0&&(e.hierarchy[t].keys[i].time=0),void 0!==e.hierarchy[t].keys[i].rot&&!(e.hierarchy[t].keys[i].rot instanceof THREE.Quaternion)){var r=e.hierarchy[t].keys[i].rot;e.hierarchy[t].keys[i].rot=new THREE.Quaternion(r[0],r[1],r[2],r[3])}if(e.hierarchy[t].keys.length&&void 0!==e.hierarchy[t].keys[0].morphTargets){for(var n={},i=0;i<e.hierarchy[t].keys.length;i++)for(var o=0;o<e.hierarchy[t].keys[i].morphTargets.length;o++){var a=e.hierarchy[t].keys[i].morphTargets[o];n[a]=-1}e.hierarchy[t].usedMorphTargets=n;for(var i=0;i<e.hierarchy[t].keys.length;i++){var s={};for(var a in n){for(var o=0;o<e.hierarchy[t].keys[i].morphTargets.length;o++)if(e.hierarchy[t].keys[i].morphTargets[o]===a){s[a]=e.hierarchy[t].keys[i].morphTargetsInfluences[o];break}o===e.hierarchy[t].keys[i].morphTargets.length&&(s[a]=0)}e.hierarchy[t].keys[i].morphTargetsInfluences=s}}for(var i=1;i<e.hierarchy[t].keys.length;i++)e.hierarchy[t].keys[i].time===e.hierarchy[t].keys[i-1].time&&(e.hierarchy[t].keys.splice(i,1),i--);for(var i=0;i<e.hierarchy[t].keys.length;i++)e.hierarchy[t].keys[i].index=i}var l=parseInt(e.length*e.fps,10);e.JIT={},e.JIT.hierarchy=[];for(var t=0;t<e.hierarchy.length;t++)e.JIT.hierarchy.push(new Array(l));e.initialized=!0}};return i.LINEAR=0,i.CATMULLROM=1,i.CATMULLROM_FORWARD=2,i}();
+/**
+ * @author mikael emtinger / http://gomo.se/
+ */
+
+THREE.AnimationHandler = (function() {
+
+	var playing = [];
+	var library = {};
+	var that    = {};
+
+
+	//--- update ---
+
+	that.update = function( deltaTimeMS ) {
+
+		for( var i = 0; i < playing.length; i ++ )
+			playing[ i ].update( deltaTimeMS );
+
+	};
+
+
+	//--- add ---
+
+	that.addToUpdate = function( animation ) {
+
+		if ( playing.indexOf( animation ) === -1 )
+			playing.push( animation );
+
+	};
+
+
+	//--- remove ---
+
+	that.removeFromUpdate = function( animation ) {
+
+		var index = playing.indexOf( animation );
+
+		if( index !== -1 )
+			playing.splice( index, 1 );
+
+	};
+
+
+	//--- add ---
+
+	that.add = function( data ) {
+
+		if ( library[ data.name ] !== undefined )
+			console.log( "THREE.AnimationHandler.add: Warning! " + data.name + " already exists in library. Overwriting." );
+
+		library[ data.name ] = data;
+		initData( data );
+
+	};
+
+
+	//--- get ---
+
+	that.get = function( name ) {
+
+		if ( typeof name === "string" ) {
+
+			if ( library[ name ] ) {
+
+				return library[ name ];
+
+			} else {
+
+				console.log( "THREE.AnimationHandler.get: Couldn't find animation " + name );
+				return null;
+
+			}
+
+		} else {
+
+			// todo: add simple tween library
+
+		}
+
+	};
+
+	//--- parse ---
+
+	that.parse = function( root ) {
+
+		// setup hierarchy
+
+		var hierarchy = [];
+
+		if ( root instanceof THREE.SkinnedMesh ) {
+
+			for( var b = 0; b < root.bones.length; b++ ) {
+
+				hierarchy.push( root.bones[ b ] );
+
+			}
+
+		} else {
+
+			parseRecurseHierarchy( root, hierarchy );
+
+		}
+
+		return hierarchy;
+
+	};
+
+	var parseRecurseHierarchy = function( root, hierarchy ) {
+
+		hierarchy.push( root );
+
+		for( var c = 0; c < root.children.length; c++ )
+			parseRecurseHierarchy( root.children[ c ], hierarchy );
+
+	}
+
+
+	//--- init data ---
+
+	var initData = function( data ) {
+
+		if( data.initialized === true )
+			return;
+
+
+		// loop through all keys
+
+		for( var h = 0; h < data.hierarchy.length; h ++ ) {
+
+			for( var k = 0; k < data.hierarchy[ h ].keys.length; k ++ ) {
+
+				// remove minus times
+
+				if( data.hierarchy[ h ].keys[ k ].time < 0 )
+					data.hierarchy[ h ].keys[ k ].time = 0;
+
+
+				// create quaternions
+
+				if( data.hierarchy[ h ].keys[ k ].rot !== undefined &&
+				 !( data.hierarchy[ h ].keys[ k ].rot instanceof THREE.Quaternion ) ) {
+
+					var quat = data.hierarchy[ h ].keys[ k ].rot;
+					data.hierarchy[ h ].keys[ k ].rot = new THREE.Quaternion( quat[0], quat[1], quat[2], quat[3] );
+
+				}
+
+			}
+
+
+			// prepare morph target keys
+
+			if( data.hierarchy[ h ].keys.length && data.hierarchy[ h ].keys[ 0 ].morphTargets !== undefined ) {
+
+				// get all used
+
+				var usedMorphTargets = {};
+
+				for ( var k = 0; k < data.hierarchy[ h ].keys.length; k ++ ) {
+
+					for ( var m = 0; m < data.hierarchy[ h ].keys[ k ].morphTargets.length; m ++ ) {
+
+						var morphTargetName = data.hierarchy[ h ].keys[ k ].morphTargets[ m ];
+						usedMorphTargets[ morphTargetName ] = -1;
+
+					}
+
+				}
+
+				data.hierarchy[ h ].usedMorphTargets = usedMorphTargets;
+
+
+				// set all used on all frames
+
+				for ( var k = 0; k < data.hierarchy[ h ].keys.length; k ++ ) {
+
+					var influences = {};
+
+					for ( var morphTargetName in usedMorphTargets ) {
+
+						for ( var m = 0; m < data.hierarchy[ h ].keys[ k ].morphTargets.length; m ++ ) {
+
+							if ( data.hierarchy[ h ].keys[ k ].morphTargets[ m ] === morphTargetName ) {
+
+								influences[ morphTargetName ] = data.hierarchy[ h ].keys[ k ].morphTargetsInfluences[ m ];
+								break;
+
+							}
+
+						}
+
+						if ( m === data.hierarchy[ h ].keys[ k ].morphTargets.length ) {
+
+							influences[ morphTargetName ] = 0;
+
+						}
+
+					}
+
+					data.hierarchy[ h ].keys[ k ].morphTargetsInfluences = influences;
+
+				}
+
+			}
+
+
+			// remove all keys that are on the same time
+
+			for ( var k = 1; k < data.hierarchy[ h ].keys.length; k ++ ) {
+
+				if ( data.hierarchy[ h ].keys[ k ].time === data.hierarchy[ h ].keys[ k - 1 ].time ) {
+
+					data.hierarchy[ h ].keys.splice( k, 1 );
+					k --;
+
+				}
+
+			}
+
+
+			// set index
+
+			for ( var k = 0; k < data.hierarchy[ h ].keys.length; k ++ ) {
+
+				data.hierarchy[ h ].keys[ k ].index = k;
+
+			}
+
+		}
+
+
+		// JIT
+
+		var lengthInFrames = parseInt( data.length * data.fps, 10 );
+
+		data.JIT = {};
+		data.JIT.hierarchy = [];
+
+		for( var h = 0; h < data.hierarchy.length; h ++ )
+			data.JIT.hierarchy.push( new Array( lengthInFrames ) );
+
+
+		// done
+
+		data.initialized = true;
+
+	};
+
+
+	// interpolation types
+
+	that.LINEAR = 0;
+	that.CATMULLROM = 1;
+	that.CATMULLROM_FORWARD = 2;
+
+	return that;
+
+}());

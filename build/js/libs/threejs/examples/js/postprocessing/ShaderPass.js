@@ -1,1 +1,51 @@
-THREE.ShaderPass=function(e,t){this.textureID=void 0!==t?t:"tDiffuse",this.uniforms=THREE.UniformsUtils.clone(e.uniforms),this.material=new THREE.ShaderMaterial({uniforms:this.uniforms,vertexShader:e.vertexShader,fragmentShader:e.fragmentShader}),this.renderToScreen=!1,this.enabled=!0,this.needsSwap=!0,this.clear=!1},THREE.ShaderPass.prototype={render:function(e,t,i){this.uniforms[this.textureID]&&(this.uniforms[this.textureID].value=i),THREE.EffectComposer.quad.material=this.material,this.renderToScreen?e.render(THREE.EffectComposer.scene,THREE.EffectComposer.camera):e.render(THREE.EffectComposer.scene,THREE.EffectComposer.camera,t,this.clear)}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.ShaderPass = function ( shader, textureID ) {
+
+	this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
+
+	this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+	this.material = new THREE.ShaderMaterial( {
+
+		uniforms: this.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader
+
+	} );
+
+	this.renderToScreen = false;
+
+	this.enabled = true;
+	this.needsSwap = true;
+	this.clear = false;
+
+};
+
+THREE.ShaderPass.prototype = {
+
+	render: function ( renderer, writeBuffer, readBuffer, delta ) {
+
+		if ( this.uniforms[ this.textureID ] ) {
+
+			this.uniforms[ this.textureID ].value = readBuffer;
+
+		}
+
+		THREE.EffectComposer.quad.material = this.material;
+
+		if ( this.renderToScreen ) {
+
+			renderer.render( THREE.EffectComposer.scene, THREE.EffectComposer.camera );
+
+		} else {
+
+			renderer.render( THREE.EffectComposer.scene, THREE.EffectComposer.camera, writeBuffer, this.clear );
+
+		}
+
+	}
+
+};

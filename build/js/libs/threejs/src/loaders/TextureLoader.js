@@ -1,1 +1,42 @@
-THREE.TextureLoader=function(e){this.manager=void 0!==e?e:THREE.DefaultLoadingManager},THREE.TextureLoader.prototype={constructor:THREE.TextureLoader,load:function(e,t){var i=this,r=new THREE.ImageLoader(i.manager);r.setCrossOrigin(this.crossOrigin),r.load(e,function(e){var i=new THREE.Texture(e);i.needsUpdate=!0,void 0!==t&&t(i)})},setCrossOrigin:function(e){this.crossOrigin=e}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.TextureLoader = function ( manager ) {
+
+	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+
+};
+
+THREE.TextureLoader.prototype = {
+
+	constructor: THREE.TextureLoader,
+
+	load: function ( url, onLoad, onProgress, onError ) {
+
+		var scope = this;
+
+		var loader = new THREE.ImageLoader( scope.manager );
+		loader.setCrossOrigin( this.crossOrigin );
+		loader.load( url, function ( image ) {
+
+			var texture = new THREE.Texture( image );
+			texture.needsUpdate = true;
+
+			if ( onLoad !== undefined ) {
+
+				onLoad( texture );
+
+			}
+
+		} );
+
+	},
+
+	setCrossOrigin: function ( value ) {
+
+		this.crossOrigin = value;
+
+	}
+
+};

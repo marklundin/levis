@@ -1,1 +1,127 @@
-THREE.Scene=function(){THREE.Object3D.call(this),this.fog=null,this.overrideMaterial=null,this.autoUpdate=!0,this.matrixAutoUpdate=!1,this.__objects=[],this.__lights=[],this.__objectsAdded=[],this.__objectsRemoved=[]},THREE.Scene.prototype=Object.create(THREE.Object3D.prototype),THREE.Scene.prototype.__addObject=function(e){if(e instanceof THREE.Light)-1===this.__lights.indexOf(e)&&this.__lights.push(e),e.target&&void 0===e.target.parent&&this.add(e.target);else if(!(e instanceof THREE.Camera||e instanceof THREE.Bone)&&-1===this.__objects.indexOf(e)){this.__objects.push(e),this.__objectsAdded.push(e);var t=this.__objectsRemoved.indexOf(e);-1!==t&&this.__objectsRemoved.splice(t,1)}for(var i=0;i<e.children.length;i++)this.__addObject(e.children[i])},THREE.Scene.prototype.__removeObject=function(e){if(e instanceof THREE.Light){var t=this.__lights.indexOf(e);-1!==t&&this.__lights.splice(t,1)}else if(!(e instanceof THREE.Camera)){var t=this.__objects.indexOf(e);if(-1!==t){this.__objects.splice(t,1),this.__objectsRemoved.push(e);var i=this.__objectsAdded.indexOf(e);-1!==i&&this.__objectsAdded.splice(i,1)}}for(var r=0;r<e.children.length;r++)this.__removeObject(e.children[r])},THREE.Scene.prototype.clone=function(e){return void 0===e&&(e=new THREE.Scene),THREE.Object3D.prototype.clone.call(this,e),null!==this.fog&&(e.fog=this.fog.clone()),null!==this.overrideMaterial&&(e.overrideMaterial=this.overrideMaterial.clone()),e.autoUpdate=this.autoUpdate,e.matrixAutoUpdate=this.matrixAutoUpdate,e};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.Scene = function () {
+
+	THREE.Object3D.call( this );
+
+	this.fog = null;
+	this.overrideMaterial = null;
+
+	this.autoUpdate = true; // checked by the renderer
+	this.matrixAutoUpdate = false;
+
+	this.__objects = [];
+	this.__lights = [];
+
+	this.__objectsAdded = [];
+	this.__objectsRemoved = [];
+
+};
+
+THREE.Scene.prototype = Object.create( THREE.Object3D.prototype );
+
+THREE.Scene.prototype.__addObject = function ( object ) {
+
+	if ( object instanceof THREE.Light ) {
+
+		if ( this.__lights.indexOf( object ) === - 1 ) {
+
+			this.__lights.push( object );
+
+		}
+
+		if ( object.target && object.target.parent === undefined ) {
+
+			this.add( object.target );
+
+		}
+
+	} else if ( !( object instanceof THREE.Camera || object instanceof THREE.Bone ) ) {
+
+		if ( this.__objects.indexOf( object ) === - 1 ) {
+
+			this.__objects.push( object );
+			this.__objectsAdded.push( object );
+
+			// check if previously removed
+
+			var i = this.__objectsRemoved.indexOf( object );
+
+			if ( i !== -1 ) {
+
+				this.__objectsRemoved.splice( i, 1 );
+
+			}
+
+		}
+
+	}
+
+	for ( var c = 0; c < object.children.length; c ++ ) {
+
+		this.__addObject( object.children[ c ] );
+
+	}
+
+};
+
+THREE.Scene.prototype.__removeObject = function ( object ) {
+
+	if ( object instanceof THREE.Light ) {
+
+		var i = this.__lights.indexOf( object );
+
+		if ( i !== -1 ) {
+
+			this.__lights.splice( i, 1 );
+
+		}
+
+	} else if ( !( object instanceof THREE.Camera ) ) {
+
+		var i = this.__objects.indexOf( object );
+
+		if( i !== -1 ) {
+
+			this.__objects.splice( i, 1 );
+			this.__objectsRemoved.push( object );
+
+			// check if previously added
+
+			var ai = this.__objectsAdded.indexOf( object );
+
+			if ( ai !== -1 ) {
+
+				this.__objectsAdded.splice( ai, 1 );
+
+			}
+
+		}
+
+	}
+
+	for ( var c = 0; c < object.children.length; c ++ ) {
+
+		this.__removeObject( object.children[ c ] );
+
+	}
+
+};
+
+THREE.Scene.prototype.clone = function ( object ) {
+
+	if ( object === undefined ) object = new THREE.Scene();
+
+	THREE.Object3D.prototype.clone.call(this, object);
+
+	if ( this.fog !== null ) object.fog = this.fog.clone();
+	if ( this.overrideMaterial !== null ) object.overrideMaterial = this.overrideMaterial.clone();
+
+	object.autoUpdate = this.autoUpdate;
+	object.matrixAutoUpdate = this.matrixAutoUpdate;
+
+	return object;
+
+};

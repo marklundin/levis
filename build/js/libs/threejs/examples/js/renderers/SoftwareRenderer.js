@@ -1,1 +1,590 @@
-THREE.SoftwareRenderer=function(){function e(e){var t=e.id,i=b[t];if(void 0===b[t]){if(e instanceof THREE.MeshBasicMaterial||e instanceof THREE.MeshLambertMaterial||e instanceof THREE.MeshPhongMaterial){var r;r=e.vertexColors===THREE.FaceColors?["buffer[ offset ] = face.color.r * 255;","buffer[ offset + 1 ] = face.color.g * 255;","buffer[ offset + 2 ] = face.color.b * 255;","buffer[ offset + 3 ] = material.opacity * 255;"].join("\n"):["buffer[ offset ] = material.color.r * 255;","buffer[ offset + 1 ] = material.color.g * 255;","buffer[ offset + 2 ] = material.color.b * 255;","buffer[ offset + 3 ] = material.opacity * 255;"].join("\n"),i=new Function("buffer, offset, u, v, face, material",r)}else{var r=["buffer[ offset ] = u * 255;","buffer[ offset + 1 ] = v * 255;","buffer[ offset + 2 ] = 0;","buffer[ offset + 3 ] = 255;"].join("\n");i=new Function("buffer, offset, u, v",r)}b[t]=i}return i}function t(e,t,r,s,f,v){if(!(e.z<-1||e.z>1||t.z<-1||t.z>1||r.z<-1||r.z>1)){var T=0|e.x*l+u,_=0|t.x*l+u,b=0|r.x*l+u,C=0|e.y*h+d,k=0|t.y*h+d,N=0|r.y*h+d,I=0|e.z*c+p,O=0|t.z*c+p,F=0|r.z*c+p,z=T-_,V=k-C,B=_-b,U=N-k,j=b-T,W=C-N,G=Math.max(Math.min(T,_,b)+H>>w,0),X=Math.min(Math.max(T,_,b)+H>>w,n),Y=Math.max(Math.min(C,k,N)+H>>w,0),q=Math.min(Math.max(C,k,N)+H>>w,o);A=Math.min(G,A),P=Math.max(X,P),D=Math.min(Y,D),L=Math.max(q,L);var K=M;G&=~(K-1),Y&=~(K-1);var Z=V*((G<<w)-T)+z*((Y<<w)-C),Q=U*((G<<w)-_)+B*((Y<<w)-k),$=W*((G<<w)-b)+j*((Y<<w)-N);(V>0||0==V&&z>0)&&Z++,(U>0||0==U&&B>0)&&Q++,(W>0||0==W&&j>0)&&$++,Z=Z-1>>w,Q=Q-1>>w,$=$-1>>w;var J=I-O,et=F-I,tt=1/(z*W-j*V),it=tt*(J*W-et*V),rt=tt*(J*j-z*et),nt=0|I+((G<<w)-T)*it+((Y<<w)-C)*rt,ot=1<<w;it=0|it*ot,rt=0|rt*ot;var at=K-1,st=0,lt=0,ht=0,ct=0,ut=0,dt=0,pt=0,ft=0;z>=0?lt-=at*z:st-=at*z,V>=0?lt-=at*V:st-=at*V,B>=0?ct-=at*B:ht-=at*B,U>=0?ct-=at*U:ht-=at*U,j>=0?dt-=at*j:ut-=at*j,W>=0?dt-=at*W:ut-=at*W,it>=0?ft+=at*it:pt+=at*it,rt>=0?ft+=at*rt:pt+=at*rt;for(var mt=n-K,gt=1/(Z+Q+$),vt=Z,Et=Q,yt=$,Tt=nt,_t=-K,bt=_t*V,xt=_t*U,Rt=_t*W,wt=_t*it,Ht=G,St=Y;q>St;St+=K){for(;Ht>=G&&X>Ht&&vt>=lt&&Et>=ct&&yt>=dt;)Ht+=_t,vt+=bt,Et+=xt,yt+=Rt,Tt+=wt;for(_t=-_t,bt=-bt,xt=-xt,Rt=-Rt,wt=-wt;;){if(Ht+=_t,vt+=bt,Et+=xt,yt+=Rt,Tt+=wt,G>Ht||Ht>=X)break;if(lt>vt){if(0>bt)break}else if(ct>Et){if(0>xt)break}else if(dt>yt){if(0>Rt)break}else{var Mt=Ht>>S,Ct=St>>S,At=Mt+Ct*a,Dt=Tt+pt;if(!(E[At]<Dt)){var Pt=y[At];Pt&R&&i(Mt,Ct),y[At]=Pt&~(x|R);var Lt=Ht+St*n;if(vt>=st&&Et>=ht&&yt>=ut){var kt=Tt+ft;E[At]=Math.min(E[At],kt);for(var Nt=vt,It=Et,Ot=Tt,Ft=0;K>Ft;Ft++){for(var zt=Nt,Vt=It,Bt=Ot,Ut=0;K>Ut;Ut++){var jt=Bt;if(jt<g[Lt]){g[Lt]=jt;var Wt=zt*gt,Gt=Vt*gt;s(m,4*Lt,Wt,Gt,f,v)}zt+=V,Vt+=U,Bt+=it,Lt++}Nt+=z,It+=B,Ot+=rt,Lt+=mt}}else for(var Nt=vt,It=Et,Xt=yt,Ot=Tt,Ft=0;K>Ft;Ft++){for(var zt=Nt,Vt=It,Yt=Xt,Bt=Ot,Ut=0;K>Ut;Ut++){if((zt|Vt|Yt)>=0){var jt=Bt;if(jt<g[Lt]){var Wt=zt*gt,Gt=Vt*gt;g[Lt]=jt,s(m,4*Lt,Wt,Gt,f,v)}}zt+=V,Vt+=U,Yt+=W,Bt+=it,Lt++}Nt+=z,It+=B,Xt+=j,Ot+=rt,Lt+=mt}}}}vt+=K*z,Et+=K*B,yt+=K*j,Tt+=K*rt}}}function i(e,t){for(var i=e*M+t*M*n,r=4*i+3,o=n-M,a=4*o,s=0;M>s;s++){for(var l=0;M>l;l++)g[i]=C,m[r]=0,i++,r+=4;i+=o,r+=a}}function r(){for(var e=0,t=0;s>t;t++)for(var r=0;a>r;r++)y[e]&R&&(i(r,t),y[e]=x),e++}console.log("THREE.SoftwareRenderer",THREE.REVISION);var n,o,a,s,l,h,c,u,d,p,f,m,g,v,E,y,T=document.createElement("canvas"),_=T.getContext("2d"),b={},x=1,R=2,w=4,H=(1<<w)-1,S=3,M=1<<S,C=1<<24,A=1/0,D=1/0,P=0,L=0,k=1/0,N=1/0,I=0,O=0,F=new THREE.Projector;this.domElement=T,this.autoClear=!0,this.supportsVertexTextures=function(){},this.setFaceCulling=function(){},this.setClearColor=function(){},this.setSize=function(e,t){a=Math.floor(e/M),s=Math.floor(t/M),n=a*M,o=s*M;var i=1<<w;l=i*n/2,h=-i*o/2,c=C/2,u=i*n/2+.5,d=i*o/2+.5,p=C/2+.5,T.width=n,T.height=o,f=_.getImageData(0,0,n,o),m=f.data,g=new Int32Array(m.length/4),v=a*s,E=new Int32Array(v),y=new Uint8Array(v);for(var r=0,b=g.length;b>r;r++)g[r]=C;for(var r=0;v>r;r++)y[r]=x},this.setSize(T.width,T.height),this.clear=function(){A=1/0,D=1/0,P=0,L=0;for(var e=0;v>e;e++)E[e]=C,y[e]=y[e]&x?x:R},this.render=function(i,n){this.autoClear===!0&&this.clear();for(var o=F.projectScene(i,n),a=o.elements,s=0,l=a.length;l>s;s++){var h=a[s],c=h.material,u=e(c);h instanceof THREE.RenderableFace3?t(h.v1.positionScreen,h.v2.positionScreen,h.v3.positionScreen,u,h,c):h instanceof THREE.RenderableFace4&&(t(h.v1.positionScreen,h.v2.positionScreen,h.v4.positionScreen,u,h,c),t(h.v2.positionScreen,h.v3.positionScreen,h.v4.positionScreen,u,h,c))}r();var d=Math.min(A,k),p=Math.min(D,N),m=Math.max(P,I)-d,g=Math.max(L,O)-p;1/0!==d&&_.putImageData(f,0,0,d,p,m,g),k=A,N=D,I=P,O=L}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author ryg / http://farbrausch.de/~fg
+ * @author mraleph / http://mrale.ph/
+ */
+
+THREE.SoftwareRenderer = function () {
+
+	console.log( 'THREE.SoftwareRenderer', THREE.REVISION );
+
+	var canvas = document.createElement( 'canvas' );
+	var context = canvas.getContext( '2d' );
+
+	var shaders = {};
+
+	var canvasWidth, canvasHeight;
+	var canvasWBlocks, canvasHBlocks;
+	var viewportXScale, viewportYScale, viewportZScale;
+	var viewportXOffs, viewportYOffs, viewportZOffs;
+
+	var imagedata, data, zbuffer;
+	var numBlocks, blockMaxZ, blockFlags;
+
+	var BLOCK_ISCLEAR = (1 << 0);
+	var BLOCK_NEEDCLEAR = (1 << 1);
+
+	var subpixelBits = 4;
+	var subpixelBias = (1 << subpixelBits) - 1;
+	var blockShift = 3;
+	var blockSize = 1 << blockShift;
+	var maxZVal = (1 << 24); // Note: You want to size this so you don't get overflows.
+
+	var rectx1 = Infinity, recty1 = Infinity;
+	var rectx2 = 0, recty2 = 0;
+
+	var prevrectx1 = Infinity, prevrecty1 = Infinity;
+	var prevrectx2 = 0, prevrecty2 = 0;
+
+	var projector = new THREE.Projector();
+
+	this.domElement = canvas;
+
+	this.autoClear = true;
+
+	// WebGLRenderer compatibility
+
+	this.supportsVertexTextures = function () {};
+	this.setFaceCulling = function () {};
+
+	this.setClearColor = function ( color, alpha ) {
+
+		// TODO
+
+	};
+
+	this.setSize = function ( width, height ) {
+
+		canvasWBlocks = Math.floor( width / blockSize );
+		canvasHBlocks = Math.floor( height / blockSize );
+		canvasWidth   = canvasWBlocks * blockSize;
+		canvasHeight  = canvasHBlocks * blockSize;
+
+		var fixScale = 1 << subpixelBits;
+
+		viewportXScale =  fixScale * canvasWidth  / 2;
+		viewportYScale = -fixScale * canvasHeight / 2;
+		viewportZScale =             maxZVal      / 2;
+		viewportXOffs  =  fixScale * canvasWidth  / 2 + 0.5;
+		viewportYOffs  =  fixScale * canvasHeight / 2 + 0.5;
+		viewportZOffs  =             maxZVal      / 2 + 0.5;
+
+		canvas.width = canvasWidth;
+		canvas.height = canvasHeight;
+
+		imagedata = context.getImageData( 0, 0, canvasWidth, canvasHeight );
+		data = imagedata.data;
+		zbuffer = new Int32Array( data.length / 4 );
+
+		numBlocks = canvasWBlocks * canvasHBlocks;
+		blockMaxZ = new Int32Array( numBlocks );
+		blockFlags = new Uint8Array( numBlocks );
+
+		for ( var i = 0, l = zbuffer.length; i < l; i ++ ) {
+
+			zbuffer[ i ] = maxZVal;
+
+		}
+
+		for ( var i = 0; i < numBlocks; i ++ ) {
+
+			blockFlags[ i ] = BLOCK_ISCLEAR;
+
+		}
+
+	};
+
+	this.setSize( canvas.width, canvas.height );
+
+	this.clear = function () {
+
+		rectx1 = Infinity;
+		recty1 = Infinity;
+		rectx2 = 0;
+		recty2 = 0;
+
+		for ( var i = 0; i < numBlocks; i ++ ) {
+
+			blockMaxZ[ i ] = maxZVal;
+			blockFlags[ i ] = (blockFlags[ i ] & BLOCK_ISCLEAR) ? BLOCK_ISCLEAR : BLOCK_NEEDCLEAR;
+
+		}
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		if ( this.autoClear === true ) this.clear();
+
+		var renderData = projector.projectScene( scene, camera );
+		var elements = renderData.elements;
+
+		for ( var e = 0, el = elements.length; e < el; e ++ ) {
+
+			var element = elements[ e ];
+			var material = element.material;
+			var shader = getMaterialShader( material );
+
+			if ( element instanceof THREE.RenderableFace3 ) {
+
+				drawTriangle(
+					element.v1.positionScreen,
+					element.v2.positionScreen,
+					element.v3.positionScreen,
+					shader, element, material
+				)
+
+			} else if ( element instanceof THREE.RenderableFace4 ) {
+
+				drawTriangle(
+					element.v1.positionScreen,
+					element.v2.positionScreen,
+					element.v4.positionScreen,
+					shader, element, material
+				);
+
+				drawTriangle(
+					element.v2.positionScreen,
+					element.v3.positionScreen,
+					element.v4.positionScreen,
+					shader, element, material
+				);
+
+			}
+
+		}
+
+		finishClear();
+
+		var x = Math.min( rectx1, prevrectx1 );
+		var y = Math.min( recty1, prevrecty1 );
+		var width = Math.max( rectx2, prevrectx2 ) - x;
+		var height = Math.max( recty2, prevrecty2 ) - y;
+
+		/*
+		// debug; draw zbuffer
+
+		for ( var i = 0, l = zbuffer.length; i < l; i++ ) {
+
+			var o = i * 4;
+			var v = (65535 - zbuffer[ i ]) >> 3;
+			data[ o + 0 ] = v;
+			data[ o + 1 ] = v;
+			data[ o + 2 ] = v;
+			data[ o + 3 ] = 255;
+		}
+		*/
+
+		if ( x !== Infinity ) {
+
+			context.putImageData( imagedata, 0, 0, x, y, width, height );
+
+		}
+
+		prevrectx1 = rectx1; prevrecty1 = recty1;
+		prevrectx2 = rectx2; prevrecty2 = recty2;
+
+	};
+
+	function getMaterialShader( material ) {
+
+		var id = material.id;
+		var shader = shaders[ id ];
+
+		if ( shaders[ id ] === undefined ) {
+
+			if ( material instanceof THREE.MeshBasicMaterial ||
+			     material instanceof THREE.MeshLambertMaterial ||
+			     material instanceof THREE.MeshPhongMaterial ) {
+
+				var string;
+
+				if ( material.vertexColors === THREE.FaceColors ) {
+
+					string = [
+						'buffer[ offset ] = face.color.r * 255;',
+						'buffer[ offset + 1 ] = face.color.g * 255;',
+						'buffer[ offset + 2 ] = face.color.b * 255;',
+						'buffer[ offset + 3 ] = material.opacity * 255;',
+					].join('\n');
+
+				} else {
+
+					string = [
+						'buffer[ offset ] = material.color.r * 255;',
+						'buffer[ offset + 1 ] = material.color.g * 255;',
+						'buffer[ offset + 2 ] = material.color.b * 255;',
+						'buffer[ offset + 3 ] = material.opacity * 255;',
+					].join('\n');
+
+				}
+
+				shader = new Function( 'buffer, offset, u, v, face, material', string );
+
+			} else {
+
+				var string = [
+					'buffer[ offset ] = u * 255;',
+					'buffer[ offset + 1 ] = v * 255;',
+					'buffer[ offset + 2 ] = 0;',
+					'buffer[ offset + 3 ] = 255;'
+				].join('\n');
+
+				shader = new Function( 'buffer, offset, u, v', string );
+
+			}
+
+			shaders[ id ] = shader;
+
+		}
+
+		return shader;
+
+	}
+
+	function clearRectangle( x1, y1, x2, y2 ) {
+
+		var xmin = Math.max( Math.min( x1, x2 ), 0 );
+		var xmax = Math.min( Math.max( x1, x2 ), canvasWidth );
+		var ymin = Math.max( Math.min( y1, y2 ), 0 );
+		var ymax = Math.min( Math.max( y1, y2 ), canvasHeight );
+
+		var offset = ( xmin + ymin * canvasWidth ) * 4 + 3;
+		var linestep = ( canvasWidth - ( xmax - xmin ) ) * 4;
+
+		for ( var y = ymin; y < ymax; y ++ ) {
+
+			for ( var x = xmin; x < xmax; x ++ ) {
+
+				data[ offset += 4 ] = 0;
+
+			}
+
+			offset += linestep;
+
+		}
+
+	}
+
+	function drawTriangle( v1, v2, v3, shader, face, material ) {
+
+		// TODO: Implement per-pixel z-clipping
+
+		if ( v1.z < -1 || v1.z > 1 || v2.z < -1 || v2.z > 1 || v3.z < -1 || v3.z > 1 ) return;
+
+		// https://gist.github.com/2486101
+		// explanation: http://pouet.net/topic.php?which=8760&page=1
+
+		// 28.4 fixed-point coordinates
+
+		var x1 = (v1.x * viewportXScale + viewportXOffs) | 0;
+		var x2 = (v2.x * viewportXScale + viewportXOffs) | 0;
+		var x3 = (v3.x * viewportXScale + viewportXOffs) | 0;
+
+		var y1 = (v1.y * viewportYScale + viewportYOffs) | 0;
+		var y2 = (v2.y * viewportYScale + viewportYOffs) | 0;
+		var y3 = (v3.y * viewportYScale + viewportYOffs) | 0;
+
+		// Z values (.28 fixed-point)
+
+		var z1 = (v1.z * viewportZScale + viewportZOffs) | 0;
+		var z2 = (v2.z * viewportZScale + viewportZOffs) | 0;
+		var z3 = (v3.z * viewportZScale + viewportZOffs) | 0;
+
+		// Deltas
+
+		var dx12 = x1 - x2, dy12 = y2 - y1;
+		var dx23 = x2 - x3, dy23 = y3 - y2;
+		var dx31 = x3 - x1, dy31 = y1 - y3;
+
+		// Bounding rectangle
+
+		var minx = Math.max( ( Math.min( x1, x2, x3 ) + subpixelBias ) >> subpixelBits, 0 );
+		var maxx = Math.min( ( Math.max( x1, x2, x3 ) + subpixelBias ) >> subpixelBits, canvasWidth );
+		var miny = Math.max( ( Math.min( y1, y2, y3 ) + subpixelBias ) >> subpixelBits, 0 );
+		var maxy = Math.min( ( Math.max( y1, y2, y3 ) + subpixelBias ) >> subpixelBits, canvasHeight );
+
+		rectx1 = Math.min( minx, rectx1 );
+		rectx2 = Math.max( maxx, rectx2 );
+		recty1 = Math.min( miny, recty1 );
+		recty2 = Math.max( maxy, recty2 );
+
+		// Block size, standard 8x8 (must be power of two)
+
+		var q = blockSize;
+
+		// Start in corner of 8x8 block
+
+		minx &= ~(q - 1);
+		miny &= ~(q - 1);
+
+		// Constant part of half-edge functions
+
+		var c1 = dy12 * ((minx << subpixelBits) - x1) + dx12 * ((miny << subpixelBits) - y1);
+		var c2 = dy23 * ((minx << subpixelBits) - x2) + dx23 * ((miny << subpixelBits) - y2);
+		var c3 = dy31 * ((minx << subpixelBits) - x3) + dx31 * ((miny << subpixelBits) - y3);
+
+		// Correct for fill convention
+
+		if ( dy12 > 0 || ( dy12 == 0 && dx12 > 0 ) ) c1 ++;
+		if ( dy23 > 0 || ( dy23 == 0 && dx23 > 0 ) ) c2 ++;
+		if ( dy31 > 0 || ( dy31 == 0 && dx31 > 0 ) ) c3 ++;
+
+		// Note this doesn't kill subpixel precision, but only because we test for >=0 (not >0).
+		// It's a bit subtle. :)
+		c1 = (c1 - 1) >> subpixelBits;
+		c2 = (c2 - 1) >> subpixelBits;
+		c3 = (c3 - 1) >> subpixelBits;
+
+		// Z interpolation setup
+
+		var dz12 = z1 - z2, dz31 = z3 - z1;
+		var invDet = 1.0 / (dx12*dy31 - dx31*dy12);
+		var dzdx = (invDet * (dz12*dy31 - dz31*dy12)); // dz per one subpixel step in x
+		var dzdy = (invDet * (dz12*dx31 - dx12*dz31)); // dz per one subpixel step in y
+
+		// Z at top/left corner of rast area
+
+		var cz = ( z1 + ((minx << subpixelBits) - x1) * dzdx + ((miny << subpixelBits) - y1) * dzdy ) | 0;
+
+		// Z pixel steps
+
+		var zfixscale = (1 << subpixelBits);
+		dzdx = (dzdx * zfixscale) | 0;
+		dzdy = (dzdy * zfixscale) | 0;
+
+		// Set up min/max corners
+		var qm1 = q - 1; // for convenience
+		var nmin1 = 0, nmax1 = 0;
+		var nmin2 = 0, nmax2 = 0;
+		var nmin3 = 0, nmax3 = 0;
+		var nminz = 0, nmaxz = 0;
+		if (dx12 >= 0) nmax1 -= qm1*dx12; else nmin1 -= qm1*dx12;
+		if (dy12 >= 0) nmax1 -= qm1*dy12; else nmin1 -= qm1*dy12;
+		if (dx23 >= 0) nmax2 -= qm1*dx23; else nmin2 -= qm1*dx23;
+		if (dy23 >= 0) nmax2 -= qm1*dy23; else nmin2 -= qm1*dy23;
+		if (dx31 >= 0) nmax3 -= qm1*dx31; else nmin3 -= qm1*dx31;
+		if (dy31 >= 0) nmax3 -= qm1*dy31; else nmin3 -= qm1*dy31;
+		if (dzdx >= 0) nmaxz += qm1*dzdx; else nminz += qm1*dzdx;
+		if (dzdy >= 0) nmaxz += qm1*dzdy; else nminz += qm1*dzdy;
+
+		// Loop through blocks
+		var linestep = canvasWidth - q;
+		var scale = 1.0 / (c1 + c2 + c3);
+
+		var cb1 = c1;
+		var cb2 = c2;
+		var cb3 = c3;
+		var cbz = cz;
+		var qstep = -q;
+		var e1x = qstep * dy12;
+		var e2x = qstep * dy23;
+		var e3x = qstep * dy31;
+		var ezx = qstep * dzdx;
+		var x0 = minx;
+
+		for ( var y0 = miny; y0 < maxy; y0 += q ) {
+
+			// New block line - keep hunting for tri outer edge in old block line dir
+			while ( x0 >= minx && x0 < maxx && cb1 >= nmax1 && cb2 >= nmax2 && cb3 >= nmax3 ) {
+
+				x0 += qstep;
+				cb1 += e1x;
+				cb2 += e2x;
+				cb3 += e3x;
+				cbz += ezx;
+
+			}
+
+			// Okay, we're now in a block we know is outside. Reverse direction and go into main loop.
+			qstep = -qstep;
+			e1x = -e1x;
+			e2x = -e2x;
+			e3x = -e3x;
+			ezx = -ezx;
+
+			while ( 1 ) {
+
+				// Step everything
+				x0 += qstep;
+				cb1 += e1x;
+				cb2 += e2x;
+				cb3 += e3x;
+				cbz += ezx;
+
+				// We're done with this block line when at least one edge completely out
+				// If an edge function is too small and decreasing in the current traversal
+				// dir, we're done with this line.
+				if (x0 < minx || x0 >= maxx) break;
+				if (cb1 < nmax1) if (e1x < 0) break; else continue;
+				if (cb2 < nmax2) if (e2x < 0) break; else continue;
+				if (cb3 < nmax3) if (e3x < 0) break; else continue;
+
+				// We can skip this block if it's already fully covered
+				var blockX = x0 >> blockShift;
+				var blockY = y0 >> blockShift;
+				var blockId = blockX + blockY * canvasWBlocks;
+				var minz = cbz + nminz;
+
+				// farthest point in block closer than closest point in our tri?
+				if ( blockMaxZ[ blockId ] < minz ) continue;
+
+				// Need to do a deferred clear?
+				var bflags = blockFlags[ blockId ];
+				if ( bflags & BLOCK_NEEDCLEAR) clearBlock( blockX, blockY );
+				blockFlags[ blockId ] = bflags & ~( BLOCK_ISCLEAR | BLOCK_NEEDCLEAR );
+
+				// Offset at top-left corner
+				var offset = x0 + y0 * canvasWidth;
+
+				// Accept whole block when fully covered
+				if ( cb1 >= nmin1 && cb2 >= nmin2 && cb3 >= nmin3 ) {
+
+					var maxz = cbz + nmaxz;
+					blockMaxZ[ blockId ] = Math.min( blockMaxZ[ blockId ], maxz );
+
+					var cy1 = cb1;
+					var cy2 = cb2;
+					var cyz = cbz;
+
+					for ( var iy = 0; iy < q; iy ++ ) {
+
+						var cx1 = cy1;
+						var cx2 = cy2;
+						var cxz = cyz;
+
+						for ( var ix = 0; ix < q; ix ++ ) {
+
+							var z = cxz;
+
+							if ( z < zbuffer[ offset ] ) {
+								zbuffer[ offset ] = z;
+								var u = cx1 * scale;
+								var v = cx2 * scale;
+								shader( data, offset * 4, u, v, face, material );
+							}
+
+							cx1 += dy12;
+							cx2 += dy23;
+							cxz += dzdx;
+							offset++;
+
+						}
+
+						cy1 += dx12;
+						cy2 += dx23;
+						cyz += dzdy;
+						offset += linestep;
+
+					}
+
+				} else { // Partially covered block
+
+					var cy1 = cb1;
+					var cy2 = cb2;
+					var cy3 = cb3;
+					var cyz = cbz;
+
+					for ( var iy = 0; iy < q; iy ++ ) {
+
+						var cx1 = cy1;
+						var cx2 = cy2;
+						var cx3 = cy3;
+						var cxz = cyz;
+
+						for ( var ix = 0; ix < q; ix ++ ) {
+
+							if ( ( cx1 | cx2 | cx3 ) >= 0 ) {
+
+								var z = cxz;
+
+								if ( z < zbuffer[ offset ] ) {
+									var u = cx1 * scale;
+									var v = cx2 * scale;
+
+									zbuffer[ offset ] = z;
+									shader( data, offset * 4, u, v, face, material );
+
+								}
+
+							}
+
+							cx1 += dy12;
+							cx2 += dy23;
+							cx3 += dy31;
+							cxz += dzdx;
+							offset++;
+
+						}
+
+						cy1 += dx12;
+						cy2 += dx23;
+						cy3 += dx31;
+						cyz += dzdy;
+						offset += linestep;
+
+					}
+
+				}
+
+			}
+
+			// Advance to next row of blocks
+			cb1 += q*dx12;
+			cb2 += q*dx23;
+			cb3 += q*dx31;
+			cbz += q*dzdy;
+		}
+
+	}
+
+	function clearBlock( blockX, blockY ) {
+
+		var zoffset = blockX * blockSize + blockY * blockSize * canvasWidth;
+		var poffset = zoffset * 4 + 3;
+
+		var zlinestep = canvasWidth - blockSize;
+		var plinestep = zlinestep * 4;
+
+		for ( var y = 0; y < blockSize; y ++ ) {
+
+			for ( var x = 0; x < blockSize; x ++ ) {
+
+				zbuffer[ zoffset ] = maxZVal;
+				data[ poffset ] = 0;
+
+				zoffset ++;
+				poffset += 4;
+
+			}
+
+			zoffset += zlinestep;
+			poffset += plinestep;
+
+		}
+
+	}
+
+	function finishClear( ) {
+
+		var block = 0;
+
+		for ( var y = 0; y < canvasHBlocks; y ++ ) {
+
+			for ( var x = 0; x < canvasWBlocks; x ++ ) {
+
+				if ( blockFlags[ block ] & BLOCK_NEEDCLEAR ) {
+
+					clearBlock( x, y );
+					blockFlags[ block ] = BLOCK_ISCLEAR;
+
+				}
+
+				block ++;
+			}
+
+		}
+
+	}
+
+};

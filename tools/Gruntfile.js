@@ -9,6 +9,8 @@ module.exports = function(grunt) {
       }
     }
 
+  var uglifyOptions = JSON.parse( JSON.stringify( dev.uglify2 ));
+
 
 
   // Project configuration. 
@@ -16,6 +18,15 @@ module.exports = function(grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
 
+
+    uglify: {
+      target:{
+        options: uglifyOptions,
+        files: {
+          '../build/js/bootloader.js' :'../build/js/bootloader.js'
+        }
+      }
+    },
 
     copy:{
       main:{
@@ -116,6 +127,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('_stamp', function(){
         grunt.log.write( 'VERSION: ' +  dev.uglify2.compress.global_defs.VERSION );
+        uglifyOptions.compress.global_defs.VERSION =  String( global['version'] );
         dev.uglify2.compress.global_defs.VERSION = String( global['version'] );
         replaceOptions.variables.version = String( global['version'] );
         grunt.log.write( 'VERSION: ' +  dev.uglify2.compress.global_defs.VERSION );
@@ -123,6 +135,7 @@ module.exports = function(grunt) {
 
 
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-gh-pages');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-gitinfo');
@@ -131,7 +144,7 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask( 'snap', ['gitinfo', 'index', 'copy']);
   grunt.registerTask( 'version',  ['describe:version', '_stamp'] );
-  grunt.registerTask( 'build',  'Build the release version of the project.', [ 'version', 'requirejs:dev', "replace" ]);
+  grunt.registerTask( 'build',  'Build the release version of the project.', [ 'version', 'requirejs:dev', "uglify", "replace" ]);
   grunt.registerTask( 'default', ['build']);
 
 

@@ -1,1 +1,30 @@
-THREE.AxisHelper=function(e){e=e||1;var t=new THREE.Geometry;t.vertices.push(new THREE.Vector3,new THREE.Vector3(e,0,0),new THREE.Vector3,new THREE.Vector3(0,e,0),new THREE.Vector3,new THREE.Vector3(0,0,e)),t.colors.push(new THREE.Color(16711680),new THREE.Color(16755200),new THREE.Color(65280),new THREE.Color(11206400),new THREE.Color(255),new THREE.Color(43775));var i=new THREE.LineBasicMaterial({vertexColors:THREE.VertexColors});THREE.Line.call(this,t,i,THREE.LinePieces)},THREE.AxisHelper.prototype=Object.create(THREE.Line.prototype);
+/**
+ * @author sroucheray / http://sroucheray.org/
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.AxisHelper = function ( size ) {
+
+	size = size || 1;
+
+	var geometry = new THREE.Geometry();
+
+	geometry.vertices.push(
+		new THREE.Vector3(), new THREE.Vector3( size, 0, 0 ),
+		new THREE.Vector3(), new THREE.Vector3( 0, size, 0 ),
+		new THREE.Vector3(), new THREE.Vector3( 0, 0, size )
+	);
+
+	geometry.colors.push(
+		new THREE.Color( 0xff0000 ), new THREE.Color( 0xffaa00 ),
+		new THREE.Color( 0x00ff00 ), new THREE.Color( 0xaaff00 ),
+		new THREE.Color( 0x0000ff ), new THREE.Color( 0x00aaff )
+	);
+
+	var material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } );
+
+	THREE.Line.call( this, geometry, material, THREE.LinePieces );
+
+};
+
+THREE.AxisHelper.prototype = Object.create( THREE.Line.prototype );

@@ -1,1 +1,626 @@
-var CTM=CTM||{};CTM.CompressionMethod={RAW:5718354,MG1:3229517,MG2:3295053},CTM.Flags={NORMALS:1},CTM.File=function(e){this.load(e)},CTM.File.prototype.load=function(e){this.header=new CTM.FileHeader(e),this.body=new CTM.FileBody(this.header),this.getReader().read(e,this.body)},CTM.File.prototype.getReader=function(){var e;switch(this.header.compressionMethod){case CTM.CompressionMethod.RAW:e=new CTM.ReaderRAW;break;case CTM.CompressionMethod.MG1:e=new CTM.ReaderMG1;break;case CTM.CompressionMethod.MG2:e=new CTM.ReaderMG2}return e},CTM.FileHeader=function(e){e.readInt32(),this.fileFormat=e.readInt32(),this.compressionMethod=e.readInt32(),this.vertexCount=e.readInt32(),this.triangleCount=e.readInt32(),this.uvMapCount=e.readInt32(),this.attrMapCount=e.readInt32(),this.flags=e.readInt32(),this.comment=e.readString()},CTM.FileHeader.prototype.hasNormals=function(){return this.flags&CTM.Flags.NORMALS},CTM.FileBody=function(e){var t=3*e.triangleCount,i=3*e.vertexCount,r=e.hasNormals()?3*e.vertexCount:0,n=2*e.vertexCount,o=4*e.vertexCount,a=0,s=new ArrayBuffer(4*(t+i+r+n*e.uvMapCount+o*e.attrMapCount));if(this.indices=new Uint32Array(s,0,t),this.vertices=new Float32Array(s,4*t,i),e.hasNormals()&&(this.normals=new Float32Array(s,4*(t+i),r)),e.uvMapCount)for(this.uvMaps=[],a=0;a<e.uvMapCount;++a)this.uvMaps[a]={uv:new Float32Array(s,4*(t+i+r+a*n),n)};if(e.attrMapCount)for(this.attrMaps=[],a=0;a<e.attrMapCount;++a)this.attrMaps[a]={attr:new Float32Array(s,4*(t+i+r+n*e.uvMapCount+a*o),o)}},CTM.FileMG2Header=function(e){e.readInt32(),this.vertexPrecision=e.readFloat32(),this.normalPrecision=e.readFloat32(),this.lowerBoundx=e.readFloat32(),this.lowerBoundy=e.readFloat32(),this.lowerBoundz=e.readFloat32(),this.higherBoundx=e.readFloat32(),this.higherBoundy=e.readFloat32(),this.higherBoundz=e.readFloat32(),this.divx=e.readInt32(),this.divy=e.readInt32(),this.divz=e.readInt32(),this.sizex=(this.higherBoundx-this.lowerBoundx)/this.divx,this.sizey=(this.higherBoundy-this.lowerBoundy)/this.divy,this.sizez=(this.higherBoundz-this.lowerBoundz)/this.divz},CTM.ReaderRAW=function(){},CTM.ReaderRAW.prototype.read=function(e,t){this.readIndices(e,t.indices),this.readVertices(e,t.vertices),t.normals&&this.readNormals(e,t.normals),t.uvMaps&&this.readUVMaps(e,t.uvMaps),t.attrMaps&&this.readAttrMaps(e,t.attrMaps)},CTM.ReaderRAW.prototype.readIndices=function(e,t){e.readInt32(),e.readArrayInt32(t)},CTM.ReaderRAW.prototype.readVertices=function(e,t){e.readInt32(),e.readArrayFloat32(t)},CTM.ReaderRAW.prototype.readNormals=function(e,t){e.readInt32(),e.readArrayFloat32(t)},CTM.ReaderRAW.prototype.readUVMaps=function(e,t){for(var i=0;i<t.length;++i)e.readInt32(),t[i].name=e.readString(),t[i].filename=e.readString(),e.readArrayFloat32(t[i].uv)},CTM.ReaderRAW.prototype.readAttrMaps=function(e,t){for(var i=0;i<t.length;++i)e.readInt32(),t[i].name=e.readString(),e.readArrayFloat32(t[i].attr)},CTM.ReaderMG1=function(){},CTM.ReaderMG1.prototype.read=function(e,t){this.readIndices(e,t.indices),this.readVertices(e,t.vertices),t.normals&&this.readNormals(e,t.normals),t.uvMaps&&this.readUVMaps(e,t.uvMaps),t.attrMaps&&this.readAttrMaps(e,t.attrMaps)},CTM.ReaderMG1.prototype.readIndices=function(e,t){e.readInt32(),e.readInt32();var i=new CTM.InterleavedStream(t,3);LZMA.decompress(e,e,i,i.data.length),CTM.restoreIndices(t,t.length)},CTM.ReaderMG1.prototype.readVertices=function(e,t){e.readInt32(),e.readInt32();var i=new CTM.InterleavedStream(t,1);LZMA.decompress(e,e,i,i.data.length)},CTM.ReaderMG1.prototype.readNormals=function(e,t){e.readInt32(),e.readInt32();var i=new CTM.InterleavedStream(t,3);LZMA.decompress(e,e,i,i.data.length)},CTM.ReaderMG1.prototype.readUVMaps=function(e,t){for(var i=0;i<t.length;++i){e.readInt32(),t[i].name=e.readString(),t[i].filename=e.readString(),e.readInt32();var r=new CTM.InterleavedStream(t[i].uv,2);LZMA.decompress(e,e,r,r.data.length)}},CTM.ReaderMG1.prototype.readAttrMaps=function(e,t){for(var i=0;i<t.length;++i){e.readInt32(),t[i].name=e.readString(),e.readInt32();var r=new CTM.InterleavedStream(t[i].attr,4);LZMA.decompress(e,e,r,r.data.length)}},CTM.ReaderMG2=function(){},CTM.ReaderMG2.prototype.read=function(e,t){this.MG2Header=new CTM.FileMG2Header(e),this.readVertices(e,t.vertices),this.readIndices(e,t.indices),t.normals&&this.readNormals(e,t),t.uvMaps&&this.readUVMaps(e,t.uvMaps),t.attrMaps&&this.readAttrMaps(e,t.attrMaps)},CTM.ReaderMG2.prototype.readVertices=function(e,t){e.readInt32(),e.readInt32();var i=new CTM.InterleavedStream(t,3);LZMA.decompress(e,e,i,i.data.length);var r=this.readGridIndices(e,t);CTM.restoreVertices(t,this.MG2Header,r,this.MG2Header.vertexPrecision)},CTM.ReaderMG2.prototype.readGridIndices=function(e,t){e.readInt32(),e.readInt32();var i=new Uint32Array(t.length/3),r=new CTM.InterleavedStream(i,1);return LZMA.decompress(e,e,r,r.data.length),CTM.restoreGridIndices(i,i.length),i},CTM.ReaderMG2.prototype.readIndices=function(e,t){e.readInt32(),e.readInt32();var i=new CTM.InterleavedStream(t,3);LZMA.decompress(e,e,i,i.data.length),CTM.restoreIndices(t,t.length)},CTM.ReaderMG2.prototype.readNormals=function(e,t){e.readInt32(),e.readInt32();var i=new CTM.InterleavedStream(t.normals,3);LZMA.decompress(e,e,i,i.data.length);var r=CTM.calcSmoothNormals(t.indices,t.vertices);CTM.restoreNormals(t.normals,r,this.MG2Header.normalPrecision)},CTM.ReaderMG2.prototype.readUVMaps=function(e,t){for(var i=0;i<t.length;++i){e.readInt32(),t[i].name=e.readString(),t[i].filename=e.readString();var r=e.readFloat32();e.readInt32();var n=new CTM.InterleavedStream(t[i].uv,2);LZMA.decompress(e,e,n,n.data.length),CTM.restoreMap(t[i].uv,2,r)}},CTM.ReaderMG2.prototype.readAttrMaps=function(e,t){for(var i=0;i<t.length;++i){e.readInt32(),t[i].name=e.readString();var r=e.readFloat32();e.readInt32();var n=new CTM.InterleavedStream(t[i].attr,4);LZMA.decompress(e,e,n,n.data.length),CTM.restoreMap(t[i].attr,4,r)}},CTM.restoreIndices=function(e,t){var i=3;for(t>0&&(e[2]+=e[0]);t>i;i+=3)e[i]+=e[i-3],e[i+1]+=e[i]===e[i-3]?e[i-2]:e[i],e[i+2]+=e[i]},CTM.restoreGridIndices=function(e,t){for(var i=1;t>i;++i)e[i]+=e[i-1]},CTM.restoreVertices=function(e,t,i,r){for(var n,o,a,s,l,h=new Uint32Array(e.buffer,e.byteOffset,e.length),c=t.divx,u=c*t.divy,d=2147483647,p=0,f=0,m=0,g=i.length;g>f;m+=3)a=n=i[f++],l=~~(a/u),a-=~~(l*u),s=~~(a/c),a-=~~(s*c),o=h[m],n===d&&(o+=p),e[m]=t.lowerBoundx+a*t.sizex+r*o,e[m+1]=t.lowerBoundy+s*t.sizey+r*h[m+1],e[m+2]=t.lowerBoundz+l*t.sizez+r*h[m+2],d=n,p=o},CTM.restoreNormals=function(e,t,i){for(var r,n,o,a,s,l,h,c,u,d,p=new Uint32Array(e.buffer,e.byteOffset,e.length),f=0,m=e.length,g=1.5707963267948966;m>f;f+=3)r=p[f]*i,n=p[f+1],0===n?(e[f]=t[f]*r,e[f+1]=t[f+1]*r,e[f+2]=t[f+2]*r):(o=4>=n?(p[f+2]-2)*g:(4*p[f+2]/n-2)*g,n*=i*g,a=r*Math.sin(n),s=a*Math.cos(o),l=a*Math.sin(o),h=r*Math.cos(n),u=t[f+1],c=t[f]-t[f+2],d=Math.sqrt(2*u*u+c*c),d>1e-20&&(c/=d,u/=d),e[f]=t[f]*h+(t[f+1]*u-t[f+2]*c)*l-u*s,e[f+1]=t[f+1]*h-(t[f+2]+t[f])*u*l+c*s,e[f+2]=t[f+2]*h+(t[f]*c+t[f+1]*u)*l+u*s)},CTM.restoreMap=function(e,t,i){for(var r,n,o,a=new Uint32Array(e.buffer,e.byteOffset,e.length),s=0,l=e.length;t>s;++s)for(r=0,o=s;l>o;o+=t)n=a[o],r+=1&n?-(n+1>>1):n>>1,e[o]=r*i},CTM.calcSmoothNormals=function(e,t){var i,r,n,o,a,s,l,h,c,u,d,p,f,m,g,v=new Float32Array(t.length);for(m=0,g=e.length;g>m;)i=3*e[m++],r=3*e[m++],n=3*e[m++],l=t[r]-t[i],u=t[n]-t[i],h=t[r+1]-t[i+1],d=t[n+1]-t[i+1],c=t[r+2]-t[i+2],p=t[n+2]-t[i+2],o=h*p-c*d,a=c*u-l*p,s=l*d-h*u,f=Math.sqrt(o*o+a*a+s*s),f>1e-10&&(o/=f,a/=f,s/=f),v[i]+=o,v[i+1]+=a,v[i+2]+=s,v[r]+=o,v[r+1]+=a,v[r+2]+=s,v[n]+=o,v[n+1]+=a,v[n+2]+=s;for(m=0,g=v.length;g>m;m+=3)f=Math.sqrt(v[m]*v[m]+v[m+1]*v[m+1]+v[m+2]*v[m+2]),f>1e-10&&(v[m]/=f,v[m+1]/=f,v[m+2]/=f);return v},CTM.isLittleEndian=function(){var e=new ArrayBuffer(2),t=new Uint8Array(e),i=new Uint16Array(e);return t[0]=1,1===i[0]}(),CTM.InterleavedStream=function(e,t){this.data=new Uint8Array(e.buffer,e.byteOffset,e.byteLength),this.offset=CTM.isLittleEndian?3:0,this.count=4*t,this.len=this.data.length},CTM.InterleavedStream.prototype.writeByte=function(e){this.data[this.offset]=e,this.offset+=this.count,this.offset>=this.len&&(this.offset-=this.len-4,this.offset>=this.count&&(this.offset-=this.count+(CTM.isLittleEndian?1:-1)))},CTM.Stream=function(e){this.data=e,this.offset=0},CTM.Stream.prototype.TWO_POW_MINUS23=Math.pow(2,-23),CTM.Stream.prototype.TWO_POW_MINUS126=Math.pow(2,-126),CTM.Stream.prototype.readByte=function(){return 255&this.data.charCodeAt(this.offset++)},CTM.Stream.prototype.readInt32=function(){var e=this.readByte();return e|=this.readByte()<<8,e|=this.readByte()<<16,e|this.readByte()<<24},CTM.Stream.prototype.readFloat32=function(){var e=this.readByte();e+=this.readByte()<<8;var t=this.readByte(),i=this.readByte();e+=(127&t)<<16;var r=(127&i)<<1|(128&t)>>>7,n=128&i?-1:1;return 255===r?0!==e?0/0:1/0*n:r>0?n*(1+e*this.TWO_POW_MINUS23)*Math.pow(2,r-127):0!==e?n*e*this.TWO_POW_MINUS126:0*n},CTM.Stream.prototype.readString=function(){var e=this.readInt32();return this.offset+=e,this.data.substr(this.offset-e,e)},CTM.Stream.prototype.readArrayInt32=function(e){for(var t=0,i=e.length;i>t;)e[t++]=this.readInt32();return e},CTM.Stream.prototype.readArrayFloat32=function(e){for(var t=0,i=e.length;i>t;)e[t++]=this.readFloat32();return e};
+
+var CTM = CTM || {};
+
+CTM.CompressionMethod = {
+  RAW: 0x00574152,
+  MG1: 0x0031474d,
+  MG2: 0x0032474d
+};
+
+CTM.Flags = {
+  NORMALS: 0x00000001
+};
+
+CTM.File = function(stream){
+  this.load(stream);
+};
+
+CTM.File.prototype.load = function(stream){
+  this.header = new CTM.FileHeader(stream);
+
+  this.body = new CTM.FileBody(this.header);
+  
+  this.getReader().read(stream, this.body);
+};
+
+CTM.File.prototype.getReader = function(){
+  var reader;
+
+  switch(this.header.compressionMethod){
+    case CTM.CompressionMethod.RAW:
+      reader = new CTM.ReaderRAW();
+      break;
+    case CTM.CompressionMethod.MG1:
+      reader = new CTM.ReaderMG1();
+      break;
+    case CTM.CompressionMethod.MG2:
+      reader = new CTM.ReaderMG2();
+      break;
+  }
+
+  return reader;
+};
+
+CTM.FileHeader = function(stream){
+  stream.readInt32(); //magic "OCTM"
+  this.fileFormat = stream.readInt32();
+  this.compressionMethod = stream.readInt32();
+  this.vertexCount = stream.readInt32();
+  this.triangleCount = stream.readInt32();
+  this.uvMapCount = stream.readInt32();
+  this.attrMapCount = stream.readInt32();
+  this.flags = stream.readInt32();
+  this.comment = stream.readString();
+};
+
+CTM.FileHeader.prototype.hasNormals = function(){
+  return this.flags & CTM.Flags.NORMALS;
+};
+
+CTM.FileBody = function(header){
+  var i = header.triangleCount * 3,
+      v = header.vertexCount * 3,
+      n = header.hasNormals()? header.vertexCount * 3: 0,
+      u = header.vertexCount * 2,
+      a = header.vertexCount * 4,
+      j = 0;
+
+  var data = new ArrayBuffer(
+    (i + v + n + (u * header.uvMapCount) + (a * header.attrMapCount) ) * 4);
+
+  this.indices = new Uint32Array(data, 0, i);
+
+  this.vertices = new Float32Array(data, i * 4, v);
+
+  if ( header.hasNormals() ){
+    this.normals = new Float32Array(data, (i + v) * 4, n);
+  }
+  
+  if (header.uvMapCount){
+    this.uvMaps = [];
+    for (j = 0; j < header.uvMapCount; ++ j){
+      this.uvMaps[j] = {uv: new Float32Array(data,
+        (i + v + n + (j * u) ) * 4, u) };
+    }
+  }
+  
+  if (header.attrMapCount){
+    this.attrMaps = [];
+    for (j = 0; j < header.attrMapCount; ++ j){
+      this.attrMaps[j] = {attr: new Float32Array(data,
+        (i + v + n + (u * header.uvMapCount) + (j * a) ) * 4, a) };
+    }
+  }
+};
+
+CTM.FileMG2Header = function(stream){
+  stream.readInt32(); //magic "MG2H"
+  this.vertexPrecision = stream.readFloat32();
+  this.normalPrecision = stream.readFloat32();
+  this.lowerBoundx = stream.readFloat32();
+  this.lowerBoundy = stream.readFloat32();
+  this.lowerBoundz = stream.readFloat32();
+  this.higherBoundx = stream.readFloat32();
+  this.higherBoundy = stream.readFloat32();
+  this.higherBoundz = stream.readFloat32();
+  this.divx = stream.readInt32();
+  this.divy = stream.readInt32();
+  this.divz = stream.readInt32();
+  
+  this.sizex = (this.higherBoundx - this.lowerBoundx) / this.divx;
+  this.sizey = (this.higherBoundy - this.lowerBoundy) / this.divy;
+  this.sizez = (this.higherBoundz - this.lowerBoundz) / this.divz;
+};
+
+CTM.ReaderRAW = function(){
+};
+
+CTM.ReaderRAW.prototype.read = function(stream, body){
+  this.readIndices(stream, body.indices);
+  this.readVertices(stream, body.vertices);
+  
+  if (body.normals){
+    this.readNormals(stream, body.normals);
+  }
+  if (body.uvMaps){
+    this.readUVMaps(stream, body.uvMaps);
+  }
+  if (body.attrMaps){
+    this.readAttrMaps(stream, body.attrMaps);
+  }
+};
+
+CTM.ReaderRAW.prototype.readIndices = function(stream, indices){
+  stream.readInt32(); //magic "INDX"
+  stream.readArrayInt32(indices);
+};
+
+CTM.ReaderRAW.prototype.readVertices = function(stream, vertices){
+  stream.readInt32(); //magic "VERT"
+  stream.readArrayFloat32(vertices);
+};
+
+CTM.ReaderRAW.prototype.readNormals = function(stream, normals){
+  stream.readInt32(); //magic "NORM"
+  stream.readArrayFloat32(normals);
+};
+
+CTM.ReaderRAW.prototype.readUVMaps = function(stream, uvMaps){
+  var i = 0;
+  for (; i < uvMaps.length; ++ i){
+    stream.readInt32(); //magic "TEXC"
+
+    uvMaps[i].name = stream.readString();
+    uvMaps[i].filename = stream.readString();
+    stream.readArrayFloat32(uvMaps[i].uv);
+  }
+};
+
+CTM.ReaderRAW.prototype.readAttrMaps = function(stream, attrMaps){
+  var i = 0;
+  for (; i < attrMaps.length; ++ i){
+    stream.readInt32(); //magic "ATTR"
+
+    attrMaps[i].name = stream.readString();
+    stream.readArrayFloat32(attrMaps[i].attr);
+  }
+};
+
+CTM.ReaderMG1 = function(){
+};
+
+CTM.ReaderMG1.prototype.read = function(stream, body){
+  this.readIndices(stream, body.indices);
+  this.readVertices(stream, body.vertices);
+  
+  if (body.normals){
+    this.readNormals(stream, body.normals);
+  }
+  if (body.uvMaps){
+    this.readUVMaps(stream, body.uvMaps);
+  }
+  if (body.attrMaps){
+    this.readAttrMaps(stream, body.attrMaps);
+  }
+};
+
+CTM.ReaderMG1.prototype.readIndices = function(stream, indices){
+  stream.readInt32(); //magic "INDX"
+  stream.readInt32(); //packed size
+  
+  var interleaved = new CTM.InterleavedStream(indices, 3);
+  LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+
+  CTM.restoreIndices(indices, indices.length);
+};
+
+CTM.ReaderMG1.prototype.readVertices = function(stream, vertices){
+  stream.readInt32(); //magic "VERT"
+  stream.readInt32(); //packed size
+  
+  var interleaved = new CTM.InterleavedStream(vertices, 1);
+  LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+};
+
+CTM.ReaderMG1.prototype.readNormals = function(stream, normals){
+  stream.readInt32(); //magic "NORM"
+  stream.readInt32(); //packed size
+
+  var interleaved = new CTM.InterleavedStream(normals, 3);
+  LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+};
+
+CTM.ReaderMG1.prototype.readUVMaps = function(stream, uvMaps){
+  var i = 0;
+  for (; i < uvMaps.length; ++ i){
+    stream.readInt32(); //magic "TEXC"
+
+    uvMaps[i].name = stream.readString();
+    uvMaps[i].filename = stream.readString();
+    
+    stream.readInt32(); //packed size
+
+    var interleaved = new CTM.InterleavedStream(uvMaps[i].uv, 2);
+    LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+  }
+};
+
+CTM.ReaderMG1.prototype.readAttrMaps = function(stream, attrMaps){
+  var i = 0;
+  for (; i < attrMaps.length; ++ i){
+    stream.readInt32(); //magic "ATTR"
+
+    attrMaps[i].name = stream.readString();
+    
+    stream.readInt32(); //packed size
+
+    var interleaved = new CTM.InterleavedStream(attrMaps[i].attr, 4);
+    LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+  }
+};
+
+CTM.ReaderMG2 = function(){
+};
+
+CTM.ReaderMG2.prototype.read = function(stream, body){
+  this.MG2Header = new CTM.FileMG2Header(stream);
+  
+  this.readVertices(stream, body.vertices);
+  this.readIndices(stream, body.indices);
+  
+  if (body.normals){
+    this.readNormals(stream, body);
+  }
+  if (body.uvMaps){
+    this.readUVMaps(stream, body.uvMaps);
+  }
+  if (body.attrMaps){
+    this.readAttrMaps(stream, body.attrMaps);
+  }
+};
+
+CTM.ReaderMG2.prototype.readVertices = function(stream, vertices){
+  stream.readInt32(); //magic "VERT"
+  stream.readInt32(); //packed size
+
+  var interleaved = new CTM.InterleavedStream(vertices, 3);
+  LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+  
+  var gridIndices = this.readGridIndices(stream, vertices);
+  
+  CTM.restoreVertices(vertices, this.MG2Header, gridIndices, this.MG2Header.vertexPrecision);
+};
+
+CTM.ReaderMG2.prototype.readGridIndices = function(stream, vertices){
+  stream.readInt32(); //magic "GIDX"
+  stream.readInt32(); //packed size
+  
+  var gridIndices = new Uint32Array(vertices.length / 3);
+  
+  var interleaved = new CTM.InterleavedStream(gridIndices, 1);
+  LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+  
+  CTM.restoreGridIndices(gridIndices, gridIndices.length);
+  
+  return gridIndices;
+};
+
+CTM.ReaderMG2.prototype.readIndices = function(stream, indices){
+  stream.readInt32(); //magic "INDX"
+  stream.readInt32(); //packed size
+
+  var interleaved = new CTM.InterleavedStream(indices, 3);
+  LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+
+  CTM.restoreIndices(indices, indices.length);
+};
+
+CTM.ReaderMG2.prototype.readNormals = function(stream, body){
+  stream.readInt32(); //magic "NORM"
+  stream.readInt32(); //packed size
+
+  var interleaved = new CTM.InterleavedStream(body.normals, 3);
+  LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+
+  var smooth = CTM.calcSmoothNormals(body.indices, body.vertices);
+
+  CTM.restoreNormals(body.normals, smooth, this.MG2Header.normalPrecision);
+};
+
+CTM.ReaderMG2.prototype.readUVMaps = function(stream, uvMaps){
+  var i = 0;
+  for (; i < uvMaps.length; ++ i){
+    stream.readInt32(); //magic "TEXC"
+
+    uvMaps[i].name = stream.readString();
+    uvMaps[i].filename = stream.readString();
+    
+    var precision = stream.readFloat32();
+    
+    stream.readInt32(); //packed size
+
+    var interleaved = new CTM.InterleavedStream(uvMaps[i].uv, 2);
+    LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+    
+    CTM.restoreMap(uvMaps[i].uv, 2, precision);
+  }
+};
+
+CTM.ReaderMG2.prototype.readAttrMaps = function(stream, attrMaps){
+  var i = 0;
+  for (; i < attrMaps.length; ++ i){
+    stream.readInt32(); //magic "ATTR"
+
+    attrMaps[i].name = stream.readString();
+    
+    var precision = stream.readFloat32();
+    
+    stream.readInt32(); //packed size
+
+    var interleaved = new CTM.InterleavedStream(attrMaps[i].attr, 4);
+    LZMA.decompress(stream, stream, interleaved, interleaved.data.length);
+    
+    CTM.restoreMap(attrMaps[i].attr, 4, precision);
+  }
+};
+
+CTM.restoreIndices = function(indices, len){
+  var i = 3;
+  if (len > 0){
+    indices[2] += indices[0];
+  }
+  for (; i < len; i += 3){
+    indices[i] += indices[i - 3];
+    
+    if (indices[i] === indices[i - 3]){
+      indices[i + 1] += indices[i - 2];
+    }else{
+      indices[i + 1] += indices[i];
+    }
+
+    indices[i + 2] += indices[i];
+  }
+};
+
+CTM.restoreGridIndices = function(gridIndices, len){
+  var i = 1;
+  for (; i < len; ++ i){
+    gridIndices[i] += gridIndices[i - 1];
+  }
+};
+
+CTM.restoreVertices = function(vertices, grid, gridIndices, precision){
+  var gridIdx, delta, x, y, z,
+      intVertices = new Uint32Array(vertices.buffer, vertices.byteOffset, vertices.length),
+      ydiv = grid.divx, zdiv = ydiv * grid.divy,
+      prevGridIdx = 0x7fffffff, prevDelta = 0,
+      i = 0, j = 0, len = gridIndices.length;
+
+  for (; i < len; j += 3){
+    x = gridIdx = gridIndices[i ++];
+    
+    z = ~~(x / zdiv);
+    x -= ~~(z * zdiv);
+    y = ~~(x / ydiv);
+    x -= ~~(y * ydiv);
+
+    delta = intVertices[j];
+    if (gridIdx === prevGridIdx){
+      delta += prevDelta;
+    }
+
+    vertices[j]     = grid.lowerBoundx +
+      x * grid.sizex + precision * delta;
+    vertices[j + 1] = grid.lowerBoundy +
+      y * grid.sizey + precision * intVertices[j + 1];
+    vertices[j + 2] = grid.lowerBoundz +
+      z * grid.sizez + precision * intVertices[j + 2];
+
+    prevGridIdx = gridIdx;
+    prevDelta = delta;
+  }
+};
+
+CTM.restoreNormals = function(normals, smooth, precision){
+  var ro, phi, theta, sinPhi,
+      nx, ny, nz, by, bz, len,
+      intNormals = new Uint32Array(normals.buffer, normals.byteOffset, normals.length),
+      i = 0, k = normals.length,
+      PI_DIV_2 = 3.141592653589793238462643 * 0.5;
+
+  for (; i < k; i += 3){
+    ro = intNormals[i] * precision;
+    phi = intNormals[i + 1];
+
+    if (phi === 0){
+      normals[i]     = smooth[i]     * ro;
+      normals[i + 1] = smooth[i + 1] * ro;
+      normals[i + 2] = smooth[i + 2] * ro;
+    }else{
+      
+      if (phi <= 4){
+        theta = (intNormals[i + 2] - 2) * PI_DIV_2;
+      }else{
+        theta = ( (intNormals[i + 2] * 4 / phi) - 2) * PI_DIV_2;
+      }
+      
+      phi *= precision * PI_DIV_2;
+      sinPhi = ro * Math.sin(phi);
+
+      nx = sinPhi * Math.cos(theta);
+      ny = sinPhi * Math.sin(theta);
+      nz = ro * Math.cos(phi);
+
+      bz = smooth[i + 1];
+      by = smooth[i] - smooth[i + 2];
+
+      len = Math.sqrt(2 * bz * bz + by * by);
+      if (len > 1e-20){
+        by /= len;
+        bz /= len;
+      }
+
+      normals[i]     = smooth[i]     * nz +
+        (smooth[i + 1] * bz - smooth[i + 2] * by) * ny - bz * nx;
+      normals[i + 1] = smooth[i + 1] * nz -
+        (smooth[i + 2]      + smooth[i]   ) * bz  * ny + by * nx;
+      normals[i + 2] = smooth[i + 2] * nz +
+        (smooth[i]     * by + smooth[i + 1] * bz) * ny + bz * nx;
+    }
+  }
+};
+
+CTM.restoreMap = function(map, count, precision){
+  var delta, value,
+      intMap = new Uint32Array(map.buffer, map.byteOffset, map.length),
+      i = 0, j, len = map.length;
+
+  for (; i < count; ++ i){
+    delta = 0;
+
+    for (j = i; j < len; j += count){
+      value = intMap[j];
+      
+      delta += value & 1? -( (value + 1) >> 1): value >> 1;
+      
+      map[j] = delta * precision;
+    }
+  }
+};
+
+CTM.calcSmoothNormals = function(indices, vertices){
+  var smooth = new Float32Array(vertices.length),
+      indx, indy, indz, nx, ny, nz,
+      v1x, v1y, v1z, v2x, v2y, v2z, len,
+      i, k;
+
+  for (i = 0, k = indices.length; i < k;){
+    indx = indices[i ++] * 3;
+    indy = indices[i ++] * 3;
+    indz = indices[i ++] * 3;
+
+    v1x = vertices[indy]     - vertices[indx];
+    v2x = vertices[indz]     - vertices[indx];
+    v1y = vertices[indy + 1] - vertices[indx + 1];
+    v2y = vertices[indz + 1] - vertices[indx + 1];
+    v1z = vertices[indy + 2] - vertices[indx + 2];
+    v2z = vertices[indz + 2] - vertices[indx + 2];
+    
+    nx = v1y * v2z - v1z * v2y;
+    ny = v1z * v2x - v1x * v2z;
+    nz = v1x * v2y - v1y * v2x;
+    
+    len = Math.sqrt(nx * nx + ny * ny + nz * nz);
+    if (len > 1e-10){
+      nx /= len;
+      ny /= len;
+      nz /= len;
+    }
+    
+    smooth[indx]     += nx;
+    smooth[indx + 1] += ny;
+    smooth[indx + 2] += nz;
+    smooth[indy]     += nx;
+    smooth[indy + 1] += ny;
+    smooth[indy + 2] += nz;
+    smooth[indz]     += nx;
+    smooth[indz + 1] += ny;
+    smooth[indz + 2] += nz;
+  }
+
+  for (i = 0, k = smooth.length; i < k; i += 3){
+    len = Math.sqrt(smooth[i] * smooth[i] + 
+      smooth[i + 1] * smooth[i + 1] +
+      smooth[i + 2] * smooth[i + 2]);
+
+    if(len > 1e-10){
+      smooth[i]     /= len;
+      smooth[i + 1] /= len;
+      smooth[i + 2] /= len;
+    }
+  }
+
+  return smooth;
+};
+
+CTM.isLittleEndian = (function(){
+  var buffer = new ArrayBuffer(2),
+      bytes = new Uint8Array(buffer),
+      ints = new Uint16Array(buffer);
+
+  bytes[0] = 1;
+
+  return ints[0] === 1;
+}());
+
+CTM.InterleavedStream = function(data, count){
+  this.data = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+  this.offset = CTM.isLittleEndian? 3: 0;
+  this.count = count * 4;
+  this.len = this.data.length;
+};
+
+CTM.InterleavedStream.prototype.writeByte = function(value){
+  this.data[this.offset] = value;
+  
+  this.offset += this.count;
+  if (this.offset >= this.len){
+  
+    this.offset -= this.len - 4;
+    if (this.offset >= this.count){
+    
+      this.offset -= this.count + (CTM.isLittleEndian? 1: -1);
+    }
+  }
+};
+
+CTM.Stream = function(data){
+  this.data = data;
+  this.offset = 0;
+};
+
+CTM.Stream.prototype.TWO_POW_MINUS23 = Math.pow(2, -23);
+
+CTM.Stream.prototype.TWO_POW_MINUS126 = Math.pow(2, -126);
+
+CTM.Stream.prototype.readByte = function(){
+  return this.data.charCodeAt(this.offset ++) & 0xff;
+};
+
+CTM.Stream.prototype.readInt32 = function(){
+  var i = this.readByte();
+  i |= this.readByte() << 8;
+  i |= this.readByte() << 16;
+  return i | (this.readByte() << 24);
+};
+
+CTM.Stream.prototype.readFloat32 = function(){
+  var m = this.readByte();
+  m += this.readByte() << 8;
+
+  var b1 = this.readByte();
+  var b2 = this.readByte();
+
+  m += (b1 & 0x7f) << 16; 
+  var e = ( (b2 & 0x7f) << 1) | ( (b1 & 0x80) >>> 7);
+  var s = b2 & 0x80? -1: 1;
+
+  if (e === 255){
+    return m !== 0? NaN: s * Infinity;
+  }
+  if (e > 0){
+    return s * (1 + (m * this.TWO_POW_MINUS23) ) * Math.pow(2, e - 127);
+  }
+  if (m !== 0){
+    return s * m * this.TWO_POW_MINUS126;
+  }
+  return s * 0;
+};
+
+CTM.Stream.prototype.readString = function(){
+  var len = this.readInt32();
+
+  this.offset += len;
+
+  return this.data.substr(this.offset - len, len);
+};
+
+CTM.Stream.prototype.readArrayInt32 = function(array){
+  var i = 0, len = array.length;
+  
+  while(i < len){
+    array[i ++] = this.readInt32();
+  }
+
+  return array;
+};
+
+CTM.Stream.prototype.readArrayFloat32 = function(array){
+  var i = 0, len = array.length;
+
+  while(i < len){
+    array[i ++] = this.readFloat32();
+  }
+
+  return array;
+};

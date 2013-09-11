@@ -1,1 +1,754 @@
-THREE.SceneExporter=function(){},THREE.SceneExporter.prototype={constructor:THREE.SceneExporter,parse:function(e){function t(e,i){for(var r=0;r<e.children.length;r++){var n=e.children[r];n instanceof THREE.Mesh?(O.push(u(n,i)),w+=1,n.geometry.id in L||(L[n.geometry.id]=!0,C.push(d(n.geometry)),H+=1),n.material.id in k||(k[n.material.id]=!0,A.push(p(n.material)),S+=1,I(n.material.map),I(n.material.envMap),I(n.material.lightMap),I(n.material.specularMap),I(n.material.bumpMap),I(n.material.normalMap))):n instanceof THREE.Light?(O.push(l(n,i)),w+=1):n instanceof THREE.Camera?(O.push(h(n,i)),w+=1):n instanceof THREE.Object3D&&(O.push(c(n,i)),w+=1),n.children.length>0&&O.push(s(i+1)+'		"children" : {'),t(n,i+2),n.children.length>0&&O.push(s(i+1)+"		}"),O.push(s(i)+"		}"+(r<e.children.length-1?",\n":""))}}function i(e){return"["+e.x+","+e.y+"]"}function r(e){return"["+e.x+","+e.y+","+e.z+"]"}function n(e){return"["+e.r.toFixed(3)+","+e.g.toFixed(3)+","+e.b.toFixed(3)+"]"}function o(e){return'"'+e+'"'}function a(e){for(var t=["NearestFilter","NearestMipMapNearestFilter","NearestMipMapLinearFilter","LinearFilter","LinearMipMapNearestFilter","LinearMipMapLinearFilter"],i=0;i<t.length;i++)if(THREE[t[i]]===e)return o(t[i]);return""}function s(e){for(var t="",i=0;e>i;i++)t+="	";return t}function l(e,t){if(e instanceof THREE.AmbientLight)var i=["		"+o(v(e))+" : {",'	"type"  : "AmbientLight",','	"color" : '+e.color.getHex()+(e.children.length?",":"")];else if(e instanceof THREE.DirectionalLight)var i=["		"+o(v(e))+" : {",'	"type"      : "DirectionalLight",','	"color"     : '+e.color.getHex()+",",'	"intensity" : '+e.intensity+",",'	"direction" : '+r(e.position)+",",'	"target"    : '+o(v(e.target))+(e.children.length?",":"")];else if(e instanceof THREE.PointLight)var i=["		"+o(v(e))+" : {",'	"type"      : "PointLight",','	"color"     : '+e.color.getHex()+",",'	"intensity" : '+e.intensity+",",'	"position"  : '+r(e.position)+",",'	"distance"  : '+e.distance+(e.children.length?",":"")];else if(e instanceof THREE.SpotLight)var i=["		"+o(v(e))+" : {",'	"type"      : "SpotLight",','	"color"     : '+e.color.getHex()+",",'	"intensity" : '+e.intensity+",",'	"position"  : '+r(e.position)+",",'	"distance"  : '+e.distance+",",'	"angle"     : '+e.angle+",",'	"exponent"  : '+e.exponent+",",'	"target"    : '+o(v(e.target))+(e.children.length?",":"")];else if(e instanceof THREE.HemisphereLight)var i=["		"+o(v(e))+" : {",'	"type"        : "HemisphereLight",','	"skyColor"    : '+e.color.getHex()+",",'	"groundColor" : '+e.groundColor.getHex()+",",'	"intensity"   : '+e.intensity+",",'	"position"    : '+r(e.position)+(e.children.length?",":"")];else var i=[];return g(i,"\n		",t)}function h(e,t){if(e instanceof THREE.PerspectiveCamera)var i=["		"+o(v(e))+" : {",'	"type"     : "PerspectiveCamera",','	"fov"      : '+e.fov+",",'	"aspect"   : '+e.aspect+",",'	"near"     : '+e.near+",",'	"far"      : '+e.far+",",'	"position" : '+r(e.position)+(e.children.length?",":"")];else if(e instanceof THREE.OrthographicCamera)var i=["		"+o(v(e))+" : {",'	"type"     : "OrthographicCamera",','	"left"     : '+e.left+",",'	"right"    : '+e.right+",",'	"top"      : '+e.top+",",'	"bottom"   : '+e.bottom+",",'	"near"     : '+e.near+",",'	"far"      : '+e.far+",",'	"position" : '+r(e.position)+(e.children.length?",":"")];else var i=[];return g(i,"\n		",t)}function c(e,t){var i=["		"+o(v(e))+" : {",'	"position" : '+r(e.position)+",",'	"rotation" : '+r(e.rotation)+",",'	"scale"	   : '+r(e.scale)+",",'	"visible"  : '+e.visible+(e.children.length?",":"")];return g(i,"\n		",t)}function u(e,t){var i=["		"+o(v(e))+" : {",'	"geometry" : '+o(E(e.geometry))+",",'	"material" : '+o(y(e.material))+",",'	"position" : '+r(e.position)+",",'	"rotation" : '+r(e.rotation)+",",'	"scale"	   : '+r(e.scale)+",",'	"visible"  : '+e.visible+(e.children.length?",":"")];return g(i,"\n		",t)}function d(e){if(e instanceof THREE.SphereGeometry)var t=["	"+o(E(e))+": {",'	"type"    : "sphere",','	"radius"  : '+e.radius+",",'	"widthSegments"  : '+e.widthSegments+",",'	"heightSegments" : '+e.heightSegments,"}"];else if(e instanceof THREE.CubeGeometry)var t=["	"+o(E(e))+": {",'	"type"    : "cube",','	"width"  : '+e.width+",",'	"height"  : '+e.height+",",'	"depth"  : '+e.depth+",",'	"widthSegments"  : '+e.widthSegments+",",'	"heightSegments" : '+e.heightSegments+",",'	"depthSegments" : '+e.depthSegments,"}"];else if(e instanceof THREE.PlaneGeometry)var t=["	"+o(E(e))+": {",'	"type"    : "plane",','	"width"  : '+e.width+",",'	"height"  : '+e.height+",",'	"widthSegments"  : '+e.widthSegments+",",'	"heightSegments" : '+e.heightSegments,"}"];else if(e instanceof THREE.Geometry)if("ascii"===e.sourceType||"ctm"===e.sourceType||"stl"===e.sourceType||"vtk"===e.sourceType)var t=["	"+o(E(e))+": {",'	"type" : '+o(e.sourceType)+",",'	"url"  : '+o(e.sourceFile),"}"];else var t=[];else var t=[];return g(t,"\n		")}function p(e){if(e instanceof THREE.MeshBasicMaterial)var t=["	"+o(y(e))+": {",'	"type"    : "MeshBasicMaterial",','	"parameters"  : {','		"color"  : '+e.color.getHex()+",",e.map?'		"map" : '+o(T(e.map))+",":"",e.envMap?'		"envMap" : '+o(T(e.envMap))+",":"",e.specularMap?'		"specularMap" : '+o(T(e.specularMap))+",":"",e.lightMap?'		"lightMap" : '+o(T(e.lightMap))+",":"",'		"reflectivity"  : '+e.reflectivity+",",'		"transparent" : '+e.transparent+",",'		"opacity" : '+e.opacity+",",'		"wireframe" : '+e.wireframe+",",'		"wireframeLinewidth" : '+e.wireframeLinewidth,"	}","}"];else if(e instanceof THREE.MeshLambertMaterial)var t=["	"+o(y(e))+": {",'	"type"    : "MeshLambertMaterial",','	"parameters"  : {','		"color"  : '+e.color.getHex()+",",'		"ambient"  : '+e.ambient.getHex()+",",'		"emissive"  : '+e.emissive.getHex()+",",e.map?'		"map" : '+o(T(e.map))+",":"",e.envMap?'		"envMap" : '+o(T(e.envMap))+",":"",e.specularMap?'		"specularMap" : '+o(T(e.specularMap))+",":"",e.lightMap?'		"lightMap" : '+o(T(e.lightMap))+",":"",'		"reflectivity"  : '+e.reflectivity+",",'		"transparent" : '+e.transparent+",",'		"opacity" : '+e.opacity+",",'		"wireframe" : '+e.wireframe+",",'		"wireframeLinewidth" : '+e.wireframeLinewidth,"	}","}"];else if(e instanceof THREE.MeshPhongMaterial)var t=["	"+o(y(e))+": {",'	"type"    : "MeshPhongMaterial",','	"parameters"  : {','		"color"  : '+e.color.getHex()+",",'		"ambient"  : '+e.ambient.getHex()+",",'		"emissive"  : '+e.emissive.getHex()+",",'		"specular"  : '+e.specular.getHex()+",",'		"shininess" : '+e.shininess+",",e.map?'		"map" : '+o(T(e.map))+",":"",e.envMap?'		"envMap" : '+o(T(e.envMap))+",":"",e.specularMap?'		"specularMap" : '+o(T(e.specularMap))+",":"",e.lightMap?'		"lightMap" : '+o(T(e.lightMap))+",":"",e.normalMap?'		"normalMap" : '+o(T(e.normalMap))+",":"",e.bumpMap?'		"bumpMap" : '+o(T(e.bumpMap))+",":"",'		"bumpScale"  : '+e.bumpScale+",",'		"reflectivity"  : '+e.reflectivity+",",'		"transparent" : '+e.transparent+",",'		"opacity" : '+e.opacity+",",'		"wireframe" : '+e.wireframe+",",'		"wireframeLinewidth" : '+e.wireframeLinewidth,"	}","}"];else if(e instanceof THREE.MeshDepthMaterial)var t=["	"+o(y(e))+": {",'	"type"    : "MeshDepthMaterial",','	"parameters"  : {','		"transparent" : '+e.transparent+",",'		"opacity" : '+e.opacity+",",'		"wireframe" : '+e.wireframe+",",'		"wireframeLinewidth" : '+e.wireframeLinewidth,"	}","}"];else if(e instanceof THREE.MeshNormalMaterial)var t=["	"+o(y(e))+": {",'	"type"    : "MeshNormalMaterial",','	"parameters"  : {','		"transparent" : '+e.transparent+",",'		"opacity" : '+e.opacity+",",'		"wireframe" : '+e.wireframe+",",'		"wireframeLinewidth" : '+e.wireframeLinewidth,"	}","}"];else if(e instanceof THREE.MeshFaceMaterial)var t=["	"+o(y(e))+": {",'	"type"    : "MeshFaceMaterial",','	"parameters"  : {}',"}"];return g(t,"\n		")}function f(e){var t=["	"+o(T(e))+": {",'	"url"    : "'+e.sourceFile+'",','	"repeat" : '+i(e.repeat)+",",'	"offset" : '+i(e.offset)+",",'	"magFilter" : '+a(e.magFilter)+",",'	"minFilter" : '+a(e.minFilter)+",",'	"anisotropy" : '+e.anisotropy,"}"];return g(t,"\n		")}function m(e){if(e instanceof THREE.Fog)var t=["	"+o(_(e))+": {",'	"type"  : "linear",','	"color" : '+n(e.color)+",",'	"near"  : '+e.near+",",'	"far"   : '+e.far,"}"];else if(e instanceof THREE.FogExp2)var t=["	"+o(_(e))+": {",'	"type"    : "exp2",','	"color"   : '+n(e.color)+",",'	"density" : '+e.density,"}"];else var t=[];return g(t,"\n		")}function g(e,t,i){for(var r=[],n=0;n<e.length;n++){var o=e[n];o&&(i&&(o=s(i)+o),r.push(o))}return r.join(t)}function v(e){return e.name?e.name:"Object_"+e.id}function E(e){return e.name?e.name:"Geometry_"+e.id}function y(e){return e.name?e.name:"Material_"+e.id}function T(e){return e.name?e.name:"Texture_"+e.id}function _(e){return e.name?e.name:"Default fog"}var x=r(e.position),b=r(e.rotation),R=r(e.scale),w=0,H=0,S=0,M=0,C=[],A=[],D=[],P=[],L={},k={},N={},I=function(e){e&&(e.id in N||(N[e.id]=!0,D.push(f(e)),M+=1))},O=[];t(e,0);var z=O.join("\n");e.fog&&P.push(m(e.fog));var F=g(C,",\n\n	"),V=g(A,",\n\n	"),U=g(D,",\n\n	"),B=g(P,",\n\n	"),j=null;e.traverse(function(e){e instanceof THREE.Camera&&e.userData.active&&(j=e)});var W=o(j?v(j):""),G=o(e.fog?_(e.fog):""),X=["{",'	"metadata": {','		"formatVersion" : 3.2,','		"type"		: "scene",','		"generatedBy"	: "SceneExporter",','		"objects"       : '+w+",",'		"geometries"    : '+H+",",'		"materials"     : '+S+",",'		"textures"      : '+M,"	},","",'	"urlBaseType": "relativeToScene",',"",'	"objects" :',"	{",z,"	},","",'	"geometries" :',"	{","	"+F,"	},","",'	"materials" :',"	{","	"+V,"	},","",'	"textures" :',"	{","	"+U,"	},","",'	"fogs" :',"	{","	"+B,"	},","",'	"transform" :',"	{",'		"position"  : '+x+",",'		"rotation"  : '+b+",",'		"scale"     : '+R,"	},","",'	"defaults" :',"	{",'		"camera"  : '+W+",",'		"fog"  	  : '+G,"	}","}"].join("\n");return JSON.parse(X)}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.SceneExporter = function () {};
+
+THREE.SceneExporter.prototype = {
+
+	constructor: THREE.SceneExporter,
+
+	parse: function ( scene ) {
+
+		var position = Vector3String( scene.position );
+		var rotation = Vector3String( scene.rotation );
+		var scale = Vector3String( scene.scale );
+
+		var nobjects = 0;
+		var ngeometries = 0;
+		var nmaterials = 0;
+		var ntextures = 0;
+
+		var objectsArray = [];
+		var geometriesArray = [];
+		var materialsArray = [];
+		var texturesArray = [];
+		var fogsArray = [];
+
+		var geometriesMap = {};
+		var materialsMap = {};
+		var texturesMap = {};
+
+		// extract objects, geometries, materials, textures
+
+		var checkTexture = function ( map ) {
+
+			if ( ! map ) return;
+
+			if ( ! ( map.id in texturesMap ) ) {
+
+				texturesMap[ map.id ] = true;
+				texturesArray.push( TextureString( map ) );
+				ntextures += 1;
+
+			}
+
+		};
+
+		var linesArray = [];
+
+		function createObjectsList( object, pad ) {
+
+			for ( var i = 0; i < object.children.length; i ++ ) {
+
+				var node = object.children[ i ];
+
+				if ( node instanceof THREE.Mesh ) {
+
+					linesArray.push( MeshString( node, pad ) );
+					nobjects += 1;
+
+					if ( ! ( node.geometry.id in geometriesMap ) ) {
+
+						geometriesMap[ node.geometry.id ] = true;
+						geometriesArray.push( GeometryString( node.geometry ) );
+						ngeometries += 1;
+
+					}
+
+					if ( ! ( node.material.id in materialsMap ) ) {
+
+						materialsMap[ node.material.id ] = true;
+						materialsArray.push( MaterialString( node.material ) );
+						nmaterials += 1;
+
+						checkTexture( node.material.map );
+						checkTexture( node.material.envMap );
+						checkTexture( node.material.lightMap );
+						checkTexture( node.material.specularMap );
+						checkTexture( node.material.bumpMap );
+						checkTexture( node.material.normalMap );
+
+					}
+
+				} else if ( node instanceof THREE.Light ) {
+
+					linesArray.push( LightString( node, pad ) );
+					nobjects += 1;
+
+				} else if ( node instanceof THREE.Camera ) {
+
+					linesArray.push( CameraString( node, pad ) );
+					nobjects += 1;
+
+				} else if ( node instanceof THREE.Object3D ) {
+
+					linesArray.push( ObjectString( node, pad ) );
+					nobjects += 1;
+
+				}
+
+				if ( node.children.length > 0 ) {
+
+					linesArray.push( PaddingString( pad + 1 ) + '\t\t"children" : {' );
+
+				}
+
+				createObjectsList( node, pad + 2 );
+
+				if ( node.children.length > 0 ) {
+
+					linesArray.push( PaddingString( pad + 1 ) + "\t\t}" );
+
+				}
+
+				linesArray.push( PaddingString( pad ) + "\t\t}" + ( i < object.children.length - 1 ? ",\n" : "" ) );
+
+			}
+
+		}
+
+		createObjectsList( scene, 0 );
+
+		var objects = linesArray.join( "\n" );
+
+		// extract fog
+
+		if ( scene.fog ) {
+
+			fogsArray.push( FogString( scene.fog ) );
+
+		}
+
+		// generate sections
+
+		var geometries = generateMultiLineString( geometriesArray, ",\n\n\t" );
+		var materials = generateMultiLineString( materialsArray, ",\n\n\t" );
+		var textures = generateMultiLineString( texturesArray, ",\n\n\t" );
+		var fogs = generateMultiLineString( fogsArray, ",\n\n\t" );
+
+		// generate defaults
+
+		var activeCamera = null;
+
+		scene.traverse( function ( node ) {
+
+			if ( node instanceof THREE.Camera && node.userData.active ) {
+
+				activeCamera = node;
+
+			}
+
+		} );
+
+		var defcamera = LabelString( activeCamera ? getObjectName( activeCamera ) : "" );
+		var deffog = LabelString( scene.fog ? getFogName( scene.fog ) : "" );
+
+		// templates
+
+		function Vector2String( v ) {
+
+			return "[" + v.x + "," + v.y + "]";
+
+		}
+
+		function Vector3String( v ) {
+
+			return "[" + v.x + "," + v.y + "," + v.z + "]";
+
+		}
+
+		function ColorString( c ) {
+
+			return "[" + c.r.toFixed( 3 ) + "," + c.g.toFixed( 3 ) + "," + c.b.toFixed( 3 ) + "]";
+
+		}
+
+		function LabelString( s ) {
+
+			return '"' + s + '"';
+
+		}
+
+		function NumConstantString( c ) {
+
+			var constants = [ "NearestFilter", "NearestMipMapNearestFilter" , "NearestMipMapLinearFilter",
+							  "LinearFilter", "LinearMipMapNearestFilter", "LinearMipMapLinearFilter" ];
+
+			for ( var i = 0; i < constants.length; i ++ ) {
+
+				if ( THREE[ constants[ i ] ] === c ) return LabelString( constants[ i ] );
+
+			};
+
+			return "";
+
+		}
+
+		function PaddingString( n ) {
+
+			var output = "";
+
+			for ( var i = 0; i < n; i ++ ) output += "\t";
+
+			return output;
+
+		}
+
+
+		//
+
+		function LightString( o, n ) {
+
+			if ( o instanceof THREE.AmbientLight ) {
+
+				var output = [
+
+				'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+				'	"type"  : "AmbientLight",',
+				'	"color" : ' + o.color.getHex() + ( o.children.length ? ',' : '' )
+
+				];
+
+			} else if ( o instanceof THREE.DirectionalLight ) {
+
+				var output = [
+
+				'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+				'	"type"      : "DirectionalLight",',
+				'	"color"     : ' + o.color.getHex() + ',',
+				'	"intensity" : ' + o.intensity + ',',
+				'	"direction" : ' + Vector3String( o.position ) + ',',
+				'	"target"    : ' + LabelString( getObjectName( o.target ) ) + ( o.children.length ? ',' : '' )
+
+				];
+
+			} else if ( o instanceof THREE.PointLight ) {
+
+				var output = [
+
+				'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+				'	"type"      : "PointLight",',
+				'	"color"     : ' + o.color.getHex() + ',',
+				'	"intensity" : ' + o.intensity + ',',
+				'	"position"  : ' + Vector3String( o.position ) + ',',
+				'	"distance"  : ' + o.distance + ( o.children.length ? ',' : '' )
+
+				];
+
+			} else if ( o instanceof THREE.SpotLight ) {
+
+				var output = [
+
+				'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+				'	"type"      : "SpotLight",',
+				'	"color"     : ' + o.color.getHex() + ',',
+				'	"intensity" : ' + o.intensity + ',',
+				'	"position"  : ' + Vector3String( o.position ) + ',',
+				'	"distance"  : ' + o.distance + ',',
+				'	"angle"     : ' + o.angle + ',',
+				'	"exponent"  : ' + o.exponent + ',',
+				'	"target"    : ' + LabelString( getObjectName( o.target ) ) + ( o.children.length ? ',' : '' )
+
+				];
+
+			} else if ( o instanceof THREE.HemisphereLight ) {
+
+				var output = [
+
+				'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+				'	"type"        : "HemisphereLight",',
+				'	"skyColor"    : ' + o.color.getHex() + ',',
+				'	"groundColor" : ' + o.groundColor.getHex() + ',',
+				'	"intensity"   : ' + o.intensity + ',',
+				'	"position"    : ' + Vector3String( o.position ) + ( o.children.length ? ',' : '' )
+
+				];
+
+			} else {
+
+				var output = [];
+
+			}
+
+			return generateMultiLineString( output, '\n\t\t', n );
+
+		}
+
+		function CameraString( o, n ) {
+
+			if ( o instanceof THREE.PerspectiveCamera ) {
+
+				var output = [
+
+				'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+				'	"type"     : "PerspectiveCamera",',
+				'	"fov"      : ' + o.fov + ',',
+				'	"aspect"   : ' + o.aspect + ',',
+				'	"near"     : ' + o.near + ',',
+				'	"far"      : ' + o.far + ',',
+				'	"position" : ' + Vector3String( o.position ) + ( o.children.length ? ',' : '' )
+
+				];
+
+			} else if ( o instanceof THREE.OrthographicCamera ) {
+
+				var output = [
+
+				'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+				'	"type"     : "OrthographicCamera",',
+				'	"left"     : ' + o.left + ',',
+				'	"right"    : ' + o.right + ',',
+				'	"top"      : ' + o.top + ',',
+				'	"bottom"   : ' + o.bottom + ',',
+				'	"near"     : ' + o.near + ',',
+				'	"far"      : ' + o.far + ',',
+				'	"position" : ' + Vector3String( o.position ) + ( o.children.length ? ',' : '' )
+
+				];
+
+			} else {
+
+				var output = [];
+
+			}
+
+			return generateMultiLineString( output, '\n\t\t', n );
+
+		}
+
+		function ObjectString( o, n ) {
+
+			var output = [
+
+			'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+			'	"position" : ' + Vector3String( o.position ) + ',',
+			'	"rotation" : ' + Vector3String( o.rotation ) + ',',
+			'	"scale"	   : ' + Vector3String( o.scale ) + ',',
+			'	"visible"  : ' + o.visible + ( o.children.length ? ',' : '' )
+
+			];
+
+			return generateMultiLineString( output, '\n\t\t', n );
+
+		}
+
+		function MeshString( o, n ) {
+
+			var output = [
+
+			'\t\t' + LabelString( getObjectName( o ) ) + ' : {',
+			'	"geometry" : ' + LabelString( getGeometryName( o.geometry ) ) + ',',
+			'	"material" : ' + LabelString( getMaterialName( o.material ) ) + ',',
+			'	"position" : ' + Vector3String( o.position ) + ',',
+			'	"rotation" : ' + Vector3String( o.rotation ) + ',',
+			'	"scale"	   : ' + Vector3String( o.scale ) + ',',
+			'	"visible"  : ' + o.visible + ( o.children.length ? ',' : '' )
+
+			];
+
+			return generateMultiLineString( output, '\n\t\t', n );
+
+		}
+
+		//
+
+		function GeometryString( g ) {
+
+			if ( g instanceof THREE.SphereGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				'	"type"    : "sphere",',
+				'	"radius"  : ' 		 + g.radius + ',',
+				'	"widthSegments"  : ' + g.widthSegments + ',',
+				'	"heightSegments" : ' + g.heightSegments,
+				'}'
+
+				];
+
+			} else if ( g instanceof THREE.CubeGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				'	"type"    : "cube",',
+				'	"width"  : '  + g.width  + ',',
+				'	"height"  : ' + g.height + ',',
+				'	"depth"  : '  + g.depth  + ',',
+				'	"widthSegments"  : ' + g.widthSegments + ',',
+				'	"heightSegments" : ' + g.heightSegments + ',',
+				'	"depthSegments" : '  + g.depthSegments,
+				'}'
+
+				];
+
+			} else if ( g instanceof THREE.PlaneGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				'	"type"    : "plane",',
+				'	"width"  : '  + g.width  + ',',
+				'	"height"  : ' + g.height + ',',
+				'	"widthSegments"  : ' + g.widthSegments + ',',
+				'	"heightSegments" : ' + g.heightSegments,
+				'}'
+
+				];
+
+			} else if ( g instanceof THREE.Geometry ) {
+
+				if ( g.sourceType === "ascii" || g.sourceType === "ctm" || g.sourceType === "stl" || g.sourceType === "vtk" ) {
+
+					var output = [
+
+					'\t' + LabelString( getGeometryName( g ) ) + ': {',
+					'	"type" : ' + LabelString( g.sourceType ) + ',',
+					'	"url"  : ' + LabelString( g.sourceFile ),
+					'}'
+
+					];
+
+				} else {
+
+					var output = [];
+
+				}
+
+			} else {
+
+				var output = [];
+
+			}
+
+			return generateMultiLineString( output, '\n\t\t' );
+
+		}
+
+		function MaterialString( m ) {
+
+			if ( m instanceof THREE.MeshBasicMaterial ) {
+
+				var output = [
+
+				'\t' + LabelString( getMaterialName( m ) ) + ': {',
+				'	"type"    : "MeshBasicMaterial",',
+				'	"parameters"  : {',
+				'		"color"  : ' 	+ m.color.getHex() + ',',
+
+				m.map ? 		'		"map" : ' + LabelString( getTextureName( m.map ) ) + ',' : '',
+				m.envMap ? 		'		"envMap" : ' + LabelString( getTextureName( m.envMap ) ) + ',' : '',
+				m.specularMap ? '		"specularMap" : ' + LabelString( getTextureName( m.specularMap ) ) + ',' : '',
+				m.lightMap ? 	'		"lightMap" : ' + LabelString( getTextureName( m.lightMap ) ) + ',' : '',
+
+				'		"reflectivity"  : ' + m.reflectivity + ',',
+				'		"transparent" : ' + m.transparent + ',',
+				'		"opacity" : ' 	+ m.opacity + ',',
+				'		"wireframe" : ' + m.wireframe + ',',
+				'		"wireframeLinewidth" : ' + m.wireframeLinewidth,
+				'	}',
+				'}'
+
+				];
+
+
+			} else if ( m instanceof THREE.MeshLambertMaterial ) {
+
+				var output = [
+
+				'\t' + LabelString( getMaterialName( m ) ) + ': {',
+				'	"type"    : "MeshLambertMaterial",',
+				'	"parameters"  : {',
+				'		"color"  : ' 	+ m.color.getHex() + ',',
+				'		"ambient"  : ' 	+ m.ambient.getHex() + ',',
+				'		"emissive"  : ' + m.emissive.getHex() + ',',
+
+				m.map ? 		'		"map" : ' + LabelString( getTextureName( m.map ) ) + ',' : '',
+				m.envMap ? 		'		"envMap" : ' + LabelString( getTextureName( m.envMap ) ) + ',' : '',
+				m.specularMap ? '		"specularMap" : ' + LabelString( getTextureName( m.specularMap ) ) + ',' : '',
+				m.lightMap ? 	'		"lightMap" : ' + LabelString( getTextureName( m.lightMap ) ) + ',' : '',
+
+				'		"reflectivity"  : ' + m.reflectivity + ',',
+				'		"transparent" : ' + m.transparent + ',',
+				'		"opacity" : ' 	+ m.opacity + ',',
+				'		"wireframe" : ' + m.wireframe + ',',
+				'		"wireframeLinewidth" : ' + m.wireframeLinewidth,
+				'	}',
+				'}'
+
+				];
+
+			} else if ( m instanceof THREE.MeshPhongMaterial ) {
+
+				var output = [
+
+				'\t' + LabelString( getMaterialName( m ) ) + ': {',
+				'	"type"    : "MeshPhongMaterial",',
+				'	"parameters"  : {',
+				'		"color"  : ' 	+ m.color.getHex() + ',',
+				'		"ambient"  : ' 	+ m.ambient.getHex() + ',',
+				'		"emissive"  : ' + m.emissive.getHex() + ',',
+				'		"specular"  : ' + m.specular.getHex() + ',',
+				'		"shininess" : ' + m.shininess + ',',
+
+				m.map ? 		'		"map" : ' + LabelString( getTextureName( m.map ) ) + ',' : '',
+				m.envMap ? 		'		"envMap" : ' + LabelString( getTextureName( m.envMap ) ) + ',' : '',
+				m.specularMap ? '		"specularMap" : ' + LabelString( getTextureName( m.specularMap ) ) + ',' : '',
+				m.lightMap ? 	'		"lightMap" : ' + LabelString( getTextureName( m.lightMap ) ) + ',' : '',
+				m.normalMap ? 	'		"normalMap" : ' + LabelString( getTextureName( m.normalMap ) ) + ',' : '',
+				m.bumpMap ? 	'		"bumpMap" : ' + LabelString( getTextureName( m.bumpMap ) ) + ',' : '',
+
+				'		"bumpScale"  : ' + m.bumpScale + ',',
+				'		"reflectivity"  : ' + m.reflectivity + ',',
+				'		"transparent" : ' + m.transparent + ',',
+				'		"opacity" : ' 	+ m.opacity + ',',
+				'		"wireframe" : ' + m.wireframe + ',',
+				'		"wireframeLinewidth" : ' + m.wireframeLinewidth,
+				'	}',
+				'}'
+
+				];
+
+			} else if ( m instanceof THREE.MeshDepthMaterial ) {
+
+				var output = [
+
+				'\t' + LabelString( getMaterialName( m ) ) + ': {',
+				'	"type"    : "MeshDepthMaterial",',
+				'	"parameters"  : {',
+				'		"transparent" : ' + m.transparent + ',',
+				'		"opacity" : ' 	+ m.opacity + ',',
+				'		"wireframe" : ' + m.wireframe + ',',
+				'		"wireframeLinewidth" : ' + m.wireframeLinewidth,
+				'	}',
+				'}'
+
+				];
+
+			} else if ( m instanceof THREE.MeshNormalMaterial ) {
+
+				var output = [
+
+				'\t' + LabelString( getMaterialName( m ) ) + ': {',
+				'	"type"    : "MeshNormalMaterial",',
+				'	"parameters"  : {',
+				'		"transparent" : ' + m.transparent + ',',
+				'		"opacity" : ' 	+ m.opacity + ',',
+				'		"wireframe" : ' + m.wireframe + ',',
+				'		"wireframeLinewidth" : ' + m.wireframeLinewidth,
+				'	}',
+				'}'
+
+				];
+
+			} else if ( m instanceof THREE.MeshFaceMaterial ) {
+
+				var output = [
+
+				'\t' + LabelString( getMaterialName( m ) ) + ': {',
+				'	"type"    : "MeshFaceMaterial",',
+				'	"parameters"  : {}',
+				'}'
+
+				];
+
+			}
+
+			return generateMultiLineString( output, '\n\t\t' );
+
+		}
+
+		function TextureString( t ) {
+
+			// here would be also an option to use data URI
+			// with embedded image from "t.image.src"
+			// (that's a side effect of using FileReader to load images)
+
+			var output = [
+
+			'\t' + LabelString( getTextureName( t ) ) + ': {',
+			'	"url"    : "' + t.sourceFile + '",',
+			'	"repeat" : ' + Vector2String( t.repeat ) + ',',
+			'	"offset" : ' + Vector2String( t.offset ) + ',',
+			'	"magFilter" : ' + NumConstantString( t.magFilter ) + ',',
+			'	"minFilter" : ' + NumConstantString( t.minFilter ) + ',',
+			'	"anisotropy" : ' + t.anisotropy,
+			'}'
+
+			];
+
+			return generateMultiLineString( output, '\n\t\t' );
+
+		}
+
+		//
+
+		function FogString( f ) {
+
+			if ( f instanceof THREE.Fog ) {
+
+				var output = [
+
+				'\t' + LabelString( getFogName( f ) ) + ': {',
+				'	"type"  : "linear",',
+				'	"color" : ' + ColorString( f.color ) + ',',
+				'	"near"  : '  + f.near + ',',
+				'	"far"   : '    + f.far,
+				'}'
+
+				];
+
+			} else if ( f instanceof THREE.FogExp2 ) {
+
+				var output = [
+
+				'\t' + LabelString( getFogName( f ) ) + ': {',
+				'	"type"    : "exp2",',
+				'	"color"   : '  + ColorString( f.color ) + ',',
+				'	"density" : ' + f.density,
+				'}'
+
+				];
+
+			} else {
+
+				var output = [];
+
+			}
+
+			return generateMultiLineString( output, '\n\t\t' );
+
+		}
+
+		//
+
+		function generateMultiLineString( lines, separator, padding ) {
+
+			var cleanLines = [];
+
+			for ( var i = 0; i < lines.length; i ++ ) {
+
+				var line = lines[ i ];
+
+				if ( line ) {
+
+					if ( padding ) line = PaddingString( padding ) + line;
+					cleanLines.push(  line );
+
+				}
+
+			}
+
+			return cleanLines.join( separator );
+
+		}
+
+		function getObjectName( o ) {
+
+			return o.name ? o.name : "Object_" + o.id;
+
+		}
+
+		function getGeometryName( g ) {
+
+			return g.name ? g.name : "Geometry_" + g.id;
+
+		}
+
+		function getMaterialName( m ) {
+
+			return m.name ? m.name : "Material_" + m.id;
+
+		}
+
+		function getTextureName( t ) {
+
+			return t.name ? t.name : "Texture_" + t.id;
+
+		}
+
+		function getFogName( f ) {
+
+			return f.name ? f.name : "Default fog";
+
+		}
+
+		//
+
+		var output = [
+			'{',
+			'	"metadata": {',
+			'		"formatVersion" : 3.2,',
+			'		"type"		: "scene",',
+			'		"generatedBy"	: "SceneExporter",',
+			'		"objects"       : ' + nobjects + ',',
+			'		"geometries"    : ' + ngeometries + ',',
+			'		"materials"     : ' + nmaterials + ',',
+			'		"textures"      : ' + ntextures,
+			'	},',
+			'',
+			'	"urlBaseType": "relativeToScene",',
+			'',
+
+			'	"objects" :',
+			'	{',
+			objects,
+			'	},',
+			'',
+
+			'	"geometries" :',
+			'	{',
+			'\t' + 	geometries,
+			'	},',
+			'',
+
+			'	"materials" :',
+			'	{',
+			'\t' + 	materials,
+			'	},',
+			'',
+
+			'	"textures" :',
+			'	{',
+			'\t' + 	textures,
+			'	},',
+			'',
+
+			'	"fogs" :',
+			'	{',
+			'\t' + 	fogs,
+			'	},',
+			'',
+
+			'	"transform" :',
+			'	{',
+			'		"position"  : ' + position + ',',
+			'		"rotation"  : ' + rotation + ',',
+			'		"scale"     : ' + scale,
+			'	},',
+			'',
+			'	"defaults" :',
+			'	{',
+			'		"camera"  : ' + defcamera + ',',
+			'		"fog"  	  : ' + deffog,
+			'	}',
+			'}'
+		].join( '\n' );
+
+		return JSON.parse( output );
+
+	}
+
+}

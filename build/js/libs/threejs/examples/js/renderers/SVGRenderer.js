@@ -1,1 +1,518 @@
-THREE.SVGRenderer=function(){function e(e){D.setRGB(0,0,0),P.setRGB(0,0,0),L.setRGB(0,0,0);for(var t=0,i=e.length;i>t;t++){var r=e[t],n=r.color;r instanceof THREE.AmbientLight?(D.r+=n.r,D.g+=n.g,D.b+=n.b):r instanceof THREE.DirectionalLight?(P.r+=n.r,P.g+=n.g,P.b+=n.b):r instanceof THREE.PointLight&&(L.r+=n.r,L.g+=n.g,L.b+=n.b)}}function t(e,t,i,r){for(var n=0,o=e.length;o>n;n++){var a=e[n],s=a.color;if(a instanceof THREE.DirectionalLight){var l=k.getPositionFromMatrix(a.matrixWorld).normalize(),h=i.dot(l);if(0>=h)continue;h*=a.intensity,r.r+=s.r*h,r.g+=s.g*h,r.b+=s.b*h}else if(a instanceof THREE.PointLight){var l=k.getPositionFromMatrix(a.matrixWorld),h=i.dot(k.subVectors(l,t).normalize());if(0>=h)continue;if(h*=0==a.distance?1:1-Math.min(t.distanceTo(l)/a.distance,1),0==h)continue;h*=a.intensity,r.r+=s.r*h,r.g+=s.g*h,r.b+=s.b*h}}}function i(){}function r(e,t,i,r){T=a(x++),T.setAttribute("x1",e.positionScreen.x),T.setAttribute("y1",e.positionScreen.y),T.setAttribute("x2",t.positionScreen.x),T.setAttribute("y2",t.positionScreen.y),r instanceof THREE.LineBasicMaterial&&(T.setAttribute("style","fill: none; stroke: "+r.color.getStyle()+"; stroke-width: "+r.linewidth+"; stroke-opacity: "+r.opacity+"; stroke-linecap: "+r.linecap+"; stroke-linejoin: "+r.linejoin),H.appendChild(T))}function n(e,i,r,n,o){if(w.info.render.vertices+=3,w.info.render.faces++,T=s(_++),T.setAttribute("d","M "+e.positionScreen.x+" "+e.positionScreen.y+" L "+i.positionScreen.x+" "+i.positionScreen.y+" L "+r.positionScreen.x+","+r.positionScreen.y+"z"),o instanceof THREE.MeshBasicMaterial)C.copy(o.color),o.vertexColors===THREE.FaceColors&&C.multiply(n.color);else if(o instanceof THREE.MeshLambertMaterial||o instanceof THREE.MeshPhongMaterial)A.copy(o.color),o.vertexColors===THREE.FaceColors&&A.multiply(n.color),C.copy(D),t(c,n.centroidModel,n.normalModel,C),C.multiply(A).add(o.emissive);else if(o instanceof THREE.MeshDepthMaterial)y=1-o.__2near/(o.__farPlusNear-n.z*o.__farMinusNear),C.setRGB(y,y,y);else if(o instanceof THREE.MeshNormalMaterial){var a=n.normalModelView;C.setRGB(a.x,a.y,a.z).multiplyScalar(.5).addScalar(.5)}o.wireframe?T.setAttribute("style","fill: none; stroke: "+C.getStyle()+"; stroke-width: "+o.wireframeLinewidth+"; stroke-opacity: "+o.opacity+"; stroke-linecap: "+o.wireframeLinecap+"; stroke-linejoin: "+o.wireframeLinejoin):T.setAttribute("style","fill: "+C.getStyle()+"; fill-opacity: "+o.opacity),H.appendChild(T)}function o(e,i,r,n,o,a){if(w.info.render.vertices+=4,w.info.render.faces++,T=s(_++),T.setAttribute("d","M "+e.positionScreen.x+" "+e.positionScreen.y+" L "+i.positionScreen.x+" "+i.positionScreen.y+" L "+r.positionScreen.x+","+r.positionScreen.y+" L "+n.positionScreen.x+","+n.positionScreen.y+"z"),a instanceof THREE.MeshBasicMaterial)C.copy(a.color),a.vertexColors===THREE.FaceColors&&C.multiply(o.color);else if(a instanceof THREE.MeshLambertMaterial||a instanceof THREE.MeshPhongMaterial)A.copy(a.color),a.vertexColors===THREE.FaceColors&&A.multiply(o.color),C.copy(D),t(c,o.centroidModel,o.normalModel,C),C.multiply(A).add(a.emissive);else if(a instanceof THREE.MeshDepthMaterial)y=1-a.__2near/(a.__farPlusNear-o.z*a.__farMinusNear),C.setRGB(y,y,y);else if(a instanceof THREE.MeshNormalMaterial){var l=o.normalModelView;C.setRGB(l.x,l.y,l.z).multiplyScalar(.5).addScalar(.5)}a.wireframe?T.setAttribute("style","fill: none; stroke: "+C.getStyle()+"; stroke-width: "+a.wireframeLinewidth+"; stroke-opacity: "+a.opacity+"; stroke-linecap: "+a.wireframeLinecap+"; stroke-linejoin: "+a.wireframeLinejoin):T.setAttribute("style","fill: "+C.getStyle()+"; fill-opacity: "+a.opacity),H.appendChild(T)}function a(e){return null==I[e]?(I[e]=document.createElementNS("http://www.w3.org/2000/svg","line"),0==O&&I[e].setAttribute("shape-rendering","crispEdges"),I[e]):I[e]}function s(e){return null==N[e]?(N[e]=document.createElementNS("http://www.w3.org/2000/svg","path"),0==O&&N[e].setAttribute("shape-rendering","crispEdges"),N[e]):N[e]}console.log("THREE.SVGRenderer",THREE.REVISION);var l,h,c,u,d,p,f,m,g,v,E,y,T,_,b,x,w=this,R=new THREE.Projector,H=document.createElementNS("http://www.w3.org/2000/svg","svg"),S=new THREE.Box2,M=new THREE.Box2,C=new THREE.Color,A=new THREE.Color,D=new THREE.Color,P=new THREE.Color,L=new THREE.Color,k=new THREE.Vector3,N=[],I=[],O=1;this.domElement=H,this.autoClear=!0,this.sortObjects=!0,this.sortElements=!0,this.info={render:{vertices:0,faces:0}},this.setQuality=function(e){switch(e){case"high":O=1;break;case"low":O=0}},this.supportsVertexTextures=function(){},this.setFaceCulling=function(){},this.setClearColor=function(){},this.setSize=function(e,t){u=e,d=t,p=u/2,f=d/2,H.setAttribute("viewBox",-p+" "+-f+" "+u+" "+d),H.setAttribute("width",u),H.setAttribute("height",d),S.min.set(-p,-f),S.max.set(p,f)},this.clear=function(){for(_=0,b=0,x=0;H.childNodes.length>0;)H.removeChild(H.childNodes[0])},this.render=function(t,a){if(a instanceof THREE.Camera==!1)return console.error("THREE.SVGRenderer.render: camera is not an instance of THREE.Camera."),void 0;this.autoClear===!0&&this.clear(),w.info.render.vertices=0,w.info.render.faces=0,l=R.projectScene(t,a,this.sortObjects,this.sortElements),h=l.elements,c=l.lights,e(c);for(var s=0,u=h.length;u>s;s++){var d=h[s],y=d.material;if(void 0!==y&&y.visible!==!1)if(M.makeEmpty(),d instanceof THREE.RenderableParticle)m=d,m.x*=p,m.y*=-f,i(m,d,y);else if(d instanceof THREE.RenderableLine)m=d.v1,g=d.v2,m.positionScreen.x*=p,m.positionScreen.y*=-f,g.positionScreen.x*=p,g.positionScreen.y*=-f,M.setFromPoints([m.positionScreen,g.positionScreen]),S.isIntersectionBox(M)===!0&&r(m,g,d,y);else if(d instanceof THREE.RenderableFace3){if(m=d.v1,g=d.v2,v=d.v3,m.positionScreen.z<-1||m.positionScreen.z>1)continue;if(g.positionScreen.z<-1||g.positionScreen.z>1)continue;if(v.positionScreen.z<-1||v.positionScreen.z>1)continue;m.positionScreen.x*=p,m.positionScreen.y*=-f,g.positionScreen.x*=p,g.positionScreen.y*=-f,v.positionScreen.x*=p,v.positionScreen.y*=-f,M.setFromPoints([m.positionScreen,g.positionScreen,v.positionScreen]),S.isIntersectionBox(M)===!0&&n(m,g,v,d,y)}else if(d instanceof THREE.RenderableFace4){if(m=d.v1,g=d.v2,v=d.v3,E=d.v4,m.positionScreen.z<-1||m.positionScreen.z>1)continue;if(g.positionScreen.z<-1||g.positionScreen.z>1)continue;if(v.positionScreen.z<-1||v.positionScreen.z>1)continue;if(E.positionScreen.z<-1||E.positionScreen.z>1)continue;m.positionScreen.x*=p,m.positionScreen.y*=-f,g.positionScreen.x*=p,g.positionScreen.y*=-f,v.positionScreen.x*=p,v.positionScreen.y*=-f,E.positionScreen.x*=p,E.positionScreen.y*=-f,M.setFromPoints([m.positionScreen,g.positionScreen,v.positionScreen,E.positionScreen]),S.isIntersectionBox(M)===!0&&o(m,g,v,E,d,y)}}}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.SVGRenderer = function () {
+
+	console.log( 'THREE.SVGRenderer', THREE.REVISION );
+
+	var _this = this,
+	_renderData, _elements, _lights,
+	_projector = new THREE.Projector(),
+	_svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
+	_svgWidth, _svgHeight, _svgWidthHalf, _svgHeightHalf,
+
+	_v1, _v2, _v3, _v4,
+
+	_clipBox = new THREE.Box2(),
+	_elemBox = new THREE.Box2(),
+
+	_color = new THREE.Color(),
+	_diffuseColor = new THREE.Color(),
+	_ambientLight = new THREE.Color(),
+	_directionalLights = new THREE.Color(),
+	_pointLights = new THREE.Color(),
+
+	_w, // z-buffer to w-buffer
+	_vector3 = new THREE.Vector3(), // Needed for PointLight
+
+	_svgPathPool = [], _svgCirclePool = [], _svgLinePool = [],
+	_svgNode, _pathCount, _circleCount, _lineCount,
+	_quality = 1;
+
+	this.domElement = _svg;
+
+	this.autoClear = true;
+	this.sortObjects = true;
+	this.sortElements = true;
+
+	this.info = {
+
+		render: {
+
+			vertices: 0,
+			faces: 0
+
+		}
+
+	}
+
+	this.setQuality = function( quality ) {
+
+		switch(quality) {
+
+			case "high": _quality = 1; break;
+			case "low": _quality = 0; break;
+
+		}
+
+	};
+
+	// WebGLRenderer compatibility
+
+	this.supportsVertexTextures = function () {};
+	this.setFaceCulling = function () {};
+
+	this.setClearColor = function ( color, alpha ) {
+
+		// TODO
+
+	};
+
+	this.setSize = function( width, height ) {
+
+		_svgWidth = width; _svgHeight = height;
+		_svgWidthHalf = _svgWidth / 2; _svgHeightHalf = _svgHeight / 2;
+
+		_svg.setAttribute( 'viewBox', ( - _svgWidthHalf ) + ' ' + ( - _svgHeightHalf ) + ' ' + _svgWidth + ' ' + _svgHeight );
+		_svg.setAttribute( 'width', _svgWidth );
+		_svg.setAttribute( 'height', _svgHeight );
+
+		_clipBox.min.set( - _svgWidthHalf, - _svgHeightHalf );
+		_clipBox.max.set( _svgWidthHalf, _svgHeightHalf );
+
+	};
+
+	this.clear = function () {
+
+		_pathCount = 0;
+		_circleCount = 0;
+		_lineCount = 0;
+
+		while ( _svg.childNodes.length > 0 ) {
+
+			_svg.removeChild( _svg.childNodes[ 0 ] );
+
+		}
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		if ( camera instanceof THREE.Camera === false ) {
+
+			console.error( 'THREE.SVGRenderer.render: camera is not an instance of THREE.Camera.' );
+			return;
+
+		}
+
+		if ( this.autoClear === true ) this.clear();
+
+		_this.info.render.vertices = 0;
+		_this.info.render.faces = 0;
+
+		_renderData = _projector.projectScene( scene, camera, this.sortObjects, this.sortElements );
+		_elements = _renderData.elements;
+		_lights = _renderData.lights;
+
+		calculateLights( _lights );
+
+		for ( var e = 0, el = _elements.length; e < el; e ++ ) {
+
+			var element = _elements[ e ];
+			var material = element.material;
+
+			if ( material === undefined || material.visible === false ) continue;
+
+			_elemBox.makeEmpty();
+
+			if ( element instanceof THREE.RenderableParticle ) {
+
+				_v1 = element;
+				_v1.x *= _svgWidthHalf; _v1.y *= -_svgHeightHalf;
+
+				renderParticle( _v1, element, material );
+
+			} else if ( element instanceof THREE.RenderableLine ) {
+
+				_v1 = element.v1; _v2 = element.v2;
+
+				_v1.positionScreen.x *= _svgWidthHalf; _v1.positionScreen.y *= - _svgHeightHalf;
+				_v2.positionScreen.x *= _svgWidthHalf; _v2.positionScreen.y *= - _svgHeightHalf;
+
+				_elemBox.setFromPoints( [ _v1.positionScreen, _v2.positionScreen ] );
+
+				if ( _clipBox.isIntersectionBox( _elemBox ) === true ) {
+
+					renderLine( _v1, _v2, element, material );
+
+				}
+
+			} else if ( element instanceof THREE.RenderableFace3 ) {
+
+				_v1 = element.v1; _v2 = element.v2; _v3 = element.v3;
+
+				if ( _v1.positionScreen.z < -1 || _v1.positionScreen.z > 1 ) continue;
+				if ( _v2.positionScreen.z < -1 || _v2.positionScreen.z > 1 ) continue;
+				if ( _v3.positionScreen.z < -1 || _v3.positionScreen.z > 1 ) continue;
+
+				_v1.positionScreen.x *= _svgWidthHalf; _v1.positionScreen.y *= - _svgHeightHalf;
+				_v2.positionScreen.x *= _svgWidthHalf; _v2.positionScreen.y *= - _svgHeightHalf;
+				_v3.positionScreen.x *= _svgWidthHalf; _v3.positionScreen.y *= - _svgHeightHalf;
+
+				_elemBox.setFromPoints( [
+					_v1.positionScreen,
+					_v2.positionScreen,
+					_v3.positionScreen
+				] );
+
+				if ( _clipBox.isIntersectionBox( _elemBox ) === true ) {
+
+					renderFace3( _v1, _v2, _v3, element, material );
+
+				}
+
+			} else if ( element instanceof THREE.RenderableFace4 ) {
+
+				_v1 = element.v1; _v2 = element.v2; _v3 = element.v3; _v4 = element.v4;
+
+				if ( _v1.positionScreen.z < -1 || _v1.positionScreen.z > 1 ) continue;
+				if ( _v2.positionScreen.z < -1 || _v2.positionScreen.z > 1 ) continue;
+				if ( _v3.positionScreen.z < -1 || _v3.positionScreen.z > 1 ) continue;
+				if ( _v4.positionScreen.z < -1 || _v4.positionScreen.z > 1 ) continue;
+
+				_v1.positionScreen.x *= _svgWidthHalf; _v1.positionScreen.y *= -_svgHeightHalf;
+				_v2.positionScreen.x *= _svgWidthHalf; _v2.positionScreen.y *= -_svgHeightHalf;
+				_v3.positionScreen.x *= _svgWidthHalf; _v3.positionScreen.y *= -_svgHeightHalf;
+				_v4.positionScreen.x *= _svgWidthHalf; _v4.positionScreen.y *= -_svgHeightHalf;
+
+				_elemBox.setFromPoints( [
+					_v1.positionScreen,
+					_v2.positionScreen,
+					_v3.positionScreen,
+					_v4.positionScreen
+				] );
+
+				if ( _clipBox.isIntersectionBox( _elemBox ) === true ) {
+
+					renderFace4( _v1, _v2, _v3, _v4, element, material );
+
+				}
+
+			}
+
+		}
+
+	};
+
+	function calculateLights( lights ) {
+
+		_ambientLight.setRGB( 0, 0, 0 );
+		_directionalLights.setRGB( 0, 0, 0 );
+		_pointLights.setRGB( 0, 0, 0 );
+
+		for ( var l = 0, ll = lights.length; l < ll; l++ ) {
+
+			var light = lights[ l ];
+			var lightColor = light.color;
+
+			if ( light instanceof THREE.AmbientLight ) {
+
+				_ambientLight.r += lightColor.r;
+				_ambientLight.g += lightColor.g;
+				_ambientLight.b += lightColor.b;
+
+			} else if ( light instanceof THREE.DirectionalLight ) {
+
+				_directionalLights.r += lightColor.r;
+				_directionalLights.g += lightColor.g;
+				_directionalLights.b += lightColor.b;
+
+			} else if ( light instanceof THREE.PointLight ) {
+
+				_pointLights.r += lightColor.r;
+				_pointLights.g += lightColor.g;
+				_pointLights.b += lightColor.b;
+
+			}
+
+		}
+
+	}
+
+	function calculateLight( lights, position, normal, color ) {
+
+		for ( var l = 0, ll = lights.length; l < ll; l ++ ) {
+
+			var light = lights[ l ];
+			var lightColor = light.color;
+
+			if ( light instanceof THREE.DirectionalLight ) {
+
+				var lightPosition = _vector3.getPositionFromMatrix( light.matrixWorld ).normalize();
+
+				var amount = normal.dot( lightPosition );
+
+				if ( amount <= 0 ) continue;
+
+				amount *= light.intensity;
+
+				color.r += lightColor.r * amount;
+				color.g += lightColor.g * amount;
+				color.b += lightColor.b * amount;
+
+			} else if ( light instanceof THREE.PointLight ) {
+
+				var lightPosition = _vector3.getPositionFromMatrix( light.matrixWorld );
+
+				var amount = normal.dot( _vector3.subVectors( lightPosition, position ).normalize() );
+
+				if ( amount <= 0 ) continue;
+
+				amount *= light.distance == 0 ? 1 : 1 - Math.min( position.distanceTo( lightPosition ) / light.distance, 1 );
+
+				if ( amount == 0 ) continue;
+
+				amount *= light.intensity;
+
+				color.r += lightColor.r * amount;
+				color.g += lightColor.g * amount;
+				color.b += lightColor.b * amount;
+
+			}
+
+		}
+
+	}
+
+	function renderParticle( v1, element, material ) {
+
+		/*
+		_svgNode = getCircleNode( _circleCount++ );
+		_svgNode.setAttribute( 'cx', v1.x );
+		_svgNode.setAttribute( 'cy', v1.y );
+		_svgNode.setAttribute( 'r', element.scale.x * _svgWidthHalf );
+
+		if ( material instanceof THREE.ParticleCircleMaterial ) {
+
+			_color.r = _ambientLight.r + _directionalLights.r + _pointLights.r;
+			_color.g = _ambientLight.g + _directionalLights.g + _pointLights.g;
+			_color.b = _ambientLight.b + _directionalLights.b + _pointLights.b;
+
+			_color.r = material.color.r * _color.r;
+			_color.g = material.color.g * _color.g;
+			_color.b = material.color.b * _color.b;
+
+			_color.updateStyleString();
+
+			_svgNode.setAttribute( 'style', 'fill: ' + _color.__styleString );
+
+		}
+
+		_svg.appendChild( _svgNode );
+		*/
+
+	}
+
+	function renderLine ( v1, v2, element, material ) {
+
+		_svgNode = getLineNode( _lineCount ++ );
+
+		_svgNode.setAttribute( 'x1', v1.positionScreen.x );
+		_svgNode.setAttribute( 'y1', v1.positionScreen.y );
+		_svgNode.setAttribute( 'x2', v2.positionScreen.x );
+		_svgNode.setAttribute( 'y2', v2.positionScreen.y );
+
+		if ( material instanceof THREE.LineBasicMaterial ) {
+
+			_svgNode.setAttribute( 'style', 'fill: none; stroke: ' + material.color.getStyle() + '; stroke-width: ' + material.linewidth + '; stroke-opacity: ' + material.opacity + '; stroke-linecap: ' + material.linecap + '; stroke-linejoin: ' + material.linejoin );
+
+			_svg.appendChild( _svgNode );
+
+		}
+
+	}
+
+	function renderFace3( v1, v2, v3, element, material ) {
+
+		_this.info.render.vertices += 3;
+		_this.info.render.faces ++;
+
+		_svgNode = getPathNode( _pathCount ++ );
+		_svgNode.setAttribute( 'd', 'M ' + v1.positionScreen.x + ' ' + v1.positionScreen.y + ' L ' + v2.positionScreen.x + ' ' + v2.positionScreen.y + ' L ' + v3.positionScreen.x + ',' + v3.positionScreen.y + 'z' );
+
+		if ( material instanceof THREE.MeshBasicMaterial ) {
+
+			_color.copy( material.color );
+
+			if ( material.vertexColors === THREE.FaceColors ) {
+
+				_color.multiply( element.color );
+
+			}
+
+		} else if ( material instanceof THREE.MeshLambertMaterial || material instanceof THREE.MeshPhongMaterial ) {
+
+			_diffuseColor.copy( material.color );
+
+			if ( material.vertexColors === THREE.FaceColors ) {
+
+				_diffuseColor.multiply( element.color );
+
+			}
+
+			_color.copy( _ambientLight );
+
+			calculateLight( _lights, element.centroidModel, element.normalModel, _color );
+
+			_color.multiply( _diffuseColor ).add( material.emissive );
+
+		} else if ( material instanceof THREE.MeshDepthMaterial ) {
+
+			_w = 1 - ( material.__2near / (material.__farPlusNear - element.z * material.__farMinusNear) );
+			_color.setRGB( _w, _w, _w );
+
+		} else if ( material instanceof THREE.MeshNormalMaterial ) {
+
+			var normal = element.normalModelView;
+
+			_color.setRGB( normal.x, normal.y, normal.z ).multiplyScalar( 0.5 ).addScalar( 0.5 );
+
+		}
+
+		if ( material.wireframe ) {
+
+			_svgNode.setAttribute( 'style', 'fill: none; stroke: ' + _color.getStyle() + '; stroke-width: ' + material.wireframeLinewidth + '; stroke-opacity: ' + material.opacity + '; stroke-linecap: ' + material.wireframeLinecap + '; stroke-linejoin: ' + material.wireframeLinejoin );
+
+		} else {
+
+			_svgNode.setAttribute( 'style', 'fill: ' + _color.getStyle() + '; fill-opacity: ' + material.opacity );
+
+		}
+
+		_svg.appendChild( _svgNode );
+
+	}
+
+	function renderFace4( v1, v2, v3, v4, element, material ) {
+
+		_this.info.render.vertices += 4;
+		_this.info.render.faces ++;
+
+		_svgNode = getPathNode( _pathCount ++ );
+		_svgNode.setAttribute( 'd', 'M ' + v1.positionScreen.x + ' ' + v1.positionScreen.y + ' L ' + v2.positionScreen.x + ' ' + v2.positionScreen.y + ' L ' + v3.positionScreen.x + ',' + v3.positionScreen.y + ' L ' + v4.positionScreen.x + ',' + v4.positionScreen.y + 'z' );
+
+		if ( material instanceof THREE.MeshBasicMaterial ) {
+
+			_color.copy( material.color );
+
+			if ( material.vertexColors === THREE.FaceColors ) {
+
+				_color.multiply( element.color );
+
+			}
+
+		} else if ( material instanceof THREE.MeshLambertMaterial || material instanceof THREE.MeshPhongMaterial ) {
+
+			_diffuseColor.copy( material.color );
+
+			if ( material.vertexColors === THREE.FaceColors ) {
+
+				_diffuseColor.multiply( element.color );
+
+			}
+
+			_color.copy( _ambientLight );
+
+			calculateLight( _lights, element.centroidModel, element.normalModel, _color );
+
+			_color.multiply( _diffuseColor ).add( material.emissive );
+
+		} else if ( material instanceof THREE.MeshDepthMaterial ) {
+
+			_w = 1 - ( material.__2near / (material.__farPlusNear - element.z * material.__farMinusNear) );
+			_color.setRGB( _w, _w, _w );
+
+		} else if ( material instanceof THREE.MeshNormalMaterial ) {
+
+			var normal = element.normalModelView;
+
+			_color.setRGB( normal.x, normal.y, normal.z ).multiplyScalar( 0.5 ).addScalar( 0.5 );
+
+		}
+
+		if ( material.wireframe ) {
+
+			_svgNode.setAttribute( 'style', 'fill: none; stroke: ' + _color.getStyle() + '; stroke-width: ' + material.wireframeLinewidth + '; stroke-opacity: ' + material.opacity + '; stroke-linecap: ' + material.wireframeLinecap + '; stroke-linejoin: ' + material.wireframeLinejoin );
+
+		} else {
+
+			_svgNode.setAttribute( 'style', 'fill: ' + _color.getStyle() + '; fill-opacity: ' + material.opacity );
+
+		}
+
+		_svg.appendChild( _svgNode );
+
+	}
+
+	function getLineNode( id ) {
+
+		if ( _svgLinePool[ id ] == null ) {
+
+			_svgLinePool[ id ] = document.createElementNS( 'http://www.w3.org/2000/svg', 'line' );
+
+			if ( _quality == 0 ) {
+
+				_svgLinePool[ id ].setAttribute( 'shape-rendering', 'crispEdges' ); //optimizeSpeed
+
+			}
+
+			return _svgLinePool[ id ];
+
+		}
+
+		return _svgLinePool[ id ];
+
+	}
+
+	function getPathNode( id ) {
+
+		if ( _svgPathPool[ id ] == null ) {
+
+			_svgPathPool[ id ] = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
+
+			if ( _quality == 0 ) {
+
+				_svgPathPool[ id ].setAttribute( 'shape-rendering', 'crispEdges' ); //optimizeSpeed
+
+			}
+
+			return _svgPathPool[ id ];
+
+		}
+
+		return _svgPathPool[ id ];
+
+	}
+
+	function getCircleNode( id ) {
+
+		if ( _svgCirclePool[id] == null ) {
+
+			_svgCirclePool[ id ] = document.createElementNS( 'http://www.w3.org/2000/svg', 'circle' );
+
+			if ( _quality == 0 ) {
+
+				_svgCirclePool[id].setAttribute( 'shape-rendering', 'crispEdges' ); //optimizeSpeed
+
+			}
+
+			return _svgCirclePool[ id ];
+
+		}
+
+		return _svgCirclePool[ id ];
+
+	}
+
+};

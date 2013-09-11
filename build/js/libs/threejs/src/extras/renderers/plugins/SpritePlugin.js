@@ -1,1 +1,305 @@
-THREE.SpritePlugin=function(){function e(e,t){var r=i.createProgram(),o=i.createShader(i.FRAGMENT_SHADER),n=i.createShader(i.VERTEX_SHADER),a="precision "+t+" float;\n";return i.shaderSource(o,a+e.fragmentShader),i.shaderSource(n,a+e.vertexShader),i.compileShader(o),i.compileShader(n),i.attachShader(r,o),i.attachShader(r,n),i.linkProgram(r),r}function t(e,t){return e.z!==t.z?t.z-e.z:t.id-e.id}var i,r,o,n={};this.init=function(t){i=t.context,r=t,o=t.getPrecision(),n.vertices=new Float32Array(16),n.faces=new Uint16Array(6);var a=0;n.vertices[a++]=-1,n.vertices[a++]=-1,n.vertices[a++]=0,n.vertices[a++]=0,n.vertices[a++]=1,n.vertices[a++]=-1,n.vertices[a++]=1,n.vertices[a++]=0,n.vertices[a++]=1,n.vertices[a++]=1,n.vertices[a++]=1,n.vertices[a++]=1,n.vertices[a++]=-1,n.vertices[a++]=1,n.vertices[a++]=0,n.vertices[a++]=1,a=0,n.faces[a++]=0,n.faces[a++]=1,n.faces[a++]=2,n.faces[a++]=0,n.faces[a++]=2,n.faces[a++]=3,n.vertexBuffer=i.createBuffer(),n.elementBuffer=i.createBuffer(),i.bindBuffer(i.ARRAY_BUFFER,n.vertexBuffer),i.bufferData(i.ARRAY_BUFFER,n.vertices,i.STATIC_DRAW),i.bindBuffer(i.ELEMENT_ARRAY_BUFFER,n.elementBuffer),i.bufferData(i.ELEMENT_ARRAY_BUFFER,n.faces,i.STATIC_DRAW),n.program=e(THREE.ShaderSprite.sprite,o),n.attributes={},n.uniforms={},n.attributes.position=i.getAttribLocation(n.program,"position"),n.attributes.uv=i.getAttribLocation(n.program,"uv"),n.uniforms.uvOffset=i.getUniformLocation(n.program,"uvOffset"),n.uniforms.uvScale=i.getUniformLocation(n.program,"uvScale"),n.uniforms.rotation=i.getUniformLocation(n.program,"rotation"),n.uniforms.scale=i.getUniformLocation(n.program,"scale"),n.uniforms.alignment=i.getUniformLocation(n.program,"alignment"),n.uniforms.color=i.getUniformLocation(n.program,"color"),n.uniforms.map=i.getUniformLocation(n.program,"map"),n.uniforms.opacity=i.getUniformLocation(n.program,"opacity"),n.uniforms.useScreenCoordinates=i.getUniformLocation(n.program,"useScreenCoordinates"),n.uniforms.sizeAttenuation=i.getUniformLocation(n.program,"sizeAttenuation"),n.uniforms.screenPosition=i.getUniformLocation(n.program,"screenPosition"),n.uniforms.modelViewMatrix=i.getUniformLocation(n.program,"modelViewMatrix"),n.uniforms.projectionMatrix=i.getUniformLocation(n.program,"projectionMatrix"),n.uniforms.fogType=i.getUniformLocation(n.program,"fogType"),n.uniforms.fogDensity=i.getUniformLocation(n.program,"fogDensity"),n.uniforms.fogNear=i.getUniformLocation(n.program,"fogNear"),n.uniforms.fogFar=i.getUniformLocation(n.program,"fogFar"),n.uniforms.fogColor=i.getUniformLocation(n.program,"fogColor"),n.uniforms.alphaTest=i.getUniformLocation(n.program,"alphaTest")},this.render=function(e,o,a,s){var l=e.__webglSprites,c=l.length;if(c){var h=n.attributes,u=n.uniforms,d=s/a,p=.5*a,f=.5*s;i.useProgram(n.program),i.enableVertexAttribArray(h.position),i.enableVertexAttribArray(h.uv),i.disable(i.CULL_FACE),i.enable(i.BLEND),i.bindBuffer(i.ARRAY_BUFFER,n.vertexBuffer),i.vertexAttribPointer(h.position,2,i.FLOAT,!1,16,0),i.vertexAttribPointer(h.uv,2,i.FLOAT,!1,16,8),i.bindBuffer(i.ELEMENT_ARRAY_BUFFER,n.elementBuffer),i.uniformMatrix4fv(u.projectionMatrix,!1,o.projectionMatrix.elements),i.activeTexture(i.TEXTURE0),i.uniform1i(u.map,0);var m=0,v=0,g=e.fog;g?(i.uniform3f(u.fogColor,g.color.r,g.color.g,g.color.b),g instanceof THREE.Fog?(i.uniform1f(u.fogNear,g.near),i.uniform1f(u.fogFar,g.far),i.uniform1i(u.fogType,1),m=1,v=1):g instanceof THREE.FogExp2&&(i.uniform1f(u.fogDensity,g.density),i.uniform1i(u.fogType,2),m=2,v=2)):(i.uniform1i(u.fogType,0),m=0,v=0);var E,y,T,x,b,_=[];for(E=0;c>E;E++)y=l[E],T=y.material,y.visible&&0!==T.opacity&&(T.useScreenCoordinates?y.z=-y.position.z:(y._modelViewMatrix.multiplyMatrices(o.matrixWorldInverse,y.matrixWorld),y.z=-y._modelViewMatrix.elements[14]));for(l.sort(t),E=0;c>E;E++)y=l[E],T=y.material,y.visible&&0!==T.opacity&&T.map&&T.map.image&&T.map.image.width&&(i.uniform1f(u.alphaTest,T.alphaTest),T.useScreenCoordinates===!0?(i.uniform1i(u.useScreenCoordinates,1),i.uniform3f(u.screenPosition,(y.position.x*r.devicePixelRatio-p)/p,(f-y.position.y*r.devicePixelRatio)/f,Math.max(0,Math.min(1,y.position.z))),_[0]=r.devicePixelRatio,_[1]=r.devicePixelRatio):(i.uniform1i(u.useScreenCoordinates,0),i.uniform1i(u.sizeAttenuation,T.sizeAttenuation?1:0),i.uniformMatrix4fv(u.modelViewMatrix,!1,y._modelViewMatrix.elements),_[0]=1,_[1]=1),b=e.fog&&T.fog?v:0,m!==b&&(i.uniform1i(u.fogType,b),m=b),x=1/(T.scaleByViewport?s:1),_[0]*=x*d*y.scale.x,_[1]*=x*y.scale.y,i.uniform2f(u.uvScale,T.uvScale.x,T.uvScale.y),i.uniform2f(u.uvOffset,T.uvOffset.x,T.uvOffset.y),i.uniform2f(u.alignment,T.alignment.x,T.alignment.y),i.uniform1f(u.opacity,T.opacity),i.uniform3f(u.color,T.color.r,T.color.g,T.color.b),i.uniform1f(u.rotation,y.rotation),i.uniform2fv(u.scale,_),r.setBlending(T.blending,T.blendEquation,T.blendSrc,T.blendDst),r.setDepthTest(T.depthTest),r.setDepthWrite(T.depthWrite),r.setTexture(T.map,0),i.drawElements(i.TRIANGLES,6,i.UNSIGNED_SHORT,0));i.enable(i.CULL_FACE)}}};
+/**
+ * @author mikael emtinger / http://gomo.se/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.SpritePlugin = function () {
+
+	var _gl, _renderer, _precision, _sprite = {};
+
+	this.init = function ( renderer ) {
+
+		_gl = renderer.context;
+		_renderer = renderer;
+
+		_precision = renderer.getPrecision();
+
+		_sprite.vertices = new Float32Array( 8 + 8 );
+		_sprite.faces    = new Uint16Array( 6 );
+
+		var i = 0;
+
+		_sprite.vertices[ i++ ] = -1; _sprite.vertices[ i++ ] = -1;	// vertex 0
+		_sprite.vertices[ i++ ] = 0;  _sprite.vertices[ i++ ] = 0;	// uv 0
+
+		_sprite.vertices[ i++ ] = 1;  _sprite.vertices[ i++ ] = -1;	// vertex 1
+		_sprite.vertices[ i++ ] = 1;  _sprite.vertices[ i++ ] = 0;	// uv 1
+
+		_sprite.vertices[ i++ ] = 1;  _sprite.vertices[ i++ ] = 1;	// vertex 2
+		_sprite.vertices[ i++ ] = 1;  _sprite.vertices[ i++ ] = 1;	// uv 2
+
+		_sprite.vertices[ i++ ] = -1; _sprite.vertices[ i++ ] = 1;	// vertex 3
+		_sprite.vertices[ i++ ] = 0;  _sprite.vertices[ i++ ] = 1;	// uv 3
+
+		i = 0;
+
+		_sprite.faces[ i++ ] = 0; _sprite.faces[ i++ ] = 1; _sprite.faces[ i++ ] = 2;
+		_sprite.faces[ i++ ] = 0; _sprite.faces[ i++ ] = 2; _sprite.faces[ i++ ] = 3;
+
+		_sprite.vertexBuffer  = _gl.createBuffer();
+		_sprite.elementBuffer = _gl.createBuffer();
+
+		_gl.bindBuffer( _gl.ARRAY_BUFFER, _sprite.vertexBuffer );
+		_gl.bufferData( _gl.ARRAY_BUFFER, _sprite.vertices, _gl.STATIC_DRAW );
+
+		_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, _sprite.elementBuffer );
+		_gl.bufferData( _gl.ELEMENT_ARRAY_BUFFER, _sprite.faces, _gl.STATIC_DRAW );
+
+		_sprite.program = createProgram( THREE.ShaderSprite[ "sprite" ], _precision );
+
+		_sprite.attributes = {};
+		_sprite.uniforms = {};
+
+		_sprite.attributes.position           = _gl.getAttribLocation ( _sprite.program, "position" );
+		_sprite.attributes.uv                 = _gl.getAttribLocation ( _sprite.program, "uv" );
+
+		_sprite.uniforms.uvOffset             = _gl.getUniformLocation( _sprite.program, "uvOffset" );
+		_sprite.uniforms.uvScale              = _gl.getUniformLocation( _sprite.program, "uvScale" );
+
+		_sprite.uniforms.rotation             = _gl.getUniformLocation( _sprite.program, "rotation" );
+		_sprite.uniforms.scale                = _gl.getUniformLocation( _sprite.program, "scale" );
+		_sprite.uniforms.alignment            = _gl.getUniformLocation( _sprite.program, "alignment" );
+
+		_sprite.uniforms.color                = _gl.getUniformLocation( _sprite.program, "color" );
+		_sprite.uniforms.map                  = _gl.getUniformLocation( _sprite.program, "map" );
+		_sprite.uniforms.opacity              = _gl.getUniformLocation( _sprite.program, "opacity" );
+
+		_sprite.uniforms.useScreenCoordinates = _gl.getUniformLocation( _sprite.program, "useScreenCoordinates" );
+		_sprite.uniforms.sizeAttenuation   	  = _gl.getUniformLocation( _sprite.program, "sizeAttenuation" );
+		_sprite.uniforms.screenPosition    	  = _gl.getUniformLocation( _sprite.program, "screenPosition" );
+		_sprite.uniforms.modelViewMatrix      = _gl.getUniformLocation( _sprite.program, "modelViewMatrix" );
+		_sprite.uniforms.projectionMatrix     = _gl.getUniformLocation( _sprite.program, "projectionMatrix" );
+
+		_sprite.uniforms.fogType 		  	  = _gl.getUniformLocation( _sprite.program, "fogType" );
+		_sprite.uniforms.fogDensity 		  = _gl.getUniformLocation( _sprite.program, "fogDensity" );
+		_sprite.uniforms.fogNear 		  	  = _gl.getUniformLocation( _sprite.program, "fogNear" );
+		_sprite.uniforms.fogFar 		  	  = _gl.getUniformLocation( _sprite.program, "fogFar" );
+		_sprite.uniforms.fogColor 		  	  = _gl.getUniformLocation( _sprite.program, "fogColor" );
+
+		_sprite.uniforms.alphaTest 		  	  = _gl.getUniformLocation( _sprite.program, "alphaTest" );
+
+	};
+
+	this.render = function ( scene, camera, viewportWidth, viewportHeight ) {
+
+		var sprites = scene.__webglSprites,
+			nSprites = sprites.length;
+
+		if ( ! nSprites ) return;
+
+		var attributes = _sprite.attributes,
+			uniforms = _sprite.uniforms;
+
+		var invAspect = viewportHeight / viewportWidth;
+
+		var halfViewportWidth = viewportWidth * 0.5,
+			halfViewportHeight = viewportHeight * 0.5;
+
+		// setup gl
+
+		_gl.useProgram( _sprite.program );
+
+		_gl.enableVertexAttribArray( attributes.position );
+		_gl.enableVertexAttribArray( attributes.uv );
+
+		_gl.disable( _gl.CULL_FACE );
+		_gl.enable( _gl.BLEND );
+
+		_gl.bindBuffer( _gl.ARRAY_BUFFER, _sprite.vertexBuffer );
+		_gl.vertexAttribPointer( attributes.position, 2, _gl.FLOAT, false, 2 * 8, 0 );
+		_gl.vertexAttribPointer( attributes.uv, 2, _gl.FLOAT, false, 2 * 8, 8 );
+
+		_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, _sprite.elementBuffer );
+
+		_gl.uniformMatrix4fv( uniforms.projectionMatrix, false, camera.projectionMatrix.elements );
+
+		_gl.activeTexture( _gl.TEXTURE0 );
+		_gl.uniform1i( uniforms.map, 0 );
+
+		var oldFogType = 0;
+		var sceneFogType = 0;
+		var fog = scene.fog;
+
+		if ( fog ) {
+
+			_gl.uniform3f( uniforms.fogColor, fog.color.r, fog.color.g, fog.color.b );
+
+			if ( fog instanceof THREE.Fog ) {
+
+				_gl.uniform1f( uniforms.fogNear, fog.near );
+				_gl.uniform1f( uniforms.fogFar, fog.far );
+
+				_gl.uniform1i( uniforms.fogType, 1 );
+				oldFogType = 1;
+				sceneFogType = 1;
+
+			} else if ( fog instanceof THREE.FogExp2 ) {
+
+				_gl.uniform1f( uniforms.fogDensity, fog.density );
+
+				_gl.uniform1i( uniforms.fogType, 2 );
+				oldFogType = 2;
+				sceneFogType = 2;
+
+			}
+
+		} else {
+
+			_gl.uniform1i( uniforms.fogType, 0 );
+			oldFogType = 0;
+			sceneFogType = 0;
+
+		}
+
+
+		// update positions and sort
+
+		var i, sprite, material, screenPosition, size, fogType, scale = [];
+
+		for( i = 0; i < nSprites; i ++ ) {
+
+			sprite = sprites[ i ];
+			material = sprite.material;
+
+			if ( ! sprite.visible || material.opacity === 0 ) continue;
+
+			if ( ! material.useScreenCoordinates ) {
+
+				sprite._modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, sprite.matrixWorld );
+				sprite.z = - sprite._modelViewMatrix.elements[ 14 ];
+
+			} else {
+
+				sprite.z = - sprite.position.z;
+
+			}
+
+		}
+
+		sprites.sort( painterSortStable );
+
+		// render all sprites
+
+		for( i = 0; i < nSprites; i ++ ) {
+
+			sprite = sprites[ i ];
+			material = sprite.material;
+
+			if ( ! sprite.visible || material.opacity === 0 ) continue;
+
+			if ( material.map && material.map.image && material.map.image.width ) {
+
+				_gl.uniform1f( uniforms.alphaTest, material.alphaTest );
+
+				if ( material.useScreenCoordinates === true ) {
+
+					_gl.uniform1i( uniforms.useScreenCoordinates, 1 );
+					_gl.uniform3f(
+						uniforms.screenPosition,
+						( ( sprite.position.x * _renderer.devicePixelRatio ) - halfViewportWidth  ) / halfViewportWidth,
+						( halfViewportHeight - ( sprite.position.y * _renderer.devicePixelRatio ) ) / halfViewportHeight,
+						Math.max( 0, Math.min( 1, sprite.position.z ) )
+					);
+
+					scale[ 0 ] = _renderer.devicePixelRatio;
+					scale[ 1 ] = _renderer.devicePixelRatio;
+
+				} else {
+
+					_gl.uniform1i( uniforms.useScreenCoordinates, 0 );
+					_gl.uniform1i( uniforms.sizeAttenuation, material.sizeAttenuation ? 1 : 0 );
+					_gl.uniformMatrix4fv( uniforms.modelViewMatrix, false, sprite._modelViewMatrix.elements );
+
+					scale[ 0 ] = 1;
+					scale[ 1 ] = 1;
+
+				}
+
+				if ( scene.fog && material.fog ) {
+
+					fogType = sceneFogType;
+
+				} else {
+
+					fogType = 0;
+
+				}
+
+				if ( oldFogType !== fogType ) {
+
+					_gl.uniform1i( uniforms.fogType, fogType );
+					oldFogType = fogType;
+
+				}
+
+				size = 1 / ( material.scaleByViewport ? viewportHeight : 1 );
+
+				scale[ 0 ] *= size * invAspect * sprite.scale.x
+				scale[ 1 ] *= size * sprite.scale.y;
+
+				_gl.uniform2f( uniforms.uvScale, material.uvScale.x, material.uvScale.y );
+				_gl.uniform2f( uniforms.uvOffset, material.uvOffset.x, material.uvOffset.y );
+				_gl.uniform2f( uniforms.alignment, material.alignment.x, material.alignment.y );
+
+				_gl.uniform1f( uniforms.opacity, material.opacity );
+				_gl.uniform3f( uniforms.color, material.color.r, material.color.g, material.color.b );
+
+				_gl.uniform1f( uniforms.rotation, sprite.rotation );
+				_gl.uniform2fv( uniforms.scale, scale );
+
+				_renderer.setBlending( material.blending, material.blendEquation, material.blendSrc, material.blendDst );
+				_renderer.setDepthTest( material.depthTest );
+				_renderer.setDepthWrite( material.depthWrite );
+				_renderer.setTexture( material.map, 0 );
+
+				_gl.drawElements( _gl.TRIANGLES, 6, _gl.UNSIGNED_SHORT, 0 );
+
+			}
+
+		}
+
+		// restore gl
+
+		_gl.enable( _gl.CULL_FACE );
+
+	};
+
+	function createProgram ( shader, precision ) {
+
+		var program = _gl.createProgram();
+
+		var fragmentShader = _gl.createShader( _gl.FRAGMENT_SHADER );
+		var vertexShader = _gl.createShader( _gl.VERTEX_SHADER );
+
+		var prefix = "precision " + precision + " float;\n";
+
+		_gl.shaderSource( fragmentShader, prefix + shader.fragmentShader );
+		_gl.shaderSource( vertexShader, prefix + shader.vertexShader );
+
+		_gl.compileShader( fragmentShader );
+		_gl.compileShader( vertexShader );
+
+		_gl.attachShader( program, fragmentShader );
+		_gl.attachShader( program, vertexShader );
+
+		_gl.linkProgram( program );
+
+		return program;
+
+	};
+
+	function painterSortStable ( a, b ) {
+
+		if ( a.z !== b.z ) {
+
+			return b.z - a.z;
+
+		} else {
+
+			return b.id - a.id;
+
+		}
+
+	};
+
+};

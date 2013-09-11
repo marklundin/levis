@@ -1,1 +1,89 @@
-THREE.Texture=function(e,t,i,r,o,n,a,s,l){this.id=THREE.TextureIdCount++,this.uuid=THREE.Math.generateUUID(),this.name="",this.image=e,this.mipmaps=[],this.mapping=void 0!==t?t:new THREE.UVMapping,this.wrapS=void 0!==i?i:THREE.ClampToEdgeWrapping,this.wrapT=void 0!==r?r:THREE.ClampToEdgeWrapping,this.magFilter=void 0!==o?o:THREE.LinearFilter,this.minFilter=void 0!==n?n:THREE.LinearMipMapLinearFilter,this.anisotropy=void 0!==l?l:1,this.format=void 0!==a?a:THREE.RGBAFormat,this.type=void 0!==s?s:THREE.UnsignedByteType,this.offset=new THREE.Vector2(0,0),this.repeat=new THREE.Vector2(1,1),this.generateMipmaps=!0,this.premultiplyAlpha=!1,this.flipY=!0,this.unpackAlignment=4,this.needsUpdate=!1,this.onUpdate=null},THREE.Texture.prototype={constructor:THREE.Texture,clone:function(e){return void 0===e&&(e=new THREE.Texture),e.image=this.image,e.mipmaps=this.mipmaps.slice(0),e.mapping=this.mapping,e.wrapS=this.wrapS,e.wrapT=this.wrapT,e.magFilter=this.magFilter,e.minFilter=this.minFilter,e.anisotropy=this.anisotropy,e.format=this.format,e.type=this.type,e.offset.copy(this.offset),e.repeat.copy(this.repeat),e.generateMipmaps=this.generateMipmaps,e.premultiplyAlpha=this.premultiplyAlpha,e.flipY=this.flipY,e.unpackAlignment=this.unpackAlignment,e},dispose:function(){this.dispatchEvent({type:"dispose"})}},THREE.EventDispatcher.prototype.apply(THREE.Texture.prototype),THREE.TextureIdCount=0;
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ * @author szimek / https://github.com/szimek/
+ */
+
+THREE.Texture = function ( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
+
+	this.id = THREE.TextureIdCount ++;
+	this.uuid = THREE.Math.generateUUID();
+
+	this.name = '';
+
+	this.image = image;
+	this.mipmaps = [];
+
+	this.mapping = mapping !== undefined ? mapping : new THREE.UVMapping();
+
+	this.wrapS = wrapS !== undefined ? wrapS : THREE.ClampToEdgeWrapping;
+	this.wrapT = wrapT !== undefined ? wrapT : THREE.ClampToEdgeWrapping;
+
+	this.magFilter = magFilter !== undefined ? magFilter : THREE.LinearFilter;
+	this.minFilter = minFilter !== undefined ? minFilter : THREE.LinearMipMapLinearFilter;
+
+	this.anisotropy = anisotropy !== undefined ? anisotropy : 1;
+
+	this.format = format !== undefined ? format : THREE.RGBAFormat;
+	this.type = type !== undefined ? type : THREE.UnsignedByteType;
+
+	this.offset = new THREE.Vector2( 0, 0 );
+	this.repeat = new THREE.Vector2( 1, 1 );
+
+	this.generateMipmaps = true;
+	this.premultiplyAlpha = false;
+	this.flipY = true;
+	this.unpackAlignment = 4; // valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
+
+	this.needsUpdate = false;
+	this.onUpdate = null;
+
+};
+
+THREE.Texture.prototype = {
+
+	constructor: THREE.Texture,
+
+	clone: function ( texture ) {
+
+		if ( texture === undefined ) texture = new THREE.Texture();
+
+		texture.image = this.image;
+		texture.mipmaps = this.mipmaps.slice(0);
+
+		texture.mapping = this.mapping;
+
+		texture.wrapS = this.wrapS;
+		texture.wrapT = this.wrapT;
+
+		texture.magFilter = this.magFilter;
+		texture.minFilter = this.minFilter;
+
+		texture.anisotropy = this.anisotropy;
+
+		texture.format = this.format;
+		texture.type = this.type;
+
+		texture.offset.copy( this.offset );
+		texture.repeat.copy( this.repeat );
+
+		texture.generateMipmaps = this.generateMipmaps;
+		texture.premultiplyAlpha = this.premultiplyAlpha;
+		texture.flipY = this.flipY;
+		texture.unpackAlignment = this.unpackAlignment;
+
+		return texture;
+
+	},
+
+	dispose: function () {
+
+		this.dispatchEvent( { type: 'dispose' } );
+
+	}
+
+};
+
+THREE.EventDispatcher.prototype.apply( THREE.Texture.prototype );
+
+THREE.TextureIdCount = 0;

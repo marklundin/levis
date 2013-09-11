@@ -1,1 +1,61 @@
-THREE.LineBasicMaterial=function(e){THREE.Material.call(this),this.color=new THREE.Color(16777215),this.linewidth=1,this.linecap="round",this.linejoin="round",this.vertexColors=!1,this.fog=!0,this.setValues(e)},THREE.LineBasicMaterial.prototype=Object.create(THREE.Material.prototype),THREE.LineBasicMaterial.prototype.clone=function(){var e=new THREE.LineBasicMaterial;return THREE.Material.prototype.clone.call(this,e),e.color.copy(this.color),e.linewidth=this.linewidth,e.linecap=this.linecap,e.linejoin=this.linejoin,e.vertexColors=this.vertexColors,e.fog=this.fog,e};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  opacity: <float>,
+ *
+ *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ *  depthWrite: <bool>,
+ *
+ *  linewidth: <float>,
+ *  linecap: "round",
+ *  linejoin: "round",
+ *
+ *  vertexColors: <bool>
+ *
+ *  fog: <bool>
+ * }
+ */
+
+THREE.LineBasicMaterial = function ( parameters ) {
+
+	THREE.Material.call( this );
+
+	this.color = new THREE.Color( 0xffffff );
+
+	this.linewidth = 1;
+	this.linecap = 'round';
+	this.linejoin = 'round';
+
+	this.vertexColors = false;
+
+	this.fog = true;
+
+	this.setValues( parameters );
+
+};
+
+THREE.LineBasicMaterial.prototype = Object.create( THREE.Material.prototype );
+
+THREE.LineBasicMaterial.prototype.clone = function () {
+
+	var material = new THREE.LineBasicMaterial();
+
+	THREE.Material.prototype.clone.call( this, material );
+
+	material.color.copy( this.color );
+
+	material.linewidth = this.linewidth;
+	material.linecap = this.linecap;
+	material.linejoin = this.linejoin;
+
+	material.vertexColors = this.vertexColors;
+
+	material.fog = this.fog;
+
+	return material;
+
+};

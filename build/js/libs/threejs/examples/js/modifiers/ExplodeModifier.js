@@ -1,1 +1,69 @@
-THREE.ExplodeModifier=function(){},THREE.ExplodeModifier.prototype.modify=function(e){for(var t=[],i=0,r=e.faces.length;r>i;i++){var n=t.length,o=e.faces[i];if(o instanceof THREE.Face4){var a=o.a,s=o.b,l=o.c,h=o.d,c=e.vertices[a],u=e.vertices[s],d=e.vertices[l],p=e.vertices[h];t.push(c.clone()),t.push(u.clone()),t.push(d.clone()),t.push(p.clone()),o.a=n,o.b=n+1,o.c=n+2,o.d=n+3}else{var a=o.a,s=o.b,l=o.c,c=e.vertices[a],u=e.vertices[s],d=e.vertices[l];t.push(c.clone()),t.push(u.clone()),t.push(d.clone()),o.a=n,o.b=n+1,o.c=n+2}}e.vertices=t,delete e.__tmpVertices};
+/**
+ * Make all faces use unique vertices
+ * so that each face can be separated from others
+ *
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.ExplodeModifier = function () {
+
+};
+
+THREE.ExplodeModifier.prototype.modify = function ( geometry ) {
+
+	var vertices = [];
+
+	for ( var i = 0, il = geometry.faces.length; i < il; i ++ ) {
+
+		var n = vertices.length;
+
+		var face = geometry.faces[ i ];
+
+		if ( face instanceof THREE.Face4 ) {
+
+			var a = face.a;
+			var b = face.b;
+			var c = face.c;
+			var d = face.d;
+
+			var va = geometry.vertices[ a ];
+			var vb = geometry.vertices[ b ];
+			var vc = geometry.vertices[ c ];
+			var vd = geometry.vertices[ d ];
+
+			vertices.push( va.clone() );
+			vertices.push( vb.clone() );
+			vertices.push( vc.clone() );
+			vertices.push( vd.clone() );
+
+			face.a = n;
+			face.b = n + 1;
+			face.c = n + 2;
+			face.d = n + 3;
+
+		} else {
+
+			var a = face.a;
+			var b = face.b;
+			var c = face.c;
+
+			var va = geometry.vertices[ a ];
+			var vb = geometry.vertices[ b ];
+			var vc = geometry.vertices[ c ];
+
+			vertices.push( va.clone() );
+			vertices.push( vb.clone() );
+			vertices.push( vc.clone() );
+
+			face.a = n;
+			face.b = n + 1;
+			face.c = n + 2;
+
+		}
+
+	}
+
+	geometry.vertices = vertices;
+	delete geometry.__tmpVertices;
+
+}

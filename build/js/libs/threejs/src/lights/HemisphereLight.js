@@ -1,1 +1,29 @@
-THREE.HemisphereLight=function(e,t,i){THREE.Light.call(this,e),this.position.set(0,100,0),this.groundColor=new THREE.Color(t),this.intensity=void 0!==i?i:1},THREE.HemisphereLight.prototype=Object.create(THREE.Light.prototype),THREE.HemisphereLight.prototype.clone=function(){var e=new THREE.PointLight;return THREE.Light.prototype.clone.call(this,e),e.groundColor.copy(this.groundColor),e.intensity=this.intensity,e};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.HemisphereLight = function ( skyColorHex, groundColorHex, intensity ) {
+
+	THREE.Light.call( this, skyColorHex );
+
+	this.position.set( 0, 100, 0 );
+
+	this.groundColor = new THREE.Color( groundColorHex );
+	this.intensity = ( intensity !== undefined ) ? intensity : 1;
+
+};
+
+THREE.HemisphereLight.prototype = Object.create( THREE.Light.prototype );
+
+THREE.HemisphereLight.prototype.clone = function () {
+
+	var light = new THREE.PointLight();
+
+	THREE.Light.prototype.clone.call( this, light );
+
+	light.groundColor.copy( this.groundColor );
+	light.intensity = this.intensity;
+
+	return light;
+
+};

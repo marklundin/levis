@@ -1,1 +1,781 @@
-THREE.BinaryLoader=function(e){THREE.Loader.call(this,e)},THREE.BinaryLoader.prototype=Object.create(THREE.Loader.prototype),THREE.BinaryLoader.prototype.load=function(e,t,i,n){i=i||this.extractUrlBase(e),n=n||this.extractUrlBase(e);var r=this.showProgress?THREE.Loader.prototype.updateProgress:void 0;this.onLoadStart(),this.loadAjaxJSON(this,e,t,i,n,r)},THREE.BinaryLoader.prototype.loadAjaxJSON=function(e,t,i,n,r,o){var a=new XMLHttpRequest;n=n&&"string"==typeof n?n:this.extractUrlBase(t),r=r&&"string"==typeof r?r:this.extractUrlBase(t),a.onreadystatechange=function(){if(4==a.readyState)if(200==a.status||0==a.status){var s=JSON.parse(a.responseText);e.loadAjaxBuffers(s,i,r,n,o)}else console.error("THREE.BinaryLoader: Couldn't load ["+t+"] ["+a.status+"]")},a.open("GET",t,!0),a.send(null)},THREE.BinaryLoader.prototype.loadAjaxBuffers=function(e,t,i,n,r){var o=new XMLHttpRequest,a=i+"/"+e.buffers;o.addEventListener("load",function(){var i=o.response;if(void 0===i&&(i=new Uint8Array(o.responseBody).buffer),0==i.byteLength)for(var i=new ArrayBuffer(o.responseText.length),r=new Uint8Array(i),a=0,s=o.responseText.length;s>a;a++)r[a]=255&o.responseText.charCodeAt(a);THREE.BinaryLoader.prototype.createBinModel(i,t,n,e.materials)},!1),void 0!==r&&o.addEventListener("progress",function(e){e.lengthComputable&&r(e)},!1),o.addEventListener("error",function(){console.error("THREE.BinaryLoader: Couldn't load ["+a+"] ["+o.status+"]")},!1),o.open("GET",a,!0),o.responseType="arraybuffer",o.overrideMimeType&&o.overrideMimeType("text/plain; charset=x-user-defined"),o.send(null)},THREE.BinaryLoader.prototype.createBinModel=function(e,t,i,n){function r(e,t,i,n){e.vertices.push(new THREE.Vector3(t,i,n))}function o(e,t,i,n,r){e.faces.push(new THREE.Face3(t,i,n,null,null,r))}function a(e,t,i,n,r,o){e.faces.push(new THREE.Face4(t,i,n,r,null,null,o))}function s(e,t,i,n,r,o,a,s,l){var h=t[3*a],c=t[3*a+1],u=t[3*a+2],d=t[3*s],p=t[3*s+1],f=t[3*s+2],m=t[3*l],g=t[3*l+1],v=t[3*l+2];e.faces.push(new THREE.Face3(i,n,r,[new THREE.Vector3(h,c,u),new THREE.Vector3(d,p,f),new THREE.Vector3(m,g,v)],null,o))}function l(e,t,i,n,r,o,a,s,l,h,c){var u=t[3*s],d=t[3*s+1],p=t[3*s+2],f=t[3*l],m=t[3*l+1],g=t[3*l+2],v=t[3*h],E=t[3*h+1],y=t[3*h+2],_=t[3*c],T=t[3*c+1],b=t[3*c+2];e.faces.push(new THREE.Face4(i,n,r,o,[new THREE.Vector3(u,d,p),new THREE.Vector3(f,m,g),new THREE.Vector3(v,E,y),new THREE.Vector3(_,T,b)],null,a))}function h(e,t,i,n,r,o,a){e.push([new THREE.Vector2(t,i),new THREE.Vector2(n,r),new THREE.Vector2(o,a)])}function c(e,t,i,n,r,o,a,s,l){e.push([new THREE.Vector2(t,i),new THREE.Vector2(n,r),new THREE.Vector2(o,a),new THREE.Vector2(s,l)])}var u=function(){function t(e){return e%4?4-e%4:0}function i(e,t){var i={signature:n(e,t,12),header_bytes:u(e,t+12),vertex_coordinate_bytes:u(e,t+13),normal_coordinate_bytes:u(e,t+14),uv_coordinate_bytes:u(e,t+15),vertex_index_bytes:u(e,t+16),normal_index_bytes:u(e,t+17),uv_index_bytes:u(e,t+18),material_index_bytes:u(e,t+19),nvertices:d(e,t+20),nnormals:d(e,t+20+4),nuvs:d(e,t+20+8),ntri_flat:d(e,t+20+12),ntri_smooth:d(e,t+20+16),ntri_flat_uv:d(e,t+20+20),ntri_smooth_uv:d(e,t+20+24),nquad_flat:d(e,t+20+28),nquad_smooth:d(e,t+20+32),nquad_flat_uv:d(e,t+20+36),nquad_smooth_uv:d(e,t+20+40)};return i}function n(e,t,i){for(var n=new Uint8Array(e,t,i),r="",o=0;i>o;o++)r+=String.fromCharCode(n[t+o]);return r}function u(e,t){var i=new Uint8Array(e,t,1);return i[0]}function d(e,t){var i=new Uint32Array(e,t,1);return i[0]}function p(t){var i,n,o,a,s=A.nvertices,l=new Float32Array(e,t,3*s);for(i=0;s>i;i++)n=l[3*i],o=l[3*i+1],a=l[3*i+2],r(K,n,o,a);return 3*s*Float32Array.BYTES_PER_ELEMENT}function f(t){var i=A.nnormals;if(i){var n,r,o,a,s=new Int8Array(e,t,3*i);for(n=0;i>n;n++)r=s[3*n],o=s[3*n+1],a=s[3*n+2],Z.push(r/127,o/127,a/127)}return 3*i*Int8Array.BYTES_PER_ELEMENT}function m(t){var i=A.nuvs;if(i){var n,r,o,a=new Float32Array(e,t,2*i);for(n=0;i>n;n++)r=a[2*n],o=a[2*n+1],$.push(r,o)}return 2*i*Float32Array.BYTES_PER_ELEMENT}function g(t,i){var n,r,o,a,s,l,c,u,d,p,f=new Uint32Array(e,i,3*t);for(n=0;t>n;n++)r=f[3*n],o=f[3*n+1],a=f[3*n+2],s=$[2*r],u=$[2*r+1],l=$[2*o],d=$[2*o+1],c=$[2*a],p=$[2*a+1],h(K.faceVertexUvs[0],s,u,l,d,c,p)}function v(t,i){var n,r,o,a,s,l,h,u,d,p,f,m,g,v=new Uint32Array(e,i,4*t);for(n=0;t>n;n++)r=v[4*n],o=v[4*n+1],a=v[4*n+2],s=v[4*n+3],l=$[2*r],p=$[2*r+1],h=$[2*o],f=$[2*o+1],u=$[2*a],m=$[2*a+1],d=$[2*s],g=$[2*s+1],c(K.faceVertexUvs[0],l,p,h,f,u,m,d,g)}function E(t,i,n){var r,a,s,l,h,c=new Uint32Array(e,i,3*t),u=new Uint16Array(e,n,t);for(r=0;t>r;r++)a=c[3*r],s=c[3*r+1],l=c[3*r+2],h=u[r],o(K,a,s,l,h)}function y(t,i,n){var r,o,s,l,h,c,u=new Uint32Array(e,i,4*t),d=new Uint16Array(e,n,t);for(r=0;t>r;r++)o=u[4*r],s=u[4*r+1],l=u[4*r+2],h=u[4*r+3],c=d[r],a(K,o,s,l,h,c)}function _(t,i,n,r){var o,a,l,h,c,u,d,p,f=new Uint32Array(e,i,3*t),m=new Uint32Array(e,n,3*t),g=new Uint16Array(e,r,t);for(o=0;t>o;o++)a=f[3*o],l=f[3*o+1],h=f[3*o+2],u=m[3*o],d=m[3*o+1],p=m[3*o+2],c=g[o],s(K,Z,a,l,h,c,u,d,p)}function T(t,i,n,r){var o,a,s,h,c,u,d,p,f,m,g=new Uint32Array(e,i,4*t),v=new Uint32Array(e,n,4*t),E=new Uint16Array(e,r,t);for(o=0;t>o;o++)a=g[4*o],s=g[4*o+1],h=g[4*o+2],c=g[4*o+3],d=v[4*o],p=v[4*o+1],f=v[4*o+2],m=v[4*o+3],u=E[o],l(K,Z,a,s,h,c,u,d,p,f,m)}function b(e){var t=A.ntri_flat;if(t){var i=e+3*t*Uint32Array.BYTES_PER_ELEMENT;E(t,e,i)}}function x(e){var t=A.ntri_flat_uv;if(t){var i=e+3*t*Uint32Array.BYTES_PER_ELEMENT,n=i+3*t*Uint32Array.BYTES_PER_ELEMENT;E(t,e,n),g(t,i)}}function w(e){var t=A.ntri_smooth;if(t){var i=e+3*t*Uint32Array.BYTES_PER_ELEMENT,n=i+3*t*Uint32Array.BYTES_PER_ELEMENT;_(t,e,i,n)}}function R(e){var t=A.ntri_smooth_uv;if(t){var i=e+3*t*Uint32Array.BYTES_PER_ELEMENT,n=i+3*t*Uint32Array.BYTES_PER_ELEMENT,r=n+3*t*Uint32Array.BYTES_PER_ELEMENT;_(t,e,i,r),g(t,n)}}function H(e){var t=A.nquad_flat;if(t){var i=e+4*t*Uint32Array.BYTES_PER_ELEMENT;y(t,e,i)}}function S(e){var t=A.nquad_flat_uv;if(t){var i=e+4*t*Uint32Array.BYTES_PER_ELEMENT,n=i+4*t*Uint32Array.BYTES_PER_ELEMENT;y(t,e,n),v(t,i)}}function M(e){var t=A.nquad_smooth;if(t){var i=e+4*t*Uint32Array.BYTES_PER_ELEMENT,n=i+4*t*Uint32Array.BYTES_PER_ELEMENT;T(t,e,i,n)}}function C(e){var t=A.nquad_smooth_uv;if(t){var i=e+4*t*Uint32Array.BYTES_PER_ELEMENT,n=i+4*t*Uint32Array.BYTES_PER_ELEMENT,r=n+4*t*Uint32Array.BYTES_PER_ELEMENT;T(t,e,i,r),v(t,n)}}var A,D,P,L,k,N,I,O,z,F,V,U,B,j,W,G,X,Y,q,K=this,Q=0,Z=[],$=[];THREE.Geometry.call(this),A=i(e,Q),Q+=A.header_bytes,F=3*A.vertex_index_bytes+A.material_index_bytes,V=4*A.vertex_index_bytes+A.material_index_bytes,U=A.ntri_flat*F,B=A.ntri_smooth*(F+3*A.normal_index_bytes),j=A.ntri_flat_uv*(F+3*A.uv_index_bytes),W=A.ntri_smooth_uv*(F+3*A.normal_index_bytes+3*A.uv_index_bytes),G=A.nquad_flat*V,X=A.nquad_smooth*(V+4*A.normal_index_bytes),Y=A.nquad_flat_uv*(V+4*A.uv_index_bytes),q=A.nquad_smooth_uv*(V+4*A.normal_index_bytes+4*A.uv_index_bytes),Q+=p(Q),Q+=f(Q),Q+=t(3*A.nnormals),Q+=m(Q),D=Q,P=D+U+t(2*A.ntri_flat),L=P+B+t(2*A.ntri_smooth),k=L+j+t(2*A.ntri_flat_uv),N=k+W+t(2*A.ntri_smooth_uv),I=N+G+t(2*A.nquad_flat),O=I+X+t(2*A.nquad_smooth),z=O+Y+t(2*A.nquad_flat_uv),x(L),R(k),S(O),C(z),b(D),w(P),H(N),M(I),this.computeCentroids(),this.computeFaceNormals()};u.prototype=Object.create(THREE.Geometry.prototype);var d=new u(i),p=this.initMaterials(n,i);this.needsTangents(p)&&d.computeTangents(),t(d,p)};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.BinaryLoader = function ( showStatus ) {
+
+	THREE.Loader.call( this, showStatus );
+
+};
+
+THREE.BinaryLoader.prototype = Object.create( THREE.Loader.prototype );
+
+// Load models generated by slim OBJ converter with BINARY option (converter_obj_three_slim.py -t binary)
+//  - binary models consist of two files: JS and BIN
+//  - parameters
+//		- url (required)
+//		- callback (required)
+//		- texturePath (optional: if not specified, textures will be assumed to be in the same folder as JS model file)
+//		- binaryPath (optional: if not specified, binary file will be assumed to be in the same folder as JS model file)
+
+THREE.BinaryLoader.prototype.load = function ( url, callback, texturePath, binaryPath ) {
+
+	// todo: unify load API to for easier SceneLoader use
+
+	texturePath = texturePath || this.extractUrlBase( url );
+	binaryPath = binaryPath || this.extractUrlBase( url );
+
+	var callbackProgress = this.showProgress ? THREE.Loader.prototype.updateProgress : undefined;
+
+	this.onLoadStart();
+
+	// #1 load JS part via web worker
+
+	this.loadAjaxJSON( this, url, callback, texturePath, binaryPath, callbackProgress );
+
+};
+
+THREE.BinaryLoader.prototype.loadAjaxJSON = function ( context, url, callback, texturePath, binaryPath, callbackProgress ) {
+
+	var xhr = new XMLHttpRequest();
+
+	texturePath = texturePath && ( typeof texturePath === "string" ) ? texturePath : this.extractUrlBase( url );
+	binaryPath = binaryPath && ( typeof binaryPath === "string" ) ? binaryPath : this.extractUrlBase( url );
+
+	xhr.onreadystatechange = function () {
+
+		if ( xhr.readyState == 4 ) {
+
+			if ( xhr.status == 200 || xhr.status == 0 ) {
+
+				var json = JSON.parse( xhr.responseText );
+				context.loadAjaxBuffers( json, callback, binaryPath, texturePath, callbackProgress );
+
+			} else {
+
+				console.error( "THREE.BinaryLoader: Couldn't load [" + url + "] [" + xhr.status + "]" );
+
+			}
+
+		}
+
+	};
+
+	xhr.open( "GET", url, true );
+	xhr.send( null );
+
+};
+
+THREE.BinaryLoader.prototype.loadAjaxBuffers = function ( json, callback, binaryPath, texturePath, callbackProgress ) {
+
+	var xhr = new XMLHttpRequest(),
+		url = binaryPath + "/" + json.buffers;
+
+	xhr.addEventListener( 'load', function ( event ) {
+
+		var buffer = xhr.response;
+
+		if ( buffer === undefined ) {
+
+			// IEWEBGL needs this
+			buffer = ( new Uint8Array( xhr.responseBody ) ).buffer;
+
+		}
+
+		if ( buffer.byteLength == 0 ) {  // iOS and other XMLHttpRequest level 1
+
+			var buffer = new ArrayBuffer( xhr.responseText.length );
+
+			var bufView = new Uint8Array( buffer );
+
+			for ( var i = 0, l = xhr.responseText.length; i < l; i ++ ) {
+
+				bufView[ i ] = xhr.responseText.charCodeAt( i ) & 0xff;
+
+			}
+
+		}
+
+		THREE.BinaryLoader.prototype.createBinModel( buffer, callback, texturePath, json.materials );
+
+	}, false );
+
+	if ( callbackProgress !== undefined ) {
+
+		xhr.addEventListener( 'progress', function ( event ) {
+
+			if ( event.lengthComputable ) {
+
+				callbackProgress( event );
+
+			}
+
+		}, false );
+
+	}
+
+	xhr.addEventListener( 'error', function ( event ) {
+
+		console.error( "THREE.BinaryLoader: Couldn't load [" + url + "] [" + xhr.status + "]" );
+
+	}, false );
+
+
+	xhr.open( "GET", url, true );
+	xhr.responseType = "arraybuffer";
+	if ( xhr.overrideMimeType ) xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+	xhr.send( null );
+
+};
+
+// Binary AJAX parser
+
+THREE.BinaryLoader.prototype.createBinModel = function ( data, callback, texturePath, jsonMaterials ) {
+
+	var Model = function ( texturePath ) {
+
+		var scope = this,
+			currentOffset = 0,
+			md,
+			normals = [],
+			uvs = [],
+			start_tri_flat, start_tri_smooth, start_tri_flat_uv, start_tri_smooth_uv,
+			start_quad_flat, start_quad_smooth, start_quad_flat_uv, start_quad_smooth_uv,
+			tri_size, quad_size,
+			len_tri_flat, len_tri_smooth, len_tri_flat_uv, len_tri_smooth_uv,
+			len_quad_flat, len_quad_smooth, len_quad_flat_uv, len_quad_smooth_uv;
+
+
+		THREE.Geometry.call( this );
+
+		md = parseMetaData( data, currentOffset );
+
+		currentOffset += md.header_bytes;
+/*
+		md.vertex_index_bytes = Uint32Array.BYTES_PER_ELEMENT;
+		md.material_index_bytes = Uint16Array.BYTES_PER_ELEMENT;
+		md.normal_index_bytes = Uint32Array.BYTES_PER_ELEMENT;
+		md.uv_index_bytes = Uint32Array.BYTES_PER_ELEMENT;
+*/
+		// buffers sizes
+
+		tri_size =  md.vertex_index_bytes * 3 + md.material_index_bytes;
+		quad_size = md.vertex_index_bytes * 4 + md.material_index_bytes;
+
+		len_tri_flat      = md.ntri_flat      * ( tri_size );
+		len_tri_smooth    = md.ntri_smooth    * ( tri_size + md.normal_index_bytes * 3 );
+		len_tri_flat_uv   = md.ntri_flat_uv   * ( tri_size + md.uv_index_bytes * 3 );
+		len_tri_smooth_uv = md.ntri_smooth_uv * ( tri_size + md.normal_index_bytes * 3 + md.uv_index_bytes * 3 );
+
+		len_quad_flat      = md.nquad_flat      * ( quad_size );
+		len_quad_smooth    = md.nquad_smooth    * ( quad_size + md.normal_index_bytes * 4 );
+		len_quad_flat_uv   = md.nquad_flat_uv   * ( quad_size + md.uv_index_bytes * 4 );
+		len_quad_smooth_uv = md.nquad_smooth_uv * ( quad_size + md.normal_index_bytes * 4 + md.uv_index_bytes * 4 );
+
+		// read buffers
+
+		currentOffset += init_vertices( currentOffset );
+
+		currentOffset += init_normals( currentOffset );
+		currentOffset += handlePadding( md.nnormals * 3 );
+
+		currentOffset += init_uvs( currentOffset );
+
+		start_tri_flat 		= currentOffset;
+		start_tri_smooth    = start_tri_flat    + len_tri_flat    + handlePadding( md.ntri_flat * 2 );
+		start_tri_flat_uv   = start_tri_smooth  + len_tri_smooth  + handlePadding( md.ntri_smooth * 2 );
+		start_tri_smooth_uv = start_tri_flat_uv + len_tri_flat_uv + handlePadding( md.ntri_flat_uv * 2 );
+
+		start_quad_flat     = start_tri_smooth_uv + len_tri_smooth_uv  + handlePadding( md.ntri_smooth_uv * 2 );
+		start_quad_smooth   = start_quad_flat     + len_quad_flat	   + handlePadding( md.nquad_flat * 2 );
+		start_quad_flat_uv  = start_quad_smooth   + len_quad_smooth    + handlePadding( md.nquad_smooth * 2 );
+		start_quad_smooth_uv= start_quad_flat_uv  + len_quad_flat_uv   + handlePadding( md.nquad_flat_uv * 2 );
+
+		// have to first process faces with uvs
+		// so that face and uv indices match
+
+		init_triangles_flat_uv( start_tri_flat_uv );
+		init_triangles_smooth_uv( start_tri_smooth_uv );
+
+		init_quads_flat_uv( start_quad_flat_uv );
+		init_quads_smooth_uv( start_quad_smooth_uv );
+
+		// now we can process untextured faces
+
+		init_triangles_flat( start_tri_flat );
+		init_triangles_smooth( start_tri_smooth );
+
+		init_quads_flat( start_quad_flat );
+		init_quads_smooth( start_quad_smooth );
+
+		this.computeCentroids();
+		this.computeFaceNormals();
+
+		function handlePadding( n ) {
+
+			return ( n % 4 ) ? ( 4 - n % 4 ) : 0;
+
+		};
+
+		function parseMetaData( data, offset ) {
+
+			var metaData = {
+
+				'signature'               :parseString( data, offset,  12 ),
+				'header_bytes'            :parseUChar8( data, offset + 12 ),
+
+				'vertex_coordinate_bytes' :parseUChar8( data, offset + 13 ),
+				'normal_coordinate_bytes' :parseUChar8( data, offset + 14 ),
+				'uv_coordinate_bytes'     :parseUChar8( data, offset + 15 ),
+
+				'vertex_index_bytes'      :parseUChar8( data, offset + 16 ),
+				'normal_index_bytes'      :parseUChar8( data, offset + 17 ),
+				'uv_index_bytes'          :parseUChar8( data, offset + 18 ),
+				'material_index_bytes'    :parseUChar8( data, offset + 19 ),
+
+				'nvertices'    :parseUInt32( data, offset + 20 ),
+				'nnormals'     :parseUInt32( data, offset + 20 + 4*1 ),
+				'nuvs'         :parseUInt32( data, offset + 20 + 4*2 ),
+
+				'ntri_flat'      :parseUInt32( data, offset + 20 + 4*3 ),
+				'ntri_smooth'    :parseUInt32( data, offset + 20 + 4*4 ),
+				'ntri_flat_uv'   :parseUInt32( data, offset + 20 + 4*5 ),
+				'ntri_smooth_uv' :parseUInt32( data, offset + 20 + 4*6 ),
+
+				'nquad_flat'      :parseUInt32( data, offset + 20 + 4*7 ),
+				'nquad_smooth'    :parseUInt32( data, offset + 20 + 4*8 ),
+				'nquad_flat_uv'   :parseUInt32( data, offset + 20 + 4*9 ),
+				'nquad_smooth_uv' :parseUInt32( data, offset + 20 + 4*10 )
+
+			};
+/*
+			console.log( "signature: " + metaData.signature );
+
+			console.log( "header_bytes: " + metaData.header_bytes );
+			console.log( "vertex_coordinate_bytes: " + metaData.vertex_coordinate_bytes );
+			console.log( "normal_coordinate_bytes: " + metaData.normal_coordinate_bytes );
+			console.log( "uv_coordinate_bytes: " + metaData.uv_coordinate_bytes );
+
+			console.log( "vertex_index_bytes: " + metaData.vertex_index_bytes );
+			console.log( "normal_index_bytes: " + metaData.normal_index_bytes );
+			console.log( "uv_index_bytes: " + metaData.uv_index_bytes );
+			console.log( "material_index_bytes: " + metaData.material_index_bytes );
+
+			console.log( "nvertices: " + metaData.nvertices );
+			console.log( "nnormals: " + metaData.nnormals );
+			console.log( "nuvs: " + metaData.nuvs );
+
+			console.log( "ntri_flat: " + metaData.ntri_flat );
+			console.log( "ntri_smooth: " + metaData.ntri_smooth );
+			console.log( "ntri_flat_uv: " + metaData.ntri_flat_uv );
+			console.log( "ntri_smooth_uv: " + metaData.ntri_smooth_uv );
+
+			console.log( "nquad_flat: " + metaData.nquad_flat );
+			console.log( "nquad_smooth: " + metaData.nquad_smooth );
+			console.log( "nquad_flat_uv: " + metaData.nquad_flat_uv );
+			console.log( "nquad_smooth_uv: " + metaData.nquad_smooth_uv );
+
+			var total = metaData.header_bytes
+					  + metaData.nvertices * metaData.vertex_coordinate_bytes * 3
+					  + metaData.nnormals * metaData.normal_coordinate_bytes * 3
+					  + metaData.nuvs * metaData.uv_coordinate_bytes * 2
+					  + metaData.ntri_flat * ( metaData.vertex_index_bytes*3 + metaData.material_index_bytes )
+					  + metaData.ntri_smooth * ( metaData.vertex_index_bytes*3 + metaData.material_index_bytes + metaData.normal_index_bytes*3 )
+					  + metaData.ntri_flat_uv * ( metaData.vertex_index_bytes*3 + metaData.material_index_bytes + metaData.uv_index_bytes*3 )
+					  + metaData.ntri_smooth_uv * ( metaData.vertex_index_bytes*3 + metaData.material_index_bytes + metaData.normal_index_bytes*3 + metaData.uv_index_bytes*3 )
+					  + metaData.nquad_flat * ( metaData.vertex_index_bytes*4 + metaData.material_index_bytes )
+					  + metaData.nquad_smooth * ( metaData.vertex_index_bytes*4 + metaData.material_index_bytes + metaData.normal_index_bytes*4 )
+					  + metaData.nquad_flat_uv * ( metaData.vertex_index_bytes*4 + metaData.material_index_bytes + metaData.uv_index_bytes*4 )
+					  + metaData.nquad_smooth_uv * ( metaData.vertex_index_bytes*4 + metaData.material_index_bytes + metaData.normal_index_bytes*4 + metaData.uv_index_bytes*4 );
+			console.log( "total bytes: " + total );
+*/
+
+			return metaData;
+
+		};
+
+		function parseString( data, offset, length ) {
+
+			var charArray = new Uint8Array( data, offset, length );
+
+			var text = "";
+
+			for ( var i = 0; i < length; i ++ ) {
+
+				text += String.fromCharCode( charArray[ offset + i ] );
+
+			}
+
+			return text;
+
+		};
+
+		function parseUChar8( data, offset ) {
+
+			var charArray = new Uint8Array( data, offset, 1 );
+
+			return charArray[ 0 ];
+
+		};
+
+		function parseUInt32( data, offset ) {
+
+			var intArray = new Uint32Array( data, offset, 1 );
+
+			return intArray[ 0 ];
+
+		};
+
+		function init_vertices( start ) {
+
+			var nElements = md.nvertices;
+
+			var coordArray = new Float32Array( data, start, nElements * 3 );
+
+			var i, x, y, z;
+
+			for( i = 0; i < nElements; i ++ ) {
+
+				x = coordArray[ i * 3 ];
+				y = coordArray[ i * 3 + 1 ];
+				z = coordArray[ i * 3 + 2 ];
+
+				vertex( scope, x, y, z );
+
+			}
+
+			return nElements * 3 * Float32Array.BYTES_PER_ELEMENT;
+
+		};
+
+		function init_normals( start ) {
+
+			var nElements = md.nnormals;
+
+			if ( nElements ) {
+
+				var normalArray = new Int8Array( data, start, nElements * 3 );
+
+				var i, x, y, z;
+
+				for( i = 0; i < nElements; i ++ ) {
+
+					x = normalArray[ i * 3 ];
+					y = normalArray[ i * 3 + 1 ];
+					z = normalArray[ i * 3 + 2 ];
+
+					normals.push( x/127, y/127, z/127 );
+
+				}
+
+			}
+
+			return nElements * 3 * Int8Array.BYTES_PER_ELEMENT;
+
+		};
+
+		function init_uvs( start ) {
+
+			var nElements = md.nuvs;
+
+			if ( nElements ) {
+
+				var uvArray = new Float32Array( data, start, nElements * 2 );
+
+				var i, u, v;
+
+				for( i = 0; i < nElements; i ++ ) {
+
+					u = uvArray[ i * 2 ];
+					v = uvArray[ i * 2 + 1 ];
+
+					uvs.push( u, v );
+
+				}
+
+			}
+
+			return nElements * 2 * Float32Array.BYTES_PER_ELEMENT;
+
+		};
+
+		function init_uvs3( nElements, offset ) {
+
+			var i, uva, uvb, uvc, u1, u2, u3, v1, v2, v3;
+
+			var uvIndexBuffer = new Uint32Array( data, offset, 3 * nElements );
+
+			for( i = 0; i < nElements; i ++ ) {
+
+				uva = uvIndexBuffer[ i * 3 ];
+				uvb = uvIndexBuffer[ i * 3 + 1 ];
+				uvc = uvIndexBuffer[ i * 3 + 2 ];
+
+				u1 = uvs[ uva*2 ];
+				v1 = uvs[ uva*2 + 1 ];
+
+				u2 = uvs[ uvb*2 ];
+				v2 = uvs[ uvb*2 + 1 ];
+
+				u3 = uvs[ uvc*2 ];
+				v3 = uvs[ uvc*2 + 1 ];
+
+				uv3( scope.faceVertexUvs[ 0 ], u1, v1, u2, v2, u3, v3 );
+
+			}
+
+		};
+
+		function init_uvs4( nElements, offset ) {
+
+			var i, uva, uvb, uvc, uvd, u1, u2, u3, u4, v1, v2, v3, v4;
+
+			var uvIndexBuffer = new Uint32Array( data, offset, 4 * nElements );
+
+			for( i = 0; i < nElements; i ++ ) {
+
+				uva = uvIndexBuffer[ i * 4 ];
+				uvb = uvIndexBuffer[ i * 4 + 1 ];
+				uvc = uvIndexBuffer[ i * 4 + 2 ];
+				uvd = uvIndexBuffer[ i * 4 + 3 ];
+
+				u1 = uvs[ uva*2 ];
+				v1 = uvs[ uva*2 + 1 ];
+
+				u2 = uvs[ uvb*2 ];
+				v2 = uvs[ uvb*2 + 1 ];
+
+				u3 = uvs[ uvc*2 ];
+				v3 = uvs[ uvc*2 + 1 ];
+
+				u4 = uvs[ uvd*2 ];
+				v4 = uvs[ uvd*2 + 1 ];
+
+				uv4( scope.faceVertexUvs[ 0 ], u1, v1, u2, v2, u3, v3, u4, v4 );
+
+			}
+
+		};
+
+		function init_faces3_flat( nElements, offsetVertices, offsetMaterials ) {
+
+			var i, a, b, c, m;
+
+			var vertexIndexBuffer = new Uint32Array( data, offsetVertices, 3 * nElements );
+			var materialIndexBuffer = new Uint16Array( data, offsetMaterials, nElements );
+
+			for( i = 0; i < nElements; i ++ ) {
+
+				a = vertexIndexBuffer[ i * 3 ];
+				b = vertexIndexBuffer[ i * 3 + 1 ];
+				c = vertexIndexBuffer[ i * 3 + 2 ];
+
+				m = materialIndexBuffer[ i ];
+
+				f3( scope, a, b, c, m );
+
+			}
+
+		};
+
+		function init_faces4_flat( nElements, offsetVertices, offsetMaterials ) {
+
+			var i, a, b, c, d, m;
+
+			var vertexIndexBuffer = new Uint32Array( data, offsetVertices, 4 * nElements );
+			var materialIndexBuffer = new Uint16Array( data, offsetMaterials, nElements );
+
+			for( i = 0; i < nElements; i ++ ) {
+
+				a = vertexIndexBuffer[ i * 4 ];
+				b = vertexIndexBuffer[ i * 4 + 1 ];
+				c = vertexIndexBuffer[ i * 4 + 2 ];
+				d = vertexIndexBuffer[ i * 4 + 3 ];
+
+				m = materialIndexBuffer[ i ];
+
+				f4( scope, a, b, c, d, m );
+
+			}
+
+		};
+
+		function init_faces3_smooth( nElements, offsetVertices, offsetNormals, offsetMaterials ) {
+
+			var i, a, b, c, m;
+			var na, nb, nc;
+
+			var vertexIndexBuffer = new Uint32Array( data, offsetVertices, 3 * nElements );
+			var normalIndexBuffer = new Uint32Array( data, offsetNormals, 3 * nElements );
+			var materialIndexBuffer = new Uint16Array( data, offsetMaterials, nElements );
+
+			for( i = 0; i < nElements; i ++ ) {
+
+				a = vertexIndexBuffer[ i * 3 ];
+				b = vertexIndexBuffer[ i * 3 + 1 ];
+				c = vertexIndexBuffer[ i * 3 + 2 ];
+
+				na = normalIndexBuffer[ i * 3 ];
+				nb = normalIndexBuffer[ i * 3 + 1 ];
+				nc = normalIndexBuffer[ i * 3 + 2 ];
+
+				m = materialIndexBuffer[ i ];
+
+				f3n( scope, normals, a, b, c, m, na, nb, nc );
+
+			}
+
+		};
+
+		function init_faces4_smooth( nElements, offsetVertices, offsetNormals, offsetMaterials ) {
+
+			var i, a, b, c, d, m;
+			var na, nb, nc, nd;
+
+			var vertexIndexBuffer = new Uint32Array( data, offsetVertices, 4 * nElements );
+			var normalIndexBuffer = new Uint32Array( data, offsetNormals, 4 * nElements );
+			var materialIndexBuffer = new Uint16Array( data, offsetMaterials, nElements );
+
+			for( i = 0; i < nElements; i ++ ) {
+
+				a = vertexIndexBuffer[ i * 4 ];
+				b = vertexIndexBuffer[ i * 4 + 1 ];
+				c = vertexIndexBuffer[ i * 4 + 2 ];
+				d = vertexIndexBuffer[ i * 4 + 3 ];
+
+				na = normalIndexBuffer[ i * 4 ];
+				nb = normalIndexBuffer[ i * 4 + 1 ];
+				nc = normalIndexBuffer[ i * 4 + 2 ];
+				nd = normalIndexBuffer[ i * 4 + 3 ];
+
+				m = materialIndexBuffer[ i ];
+
+				f4n( scope, normals, a, b, c, d, m, na, nb, nc, nd );
+
+			}
+
+		};
+
+		function init_triangles_flat( start ) {
+
+			var nElements = md.ntri_flat;
+
+			if ( nElements ) {
+
+				var offsetMaterials = start + nElements * Uint32Array.BYTES_PER_ELEMENT * 3;
+				init_faces3_flat( nElements, start, offsetMaterials );
+
+			}
+
+		};
+
+		function init_triangles_flat_uv( start ) {
+
+			var nElements = md.ntri_flat_uv;
+
+			if ( nElements ) {
+
+				var offsetUvs = start + nElements * Uint32Array.BYTES_PER_ELEMENT * 3;
+				var offsetMaterials = offsetUvs + nElements * Uint32Array.BYTES_PER_ELEMENT * 3;
+
+				init_faces3_flat( nElements, start, offsetMaterials );
+				init_uvs3( nElements, offsetUvs );
+
+			}
+
+		};
+
+		function init_triangles_smooth( start ) {
+
+			var nElements = md.ntri_smooth;
+
+			if ( nElements ) {
+
+				var offsetNormals = start + nElements * Uint32Array.BYTES_PER_ELEMENT * 3;
+				var offsetMaterials = offsetNormals + nElements * Uint32Array.BYTES_PER_ELEMENT * 3;
+
+				init_faces3_smooth( nElements, start, offsetNormals, offsetMaterials );
+
+			}
+
+		};
+
+		function init_triangles_smooth_uv( start ) {
+
+			var nElements = md.ntri_smooth_uv;
+
+			if ( nElements ) {
+
+				var offsetNormals = start + nElements * Uint32Array.BYTES_PER_ELEMENT * 3;
+				var offsetUvs = offsetNormals + nElements * Uint32Array.BYTES_PER_ELEMENT * 3;
+				var offsetMaterials = offsetUvs + nElements * Uint32Array.BYTES_PER_ELEMENT * 3;
+
+				init_faces3_smooth( nElements, start, offsetNormals, offsetMaterials );
+				init_uvs3( nElements, offsetUvs );
+
+			}
+
+		};
+
+		function init_quads_flat( start ) {
+
+			var nElements = md.nquad_flat;
+
+			if ( nElements ) {
+
+				var offsetMaterials = start + nElements * Uint32Array.BYTES_PER_ELEMENT * 4;
+				init_faces4_flat( nElements, start, offsetMaterials );
+
+			}
+
+		};
+
+		function init_quads_flat_uv( start ) {
+
+			var nElements = md.nquad_flat_uv;
+
+			if ( nElements ) {
+
+				var offsetUvs = start + nElements * Uint32Array.BYTES_PER_ELEMENT * 4;
+				var offsetMaterials = offsetUvs + nElements * Uint32Array.BYTES_PER_ELEMENT * 4;
+
+				init_faces4_flat( nElements, start, offsetMaterials );
+				init_uvs4( nElements, offsetUvs );
+
+			}
+
+		};
+
+		function init_quads_smooth( start ) {
+
+			var nElements = md.nquad_smooth;
+
+			if ( nElements ) {
+
+				var offsetNormals = start + nElements * Uint32Array.BYTES_PER_ELEMENT * 4;
+				var offsetMaterials = offsetNormals + nElements * Uint32Array.BYTES_PER_ELEMENT * 4;
+
+				init_faces4_smooth( nElements, start, offsetNormals, offsetMaterials );
+
+			}
+
+		};
+
+		function init_quads_smooth_uv( start ) {
+
+			var nElements = md.nquad_smooth_uv;
+
+			if ( nElements ) {
+
+				var offsetNormals = start + nElements * Uint32Array.BYTES_PER_ELEMENT * 4;
+				var offsetUvs = offsetNormals + nElements * Uint32Array.BYTES_PER_ELEMENT * 4;
+				var offsetMaterials = offsetUvs + nElements * Uint32Array.BYTES_PER_ELEMENT * 4;
+
+				init_faces4_smooth( nElements, start, offsetNormals, offsetMaterials );
+				init_uvs4( nElements, offsetUvs );
+
+			}
+
+		};
+
+	};
+
+	function vertex ( scope, x, y, z ) {
+
+		scope.vertices.push( new THREE.Vector3( x, y, z ) );
+
+	};
+
+	function f3 ( scope, a, b, c, mi ) {
+
+		scope.faces.push( new THREE.Face3( a, b, c, null, null, mi ) );
+
+	};
+
+	function f4 ( scope, a, b, c, d, mi ) {
+
+		scope.faces.push( new THREE.Face4( a, b, c, d, null, null, mi ) );
+
+	};
+
+	function f3n ( scope, normals, a, b, c, mi, na, nb, nc ) {
+
+		var nax = normals[ na*3     ],
+			nay = normals[ na*3 + 1 ],
+			naz = normals[ na*3 + 2 ],
+
+			nbx = normals[ nb*3     ],
+			nby = normals[ nb*3 + 1 ],
+			nbz = normals[ nb*3 + 2 ],
+
+			ncx = normals[ nc*3     ],
+			ncy = normals[ nc*3 + 1 ],
+			ncz = normals[ nc*3 + 2 ];
+
+		scope.faces.push( new THREE.Face3( a, b, c,
+						  [new THREE.Vector3( nax, nay, naz ),
+						   new THREE.Vector3( nbx, nby, nbz ),
+						   new THREE.Vector3( ncx, ncy, ncz )],
+						  null,
+						  mi ) );
+
+	};
+
+	function f4n ( scope, normals, a, b, c, d, mi, na, nb, nc, nd ) {
+
+		var nax = normals[ na*3     ],
+			nay = normals[ na*3 + 1 ],
+			naz = normals[ na*3 + 2 ],
+
+			nbx = normals[ nb*3     ],
+			nby = normals[ nb*3 + 1 ],
+			nbz = normals[ nb*3 + 2 ],
+
+			ncx = normals[ nc*3     ],
+			ncy = normals[ nc*3 + 1 ],
+			ncz = normals[ nc*3 + 2 ],
+
+			ndx = normals[ nd*3     ],
+			ndy = normals[ nd*3 + 1 ],
+			ndz = normals[ nd*3 + 2 ];
+
+		scope.faces.push( new THREE.Face4( a, b, c, d,
+						  [new THREE.Vector3( nax, nay, naz ),
+						   new THREE.Vector3( nbx, nby, nbz ),
+						   new THREE.Vector3( ncx, ncy, ncz ),
+						   new THREE.Vector3( ndx, ndy, ndz )],
+						  null,
+						  mi ) );
+
+	};
+
+	function uv3 ( where, u1, v1, u2, v2, u3, v3 ) {
+
+		where.push( [
+			new THREE.Vector2( u1, v1 ),
+			new THREE.Vector2( u2, v2 ),
+			new THREE.Vector2( u3, v3 )
+		] );
+
+	};
+
+	function uv4 ( where, u1, v1, u2, v2, u3, v3, u4, v4 ) {
+
+		where.push( [
+			new THREE.Vector2( u1, v1 ),
+			new THREE.Vector2( u2, v2 ),
+			new THREE.Vector2( u3, v3 ),
+			new THREE.Vector2( u4, v4 )
+		] );
+	};
+
+	Model.prototype = Object.create( THREE.Geometry.prototype );
+
+	var geometry = new Model( texturePath );
+	var materials = this.initMaterials( jsonMaterials, texturePath );
+
+	if ( this.needsTangents( materials ) ) geometry.computeTangents();
+
+	callback( geometry, materials );
+
+};

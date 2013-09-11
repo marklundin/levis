@@ -1,1 +1,27 @@
-THREE.LineCurve3=THREE.Curve.create(function(e,t){this.v1=e,this.v2=t},function(e){var t=new THREE.Vector3;return t.subVectors(this.v2,this.v1),t.multiplyScalar(e),t.add(this.v1),t});
+/**************************************************************
+ *	Line3D
+ **************************************************************/
+
+THREE.LineCurve3 = THREE.Curve.create(
+
+	function ( v1, v2 ) {
+
+		this.v1 = v1;
+		this.v2 = v2;
+
+	},
+
+	function ( t ) {
+
+		var r = new THREE.Vector3();
+
+
+		r.subVectors( this.v2, this.v1 ); // diff
+		r.multiplyScalar( t );
+		r.add( this.v1 );
+
+		return r;
+
+	}
+
+);

@@ -1,1 +1,496 @@
-THREE.ShadowMapPlugin=function(){function e(e,t){var i=new THREE.DirectionalLight;i.isVirtual=!0,i.onlyShadow=!0,i.castShadow=!0,i.shadowCameraNear=e.shadowCameraNear,i.shadowCameraFar=e.shadowCameraFar,i.shadowCameraLeft=e.shadowCameraLeft,i.shadowCameraRight=e.shadowCameraRight,i.shadowCameraBottom=e.shadowCameraBottom,i.shadowCameraTop=e.shadowCameraTop,i.shadowCameraVisible=e.shadowCameraVisible,i.shadowDarkness=e.shadowDarkness,i.shadowBias=e.shadowCascadeBias[t],i.shadowMapWidth=e.shadowCascadeWidth[t],i.shadowMapHeight=e.shadowCascadeHeight[t],i.pointsWorld=[],i.pointsFrustum=[];for(var r=i.pointsWorld,o=i.pointsFrustum,n=0;8>n;n++)r[n]=new THREE.Vector3,o[n]=new THREE.Vector3;var a=e.shadowCascadeNearZ[t],s=e.shadowCascadeFarZ[t];return o[0].set(-1,-1,a),o[1].set(1,-1,a),o[2].set(-1,1,a),o[3].set(1,1,a),o[4].set(-1,-1,s),o[5].set(1,-1,s),o[6].set(-1,1,s),o[7].set(1,1,s),i}function t(e,t){var i=e.shadowCascadeArray[t];i.position.copy(e.position),i.target.position.copy(e.target.position),i.lookAt(i.target),i.shadowCameraVisible=e.shadowCameraVisible,i.shadowDarkness=e.shadowDarkness,i.shadowBias=e.shadowCascadeBias[t];var r=e.shadowCascadeNearZ[t],o=e.shadowCascadeFarZ[t],n=i.pointsFrustum;n[0].z=r,n[1].z=r,n[2].z=r,n[3].z=r,n[4].z=o,n[5].z=o,n[6].z=o,n[7].z=o}function i(e,t){var i=t.shadowCamera,r=t.pointsFrustum,o=t.pointsWorld;d.set(1/0,1/0,1/0),p.set(-1/0,-1/0,-1/0);for(var n=0;8>n;n++){var a=o[n];a.copy(r[n]),THREE.ShadowMapPlugin.__projector.unprojectVector(a,e),a.applyMatrix4(i.matrixWorldInverse),a.x<d.x&&(d.x=a.x),a.x>p.x&&(p.x=a.x),a.y<d.y&&(d.y=a.y),a.y>p.y&&(p.y=a.y),a.z<d.z&&(d.z=a.z),a.z>p.z&&(p.z=a.z)}i.left=d.x,i.right=p.x,i.top=p.y,i.bottom=d.y,i.updateProjectionMatrix()}function r(e){return e.material instanceof THREE.MeshFaceMaterial?e.material.materials[0]:e.material}var o,n,a,s,l,c,h=new THREE.Frustum,u=new THREE.Matrix4,d=new THREE.Vector3,p=new THREE.Vector3,f=new THREE.Vector3;this.init=function(e){o=e.context,n=e;var t=THREE.ShaderLib.depthRGBA,i=THREE.UniformsUtils.clone(t.uniforms);a=new THREE.ShaderMaterial({fragmentShader:t.fragmentShader,vertexShader:t.vertexShader,uniforms:i}),s=new THREE.ShaderMaterial({fragmentShader:t.fragmentShader,vertexShader:t.vertexShader,uniforms:i,morphTargets:!0}),l=new THREE.ShaderMaterial({fragmentShader:t.fragmentShader,vertexShader:t.vertexShader,uniforms:i,skinning:!0}),c=new THREE.ShaderMaterial({fragmentShader:t.fragmentShader,vertexShader:t.vertexShader,uniforms:i,morphTargets:!0,skinning:!0}),a._shadowPass=!0,s._shadowPass=!0,l._shadowPass=!0,c._shadowPass=!0},this.render=function(e,t){n.shadowMapEnabled&&n.shadowMapAutoUpdate&&this.update(e,t)},this.update=function(d,p){var m,v,g,E,y,T,x,b,_,R,w,H,S,M,C=[],A=0,D=null;for(o.clearColor(1,1,1,1),o.disable(o.BLEND),o.enable(o.CULL_FACE),o.frontFace(o.CCW),n.shadowMapCullFace===THREE.CullFaceFront?o.cullFace(o.FRONT):o.cullFace(o.BACK),n.setDepthTest(!0),m=0,v=d.__lights.length;v>m;m++)if(S=d.__lights[m],S.castShadow)if(S instanceof THREE.DirectionalLight&&S.shadowCascade)for(y=0;y<S.shadowCascadeCount;y++){var P;if(S.shadowCascadeArray[y])P=S.shadowCascadeArray[y];else{P=e(S,y),P.originalCamera=p;var L=new THREE.Gyroscope;L.position=S.shadowCascadeOffset,L.add(P),L.add(P.target),p.add(L),S.shadowCascadeArray[y]=P,console.log("Created virtualLight",P)}t(S,y),C[A]=P,A++}else C[A]=S,A++;for(m=0,v=C.length;v>m;m++){if(S=C[m],!S.shadowMap){var N=THREE.LinearFilter;n.shadowMapType===THREE.PCFSoftShadowMap&&(N=THREE.NearestFilter);var F={minFilter:N,magFilter:N,format:THREE.RGBAFormat};S.shadowMap=new THREE.WebGLRenderTarget(S.shadowMapWidth,S.shadowMapHeight,F),S.shadowMapSize=new THREE.Vector2(S.shadowMapWidth,S.shadowMapHeight),S.shadowMatrix=new THREE.Matrix4}if(!S.shadowCamera){if(S instanceof THREE.SpotLight)S.shadowCamera=new THREE.PerspectiveCamera(S.shadowCameraFov,S.shadowMapWidth/S.shadowMapHeight,S.shadowCameraNear,S.shadowCameraFar);else{if(!(S instanceof THREE.DirectionalLight)){console.error("Unsupported light type for shadow");continue}S.shadowCamera=new THREE.OrthographicCamera(S.shadowCameraLeft,S.shadowCameraRight,S.shadowCameraTop,S.shadowCameraBottom,S.shadowCameraNear,S.shadowCameraFar)}d.add(S.shadowCamera),d.autoUpdate===!0&&d.updateMatrixWorld()}for(S.shadowCameraVisible&&!S.cameraHelper&&(S.cameraHelper=new THREE.CameraHelper(S.shadowCamera),S.shadowCamera.add(S.cameraHelper)),S.isVirtual&&P.originalCamera==p&&i(p,S),T=S.shadowMap,x=S.shadowMatrix,b=S.shadowCamera,b.position.getPositionFromMatrix(S.matrixWorld),f.getPositionFromMatrix(S.target.matrixWorld),b.lookAt(f),b.updateMatrixWorld(),b.matrixWorldInverse.getInverse(b.matrixWorld),S.cameraHelper&&(S.cameraHelper.visible=S.shadowCameraVisible),S.shadowCameraVisible&&S.cameraHelper.update(),x.set(.5,0,0,.5,0,.5,0,.5,0,0,.5,.5,0,0,0,1),x.multiply(b.projectionMatrix),x.multiply(b.matrixWorldInverse),u.multiplyMatrices(b.projectionMatrix,b.matrixWorldInverse),h.setFromMatrix(u),n.setRenderTarget(T),n.clear(),M=d.__webglObjects,g=0,E=M.length;E>g;g++)w=M[g],H=w.object,w.render=!1,H.visible&&H.castShadow&&((H instanceof THREE.Mesh||H instanceof THREE.ParticleSystem)&&H.frustumCulled&&!h.intersectsObject(H)||(H._modelViewMatrix.multiplyMatrices(b.matrixWorldInverse,H.matrixWorld),w.render=!0));var I,k,O;for(g=0,E=M.length;E>g;g++)w=M[g],w.render&&(H=w.object,_=w.buffer,I=r(H),k=H.geometry.morphTargets.length>0&&I.morphTargets,O=H instanceof THREE.SkinnedMesh&&I.skinning,R=H.customDepthMaterial?H.customDepthMaterial:O?k?c:l:k?s:a,_ instanceof THREE.BufferGeometry?n.renderBufferDirect(b,d.__lights,D,R,_,H):n.renderBuffer(b,d.__lights,D,R,_,H));for(M=d.__webglObjectsImmediate,g=0,E=M.length;E>g;g++)w=M[g],H=w.object,H.visible&&H.castShadow&&(H._modelViewMatrix.multiplyMatrices(b.matrixWorldInverse,H.matrixWorld),n.renderImmediateObject(b,d.__lights,D,a,H))}var U=n.getClearColor(),V=n.getClearAlpha();o.clearColor(U.r,U.g,U.b,V),o.enable(o.BLEND),n.shadowMapCullFace===THREE.CullFaceFront&&o.cullFace(o.BACK)}},THREE.ShadowMapPlugin.__projector=new THREE.Projector;
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.ShadowMapPlugin = function () {
+
+	var _gl,
+	_renderer,
+	_depthMaterial, _depthMaterialMorph, _depthMaterialSkin, _depthMaterialMorphSkin,
+
+	_frustum = new THREE.Frustum(),
+	_projScreenMatrix = new THREE.Matrix4(),
+
+	_min = new THREE.Vector3(),
+	_max = new THREE.Vector3(),
+
+	_matrixPosition = new THREE.Vector3();
+
+	this.init = function ( renderer ) {
+
+		_gl = renderer.context;
+		_renderer = renderer;
+
+		var depthShader = THREE.ShaderLib[ "depthRGBA" ];
+		var depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
+
+		_depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms } );
+		_depthMaterialMorph = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms, morphTargets: true } );
+		_depthMaterialSkin = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms, skinning: true } );
+		_depthMaterialMorphSkin = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms, morphTargets: true, skinning: true } );
+
+		_depthMaterial._shadowPass = true;
+		_depthMaterialMorph._shadowPass = true;
+		_depthMaterialSkin._shadowPass = true;
+		_depthMaterialMorphSkin._shadowPass = true;
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		if ( ! ( _renderer.shadowMapEnabled && _renderer.shadowMapAutoUpdate ) ) return;
+
+		this.update( scene, camera );
+
+	};
+
+	this.update = function ( scene, camera ) {
+
+		var i, il, j, jl, n,
+
+		shadowMap, shadowMatrix, shadowCamera,
+		program, buffer, material,
+		webglObject, object, light,
+		renderList,
+
+		lights = [],
+		k = 0,
+
+		fog = null;
+
+		// set GL state for depth map
+
+		_gl.clearColor( 1, 1, 1, 1 );
+		_gl.disable( _gl.BLEND );
+
+		_gl.enable( _gl.CULL_FACE );
+		_gl.frontFace( _gl.CCW );
+
+		if ( _renderer.shadowMapCullFace === THREE.CullFaceFront ) {
+
+			_gl.cullFace( _gl.FRONT );
+
+		} else {
+
+			_gl.cullFace( _gl.BACK );
+
+		}
+
+		_renderer.setDepthTest( true );
+
+		// preprocess lights
+		// 	- skip lights that are not casting shadows
+		//	- create virtual lights for cascaded shadow maps
+
+		for ( i = 0, il = scene.__lights.length; i < il; i ++ ) {
+
+			light = scene.__lights[ i ];
+
+			if ( ! light.castShadow ) continue;
+
+			if ( ( light instanceof THREE.DirectionalLight ) && light.shadowCascade ) {
+
+				for ( n = 0; n < light.shadowCascadeCount; n ++ ) {
+
+					var virtualLight;
+
+					if ( ! light.shadowCascadeArray[ n ] ) {
+
+						virtualLight = createVirtualLight( light, n );
+						virtualLight.originalCamera = camera;
+
+						var gyro = new THREE.Gyroscope();
+						gyro.position = light.shadowCascadeOffset;
+
+						gyro.add( virtualLight );
+						gyro.add( virtualLight.target );
+
+						camera.add( gyro );
+
+						light.shadowCascadeArray[ n ] = virtualLight;
+
+						console.log( "Created virtualLight", virtualLight );
+
+					} else {
+
+						virtualLight = light.shadowCascadeArray[ n ];
+
+					}
+
+					updateVirtualLight( light, n );
+
+					lights[ k ] = virtualLight;
+					k ++;
+
+				}
+
+			} else {
+
+				lights[ k ] = light;
+				k ++;
+
+			}
+
+		}
+
+		// render depth map
+
+		for ( i = 0, il = lights.length; i < il; i ++ ) {
+
+			light = lights[ i ];
+
+			if ( ! light.shadowMap ) {
+
+				var shadowFilter = THREE.LinearFilter;
+
+				if ( _renderer.shadowMapType === THREE.PCFSoftShadowMap ) {
+
+					shadowFilter = THREE.NearestFilter;
+
+				}
+
+				var pars = { minFilter: shadowFilter, magFilter: shadowFilter, format: THREE.RGBAFormat };
+
+				light.shadowMap = new THREE.WebGLRenderTarget( light.shadowMapWidth, light.shadowMapHeight, pars );
+				light.shadowMapSize = new THREE.Vector2( light.shadowMapWidth, light.shadowMapHeight );
+
+				light.shadowMatrix = new THREE.Matrix4();
+
+			}
+
+			if ( ! light.shadowCamera ) {
+
+				if ( light instanceof THREE.SpotLight ) {
+
+					light.shadowCamera = new THREE.PerspectiveCamera( light.shadowCameraFov, light.shadowMapWidth / light.shadowMapHeight, light.shadowCameraNear, light.shadowCameraFar );
+
+				} else if ( light instanceof THREE.DirectionalLight ) {
+
+					light.shadowCamera = new THREE.OrthographicCamera( light.shadowCameraLeft, light.shadowCameraRight, light.shadowCameraTop, light.shadowCameraBottom, light.shadowCameraNear, light.shadowCameraFar );
+
+				} else {
+
+					console.error( "Unsupported light type for shadow" );
+					continue;
+
+				}
+
+				scene.add( light.shadowCamera );
+
+				if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
+
+			}
+
+			if ( light.shadowCameraVisible && ! light.cameraHelper ) {
+
+				light.cameraHelper = new THREE.CameraHelper( light.shadowCamera );
+				light.shadowCamera.add( light.cameraHelper );
+
+			}
+
+			if ( light.isVirtual && virtualLight.originalCamera == camera ) {
+
+				updateShadowCamera( camera, light );
+
+			}
+
+			shadowMap = light.shadowMap;
+			shadowMatrix = light.shadowMatrix;
+			shadowCamera = light.shadowCamera;
+
+			shadowCamera.position.getPositionFromMatrix( light.matrixWorld );
+			_matrixPosition.getPositionFromMatrix( light.target.matrixWorld );
+			shadowCamera.lookAt( _matrixPosition );
+			shadowCamera.updateMatrixWorld();
+
+			shadowCamera.matrixWorldInverse.getInverse( shadowCamera.matrixWorld );
+
+			if ( light.cameraHelper ) light.cameraHelper.visible = light.shadowCameraVisible;
+			if ( light.shadowCameraVisible ) light.cameraHelper.update();
+
+			// compute shadow matrix
+
+			shadowMatrix.set( 0.5, 0.0, 0.0, 0.5,
+							  0.0, 0.5, 0.0, 0.5,
+							  0.0, 0.0, 0.5, 0.5,
+							  0.0, 0.0, 0.0, 1.0 );
+
+			shadowMatrix.multiply( shadowCamera.projectionMatrix );
+			shadowMatrix.multiply( shadowCamera.matrixWorldInverse );
+
+			// update camera matrices and frustum
+
+			_projScreenMatrix.multiplyMatrices( shadowCamera.projectionMatrix, shadowCamera.matrixWorldInverse );
+			_frustum.setFromMatrix( _projScreenMatrix );
+
+			// render shadow map
+
+			_renderer.setRenderTarget( shadowMap );
+			_renderer.clear();
+
+			// set object matrices & frustum culling
+
+			renderList = scene.__webglObjects;
+
+			for ( j = 0, jl = renderList.length; j < jl; j ++ ) {
+
+				webglObject = renderList[ j ];
+				object = webglObject.object;
+
+				webglObject.render = false;
+
+				if ( object.visible && object.castShadow ) {
+
+					if ( ! ( object instanceof THREE.Mesh || object instanceof THREE.ParticleSystem ) || ! ( object.frustumCulled ) || _frustum.intersectsObject( object ) ) {
+
+						object._modelViewMatrix.multiplyMatrices( shadowCamera.matrixWorldInverse, object.matrixWorld );
+
+						webglObject.render = true;
+
+					}
+
+				}
+
+			}
+
+			// render regular objects
+
+			var objectMaterial, useMorphing, useSkinning;
+
+			for ( j = 0, jl = renderList.length; j < jl; j ++ ) {
+
+				webglObject = renderList[ j ];
+
+				if ( webglObject.render ) {
+
+					object = webglObject.object;
+					buffer = webglObject.buffer;
+
+					// culling is overriden globally for all objects
+					// while rendering depth map
+
+					// need to deal with MeshFaceMaterial somehow
+					// in that case just use the first of material.materials for now
+					// (proper solution would require to break objects by materials
+					//  similarly to regular rendering and then set corresponding
+					//  depth materials per each chunk instead of just once per object)
+
+					objectMaterial = getObjectMaterial( object );
+
+					useMorphing = object.geometry.morphTargets.length > 0 && objectMaterial.morphTargets;
+					useSkinning = object instanceof THREE.SkinnedMesh && objectMaterial.skinning;
+
+					if ( object.customDepthMaterial ) {
+
+						material = object.customDepthMaterial;
+
+					} else if ( useSkinning ) {
+
+						material = useMorphing ? _depthMaterialMorphSkin : _depthMaterialSkin;
+
+					} else if ( useMorphing ) {
+
+						material = _depthMaterialMorph;
+
+					} else {
+
+						material = _depthMaterial;
+
+					}
+
+					if ( buffer instanceof THREE.BufferGeometry ) {
+
+						_renderer.renderBufferDirect( shadowCamera, scene.__lights, fog, material, buffer, object );
+
+					} else {
+
+						_renderer.renderBuffer( shadowCamera, scene.__lights, fog, material, buffer, object );
+
+					}
+
+				}
+
+			}
+
+			// set matrices and render immediate objects
+
+			renderList = scene.__webglObjectsImmediate;
+
+			for ( j = 0, jl = renderList.length; j < jl; j ++ ) {
+
+				webglObject = renderList[ j ];
+				object = webglObject.object;
+
+				if ( object.visible && object.castShadow ) {
+
+					object._modelViewMatrix.multiplyMatrices( shadowCamera.matrixWorldInverse, object.matrixWorld );
+
+					_renderer.renderImmediateObject( shadowCamera, scene.__lights, fog, _depthMaterial, object );
+
+				}
+
+			}
+
+		}
+
+		// restore GL state
+
+		var clearColor = _renderer.getClearColor(),
+		clearAlpha = _renderer.getClearAlpha();
+
+		_gl.clearColor( clearColor.r, clearColor.g, clearColor.b, clearAlpha );
+		_gl.enable( _gl.BLEND );
+
+		if ( _renderer.shadowMapCullFace === THREE.CullFaceFront ) {
+
+			_gl.cullFace( _gl.BACK );
+
+		}
+
+	};
+
+	function createVirtualLight( light, cascade ) {
+
+		var virtualLight = new THREE.DirectionalLight();
+
+		virtualLight.isVirtual = true;
+
+		virtualLight.onlyShadow = true;
+		virtualLight.castShadow = true;
+
+		virtualLight.shadowCameraNear = light.shadowCameraNear;
+		virtualLight.shadowCameraFar = light.shadowCameraFar;
+
+		virtualLight.shadowCameraLeft = light.shadowCameraLeft;
+		virtualLight.shadowCameraRight = light.shadowCameraRight;
+		virtualLight.shadowCameraBottom = light.shadowCameraBottom;
+		virtualLight.shadowCameraTop = light.shadowCameraTop;
+
+		virtualLight.shadowCameraVisible = light.shadowCameraVisible;
+
+		virtualLight.shadowDarkness = light.shadowDarkness;
+
+		virtualLight.shadowBias = light.shadowCascadeBias[ cascade ];
+		virtualLight.shadowMapWidth = light.shadowCascadeWidth[ cascade ];
+		virtualLight.shadowMapHeight = light.shadowCascadeHeight[ cascade ];
+
+		virtualLight.pointsWorld = [];
+		virtualLight.pointsFrustum = [];
+
+		var pointsWorld = virtualLight.pointsWorld,
+			pointsFrustum = virtualLight.pointsFrustum;
+
+		for ( var i = 0; i < 8; i ++ ) {
+
+			pointsWorld[ i ] = new THREE.Vector3();
+			pointsFrustum[ i ] = new THREE.Vector3();
+
+		}
+
+		var nearZ = light.shadowCascadeNearZ[ cascade ];
+		var farZ = light.shadowCascadeFarZ[ cascade ];
+
+		pointsFrustum[ 0 ].set( -1, -1, nearZ );
+		pointsFrustum[ 1 ].set(  1, -1, nearZ );
+		pointsFrustum[ 2 ].set( -1,  1, nearZ );
+		pointsFrustum[ 3 ].set(  1,  1, nearZ );
+
+		pointsFrustum[ 4 ].set( -1, -1, farZ );
+		pointsFrustum[ 5 ].set(  1, -1, farZ );
+		pointsFrustum[ 6 ].set( -1,  1, farZ );
+		pointsFrustum[ 7 ].set(  1,  1, farZ );
+
+		return virtualLight;
+
+	}
+
+	// Synchronize virtual light with the original light
+
+	function updateVirtualLight( light, cascade ) {
+
+		var virtualLight = light.shadowCascadeArray[ cascade ];
+
+		virtualLight.position.copy( light.position );
+		virtualLight.target.position.copy( light.target.position );
+		virtualLight.lookAt( virtualLight.target );
+
+		virtualLight.shadowCameraVisible = light.shadowCameraVisible;
+		virtualLight.shadowDarkness = light.shadowDarkness;
+
+		virtualLight.shadowBias = light.shadowCascadeBias[ cascade ];
+
+		var nearZ = light.shadowCascadeNearZ[ cascade ];
+		var farZ = light.shadowCascadeFarZ[ cascade ];
+
+		var pointsFrustum = virtualLight.pointsFrustum;
+
+		pointsFrustum[ 0 ].z = nearZ;
+		pointsFrustum[ 1 ].z = nearZ;
+		pointsFrustum[ 2 ].z = nearZ;
+		pointsFrustum[ 3 ].z = nearZ;
+
+		pointsFrustum[ 4 ].z = farZ;
+		pointsFrustum[ 5 ].z = farZ;
+		pointsFrustum[ 6 ].z = farZ;
+		pointsFrustum[ 7 ].z = farZ;
+
+	}
+
+	// Fit shadow camera's ortho frustum to camera frustum
+
+	function updateShadowCamera( camera, light ) {
+
+		var shadowCamera = light.shadowCamera,
+			pointsFrustum = light.pointsFrustum,
+			pointsWorld = light.pointsWorld;
+
+		_min.set( Infinity, Infinity, Infinity );
+		_max.set( -Infinity, -Infinity, -Infinity );
+
+		for ( var i = 0; i < 8; i ++ ) {
+
+			var p = pointsWorld[ i ];
+
+			p.copy( pointsFrustum[ i ] );
+			THREE.ShadowMapPlugin.__projector.unprojectVector( p, camera );
+
+			p.applyMatrix4( shadowCamera.matrixWorldInverse );
+
+			if ( p.x < _min.x ) _min.x = p.x;
+			if ( p.x > _max.x ) _max.x = p.x;
+
+			if ( p.y < _min.y ) _min.y = p.y;
+			if ( p.y > _max.y ) _max.y = p.y;
+
+			if ( p.z < _min.z ) _min.z = p.z;
+			if ( p.z > _max.z ) _max.z = p.z;
+
+		}
+
+		shadowCamera.left = _min.x;
+		shadowCamera.right = _max.x;
+		shadowCamera.top = _max.y;
+		shadowCamera.bottom = _min.y;
+
+		// can't really fit near/far
+		//shadowCamera.near = _min.z;
+		//shadowCamera.far = _max.z;
+
+		shadowCamera.updateProjectionMatrix();
+
+	}
+
+	// For the moment just ignore objects that have multiple materials with different animation methods
+	// Only the first material will be taken into account for deciding which depth material to use for shadow maps
+
+	function getObjectMaterial( object ) {
+
+		return object.material instanceof THREE.MeshFaceMaterial
+			? object.material.materials[ 0 ]
+			: object.material;
+
+	};
+
+};
+
+THREE.ShadowMapPlugin.__projector = new THREE.Projector();

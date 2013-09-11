@@ -1,1 +1,176 @@
-THREE.Spline=function(e){function t(e,t,i,r,n,o,a){var s=.5*(i-e),l=.5*(r-t);return(2*(t-i)+s+l)*a+(-3*(t-i)-2*s-l)*o+s*n+t}this.points=e;var i,r,n,o,a,s,l,c,h,u=[],d={x:0,y:0,z:0};this.initFromArray=function(e){this.points=[];for(var t=0;t<e.length;t++)this.points[t]={x:e[t][0],y:e[t][1],z:e[t][2]}},this.getPoint=function(e){return i=(this.points.length-1)*e,r=Math.floor(i),n=i-r,u[0]=0===r?r:r-1,u[1]=r,u[2]=r>this.points.length-2?this.points.length-1:r+1,u[3]=r>this.points.length-3?this.points.length-1:r+2,s=this.points[u[0]],l=this.points[u[1]],c=this.points[u[2]],h=this.points[u[3]],o=n*n,a=n*o,d.x=t(s.x,l.x,c.x,h.x,n,o,a),d.y=t(s.y,l.y,c.y,h.y,n,o,a),d.z=t(s.z,l.z,c.z,h.z,n,o,a),d},this.getControlPointsArray=function(){var e,t,i=this.points.length,r=[];for(e=0;i>e;e++)t=this.points[e],r[e]=[t.x,t.y,t.z];return r},this.getLength=function(e){var t,i,r,n,o=0,a=0,s=0,l=new THREE.Vector3,c=new THREE.Vector3,h=[],u=0;for(h[0]=0,e||(e=100),r=this.points.length*e,l.copy(this.points[0]),t=1;r>t;t++)i=t/r,n=this.getPoint(i),c.copy(n),u+=c.distanceTo(l),l.copy(n),o=(this.points.length-1)*i,a=Math.floor(o),a!=s&&(h[a]=u,s=a);return h[h.length]=u,{chunks:h,total:u}},this.reparametrizeByArcLength=function(e){var t,i,r,n,o,a,s,l,c=[],h=new THREE.Vector3,u=this.getLength();for(c.push(h.copy(this.points[0]).clone()),t=1;t<this.points.length;t++){for(a=u.chunks[t]-u.chunks[t-1],s=Math.ceil(e*a/u.total),n=(t-1)/(this.points.length-1),o=t/(this.points.length-1),i=1;s-1>i;i++)r=n+i*(1/s)*(o-n),l=this.getPoint(r),c.push(h.copy(l).clone());c.push(h.copy(this.points[t]).clone())}this.points=c}};
+/**
+ * Spline from Tween.js, slightly optimized (and trashed)
+ * http://sole.github.com/tween.js/examples/05_spline.html
+ *
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.Spline = function ( points ) {
+
+	this.points = points;
+
+	var c = [], v3 = { x: 0, y: 0, z: 0 },
+	point, intPoint, weight, w2, w3,
+	pa, pb, pc, pd;
+
+	this.initFromArray = function( a ) {
+
+		this.points = [];
+
+		for ( var i = 0; i < a.length; i++ ) {
+
+			this.points[ i ] = { x: a[ i ][ 0 ], y: a[ i ][ 1 ], z: a[ i ][ 2 ] };
+
+		}
+
+	};
+
+	this.getPoint = function ( k ) {
+
+		point = ( this.points.length - 1 ) * k;
+		intPoint = Math.floor( point );
+		weight = point - intPoint;
+
+		c[ 0 ] = intPoint === 0 ? intPoint : intPoint - 1;
+		c[ 1 ] = intPoint;
+		c[ 2 ] = intPoint  > this.points.length - 2 ? this.points.length - 1 : intPoint + 1;
+		c[ 3 ] = intPoint  > this.points.length - 3 ? this.points.length - 1 : intPoint + 2;
+
+		pa = this.points[ c[ 0 ] ];
+		pb = this.points[ c[ 1 ] ];
+		pc = this.points[ c[ 2 ] ];
+		pd = this.points[ c[ 3 ] ];
+
+		w2 = weight * weight;
+		w3 = weight * w2;
+
+		v3.x = interpolate( pa.x, pb.x, pc.x, pd.x, weight, w2, w3 );
+		v3.y = interpolate( pa.y, pb.y, pc.y, pd.y, weight, w2, w3 );
+		v3.z = interpolate( pa.z, pb.z, pc.z, pd.z, weight, w2, w3 );
+
+		return v3;
+
+	};
+
+	this.getControlPointsArray = function () {
+
+		var i, p, l = this.points.length,
+			coords = [];
+
+		for ( i = 0; i < l; i ++ ) {
+
+			p = this.points[ i ];
+			coords[ i ] = [ p.x, p.y, p.z ];
+
+		}
+
+		return coords;
+
+	};
+
+	// approximate length by summing linear segments
+
+	this.getLength = function ( nSubDivisions ) {
+
+		var i, index, nSamples, position,
+			point = 0, intPoint = 0, oldIntPoint = 0,
+			oldPosition = new THREE.Vector3(),
+			tmpVec = new THREE.Vector3(),
+			chunkLengths = [],
+			totalLength = 0;
+
+		// first point has 0 length
+
+		chunkLengths[ 0 ] = 0;
+
+		if ( !nSubDivisions ) nSubDivisions = 100;
+
+		nSamples = this.points.length * nSubDivisions;
+
+		oldPosition.copy( this.points[ 0 ] );
+
+		for ( i = 1; i < nSamples; i ++ ) {
+
+			index = i / nSamples;
+
+			position = this.getPoint( index );
+			tmpVec.copy( position );
+
+			totalLength += tmpVec.distanceTo( oldPosition );
+
+			oldPosition.copy( position );
+
+			point = ( this.points.length - 1 ) * index;
+			intPoint = Math.floor( point );
+
+			if ( intPoint != oldIntPoint ) {
+
+				chunkLengths[ intPoint ] = totalLength;
+				oldIntPoint = intPoint;
+
+			}
+
+		}
+
+		// last point ends with total length
+
+		chunkLengths[ chunkLengths.length ] = totalLength;
+
+		return { chunks: chunkLengths, total: totalLength };
+
+	};
+
+	this.reparametrizeByArcLength = function ( samplingCoef ) {
+
+		var i, j,
+			index, indexCurrent, indexNext,
+			linearDistance, realDistance,
+			sampling, position,
+			newpoints = [],
+			tmpVec = new THREE.Vector3(),
+			sl = this.getLength();
+
+		newpoints.push( tmpVec.copy( this.points[ 0 ] ).clone() );
+
+		for ( i = 1; i < this.points.length; i++ ) {
+
+			//tmpVec.copy( this.points[ i - 1 ] );
+			//linearDistance = tmpVec.distanceTo( this.points[ i ] );
+
+			realDistance = sl.chunks[ i ] - sl.chunks[ i - 1 ];
+
+			sampling = Math.ceil( samplingCoef * realDistance / sl.total );
+
+			indexCurrent = ( i - 1 ) / ( this.points.length - 1 );
+			indexNext = i / ( this.points.length - 1 );
+
+			for ( j = 1; j < sampling - 1; j++ ) {
+
+				index = indexCurrent + j * ( 1 / sampling ) * ( indexNext - indexCurrent );
+
+				position = this.getPoint( index );
+				newpoints.push( tmpVec.copy( position ).clone() );
+
+			}
+
+			newpoints.push( tmpVec.copy( this.points[ i ] ).clone() );
+
+		}
+
+		this.points = newpoints;
+
+	};
+
+	// Catmull-Rom
+
+	function interpolate( p0, p1, p2, p3, t, t2, t3 ) {
+
+		var v0 = ( p2 - p0 ) * 0.5,
+			v1 = ( p3 - p1 ) * 0.5;
+
+		return ( 2 * ( p1 - p2 ) + v0 + v1 ) * t3 + ( - 3 * ( p1 - p2 ) - 2 * v0 - v1 ) * t2 + v0 * t + p1;
+
+	};
+
+};

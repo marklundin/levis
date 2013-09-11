@@ -1,1 +1,86 @@
-THREE.LatheGeometry=function(e,t,i,r){THREE.Geometry.call(this),t=t||12,i=i||0,r=r||2*Math.PI;for(var n=1/(e.length-1),o=1/t,a=0,s=t;s>=a;a++)for(var l=i+a*o*r,c=Math.cos(l),h=Math.sin(l),u=0,d=e.length;d>u;u++){var p=e[u],f=new THREE.Vector3;f.x=c*p.x-h*p.y,f.y=h*p.x+c*p.y,f.z=p.z,this.vertices.push(f)}for(var m=e.length,a=0,s=t;s>a;a++)for(var u=0,d=e.length-1;d>u;u++){var v=u+m*a,g=v,E=v+m,c=v+1+m,y=v+1;this.faces.push(new THREE.Face4(g,E,c,y));var T=a*o,x=u*n,_=T+o,b=x+n;this.faceVertexUvs[0].push([new THREE.Vector2(T,x),new THREE.Vector2(_,x),new THREE.Vector2(_,b),new THREE.Vector2(T,b)])}this.mergeVertices(),this.computeCentroids(),this.computeFaceNormals(),this.computeVertexNormals()},THREE.LatheGeometry.prototype=Object.create(THREE.Geometry.prototype);
+/**
+ * @author astrodud / http://astrodud.isgreat.org/
+ * @author zz85 / https://github.com/zz85
+ * @author bhouston / http://exocortex.com
+ */
+
+// points - to create a closed torus, one must use a set of points 
+//    like so: [ a, b, c, d, a ], see first is the same as last.
+// segments - the number of circumference segments to create
+// phiStart - the starting radian
+// phiLength - the radian (0 to 2*PI) range of the lathed section
+//    2*pi is a closed lathe, less than 2PI is a portion.
+THREE.LatheGeometry = function ( points, segments, phiStart, phiLength ) {
+
+	THREE.Geometry.call( this );
+
+	segments = segments || 12;
+	phiStart = phiStart || 0;
+	phiLength = phiLength || 2 * Math.PI;
+
+	var inversePointLength = 1.0 / ( points.length - 1 );
+	var inverseSegments = 1.0 / segments;
+
+	for ( var i = 0, il = segments; i <= il; i ++ ) {
+
+		var phi = phiStart + i * inverseSegments * phiLength;
+
+		var c = Math.cos( phi ),
+			s = Math.sin( phi );
+
+		for ( var j = 0, jl = points.length; j < jl; j ++ ) {
+
+			var pt = points[ j ];
+
+			var vertex = new THREE.Vector3();
+
+			vertex.x = c * pt.x - s * pt.y;
+			vertex.y = s * pt.x + c * pt.y;
+			vertex.z = pt.z;
+
+			this.vertices.push( vertex );
+
+		}
+
+	}
+
+	var np = points.length;
+
+	for ( var i = 0, il = segments; i < il; i ++ ) {
+
+		for ( var j = 0, jl = points.length - 1; j < jl; j ++ ) {
+
+			var base = j + np * i;
+			var a = base;
+			var b = base + np;
+			var c = base + 1 + np;
+			var d = base + 1;
+
+			this.faces.push( new THREE.Face4( a, b, c, d ) );
+
+			var u0 = i * inverseSegments;
+			var v0 = j * inversePointLength;
+			var u1 = u0 + inverseSegments;
+			var v1 = v0 + inversePointLength;
+
+			this.faceVertexUvs[ 0 ].push( [
+
+				new THREE.Vector2( u0, v0 ), 
+				new THREE.Vector2( u1, v0 ),
+				new THREE.Vector2( u1, v1 ),
+				new THREE.Vector2( u0, v1 )
+
+			] );
+
+		}
+
+	}
+
+	this.mergeVertices();
+	this.computeCentroids();
+	this.computeFaceNormals();
+	this.computeVertexNormals();
+
+};
+
+THREE.LatheGeometry.prototype = Object.create( THREE.Geometry.prototype );

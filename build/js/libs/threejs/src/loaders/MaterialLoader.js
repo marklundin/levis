@@ -1,1 +1,118 @@
-THREE.MaterialLoader=function(e){this.manager=void 0!==e?e:THREE.DefaultLoadingManager},THREE.MaterialLoader.prototype={constructor:THREE.MaterialLoader,load:function(e,t){var i=this,r=new THREE.XHRLoader;r.setCrossOrigin(this.crossOrigin),r.load(e,function(e){t(i.parse(JSON.parse(e)))})},setCrossOrigin:function(e){this.crossOrigin=e},parse:function(e){var t;switch(e.type){case"MeshBasicMaterial":t=new THREE.MeshBasicMaterial({color:e.color,opacity:e.opacity,transparent:e.transparent,wireframe:e.wireframe});break;case"MeshLambertMaterial":t=new THREE.MeshLambertMaterial({color:e.color,ambient:e.ambient,emissive:e.emissive,opacity:e.opacity,transparent:e.transparent,wireframe:e.wireframe});break;case"MeshPhongMaterial":t=new THREE.MeshPhongMaterial({color:e.color,ambient:e.ambient,emissive:e.emissive,specular:e.specular,shininess:e.shininess,opacity:e.opacity,transparent:e.transparent,wireframe:e.wireframe});break;case"MeshNormalMaterial":t=new THREE.MeshNormalMaterial({opacity:e.opacity,transparent:e.transparent,wireframe:e.wireframe});break;case"MeshDepthMaterial":t=new THREE.MeshDepthMaterial({opacity:e.opacity,transparent:e.transparent,wireframe:e.wireframe})}return void 0!==e.vertexColors&&(t.vertexColors=e.vertexColors),t}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.MaterialLoader = function ( manager ) {
+
+	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+
+};
+
+THREE.MaterialLoader.prototype = {
+
+	constructor: THREE.MaterialLoader,
+
+	load: function ( url, onLoad, onProgress, onError ) {
+
+		var scope = this;
+
+		var loader = new THREE.XHRLoader();
+		loader.setCrossOrigin( this.crossOrigin );
+		loader.load( url, function ( text ) {
+
+			onLoad( scope.parse( JSON.parse( text ) ) );
+
+		} );
+
+	},
+
+	setCrossOrigin: function ( value ) {
+
+		this.crossOrigin = value;
+
+	},
+
+	parse: function ( json ) {
+
+		var material;
+
+		switch ( json.type ) {
+
+			case 'MeshBasicMaterial':
+
+				material = new THREE.MeshBasicMaterial( {
+
+					color: json.color,
+					opacity: json.opacity,
+					transparent: json.transparent,
+					wireframe: json.wireframe
+
+				} );
+
+				break;
+
+			case 'MeshLambertMaterial':
+
+				material = new THREE.MeshLambertMaterial( {
+
+					color: json.color,
+					ambient: json.ambient,
+					emissive: json.emissive,
+					opacity: json.opacity,
+					transparent: json.transparent,
+					wireframe: json.wireframe
+
+				} );
+
+				break;
+
+			case 'MeshPhongMaterial':
+
+				material = new THREE.MeshPhongMaterial( {
+
+					color: json.color,
+					ambient: json.ambient,
+					emissive: json.emissive,
+					specular: json.specular,
+					shininess: json.shininess,
+					opacity: json.opacity,
+					transparent: json.transparent,
+					wireframe: json.wireframe
+
+				} );
+
+				break;
+
+			case 'MeshNormalMaterial':
+
+				material = new THREE.MeshNormalMaterial( {
+
+					opacity: json.opacity,
+					transparent: json.transparent,
+					wireframe: json.wireframe
+
+				} );
+
+				break;
+
+			case 'MeshDepthMaterial':
+
+				material = new THREE.MeshDepthMaterial( {
+
+					opacity: json.opacity,
+					transparent: json.transparent,
+					wireframe: json.wireframe
+
+				} );
+
+				break;
+
+		}
+
+		if ( json.vertexColors !== undefined ) material.vertexColors = json.vertexColors;
+
+		return material;
+
+	}
+
+};

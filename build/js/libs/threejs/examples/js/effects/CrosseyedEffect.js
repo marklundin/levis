@@ -1,1 +1,73 @@
-THREE.CrosseyedEffect=function(e){this.separation=10;var t,i,r=new THREE.PerspectiveCamera;r.target=new THREE.Vector3;var n=new THREE.PerspectiveCamera;n.target=new THREE.Vector3,e.autoClear=!1,this.setSize=function(r,n){t=r/2,i=n,e.setSize(r,n)},this.render=function(o,a){r.fov=a.fov,r.aspect=.5*a.aspect,r.near=a.near,r.far=a.far,r.updateProjectionMatrix(),r.position.copy(a.position),r.target.copy(a.target),r.translateX(this.separation),r.lookAt(r.target),n.near=a.near,n.far=a.far,n.projectionMatrix=r.projectionMatrix,n.position.copy(a.position),n.target.copy(a.target),n.translateX(-this.separation),n.lookAt(n.target),e.clear(),e.setViewport(0,0,t,i),e.render(o,r),e.setViewport(t,0,t,i),e.render(o,n,!1)}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.CrosseyedEffect = function ( renderer ) {
+
+	// API
+
+	this.separation = 10;
+
+	// internals
+
+	var _width, _height;
+
+	var _cameraL = new THREE.PerspectiveCamera();
+	_cameraL.target = new THREE.Vector3();
+
+	var _cameraR = new THREE.PerspectiveCamera();
+	_cameraR.target = new THREE.Vector3();
+
+	// initialization
+
+	renderer.autoClear = false;
+
+	this.setSize = function ( width, height ) {
+
+		_width = width / 2;
+		_height = height;
+
+		renderer.setSize( width, height );
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		// left
+
+		_cameraL.fov = camera.fov;
+		_cameraL.aspect = 0.5 * camera.aspect;
+		_cameraL.near = camera.near;
+		_cameraL.far = camera.far;
+		_cameraL.updateProjectionMatrix();
+
+		_cameraL.position.copy( camera.position );
+		_cameraL.target.copy( camera.target );
+		_cameraL.translateX( this.separation );
+		_cameraL.lookAt( _cameraL.target );
+
+		// right
+
+		_cameraR.near = camera.near;
+		_cameraR.far = camera.far;
+
+		_cameraR.projectionMatrix = _cameraL.projectionMatrix;
+
+		_cameraR.position.copy( camera.position );
+		_cameraR.target.copy( camera.target );
+		_cameraR.translateX( - this.separation );
+		_cameraR.lookAt( _cameraR.target );
+
+		//
+
+		renderer.clear();
+
+		renderer.setViewport( 0, 0, _width, _height );
+		renderer.render( scene, _cameraL );
+
+		renderer.setViewport( _width, 0, _width, _height );
+		renderer.render( scene, _cameraR, false );
+
+	};
+
+};

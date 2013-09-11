@@ -1,1 +1,315 @@
-THREE.ObjectLoader=function(e){this.manager=void 0!==e?e:THREE.DefaultLoadingManager},THREE.ObjectLoader.prototype={constructor:THREE.ObjectLoader,load:function(e,t){var i=this,r=new THREE.XHRLoader(i.manager);r.setCrossOrigin(this.crossOrigin),r.load(e,function(e){t(i.parse(JSON.parse(e)))})},setCrossOrigin:function(e){this.crossOrigin=e},parse:function(e){var t=this.parseGeometries(e.geometries),i=this.parseMaterials(e.materials),r=this.parseObject(e.object,t,i);return r},parseGeometries:function(e){var t={};if(void 0!==e)for(var i=new THREE.JSONLoader,r=0,o=e.length;o>r;r++){var n,a=e[r];switch(a.type){case"PlaneGeometry":n=new THREE.PlaneGeometry(a.width,a.height,a.widthSegments,a.heightSegments);break;case"CubeGeometry":n=new THREE.CubeGeometry(a.width,a.height,a.depth,a.widthSegments,a.heightSegments,a.depthSegments);break;case"CylinderGeometry":n=new THREE.CylinderGeometry(a.radiusTop,a.radiusBottom,a.height,a.radiusSegments,a.heightSegments,a.openEnded);break;case"SphereGeometry":n=new THREE.SphereGeometry(a.radius,a.widthSegments,a.heightSegments,a.phiStart,a.phiLength,a.thetaStart,a.thetaLength);break;case"IcosahedronGeometry":n=new THREE.IcosahedronGeometry(a.radius,a.detail);break;case"TorusGeometry":n=new THREE.TorusGeometry(a.radius,a.tube,a.radialSegments,a.tubularSegments,a.arc);break;case"TorusKnotGeometry":n=new THREE.TorusKnotGeometry(a.radius,a.tube,a.radialSegments,a.tubularSegments,a.p,a.q,a.heightScale);break;case"Geometry":n=i.parse(a.data).geometry}n.uuid=a.uuid,void 0!==a.name&&(n.name=a.name),t[a.uuid]=n}return t},parseMaterials:function(e){var t={};if(void 0!==e)for(var i=new THREE.MaterialLoader,r=0,o=e.length;o>r;r++){var n=e[r],a=i.parse(n);a.uuid=n.uuid,void 0!==n.name&&(a.name=n.name),t[n.uuid]=a}return t},parseObject:function(){var e=new THREE.Matrix4;return function(t,i,r){var o;switch(t.type){case"Scene":o=new THREE.Scene;break;case"PerspectiveCamera":o=new THREE.PerspectiveCamera(t.fov,t.aspect,t.near,t.far);break;case"OrthographicCamera":o=new THREE.OrthographicCamera(t.left,t.right,t.top,t.bottom,t.near,t.far);break;case"AmbientLight":o=new THREE.AmbientLight(t.color);break;case"DirectionalLight":o=new THREE.DirectionalLight(t.color,t.intensity);break;case"PointLight":o=new THREE.PointLight(t.color,t.intensity,t.distance);break;case"SpotLight":o=new THREE.SpotLight(t.color,t.intensity,t.distance,t.angle,t.exponent);break;case"HemisphereLight":o=new THREE.HemisphereLight(t.color,t.groundColor,t.intensity);break;case"Mesh":var n=i[t.geometry],a=r[t.material];void 0===n&&console.error("THREE.ObjectLoader: Undefined geometry "+t.geometry),void 0===a&&console.error("THREE.ObjectLoader: Undefined material "+t.material),o=new THREE.Mesh(n,a);break;default:o=new THREE.Object3D}if(o.uuid=t.uuid,void 0!==t.name&&(o.name=t.name),void 0!==t.matrix?(e.fromArray(t.matrix),e.decompose(o.position,o.quaternion,o.scale)):(void 0!==t.position&&o.position.fromArray(t.position),void 0!==t.rotation&&o.rotation.fromArray(t.rotation),void 0!==t.scale&&o.scale.fromArray(t.scale)),void 0!==t.visible&&(o.visible=t.visible),void 0!==t.userData&&(o.userData=t.userData),void 0!==t.children)for(var s in t.children)o.add(this.parseObject(t.children[s],i,r));return o}}()};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.ObjectLoader = function ( manager ) {
+
+	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+
+};
+
+THREE.ObjectLoader.prototype = {
+
+	constructor: THREE.ObjectLoader,
+
+	load: function ( url, onLoad, onProgress, onError ) {
+
+		var scope = this;
+
+		var loader = new THREE.XHRLoader( scope.manager );
+		loader.setCrossOrigin( this.crossOrigin );
+		loader.load( url, function ( text ) {
+
+			onLoad( scope.parse( JSON.parse( text ) ) );
+
+		} );
+
+	},
+
+	setCrossOrigin: function ( value ) {
+
+		this.crossOrigin = value;
+
+	},
+
+	parse: function ( json ) {
+
+		var geometries = this.parseGeometries( json.geometries );
+		var materials = this.parseMaterials( json.materials );
+		var object = this.parseObject( json.object, geometries, materials );
+
+		return object;
+
+	},
+
+	parseGeometries: function ( json ) {
+
+		var geometries = {};
+
+		if ( json !== undefined ) {
+
+			var loader = new THREE.JSONLoader();
+
+			for ( var i = 0, l = json.length; i < l; i ++ ) {
+
+				var geometry;
+				var data = json[ i ];
+
+				switch ( data.type ) {
+
+					case 'PlaneGeometry':
+
+						geometry = new THREE.PlaneGeometry(
+							data.width,
+							data.height,
+							data.widthSegments,
+							data.heightSegments
+						);
+
+						break;
+
+					case 'CubeGeometry':
+
+						geometry = new THREE.CubeGeometry(
+							data.width,
+							data.height,
+							data.depth,
+							data.widthSegments,
+							data.heightSegments,
+							data.depthSegments
+						);
+
+						break;
+
+					case 'CylinderGeometry':
+
+						geometry = new THREE.CylinderGeometry(
+							data.radiusTop,
+							data.radiusBottom,
+							data.height,
+							data.radiusSegments,
+							data.heightSegments,
+							data.openEnded
+						);
+
+						break;
+
+					case 'SphereGeometry':
+
+						geometry = new THREE.SphereGeometry(
+							data.radius,
+							data.widthSegments,
+							data.heightSegments,
+							data.phiStart,
+							data.phiLength,
+							data.thetaStart,
+							data.thetaLength
+						);
+
+						break;
+
+					case 'IcosahedronGeometry':
+
+						geometry = new THREE.IcosahedronGeometry(
+							data.radius,
+							data.detail
+						);
+
+						break;
+
+					case 'TorusGeometry':
+
+						geometry = new THREE.TorusGeometry(
+							data.radius,
+							data.tube,
+							data.radialSegments,
+							data.tubularSegments,
+							data.arc
+						);
+
+						break;
+
+					case 'TorusKnotGeometry':
+
+						geometry = new THREE.TorusKnotGeometry(
+							data.radius,
+							data.tube,
+							data.radialSegments,
+							data.tubularSegments,
+							data.p,
+							data.q,
+							data.heightScale
+						);
+
+						break;
+
+					case 'Geometry':
+
+						geometry = loader.parse( data.data ).geometry;
+
+						break;
+
+				}
+
+				geometry.uuid = data.uuid;
+
+				if ( data.name !== undefined ) geometry.name = data.name;
+
+				geometries[ data.uuid ] = geometry;
+
+			}
+
+		}
+
+		return geometries;
+
+	},
+
+	parseMaterials: function ( json ) {
+
+		var materials = {};
+
+		if ( json !== undefined ) {
+
+			var loader = new THREE.MaterialLoader();
+
+			for ( var i = 0, l = json.length; i < l; i ++ ) {
+
+				var data = json[ i ];
+				var material = loader.parse( data );
+
+				material.uuid = data.uuid;
+
+				if ( data.name !== undefined ) material.name = data.name;
+
+				materials[ data.uuid ] = material;
+
+			}
+
+		}
+
+		return materials;
+
+	},
+
+	parseObject: function () {
+
+		var matrix = new THREE.Matrix4();
+
+		return function ( data, geometries, materials ) {
+
+			var object;
+
+			switch ( data.type ) {
+
+				case 'Scene':
+
+					object = new THREE.Scene();
+
+					break;
+
+				case 'PerspectiveCamera':
+
+					object = new THREE.PerspectiveCamera( data.fov, data.aspect, data.near, data.far );
+
+					break;
+
+				case 'OrthographicCamera':
+
+					object = new THREE.OrthographicCamera( data.left, data.right, data.top, data.bottom, data.near, data.far );
+
+					break;
+
+				case 'AmbientLight':
+
+					object = new THREE.AmbientLight( data.color );
+
+					break;
+
+				case 'DirectionalLight':
+
+					object = new THREE.DirectionalLight( data.color, data.intensity );
+
+					break;
+
+				case 'PointLight':
+
+					object = new THREE.PointLight( data.color, data.intensity, data.distance );
+
+					break;
+
+				case 'SpotLight':
+
+					object = new THREE.SpotLight( data.color, data.intensity, data.distance, data.angle, data.exponent );
+
+					break;
+
+				case 'HemisphereLight':
+
+					object = new THREE.HemisphereLight( data.color, data.groundColor, data.intensity );
+
+					break;
+
+				case 'Mesh':
+
+					var geometry = geometries[ data.geometry ];
+					var material = materials[ data.material ];
+
+					if ( geometry === undefined ) {
+
+						console.error( 'THREE.ObjectLoader: Undefined geometry ' + data.geometry );
+
+					}
+
+					if ( material === undefined ) {
+
+						console.error( 'THREE.ObjectLoader: Undefined material ' + data.material );
+
+					}
+
+					object = new THREE.Mesh( geometry, material );
+
+					break;
+
+				default:
+
+					object = new THREE.Object3D();
+
+			}
+
+			object.uuid = data.uuid;
+
+			if ( data.name !== undefined ) object.name = data.name;
+			if ( data.matrix !== undefined ) {
+
+				matrix.fromArray( data.matrix );
+				matrix.decompose( object.position, object.quaternion, object.scale );
+
+			} else {
+
+				if ( data.position !== undefined ) object.position.fromArray( data.position );
+				if ( data.rotation !== undefined ) object.rotation.fromArray( data.rotation );
+				if ( data.scale !== undefined ) object.scale.fromArray( data.scale );
+
+			}
+
+			if ( data.visible !== undefined ) object.visible = data.visible;
+			if ( data.userData !== undefined ) object.userData = data.userData;
+
+			if ( data.children !== undefined ) {
+
+				for ( var child in data.children ) {
+
+					object.add( this.parseObject( data.children[ child ], geometries, materials ) );
+
+				}
+
+			}
+
+			return object;
+
+		}
+
+	}()
+
+};

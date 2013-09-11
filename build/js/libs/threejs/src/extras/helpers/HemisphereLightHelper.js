@@ -1,1 +1,53 @@
-THREE.HemisphereLightHelper=function(e,t){THREE.Object3D.call(this),this.light=e,this.light.updateMatrixWorld(),this.matrixWorld=e.matrixWorld,this.matrixAutoUpdate=!1,this.colors=[new THREE.Color,new THREE.Color];var i=new THREE.SphereGeometry(t,4,2);i.applyMatrix((new THREE.Matrix4).makeRotationX(-Math.PI/2));for(var r=0,o=8;o>r;r++)i.faces[r].color=this.colors[4>r?0:1];var n=new THREE.MeshBasicMaterial({vertexColors:THREE.FaceColors,wireframe:!0});this.lightSphere=new THREE.Mesh(i,n),this.add(this.lightSphere),this.update()},THREE.HemisphereLightHelper.prototype=Object.create(THREE.Object3D.prototype),THREE.HemisphereLightHelper.prototype.update=function(){var e=new THREE.Vector3;return function(){this.colors[0].copy(this.light.color).multiplyScalar(this.light.intensity),this.colors[1].copy(this.light.groundColor).multiplyScalar(this.light.intensity),this.lightSphere.lookAt(e.getPositionFromMatrix(this.light.matrixWorld).negate()),this.lightSphere.geometry.colorsNeedUpdate=!0}}();
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.HemisphereLightHelper = function ( light, sphereSize, arrowLength, domeSize ) {
+
+	THREE.Object3D.call( this );
+
+	this.light = light;
+	this.light.updateMatrixWorld();
+
+	this.matrixWorld = light.matrixWorld;
+	this.matrixAutoUpdate = false;
+
+	this.colors = [ new THREE.Color(), new THREE.Color() ];
+
+	var geometry = new THREE.SphereGeometry( sphereSize, 4, 2 );
+	geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
+
+	for ( var i = 0, il = 8; i < il; i ++ ) {
+
+		geometry.faces[ i ].color = this.colors[ i < 4 ? 0 : 1 ];
+
+	}
+
+	var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors, wireframe: true } );
+
+	this.lightSphere = new THREE.Mesh( geometry, material );
+	this.add( this.lightSphere );
+
+	this.update();
+
+};
+
+THREE.HemisphereLightHelper.prototype = Object.create( THREE.Object3D.prototype );
+
+THREE.HemisphereLightHelper.prototype.update = function () {
+
+	var vector = new THREE.Vector3();
+
+	return function () {
+
+		this.colors[ 0 ].copy( this.light.color ).multiplyScalar( this.light.intensity );
+		this.colors[ 1 ].copy( this.light.groundColor ).multiplyScalar( this.light.intensity );
+
+		this.lightSphere.lookAt( vector.getPositionFromMatrix( this.light.matrixWorld ).negate() );
+		this.lightSphere.geometry.colorsNeedUpdate = true;
+
+	}
+
+}();
+

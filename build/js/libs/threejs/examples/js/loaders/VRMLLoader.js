@@ -1,1 +1,376 @@
-THREE.VRMLLoader=function(){},THREE.VRMLLoader.prototype={constructor:THREE.VTKLoader,load:function(e,t){var i=this,r=new XMLHttpRequest;r.addEventListener("load",function(e){var r=i.parse(e.target.responseText);i.dispatchEvent({type:"load",content:r}),t&&t(geometry)},!1),r.addEventListener("progress",function(e){i.dispatchEvent({type:"progress",loaded:e.loaded,total:e.total})},!1),r.addEventListener("error",function(){i.dispatchEvent({type:"error",message:"Couldn't load URL ["+e+"]"})},!1),r.open("GET",e,!0),r.send(null)},parse:function(e){var t=function(){console.warn("VRML V1.0 not supported yet")},i=function(e,t){var i=function(e){for(var t={string:"Scene",children:[]},i=t,r=0;r<e.length;r++){var n=e[r];if(!/^#/.exec(n))if(/{/.exec(n)){var o={string:n,parent:i,children:[]};i.children.push(o),i=o,/}/.exec(n)&&(o.children.push(/{(.*)}/.exec(n)[1]),i=i.parent)}else/}/.exec(n)?i=i.parent:""!==n&&i.children.push(n)}return t},r={},n=/( +[\d|\.|\+|\-|e]+)/,o=/( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+)/,a=/( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+)/,s=function(e,t){if("string"!=typeof e){var i=t;if(/Transform/.exec(e.string)||/Group/.exec(e.string)){i=new THREE.Object3D,/DEF/.exec(e.string)&&(i.name=/DEF (\w+)/.exec(e.string)[1],r[i.name]=i);for(var l=0,h=e.children.length;h>l;l++){var c=e.children[l];if(/translation/.exec(c)){var u=o.exec(c);i.position.set(parseFloat(u[1]),parseFloat(u[2]),parseFloat(u[3]))}else if(/rotation/.exec(c)){var u=a.exec(c);i.rotation.set(parseFloat(u[1]),parseFloat(u[2]),parseFloat(u[3])).multiplyScalar(u[4])}else if(/scale/.exec(c)){var u=o.exec(c);i.scale.set(parseFloat(u[1]),parseFloat(u[2]),parseFloat(u[3]))}}t.add(i)}else if(/Shape/.exec(e.string))i=new THREE.Mesh,/DEF/.exec(e.string)&&(i.name=/DEF (\w+)/.exec(e.string)[1],r[i.name]=i),t.add(i);else{if(/geometry/.exec(e.string)){if(/Box/.exec(e.string)){for(var d=1,p=1,f=1,l=0,h=e.children.length;h>l;l++){var c=e.children[l];if(/size/.exec(c)){var u=o.exec(c);d=parseFloat(u[1]),p=parseFloat(u[2]),f=parseFloat(u[3])}}t.geometry=new THREE.CubeGeometry(d,p,f)}else if(/Cylinder/.exec(e.string)){for(var m=1,p=1,l=0,h=e.children.length;h>l;l++){var c=e.children[l];/radius/.exec(c)?m=parseFloat(n.exec(c)[1]):/height/.exec(c)&&(p=parseFloat(n.exec(c)[1]))}t.geometry=new THREE.CylinderGeometry(m,m,p)}else if(/Cone/.exec(e.string)){for(var g=0,v=1,p=1,l=0,h=e.children.length;h>l;l++){var c=e.children[l];/bottomRadius/.exec(c)?v=parseFloat(n.exec(c)[1]):/height/.exec(c)&&(p=parseFloat(n.exec(c)[1]))}t.geometry=new THREE.CylinderGeometry(g,v,p)}else if(/Sphere/.exec(e.string)){var u=/radius( +[\d|\.|\+|\-|e]+)/.exec(e.children[0]);t.geometry=new THREE.SphereGeometry(parseFloat(u[1]))}return}if(/appearance/.exec(e.string)){for(var l=0;l<e.children.length;l++){var c=e.children[l];if(/Material/.exec(c.string)){for(var E=new THREE.MeshPhongMaterial,h=0;h<c.children.length;h++){var y=c.children[h];if(/diffuseColor/.exec(y)){var u=o.exec(y);E.color.setRGB(parseFloat(u[1]),parseFloat(u[2]),parseFloat(u[3]))}else if(/emissiveColor/.exec(y)){var u=o.exec(y);E.emissive.setRGB(parseFloat(u[1]),parseFloat(u[2]),parseFloat(u[3]))}else if(/specularColor/.exec(y)){var u=o.exec(y);E.specular.setRGB(parseFloat(u[1]),parseFloat(u[2]),parseFloat(u[3]))}else if(/transparency/.exec(y)){var u=/( +[\d|\.|\+|\-|e]+)/.exec(y);E.opacity=parseFloat(u[1]),E.transparent=!0}}/DEF/.exec(e.string)&&(E.name=/DEF (\w+)/.exec(e.string)[1],r[E.name]=E),t.material=E}}return}}for(var l=0,_=e.children.length;_>l;l++){var c=e.children[l];s(e.children[l],i)}}else if(/USE/.exec(e))if(/appearance/.exec(e))t.material=r[/USE (\w+)/.exec(e)[1]].clone();else{var i=r[/USE (\w+)/.exec(e)[1]].clone();t.add(i)}};s(i(e),t)},r=new THREE.Scene,n=e.split("\n"),o=n.shift();return/V1.0/.exec(o)?t(n,r):/V2.0/.exec(o)&&i(n,r),r}},THREE.EventDispatcher.prototype.apply(THREE.VRMLLoader.prototype);
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.VRMLLoader = function () {};
+
+THREE.VRMLLoader.prototype = {
+
+	constructor: THREE.VTKLoader,
+
+	load: function ( url, callback ) {
+
+		var scope = this;
+		var request = new XMLHttpRequest();
+
+		request.addEventListener( 'load', function ( event ) {
+
+			var object = scope.parse( event.target.responseText );
+
+			scope.dispatchEvent( { type: 'load', content: object } );
+
+			if ( callback ) callback( geometry );
+
+		}, false );
+
+		request.addEventListener( 'progress', function ( event ) {
+
+			scope.dispatchEvent( { type: 'progress', loaded: event.loaded, total: event.total } );
+
+		}, false );
+
+		request.addEventListener( 'error', function () {
+
+			scope.dispatchEvent( { type: 'error', message: 'Couldn\'t load URL [' + url + ']' } );
+
+		}, false );
+
+		request.open( 'GET', url, true );
+		request.send( null );
+
+	},
+
+	parse: function ( data ) {
+
+		var parseV1 = function ( lines, scene ) {
+
+			console.warn( 'VRML V1.0 not supported yet' );
+
+		};
+
+		var parseV2 = function ( lines, scene ) {
+
+			var getTree = function ( lines ) {
+
+				var tree = { 'string': 'Scene', children: [] };
+				var current = tree;
+
+				for ( var i = 0; i < lines.length; i ++ ) {
+
+					var line = lines[ i ];
+
+					if ( /^#/.exec( line ) ) {
+
+						continue;
+
+					} else if ( /{/.exec( line ) ) {
+
+						var block = { 'string': line, 'parent': current, 'children': [] };
+						current.children.push( block );
+						current = block;
+
+						if ( /}/.exec( line ) ) {
+
+							block.children.push( /{(.*)}/.exec( line )[ 1 ] );
+							current = current.parent;
+
+						}
+
+					} else if ( /}/.exec( line ) ) {
+
+						current = current.parent;
+
+					} else if ( line !== '' ) {
+
+						current.children.push( line );
+
+					}
+
+				}
+
+				return tree;
+
+			}
+
+			var defines = {};
+			var float_pattern = /( +[\d|\.|\+|\-|e]+)/;
+			var float3_pattern = /( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+)/;
+			var float4_pattern = /( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+),?( +[\d|\.|\+|\-|e]+)/;
+
+			var parseNode = function ( data, parent ) {
+
+				// console.log( data );
+
+				if ( typeof data === 'string' ) {
+
+					if ( /USE/.exec( data ) ) {
+
+						if ( /appearance/.exec( data ) ) {
+
+							parent.material = defines[ /USE (\w+)/.exec( data )[ 1 ] ].clone();
+
+						} else {
+
+							var object = defines[ /USE (\w+)/.exec( data )[ 1 ] ].clone();
+							parent.add( object );
+
+						}
+
+					}
+
+					return;
+
+				}
+
+				var object = parent;
+
+				if ( /Transform/.exec( data.string ) || /Group/.exec( data.string ) ) {
+
+					object = new THREE.Object3D();
+
+					if ( /DEF/.exec( data.string ) ) {
+
+						object.name = /DEF (\w+)/.exec( data.string )[ 1 ];
+						defines[ object.name ] = object;
+
+					}
+
+					for ( var i = 0, j = data.children.length; i < j; i ++ ) {
+
+						var child = data.children[ i ];
+
+						if ( /translation/.exec( child ) ) {
+
+							var result = float3_pattern.exec( child );
+
+							object.position.set(
+								parseFloat( result[ 1 ] ),
+								parseFloat( result[ 2 ] ),
+								parseFloat( result[ 3 ] )
+							);
+
+						} else if ( /rotation/.exec( child ) ) {
+
+							var result = float4_pattern.exec( child );
+
+							object.rotation.set(
+								parseFloat( result[ 1 ] ),
+								parseFloat( result[ 2 ] ),
+								parseFloat( result[ 3 ] )
+							).multiplyScalar( result[ 4 ] );
+
+						} else if ( /scale/.exec( child ) ) {
+
+							var result = float3_pattern.exec( child );
+
+							object.scale.set(
+								parseFloat( result[ 1 ] ),
+								parseFloat( result[ 2 ] ),
+								parseFloat( result[ 3 ] )
+							);
+
+						}
+
+					}
+
+					parent.add( object );
+
+				} else if ( /Shape/.exec( data.string ) ) {
+
+					object = new THREE.Mesh();
+
+					if ( /DEF/.exec( data.string ) ) {
+
+						object.name = /DEF (\w+)/.exec( data.string )[ 1 ];
+						defines[ object.name ] = object;
+
+					}
+
+					parent.add( object );
+
+				} else if ( /geometry/.exec( data.string ) ) {
+
+					if ( /Box/.exec( data.string ) ) {
+
+						var width = 1, height = 1, depth = 1;
+
+						for ( var i = 0, j = data.children.length; i < j; i ++ ) {
+
+							var child = data.children[ i ];
+
+							if ( /size/.exec( child ) ) {
+
+								var result = float3_pattern.exec( child );
+
+								width = parseFloat( result[ 1 ] );
+								height = parseFloat( result[ 2 ] );
+								depth = parseFloat( result[ 3 ] );
+
+							}
+
+						}
+
+						parent.geometry = new THREE.CubeGeometry( width, height, depth );
+
+					} else if ( /Cylinder/.exec( data.string ) ) {
+
+						var radius = 1, height = 1;
+
+						for ( var i = 0, j = data.children.length; i < j; i ++ ) {
+
+							var child = data.children[ i ];
+
+							if ( /radius/.exec( child ) ) {
+
+								radius = parseFloat( float_pattern.exec( child )[ 1 ] );
+
+							} else if ( /height/.exec( child ) ) {
+
+								height = parseFloat( float_pattern.exec( child )[ 1 ] );
+
+							}
+
+						}
+
+						parent.geometry = new THREE.CylinderGeometry( radius, radius, height );
+
+					} else if ( /Cone/.exec( data.string ) ) {
+
+						var topRadius = 0, bottomRadius = 1, height = 1;
+
+						for ( var i = 0, j = data.children.length; i < j; i ++ ) {
+
+							var child = data.children[ i ];
+
+							if ( /bottomRadius/.exec( child ) ) {
+
+								bottomRadius = parseFloat( float_pattern.exec( child )[ 1 ] );
+
+							} else if ( /height/.exec( child ) ) {
+
+								height = parseFloat( float_pattern.exec( child )[ 1 ] );
+
+							}
+
+						}
+
+						parent.geometry = new THREE.CylinderGeometry( topRadius, bottomRadius, height );
+
+					} else if ( /Sphere/.exec( data.string ) ) {
+
+						var result = /radius( +[\d|\.|\+|\-|e]+)/.exec( data.children[ 0 ] );
+
+						parent.geometry = new THREE.SphereGeometry( parseFloat( result[ 1 ] ) );
+
+					}
+
+					return;
+
+				} else if ( /appearance/.exec( data.string ) ) {
+
+					for ( var i = 0; i < data.children.length; i ++ ) {
+
+						var child = data.children[ i ];
+
+						if ( /Material/.exec( child.string ) ) {
+
+							var material = new THREE.MeshPhongMaterial();
+
+							for ( var j = 0; j < child.children.length; j ++ ) {
+
+								var parameter = child.children[ j ];
+
+								if ( /diffuseColor/.exec( parameter ) ) {
+
+									var result = float3_pattern.exec( parameter );
+
+									material.color.setRGB(
+										parseFloat( result[ 1 ] ),
+										parseFloat( result[ 2 ] ),
+										parseFloat( result[ 3 ] )
+									);
+
+								} else if ( /emissiveColor/.exec( parameter ) ) {
+
+									var result = float3_pattern.exec( parameter );
+
+									material.emissive.setRGB(
+										parseFloat( result[ 1 ] ),
+										parseFloat( result[ 2 ] ),
+										parseFloat( result[ 3 ] )
+									);
+
+								} else if ( /specularColor/.exec( parameter ) ) {
+
+									var result = float3_pattern.exec( parameter );
+
+									material.specular.setRGB(
+										parseFloat( result[ 1 ] ),
+										parseFloat( result[ 2 ] ),
+										parseFloat( result[ 3 ] )
+									);
+
+								} else if ( /transparency/.exec( parameter ) ) {
+
+									var result = /( +[\d|\.|\+|\-|e]+)/.exec( parameter );
+
+									material.opacity = parseFloat( result[ 1 ] );
+									material.transparent = true;
+
+								}
+
+							}
+
+							if ( /DEF/.exec( data.string ) ) {
+
+								material.name = /DEF (\w+)/.exec( data.string )[ 1 ];
+								defines[ material.name ] = material;
+
+							}
+
+							parent.material = material;
+
+						}
+
+					}
+
+					return;
+
+				}
+
+				for ( var i = 0, l = data.children.length; i < l; i ++ ) {
+
+					var child = data.children[ i ];
+
+					parseNode( data.children[ i ], object );
+
+				}
+
+			}
+
+			parseNode( getTree( lines ), scene );
+
+		};
+
+		var scene = new THREE.Scene();
+
+		var lines = data.split( '\n' );
+		var header = lines.shift();
+
+		if ( /V1.0/.exec( header ) ) {
+
+			parseV1( lines, scene );
+
+		} else if ( /V2.0/.exec( header ) ) {
+
+			parseV2( lines, scene );
+
+		}
+
+		return scene;
+
+	}
+
+};
+
+THREE.EventDispatcher.prototype.apply( THREE.VRMLLoader.prototype );

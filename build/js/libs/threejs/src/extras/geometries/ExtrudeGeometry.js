@@ -1,1 +1,733 @@
-THREE.ExtrudeGeometry=function(e,t){return"undefined"==typeof e?(e=[],void 0):(THREE.Geometry.call(this),e=e instanceof Array?e:[e],this.shapebb=e[e.length-1].getBoundingBox(),this.addShapeList(e,t),this.computeCentroids(),this.computeFaceNormals(),void 0)},THREE.ExtrudeGeometry.prototype=Object.create(THREE.Geometry.prototype),THREE.ExtrudeGeometry.prototype.addShapeList=function(e,t){for(var i=e.length,r=0;i>r;r++){var n=e[r];this.addShape(n,t)}},THREE.ExtrudeGeometry.prototype.addShape=function(e,t){function i(e,t,i){return t||console.log("die"),t.clone().multiplyScalar(i).add(e)}function r(e,t,i){return o(e,t,i)}function n(e,t,i){var r=Math.atan2(t.y-e.y,t.x-e.x),n=Math.atan2(i.y-e.y,i.x-e.x);r>n&&(n+=2*Math.PI);var o=(r+n)/2,a=-Math.cos(o),s=-Math.sin(o),l=new THREE.Vector2(a,s);return l}function o(e,t,i){var r,o,a,s,l,c,h=THREE.ExtrudeGeometry.__v1,u=THREE.ExtrudeGeometry.__v2,d=THREE.ExtrudeGeometry.__v3,p=THREE.ExtrudeGeometry.__v4,f=THREE.ExtrudeGeometry.__v5,m=THREE.ExtrudeGeometry.__v6;return h.set(e.x-t.x,e.y-t.y),u.set(e.x-i.x,e.y-i.y),r=h.normalize(),o=u.normalize(),d.set(-r.y,r.x),p.set(o.y,-o.x),f.copy(e).add(d),m.copy(e).add(p),f.equals(m)?p.clone():(f.copy(t).add(d),m.copy(i).add(p),a=r.dot(p),s=m.sub(f).dot(p),0===a&&(console.log("Either infinite or no solutions!"),0===s?console.log("Its finite solutions."):console.log("Too bad, no solutions.")),l=s/a,0>l?n(e,t,i):(c=r.multiplyScalar(l).add(f),c.sub(e).clone()))}function a(){if(g){var e=0,t=X*e;for(K=0;Y>K;K++)G=O[K],h(G[2]+t,G[1]+t,G[0]+t,!0);for(e=y+2*v,t=X*e,K=0;Y>K;K++)G=O[K],h(G[0]+t,G[1]+t,G[2]+t,!1)}else{for(K=0;Y>K;K++)G=O[K],h(G[2],G[1],G[0],!0);for(K=0;Y>K;K++)G=O[K],h(G[0]+X*y,G[1]+X*y,G[2]+X*y,!1)}}function s(){var e=0;for(l(U,e),e+=U.length,A=0,D=I.length;D>A;A++)C=I[A],l(C,e),e+=C.length}function l(e,t){var i,r;for(K=e.length;--K>=0;){i=K,r=K-1,0>r&&(r=e.length-1);var n=0,o=y+2*v;for(n=0;o>n;n++){var a=X*n,s=X*(n+1),l=t+i+a,c=t+r+a,h=t+r+s,d=t+i+s;u(l,c,h,d,e,n,o,i,r)}}}function c(e,t,i){P.vertices.push(new THREE.Vector3(e,t,i))}function h(i,r,n,o){i+=L,r+=L,n+=L,P.faces.push(new THREE.Face3(i,r,n,null,null,_));var a=o?R.generateBottomUV(P,e,t,i,r,n):R.generateTopUV(P,e,t,i,r,n);P.faceVertexUvs[0].push(a)}function u(i,r,n,o,a,s,l,c,h){i+=L,r+=L,n+=L,o+=L,P.faces.push(new THREE.Face4(i,r,n,o,null,null,b));var u=R.generateSideWallUV(P,e,a,t,i,r,n,o,s,l,c,h);P.faceVertexUvs[0].push(u)}var d,p=void 0!==t.amount?t.amount:100,f=void 0!==t.bevelThickness?t.bevelThickness:6,m=void 0!==t.bevelSize?t.bevelSize:f-2,v=void 0!==t.bevelSegments?t.bevelSegments:3,g=void 0!==t.bevelEnabled?t.bevelEnabled:!0,E=void 0!==t.curveSegments?t.curveSegments:12,y=void 0!==t.steps?t.steps:1,T=t.extrudePath,x=!1,_=t.material,b=t.extrudeMaterial,R=void 0!==t.UVGenerator?t.UVGenerator:THREE.ExtrudeGeometry.WorldUVGenerator;this.shapebb;var w,H,S,M;T&&(d=T.getSpacedPoints(y),x=!0,g=!1,w=void 0!==t.frames?t.frames:new THREE.TubeGeometry.FrenetFrames(T,y,!1),H=new THREE.Vector3,S=new THREE.Vector3,M=new THREE.Vector3),g||(v=0,f=0,m=0);var C,A,D,P=this,L=this.vertices.length,N=e.extractPoints(E),F=N.shape,I=N.holes,k=!THREE.Shape.Utils.isClockWise(F);if(k){for(F=F.reverse(),A=0,D=I.length;D>A;A++)C=I[A],THREE.Shape.Utils.isClockWise(C)&&(I[A]=C.reverse());k=!1}var O=THREE.Shape.Utils.triangulateShape(F,I),U=F;for(A=0,D=I.length;D>A;A++)C=I[A],F=F.concat(C);var z,V,B,j,W,G,X=F.length,Y=O.length;U.length,180/Math.PI;for(var q=[],K=0,Z=U.length,Q=Z-1,$=K+1;Z>K;K++,Q++,$++)Q===Z&&(Q=0),$===Z&&($=0),U[K],U[Q],U[$],q[K]=r(U[K],U[Q],U[$]);var J,et=[],tt=q.concat();for(A=0,D=I.length;D>A;A++){for(C=I[A],J=[],K=0,Z=C.length,Q=Z-1,$=K+1;Z>K;K++,Q++,$++)Q===Z&&(Q=0),$===Z&&($=0),J[K]=r(C[K],C[Q],C[$]);et.push(J),tt=tt.concat(J)}for(z=0;v>z;z++){for(B=z/v,j=f*(1-B),V=m*Math.sin(B*Math.PI/2),K=0,Z=U.length;Z>K;K++)W=i(U[K],q[K],V),c(W.x,W.y,-j);for(A=0,D=I.length;D>A;A++)for(C=I[A],J=et[A],K=0,Z=C.length;Z>K;K++)W=i(C[K],J[K],V),c(W.x,W.y,-j)}for(V=m,K=0;X>K;K++)W=g?i(F[K],tt[K],V):F[K],x?(S.copy(w.normals[0]).multiplyScalar(W.x),H.copy(w.binormals[0]).multiplyScalar(W.y),M.copy(d[0]).add(S).add(H),c(M.x,M.y,M.z)):c(W.x,W.y,0);var it;for(it=1;y>=it;it++)for(K=0;X>K;K++)W=g?i(F[K],tt[K],V):F[K],x?(S.copy(w.normals[it]).multiplyScalar(W.x),H.copy(w.binormals[it]).multiplyScalar(W.y),M.copy(d[it]).add(S).add(H),c(M.x,M.y,M.z)):c(W.x,W.y,p/y*it);for(z=v-1;z>=0;z--){for(B=z/v,j=f*(1-B),V=m*Math.sin(B*Math.PI/2),K=0,Z=U.length;Z>K;K++)W=i(U[K],q[K],V),c(W.x,W.y,p+j);for(A=0,D=I.length;D>A;A++)for(C=I[A],J=et[A],K=0,Z=C.length;Z>K;K++)W=i(C[K],J[K],V),x?c(W.x,W.y+d[y-1].y,d[y-1].x+j):c(W.x,W.y,p+j)}a(),s()},THREE.ExtrudeGeometry.WorldUVGenerator={generateTopUV:function(e,t,i,r,n,o){var a=e.vertices[r].x,s=e.vertices[r].y,l=e.vertices[n].x,c=e.vertices[n].y,h=e.vertices[o].x,u=e.vertices[o].y;return[new THREE.Vector2(a,s),new THREE.Vector2(l,c),new THREE.Vector2(h,u)]},generateBottomUV:function(e,t,i,r,n,o){return this.generateTopUV(e,t,i,r,n,o)},generateSideWallUV:function(e,t,i,r,n,o,a,s){var l=e.vertices[n].x,c=e.vertices[n].y,h=e.vertices[n].z,u=e.vertices[o].x,d=e.vertices[o].y,p=e.vertices[o].z,f=e.vertices[a].x,m=e.vertices[a].y,v=e.vertices[a].z,g=e.vertices[s].x,E=e.vertices[s].y,y=e.vertices[s].z;return Math.abs(c-d)<.01?[new THREE.Vector2(l,1-h),new THREE.Vector2(u,1-p),new THREE.Vector2(f,1-v),new THREE.Vector2(g,1-y)]:[new THREE.Vector2(c,1-h),new THREE.Vector2(d,1-p),new THREE.Vector2(m,1-v),new THREE.Vector2(E,1-y)]}},THREE.ExtrudeGeometry.__v1=new THREE.Vector2,THREE.ExtrudeGeometry.__v2=new THREE.Vector2,THREE.ExtrudeGeometry.__v3=new THREE.Vector2,THREE.ExtrudeGeometry.__v4=new THREE.Vector2,THREE.ExtrudeGeometry.__v5=new THREE.Vector2,THREE.ExtrudeGeometry.__v6=new THREE.Vector2;
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ *
+ * Creates extruded geometry from a path shape.
+ *
+ * parameters = {
+ *
+ *  size: <float>, // size of the text
+ *  height: <float>, // thickness to extrude text
+ *  curveSegments: <int>, // number of points on the curves
+ *  steps: <int>, // number of points for z-side extrusions / used for subdividing segements of extrude spline too
+ *  amount: <int>, // Amount
+ *
+ *  bevelEnabled: <bool>, // turn on bevel
+ *  bevelThickness: <float>, // how deep into text bevel goes
+ *  bevelSize: <float>, // how far from text outline is bevel
+ *  bevelSegments: <int>, // number of bevel layers
+ *
+ *  extrudePath: <THREE.CurvePath> // 3d spline path to extrude shape along. (creates Frames if .frames aren't defined)
+ *  frames: <THREE.TubeGeometry.FrenetFrames> // containing arrays of tangents, normals, binormals
+ *
+ *  material: <int> // material index for front and back faces
+ *  extrudeMaterial: <int> // material index for extrusion and beveled faces
+ *  uvGenerator: <Object> // object that provides UV generator functions
+ *
+ * }
+ **/
+
+THREE.ExtrudeGeometry = function ( shapes, options ) {
+
+	if ( typeof( shapes ) === "undefined" ) {
+		shapes = [];
+		return;
+	}
+
+	THREE.Geometry.call( this );
+
+	shapes = shapes instanceof Array ? shapes : [ shapes ];
+
+	this.shapebb = shapes[ shapes.length - 1 ].getBoundingBox();
+
+	this.addShapeList( shapes, options );
+
+	this.computeCentroids();
+	this.computeFaceNormals();
+
+	// can't really use automatic vertex normals
+	// as then front and back sides get smoothed too
+	// should do separate smoothing just for sides
+
+	//this.computeVertexNormals();
+
+	//console.log( "took", ( Date.now() - startTime ) );
+
+};
+
+THREE.ExtrudeGeometry.prototype = Object.create( THREE.Geometry.prototype );
+
+THREE.ExtrudeGeometry.prototype.addShapeList = function ( shapes, options ) {
+	var sl = shapes.length;
+
+	for ( var s = 0; s < sl; s ++ ) {
+		var shape = shapes[ s ];
+		this.addShape( shape, options );
+	}
+};
+
+THREE.ExtrudeGeometry.prototype.addShape = function ( shape, options ) {
+
+	var amount = options.amount !== undefined ? options.amount : 100;
+
+	var bevelThickness = options.bevelThickness !== undefined ? options.bevelThickness : 6; // 10
+	var bevelSize = options.bevelSize !== undefined ? options.bevelSize : bevelThickness - 2; // 8
+	var bevelSegments = options.bevelSegments !== undefined ? options.bevelSegments : 3;
+
+	var bevelEnabled = options.bevelEnabled !== undefined ? options.bevelEnabled : true; // false
+
+	var curveSegments = options.curveSegments !== undefined ? options.curveSegments : 12;
+
+	var steps = options.steps !== undefined ? options.steps : 1;
+
+	var extrudePath = options.extrudePath;
+	var extrudePts, extrudeByPath = false;
+
+	var material = options.material;
+	var extrudeMaterial = options.extrudeMaterial;
+
+	// Use default WorldUVGenerator if no UV generators are specified.
+	var uvgen = options.UVGenerator !== undefined ? options.UVGenerator : THREE.ExtrudeGeometry.WorldUVGenerator;
+
+	var shapebb = this.shapebb;
+	//shapebb = shape.getBoundingBox();
+
+
+
+	var splineTube, binormal, normal, position2;
+	if ( extrudePath ) {
+
+		extrudePts = extrudePath.getSpacedPoints( steps );
+
+		extrudeByPath = true;
+		bevelEnabled = false; // bevels not supported for path extrusion
+
+		// SETUP TNB variables
+
+		// Reuse TNB from TubeGeomtry for now.
+		// TODO1 - have a .isClosed in spline?
+
+		splineTube = options.frames !== undefined ? options.frames : new THREE.TubeGeometry.FrenetFrames(extrudePath, steps, false);
+
+		// console.log(splineTube, 'splineTube', splineTube.normals.length, 'steps', steps, 'extrudePts', extrudePts.length);
+
+		binormal = new THREE.Vector3();
+		normal = new THREE.Vector3();
+		position2 = new THREE.Vector3();
+
+	}
+
+	// Safeguards if bevels are not enabled
+
+	if ( ! bevelEnabled ) {
+
+		bevelSegments = 0;
+		bevelThickness = 0;
+		bevelSize = 0;
+
+	}
+
+	// Variables initalization
+
+	var ahole, h, hl; // looping of holes
+	var scope = this;
+	var bevelPoints = [];
+
+	var shapesOffset = this.vertices.length;
+
+	var shapePoints = shape.extractPoints( curveSegments );
+
+	var vertices = shapePoints.shape;
+	var holes = shapePoints.holes;
+
+	var reverse = !THREE.Shape.Utils.isClockWise( vertices ) ;
+
+	if ( reverse ) {
+
+		vertices = vertices.reverse();
+
+		// Maybe we should also check if holes are in the opposite direction, just to be safe ...
+
+		for ( h = 0, hl = holes.length; h < hl; h ++ ) {
+
+			ahole = holes[ h ];
+
+			if ( THREE.Shape.Utils.isClockWise( ahole ) ) {
+
+				holes[ h ] = ahole.reverse();
+
+			}
+
+		}
+
+		reverse = false; // If vertices are in order now, we shouldn't need to worry about them again (hopefully)!
+
+	}
+
+
+	var faces = THREE.Shape.Utils.triangulateShape ( vertices, holes );
+
+	/* Vertices */
+
+	var contour = vertices; // vertices has all points but contour has only points of circumference
+
+	for ( h = 0, hl = holes.length;  h < hl; h ++ ) {
+
+		ahole = holes[ h ];
+
+		vertices = vertices.concat( ahole );
+
+	}
+
+
+	function scalePt2 ( pt, vec, size ) {
+
+		if ( !vec ) console.log( "die" );
+
+		return vec.clone().multiplyScalar( size ).add( pt );
+
+	}
+
+	var b, bs, t, z,
+		vert, vlen = vertices.length,
+		face, flen = faces.length,
+		cont, clen = contour.length;
+
+
+	// Find directions for point movement
+
+	var RAD_TO_DEGREES = 180 / Math.PI;
+
+
+	function getBevelVec( pt_i, pt_j, pt_k ) {
+
+		// Algorithm 2
+
+		return getBevelVec2( pt_i, pt_j, pt_k );
+
+	}
+
+	function getBevelVec1( pt_i, pt_j, pt_k ) {
+
+		var anglea = Math.atan2( pt_j.y - pt_i.y, pt_j.x - pt_i.x );
+		var angleb = Math.atan2( pt_k.y - pt_i.y, pt_k.x - pt_i.x );
+
+		if ( anglea > angleb ) {
+
+			angleb += Math.PI * 2;
+
+		}
+
+		var anglec = ( anglea + angleb ) / 2;
+
+
+		//console.log('angle1', anglea * RAD_TO_DEGREES,'angle2', angleb * RAD_TO_DEGREES, 'anglec', anglec *RAD_TO_DEGREES);
+
+		var x = - Math.cos( anglec );
+		var y = - Math.sin( anglec );
+
+		var vec = new THREE.Vector2( x, y ); //.normalize();
+
+		return vec;
+
+	}
+
+	function getBevelVec2( pt_i, pt_j, pt_k ) {
+
+		var a = THREE.ExtrudeGeometry.__v1,
+			b = THREE.ExtrudeGeometry.__v2,
+			v_hat = THREE.ExtrudeGeometry.__v3,
+			w_hat = THREE.ExtrudeGeometry.__v4,
+			p = THREE.ExtrudeGeometry.__v5,
+			q = THREE.ExtrudeGeometry.__v6,
+			v, w,
+			v_dot_w_hat, q_sub_p_dot_w_hat,
+			s, intersection;
+
+		// good reading for line-line intersection
+		// http://sputsoft.com/blog/2010/03/line-line-intersection.html
+
+		// define a as vector j->i
+		// define b as vectot k->i
+
+		a.set( pt_i.x - pt_j.x, pt_i.y - pt_j.y );
+		b.set( pt_i.x - pt_k.x, pt_i.y - pt_k.y );
+
+		// get unit vectors
+
+		v = a.normalize();
+		w = b.normalize();
+
+		// normals from pt i
+
+		v_hat.set( -v.y, v.x );
+		w_hat.set( w.y, -w.x );
+
+		// pts from i
+
+		p.copy( pt_i ).add( v_hat );
+		q.copy( pt_i ).add( w_hat );
+
+		if ( p.equals( q ) ) {
+
+			//console.log("Warning: lines are straight");
+			return w_hat.clone();
+
+		}
+
+		// Points from j, k. helps prevents points cross overover most of the time
+
+		p.copy( pt_j ).add( v_hat );
+		q.copy( pt_k ).add( w_hat );
+
+		v_dot_w_hat = v.dot( w_hat );
+		q_sub_p_dot_w_hat = q.sub( p ).dot( w_hat );
+
+		// We should not reach these conditions
+
+		if ( v_dot_w_hat === 0 ) {
+
+			console.log( "Either infinite or no solutions!" );
+
+			if ( q_sub_p_dot_w_hat === 0 ) {
+
+				console.log( "Its finite solutions." );
+
+			} else {
+
+				console.log( "Too bad, no solutions." );
+
+			}
+
+		}
+
+		s = q_sub_p_dot_w_hat / v_dot_w_hat;
+
+		if ( s < 0 ) {
+
+			// in case of emergecy, revert to algorithm 1.
+
+			return getBevelVec1( pt_i, pt_j, pt_k );
+
+		}
+
+		intersection = v.multiplyScalar( s ).add( p );
+
+		return intersection.sub( pt_i ).clone(); // Don't normalize!, otherwise sharp corners become ugly
+
+	}
+
+	var contourMovements = [];
+
+	for ( var i = 0, il = contour.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
+
+		if ( j === il ) j = 0;
+		if ( k === il ) k = 0;
+
+		//  (j)---(i)---(k)
+		// console.log('i,j,k', i, j , k)
+
+		var pt_i = contour[ i ];
+		var pt_j = contour[ j ];
+		var pt_k = contour[ k ];
+
+		contourMovements[ i ]= getBevelVec( contour[ i ], contour[ j ], contour[ k ] );
+
+	}
+
+	var holesMovements = [], oneHoleMovements, verticesMovements = contourMovements.concat();
+
+	for ( h = 0, hl = holes.length; h < hl; h ++ ) {
+
+		ahole = holes[ h ];
+
+		oneHoleMovements = [];
+
+		for ( i = 0, il = ahole.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
+
+			if ( j === il ) j = 0;
+			if ( k === il ) k = 0;
+
+			//  (j)---(i)---(k)
+			oneHoleMovements[ i ]= getBevelVec( ahole[ i ], ahole[ j ], ahole[ k ] );
+
+		}
+
+		holesMovements.push( oneHoleMovements );
+		verticesMovements = verticesMovements.concat( oneHoleMovements );
+
+	}
+
+
+	// Loop bevelSegments, 1 for the front, 1 for the back
+
+	for ( b = 0; b < bevelSegments; b ++ ) {
+	//for ( b = bevelSegments; b > 0; b -- ) {
+
+		t = b / bevelSegments;
+		z = bevelThickness * ( 1 - t );
+
+		//z = bevelThickness * t;
+		bs = bevelSize * ( Math.sin ( t * Math.PI/2 ) ) ; // curved
+		//bs = bevelSize * t ; // linear
+
+		// contract shape
+
+		for ( i = 0, il = contour.length; i < il; i ++ ) {
+
+			vert = scalePt2( contour[ i ], contourMovements[ i ], bs );
+			//vert = scalePt( contour[ i ], contourCentroid, bs, false );
+			v( vert.x, vert.y,  - z );
+
+		}
+
+		// expand holes
+
+		for ( h = 0, hl = holes.length; h < hl; h++ ) {
+
+			ahole = holes[ h ];
+			oneHoleMovements = holesMovements[ h ];
+
+			for ( i = 0, il = ahole.length; i < il; i++ ) {
+
+				vert = scalePt2( ahole[ i ], oneHoleMovements[ i ], bs );
+				//vert = scalePt( ahole[ i ], holesCentroids[ h ], bs, true );
+
+				v( vert.x, vert.y,  -z );
+
+			}
+
+		}
+
+	}
+
+	bs = bevelSize;
+
+	// Back facing vertices
+
+	for ( i = 0; i < vlen; i ++ ) {
+
+		vert = bevelEnabled ? scalePt2( vertices[ i ], verticesMovements[ i ], bs ) : vertices[ i ];
+
+		if ( !extrudeByPath ) {
+
+			v( vert.x, vert.y, 0 );
+
+		} else {
+
+			// v( vert.x, vert.y + extrudePts[ 0 ].y, extrudePts[ 0 ].x );
+
+			normal.copy( splineTube.normals[0] ).multiplyScalar(vert.x);
+			binormal.copy( splineTube.binormals[0] ).multiplyScalar(vert.y);
+
+			position2.copy( extrudePts[0] ).add(normal).add(binormal);
+
+			v( position2.x, position2.y, position2.z );
+
+		}
+
+	}
+
+	// Add stepped vertices...
+	// Including front facing vertices
+
+	var s;
+
+	for ( s = 1; s <= steps; s ++ ) {
+
+		for ( i = 0; i < vlen; i ++ ) {
+
+			vert = bevelEnabled ? scalePt2( vertices[ i ], verticesMovements[ i ], bs ) : vertices[ i ];
+
+			if ( !extrudeByPath ) {
+
+				v( vert.x, vert.y, amount / steps * s );
+
+			} else {
+
+				// v( vert.x, vert.y + extrudePts[ s - 1 ].y, extrudePts[ s - 1 ].x );
+
+				normal.copy( splineTube.normals[s] ).multiplyScalar( vert.x );
+				binormal.copy( splineTube.binormals[s] ).multiplyScalar( vert.y );
+
+				position2.copy( extrudePts[s] ).add( normal ).add( binormal );
+
+				v( position2.x, position2.y, position2.z );
+
+			}
+
+		}
+
+	}
+
+
+	// Add bevel segments planes
+
+	//for ( b = 1; b <= bevelSegments; b ++ ) {
+	for ( b = bevelSegments - 1; b >= 0; b -- ) {
+
+		t = b / bevelSegments;
+		z = bevelThickness * ( 1 - t );
+		//bs = bevelSize * ( 1-Math.sin ( ( 1 - t ) * Math.PI/2 ) );
+		bs = bevelSize * Math.sin ( t * Math.PI/2 ) ;
+
+		// contract shape
+
+		for ( i = 0, il = contour.length; i < il; i ++ ) {
+
+			vert = scalePt2( contour[ i ], contourMovements[ i ], bs );
+			v( vert.x, vert.y,  amount + z );
+
+		}
+
+		// expand holes
+
+		for ( h = 0, hl = holes.length; h < hl; h ++ ) {
+
+			ahole = holes[ h ];
+			oneHoleMovements = holesMovements[ h ];
+
+			for ( i = 0, il = ahole.length; i < il; i ++ ) {
+
+				vert = scalePt2( ahole[ i ], oneHoleMovements[ i ], bs );
+
+				if ( !extrudeByPath ) {
+
+					v( vert.x, vert.y,  amount + z );
+
+				} else {
+
+					v( vert.x, vert.y + extrudePts[ steps - 1 ].y, extrudePts[ steps - 1 ].x + z );
+
+				}
+
+			}
+
+		}
+
+	}
+
+	/* Faces */
+
+	// Top and bottom faces
+
+	buildLidFaces();
+
+	// Sides faces
+
+	buildSideFaces();
+
+
+	/////  Internal functions
+
+	function buildLidFaces() {
+
+		if ( bevelEnabled ) {
+
+			var layer = 0 ; // steps + 1
+			var offset = vlen * layer;
+
+			// Bottom faces
+
+			for ( i = 0; i < flen; i ++ ) {
+
+				face = faces[ i ];
+				f3( face[ 2 ]+ offset, face[ 1 ]+ offset, face[ 0 ] + offset, true );
+
+			}
+
+			layer = steps + bevelSegments * 2;
+			offset = vlen * layer;
+
+			// Top faces
+
+			for ( i = 0; i < flen; i ++ ) {
+
+				face = faces[ i ];
+				f3( face[ 0 ] + offset, face[ 1 ] + offset, face[ 2 ] + offset, false );
+
+			}
+
+		} else {
+
+			// Bottom faces
+
+			for ( i = 0; i < flen; i++ ) {
+
+				face = faces[ i ];
+				f3( face[ 2 ], face[ 1 ], face[ 0 ], true );
+
+			}
+
+			// Top faces
+
+			for ( i = 0; i < flen; i ++ ) {
+
+				face = faces[ i ];
+				f3( face[ 0 ] + vlen * steps, face[ 1 ] + vlen * steps, face[ 2 ] + vlen * steps, false );
+
+			}
+		}
+
+	}
+
+	// Create faces for the z-sides of the shape
+
+	function buildSideFaces() {
+
+		var layeroffset = 0;
+		sidewalls( contour, layeroffset );
+		layeroffset += contour.length;
+
+		for ( h = 0, hl = holes.length;  h < hl; h ++ ) {
+
+			ahole = holes[ h ];
+			sidewalls( ahole, layeroffset );
+
+			//, true
+			layeroffset += ahole.length;
+
+		}
+
+	}
+
+	function sidewalls( contour, layeroffset ) {
+
+		var j, k;
+		i = contour.length;
+
+		while ( --i >= 0 ) {
+
+			j = i;
+			k = i - 1;
+			if ( k < 0 ) k = contour.length - 1;
+
+			//console.log('b', i,j, i-1, k,vertices.length);
+
+			var s = 0, sl = steps  + bevelSegments * 2;
+
+			for ( s = 0; s < sl; s ++ ) {
+
+				var slen1 = vlen * s;
+				var slen2 = vlen * ( s + 1 );
+
+				var a = layeroffset + j + slen1,
+					b = layeroffset + k + slen1,
+					c = layeroffset + k + slen2,
+					d = layeroffset + j + slen2;
+
+				f4( a, b, c, d, contour, s, sl, j, k );
+
+			}
+		}
+
+	}
+
+
+	function v( x, y, z ) {
+
+		scope.vertices.push( new THREE.Vector3( x, y, z ) );
+
+	}
+
+	function f3( a, b, c, isBottom ) {
+
+		a += shapesOffset;
+		b += shapesOffset;
+		c += shapesOffset;
+
+		// normal, color, material
+		scope.faces.push( new THREE.Face3( a, b, c, null, null, material ) );
+
+		var uvs = isBottom ? uvgen.generateBottomUV( scope, shape, options, a, b, c ) : uvgen.generateTopUV( scope, shape, options, a, b, c );
+
+ 		scope.faceVertexUvs[ 0 ].push( uvs );
+
+	}
+
+	function f4( a, b, c, d, wallContour, stepIndex, stepsLength, contourIndex1, contourIndex2 ) {
+
+		a += shapesOffset;
+		b += shapesOffset;
+		c += shapesOffset;
+		d += shapesOffset;
+
+ 		scope.faces.push( new THREE.Face4( a, b, c, d, null, null, extrudeMaterial ) );
+
+ 		var uvs = uvgen.generateSideWallUV( scope, shape, wallContour, options, a, b, c, d,
+ 		                                    stepIndex, stepsLength, contourIndex1, contourIndex2 );
+ 		scope.faceVertexUvs[ 0 ].push( uvs );
+
+	}
+
+};
+
+THREE.ExtrudeGeometry.WorldUVGenerator = {
+
+	generateTopUV: function( geometry, extrudedShape, extrudeOptions, indexA, indexB, indexC ) {
+		var ax = geometry.vertices[ indexA ].x,
+			ay = geometry.vertices[ indexA ].y,
+
+			bx = geometry.vertices[ indexB ].x,
+			by = geometry.vertices[ indexB ].y,
+
+			cx = geometry.vertices[ indexC ].x,
+			cy = geometry.vertices[ indexC ].y;
+
+		return [
+			new THREE.Vector2( ax, ay ),
+			new THREE.Vector2( bx, by ),
+			new THREE.Vector2( cx, cy )
+		];
+
+	},
+
+	generateBottomUV: function( geometry, extrudedShape, extrudeOptions, indexA, indexB, indexC ) {
+
+		return this.generateTopUV( geometry, extrudedShape, extrudeOptions, indexA, indexB, indexC );
+
+	},
+
+	generateSideWallUV: function( geometry, extrudedShape, wallContour, extrudeOptions,
+	                              indexA, indexB, indexC, indexD, stepIndex, stepsLength,
+	                              contourIndex1, contourIndex2 ) {
+
+		var ax = geometry.vertices[ indexA ].x,
+			ay = geometry.vertices[ indexA ].y,
+			az = geometry.vertices[ indexA ].z,
+
+			bx = geometry.vertices[ indexB ].x,
+			by = geometry.vertices[ indexB ].y,
+			bz = geometry.vertices[ indexB ].z,
+
+			cx = geometry.vertices[ indexC ].x,
+			cy = geometry.vertices[ indexC ].y,
+			cz = geometry.vertices[ indexC ].z,
+
+			dx = geometry.vertices[ indexD ].x,
+			dy = geometry.vertices[ indexD ].y,
+			dz = geometry.vertices[ indexD ].z;
+
+		if ( Math.abs( ay - by ) < 0.01 ) {
+			return [
+				new THREE.Vector2( ax, 1 - az ),
+				new THREE.Vector2( bx, 1 - bz ),
+				new THREE.Vector2( cx, 1 - cz ),
+				new THREE.Vector2( dx, 1 - dz )
+			];
+		} else {
+			return [
+				new THREE.Vector2( ay, 1 - az ),
+				new THREE.Vector2( by, 1 - bz ),
+				new THREE.Vector2( cy, 1 - cz ),
+				new THREE.Vector2( dy, 1 - dz )
+			];
+		}
+	}
+};
+
+THREE.ExtrudeGeometry.__v1 = new THREE.Vector2();
+THREE.ExtrudeGeometry.__v2 = new THREE.Vector2();
+THREE.ExtrudeGeometry.__v3 = new THREE.Vector2();
+THREE.ExtrudeGeometry.__v4 = new THREE.Vector2();
+THREE.ExtrudeGeometry.__v5 = new THREE.Vector2();
+THREE.ExtrudeGeometry.__v6 = new THREE.Vector2();

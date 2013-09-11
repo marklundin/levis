@@ -1,1 +1,327 @@
-THREE.Curves={},THREE.Curves.GrannyKnot=THREE.Curve.create(function(){},function(e){e=2*Math.PI*e;var t=-.22*Math.cos(e)-1.28*Math.sin(e)-.44*Math.cos(3*e)-.78*Math.sin(3*e),i=-.1*Math.cos(2*e)-.27*Math.sin(2*e)+.38*Math.cos(4*e)+.46*Math.sin(4*e),r=.7*Math.cos(3*e)-.4*Math.sin(3*e);return new THREE.Vector3(t,i,r).multiplyScalar(20)}),THREE.Curves.HeartCurve=THREE.Curve.create(function(e){this.scale=void 0===e?5:e},function(e){e*=2*Math.PI;var t=16*Math.pow(Math.sin(e),3),i=13*Math.cos(e)-5*Math.cos(2*e)-2*Math.cos(3*e)-Math.cos(4*e),r=0;return new THREE.Vector3(t,i,r).multiplyScalar(this.scale)}),THREE.Curves.VivianiCurve=THREE.Curve.create(function(e){this.radius=e},function(e){e=4*e*Math.PI;var t=this.radius/2,i=t*(1+Math.cos(e)),r=t*Math.sin(e),n=2*t*Math.sin(e/2);return new THREE.Vector3(i,r,n)}),THREE.Curves.KnotCurve=THREE.Curve.create(function(){},function(e){e*=2*Math.PI;var t=10,i=50,r=i*Math.sin(e),n=Math.cos(e)*(t+i*Math.cos(e)),o=Math.sin(e)*(t+i*Math.cos(e));return new THREE.Vector3(r,n,o)}),THREE.Curves.HelixCurve=THREE.Curve.create(function(){},function(e){var t=30,i=150,r=2*Math.PI*e*i/30,n=Math.cos(r)*t,o=Math.sin(r)*t,a=i*e;return new THREE.Vector3(n,o,a)}),THREE.Curves.TrefoilKnot=THREE.Curve.create(function(e){this.scale=void 0===e?10:e},function(e){e*=2*Math.PI;var t=(2+Math.cos(3*e))*Math.cos(2*e),i=(2+Math.cos(3*e))*Math.sin(2*e),r=Math.sin(3*e);return new THREE.Vector3(t,i,r).multiplyScalar(this.scale)}),THREE.Curves.TorusKnot=THREE.Curve.create(function(e){this.scale=void 0===e?10:e},function(e){var t=3,i=4;e*=2*Math.PI;var r=(2+Math.cos(i*e))*Math.cos(t*e),n=(2+Math.cos(i*e))*Math.sin(t*e),o=Math.sin(i*e);return new THREE.Vector3(r,n,o).multiplyScalar(this.scale)}),THREE.Curves.CinquefoilKnot=THREE.Curve.create(function(e){this.scale=void 0===e?10:e},function(e){var t=2,i=5;e*=2*Math.PI;var r=(2+Math.cos(i*e))*Math.cos(t*e),n=(2+Math.cos(i*e))*Math.sin(t*e),o=Math.sin(i*e);return new THREE.Vector3(r,n,o).multiplyScalar(this.scale)}),THREE.Curves.TrefoilPolynomialKnot=THREE.Curve.create(function(e){this.scale=void 0===e?10:e},function(e){e=4*e-2;var t=Math.pow(e,3)-3*e,i=Math.pow(e,4)-4*e*e,r=.2*Math.pow(e,5)-2*e;return new THREE.Vector3(t,i,r).multiplyScalar(this.scale)});var scaleTo=function(e,t,i){var r=t-e;return i*r+e};THREE.Curves.FigureEightPolynomialKnot=THREE.Curve.create(function(e){this.scale=void 0===e?1:e},function(e){e=scaleTo(-4,4,e);var t=.4*e*(e*e-7)*(e*e-10),i=Math.pow(e,4)-13*e*e,r=.1*e*(e*e-4)*(e*e-9)*(e*e-12);return new THREE.Vector3(t,i,r).multiplyScalar(this.scale)}),THREE.Curves.DecoratedTorusKnot4a=THREE.Curve.create(function(e){this.scale=void 0===e?40:e},function(e){e*=2*Math.PI;var t=Math.cos(2*e)*(1+.6*(Math.cos(5*e)+.75*Math.cos(10*e))),i=Math.sin(2*e)*(1+.6*(Math.cos(5*e)+.75*Math.cos(10*e))),r=.35*Math.sin(5*e);return new THREE.Vector3(t,i,r).multiplyScalar(this.scale)}),THREE.Curves.DecoratedTorusKnot4b=THREE.Curve.create(function(e){this.scale=void 0===e?40:e},function(e){var t=2*e*Math.PI,i=Math.cos(2*t)*(1+.45*Math.cos(3*t)+.4*Math.cos(9*t)),r=Math.sin(2*t)*(1+.45*Math.cos(3*t)+.4*Math.cos(9*t)),n=.2*Math.sin(9*t);return new THREE.Vector3(i,r,n).multiplyScalar(this.scale)}),THREE.Curves.DecoratedTorusKnot5a=THREE.Curve.create(function(e){this.scale=void 0===e?40:e},function(e){var t=2*e*Math.PI,i=Math.cos(3*t)*(1+.3*Math.cos(5*t)+.5*Math.cos(10*t)),r=Math.sin(3*t)*(1+.3*Math.cos(5*t)+.5*Math.cos(10*t)),n=.2*Math.sin(20*t);return new THREE.Vector3(i,r,n).multiplyScalar(this.scale)}),THREE.Curves.DecoratedTorusKnot5c=THREE.Curve.create(function(e){this.scale=void 0===e?40:e},function(e){var t=2*e*Math.PI,i=Math.cos(4*t)*(1+.5*(Math.cos(5*t)+.4*Math.cos(20*t))),r=Math.sin(4*t)*(1+.5*(Math.cos(5*t)+.4*Math.cos(20*t))),n=.35*Math.sin(15*t);return new THREE.Vector3(i,r,n).multiplyScalar(this.scale)});
+/*
+ * A bunch of parametric curves
+ * @author zz85
+ *
+ * Formulas collected from various sources
+ *	http://mathworld.wolfram.com/HeartCurve.html
+ *	http://mathdl.maa.org/images/upload_library/23/stemkoski/knots/page6.html
+ *	http://en.wikipedia.org/wiki/Viviani%27s_curve
+ *	http://mathdl.maa.org/images/upload_library/23/stemkoski/knots/page4.html
+ *	http://www.mi.sanu.ac.rs/vismath/taylorapril2011/Taylor.pdf
+ *	http://prideout.net/blog/?p=44
+ */
+
+// Lets define some curves
+THREE.Curves = {};
+
+
+ THREE.Curves.GrannyKnot = THREE.Curve.create( function(){},
+
+	 function(t) {
+	    t = 2 * Math.PI * t;
+
+	    var x = -0.22 * Math.cos(t) - 1.28 * Math.sin(t) - 0.44 * Math.cos(3 * t) - 0.78 * Math.sin(3 * t);
+	    var y = -0.1 * Math.cos(2 * t) - 0.27 * Math.sin(2 * t) + 0.38 * Math.cos(4 * t) + 0.46 * Math.sin(4 * t);
+	    var z = 0.7 * Math.cos(3 * t) - 0.4 * Math.sin(3 * t);
+	    return new THREE.Vector3(x, y, z).multiplyScalar(20);
+	}
+);
+
+THREE.Curves.HeartCurve = THREE.Curve.create(
+
+function(s) {
+
+	this.scale = (s === undefined) ? 5 : s;
+
+},
+
+function(t) {
+
+	t *= 2 * Math.PI;
+
+	var tx = 16 * Math.pow(Math.sin(t), 3);
+	var ty = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t), tz = 0;
+
+	return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+}
+
+);
+
+
+
+// Viviani's Curve
+THREE.Curves.VivianiCurve = THREE.Curve.create(
+
+	function(radius) {
+
+		this.radius = radius;
+	},
+
+	function(t) {
+
+		t = t * 4 * Math.PI; // Normalized to 0..1
+		var a = this.radius / 2;
+		var tx = a * (1 + Math.cos(t)),
+			ty = a * Math.sin(t),
+			tz = 2 * a * Math.sin(t / 2);
+
+		return new THREE.Vector3(tx, ty, tz);
+
+	}
+
+);
+
+
+THREE.Curves.KnotCurve = THREE.Curve.create(
+
+	function() {
+
+	},
+
+	function(t) {
+
+		t *= 2 * Math.PI;
+
+		var R = 10;
+		var s = 50;
+		var tx = s * Math.sin(t),
+			ty = Math.cos(t) * (R + s * Math.cos(t)),
+			tz = Math.sin(t) * (R + s * Math.cos(t));
+
+		return new THREE.Vector3(tx, ty, tz);
+
+	}
+
+);
+
+THREE.Curves.HelixCurve = THREE.Curve.create(
+
+	function() {
+
+	},
+
+	function(t) {
+
+		var a = 30; // radius
+		var b = 150; //height
+		var t2 = 2 * Math.PI * t * b / 30;
+		var tx = Math.cos(t2) * a,
+			ty = Math.sin(t2) * a,
+			tz = b * t;
+
+		return new THREE.Vector3(tx, ty, tz);
+
+	}
+
+);
+
+THREE.Curves.TrefoilKnot = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 10 : s;
+
+	},
+
+	function(t) {
+
+		t *= Math.PI * 2;
+		var tx = (2 + Math.cos(3 * t)) * Math.cos(2 * t),
+			ty = (2 + Math.cos(3 * t)) * Math.sin(2 * t),
+			tz = Math.sin(3 * t);
+
+		return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+	}
+
+);
+
+THREE.Curves.TorusKnot = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 10 : s;
+
+	},
+
+	function(t) {
+
+		var p = 3,
+			q = 4;
+		t *= Math.PI * 2;
+		var tx = (2 + Math.cos(q * t)) * Math.cos(p * t),
+			ty = (2 + Math.cos(q * t)) * Math.sin(p * t),
+			tz = Math.sin(q * t);
+
+		return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+	}
+
+);
+
+
+THREE.Curves.CinquefoilKnot = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 10 : s;
+
+	},
+
+	function(t) {
+
+		var p = 2,
+			q = 5;
+		t *= Math.PI * 2;
+		var tx = (2 + Math.cos(q * t)) * Math.cos(p * t),
+			ty = (2 + Math.cos(q * t)) * Math.sin(p * t),
+			tz = Math.sin(q * t);
+
+		return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+	}
+
+);
+
+
+THREE.Curves.TrefoilPolynomialKnot = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 10 : s;
+
+	},
+
+	function(t) {
+
+		t = t * 4 - 2;
+		var tx = Math.pow(t, 3) - 3 * t,
+			ty = Math.pow(t, 4) - 4 * t * t,
+			tz = 1 / 5 * Math.pow(t, 5) - 2 * t;
+
+		return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+	}
+
+);
+
+// var scaleTo = function(x, y) {
+//   var r = y - x;
+//   return function(t) {
+//     t * r + x;
+//   };
+// }
+var scaleTo = function(x, y, t) {
+
+		var r = y - x;
+		return t * r + x;
+
+	}
+
+THREE.Curves.FigureEightPolynomialKnot = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 1 : s;
+
+	},
+
+	function(t) {
+
+		t = scaleTo(-4, 4, t);
+		var tx = 2 / 5 * t * (t * t - 7) * (t * t - 10),
+			ty = Math.pow(t, 4) - 13 * t * t,
+			tz = 1 / 10 * t * (t * t - 4) * (t * t - 9) * (t * t - 12);
+
+		return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+	}
+
+);
+
+THREE.Curves.DecoratedTorusKnot4a = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 40 : s;
+
+	},
+
+	function(t) {
+
+		t *= Math.PI * 2;
+		var
+		x = Math.cos(2 * t) * (1 + 0.6 * (Math.cos(5 * t) + 0.75 * Math.cos(10 * t))),
+			y = Math.sin(2 * t) * (1 + 0.6 * (Math.cos(5 * t) + 0.75 * Math.cos(10 * t))),
+			z = 0.35 * Math.sin(5 * t);
+
+		return new THREE.Vector3(x, y, z).multiplyScalar(this.scale);
+
+	}
+
+);
+
+
+THREE.Curves.DecoratedTorusKnot4b = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 40 : s;
+
+	},
+
+	function(t) {
+		var fi = t * Math.PI * 2;
+		var x = Math.cos(2 * fi) * (1 + 0.45 * Math.cos(3 * fi) + 0.4 * Math.cos(9 * fi)),
+			y = Math.sin(2 * fi) * (1 + 0.45 * Math.cos(3 * fi) + 0.4 * Math.cos(9 * fi)),
+			z = 0.2 * Math.sin(9 * fi);
+
+		return new THREE.Vector3(x, y, z).multiplyScalar(this.scale);
+
+	}
+
+);
+
+
+THREE.Curves.DecoratedTorusKnot5a = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 40 : s;
+
+	},
+
+	function(t) {
+
+		var fi = t * Math.PI * 2;
+		var x = Math.cos(3 * fi) * (1 + 0.3 * Math.cos(5 * fi) + 0.5 * Math.cos(10 * fi)),
+			y = Math.sin(3 * fi) * (1 + 0.3 * Math.cos(5 * fi) + 0.5 * Math.cos(10 * fi)),
+			z = 0.2 * Math.sin(20 * fi);
+
+		return new THREE.Vector3(x, y, z).multiplyScalar(this.scale);
+
+	}
+
+);
+
+THREE.Curves.DecoratedTorusKnot5c = THREE.Curve.create(
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 40 : s;
+
+	},
+
+	function(t) {
+
+		var fi = t * Math.PI * 2;
+		var x = Math.cos(4 * fi) * (1 + 0.5 * (Math.cos(5 * fi) + 0.4 * Math.cos(20 * fi))),
+			y = Math.sin(4 * fi) * (1 + 0.5 * (Math.cos(5 * fi) + 0.4 * Math.cos(20 * fi))),
+			z = 0.35 * Math.sin(15 * fi);
+
+		return new THREE.Vector3(x, y, z).multiplyScalar(this.scale);
+
+	}
+
+);

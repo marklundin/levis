@@ -1,1 +1,100 @@
-THREE.TorusKnotGeometry=function(e,t,i,r,n,o,a){function s(e,t,i,r,n){var o=Math.cos(e),a=Math.sin(e),s=t/i*e,l=Math.cos(s),c=.5*r*(2+l)*o,h=.5*r*(2+l)*a,u=.5*n*r*Math.sin(s);return new THREE.Vector3(c,h,u)}THREE.Geometry.call(this);var l=this;this.radius=e||100,this.tube=t||40,this.radialSegments=i||64,this.tubularSegments=r||8,this.p=n||2,this.q=o||3,this.heightScale=a||1,this.grid=new Array(this.radialSegments);for(var c=new THREE.Vector3,h=new THREE.Vector3,u=new THREE.Vector3,d=0;d<this.radialSegments;++d){this.grid[d]=new Array(this.tubularSegments);var p=2*(d/this.radialSegments)*this.p*Math.PI,f=s(p,this.q,this.p,this.radius,this.heightScale),m=s(p+.01,this.q,this.p,this.radius,this.heightScale);c.subVectors(m,f),h.addVectors(m,f),u.crossVectors(c,h),h.crossVectors(u,c),u.normalize(),h.normalize();for(var v=0;v<this.tubularSegments;++v){var g=2*(v/this.tubularSegments)*Math.PI,E=-this.tube*Math.cos(g),y=this.tube*Math.sin(g),T=new THREE.Vector3;T.x=f.x+E*h.x+y*u.x,T.y=f.y+E*h.y+y*u.y,T.z=f.z+E*h.z+y*u.z,this.grid[d][v]=l.vertices.push(T)-1}}for(var d=0;d<this.radialSegments;++d)for(var v=0;v<this.tubularSegments;++v){var x=(d+1)%this.radialSegments,b=(v+1)%this.tubularSegments,_=this.grid[d][v],R=this.grid[x][v],w=this.grid[x][b],H=this.grid[d][b],S=new THREE.Vector2(d/this.radialSegments,v/this.tubularSegments),M=new THREE.Vector2((d+1)/this.radialSegments,v/this.tubularSegments),C=new THREE.Vector2((d+1)/this.radialSegments,(v+1)/this.tubularSegments),A=new THREE.Vector2(d/this.radialSegments,(v+1)/this.tubularSegments);this.faces.push(new THREE.Face4(_,R,w,H)),this.faceVertexUvs[0].push([S,M,C,A])}this.computeCentroids(),this.computeFaceNormals(),this.computeVertexNormals()},THREE.TorusKnotGeometry.prototype=Object.create(THREE.Geometry.prototype);
+/**
+ * @author oosmoxiecode
+ * based on http://code.google.com/p/away3d/source/browse/trunk/fp10/Away3D/src/away3d/primitives/TorusKnot.as?spec=svn2473&r=2473
+ */
+
+THREE.TorusKnotGeometry = function ( radius, tube, radialSegments, tubularSegments, p, q, heightScale ) {
+
+	THREE.Geometry.call( this );
+
+	var scope = this;
+
+	this.radius = radius || 100;
+	this.tube = tube || 40;
+	this.radialSegments = radialSegments || 64;
+	this.tubularSegments = tubularSegments || 8;
+	this.p = p || 2;
+	this.q = q || 3;
+	this.heightScale = heightScale || 1;
+	this.grid = new Array( this.radialSegments );
+
+	var tang = new THREE.Vector3();
+	var n = new THREE.Vector3();
+	var bitan = new THREE.Vector3();
+
+	for ( var i = 0; i < this.radialSegments; ++ i ) {
+
+		this.grid[ i ] = new Array( this.tubularSegments );
+		var u = i / this.radialSegments * 2 * this.p * Math.PI;
+		var p1 = getPos( u, this.q, this.p, this.radius, this.heightScale );
+		var p2 = getPos( u + 0.01, this.q, this.p, this.radius, this.heightScale );
+		tang.subVectors( p2, p1 );
+		n.addVectors( p2, p1 );
+
+		bitan.crossVectors( tang, n );
+		n.crossVectors( bitan, tang );
+		bitan.normalize();
+		n.normalize();
+
+		for ( var j = 0; j < this.tubularSegments; ++ j ) {
+
+			var v = j / this.tubularSegments * 2 * Math.PI;
+			var cx = - this.tube * Math.cos( v ); // TODO: Hack: Negating it so it faces outside.
+			var cy = this.tube * Math.sin( v );
+
+			var pos = new THREE.Vector3();
+			pos.x = p1.x + cx * n.x + cy * bitan.x;
+			pos.y = p1.y + cx * n.y + cy * bitan.y;
+			pos.z = p1.z + cx * n.z + cy * bitan.z;
+
+			this.grid[ i ][ j ] = scope.vertices.push( pos ) - 1;
+
+		}
+
+	}
+
+	for ( var i = 0; i < this.radialSegments; ++ i ) {
+
+		for ( var j = 0; j < this.tubularSegments; ++ j ) {
+
+			var ip = ( i + 1 ) % this.radialSegments;
+			var jp = ( j + 1 ) % this.tubularSegments;
+
+			var a = this.grid[ i ][ j ];
+			var b = this.grid[ ip ][ j ];
+			var c = this.grid[ ip ][ jp ];
+			var d = this.grid[ i ][ jp ];
+
+			var uva = new THREE.Vector2( i / this.radialSegments, j / this.tubularSegments );
+			var uvb = new THREE.Vector2( ( i + 1 ) / this.radialSegments, j / this.tubularSegments );
+			var uvc = new THREE.Vector2( ( i + 1 ) / this.radialSegments, ( j + 1 ) / this.tubularSegments );
+			var uvd = new THREE.Vector2( i / this.radialSegments, ( j + 1 ) / this.tubularSegments );
+
+			this.faces.push( new THREE.Face4( a, b, c, d ) );
+			this.faceVertexUvs[ 0 ].push( [ uva,uvb,uvc, uvd ] );
+
+		}
+	}
+
+	this.computeCentroids();
+	this.computeFaceNormals();
+	this.computeVertexNormals();
+
+	function getPos( u, in_q, in_p, radius, heightScale ) {
+
+		var cu = Math.cos( u );
+		var su = Math.sin( u );
+		var quOverP = in_q / in_p * u;
+		var cs = Math.cos( quOverP );
+
+		var tx = radius * ( 2 + cs ) * 0.5 * cu;
+		var ty = radius * ( 2 + cs ) * su * 0.5;
+		var tz = heightScale * radius * Math.sin( quOverP ) * 0.5;
+
+		return new THREE.Vector3( tx, ty, tz );
+
+	}
+
+};
+
+THREE.TorusKnotGeometry.prototype = Object.create( THREE.Geometry.prototype );

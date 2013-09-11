@@ -1,1 +1,136 @@
-THREE.ShapeGeometry=function(e,t){THREE.Geometry.call(this),e instanceof Array==!1&&(e=[e]),this.shapebb=e[e.length-1].getBoundingBox(),this.addShapeList(e,t),this.computeCentroids(),this.computeFaceNormals()},THREE.ShapeGeometry.prototype=Object.create(THREE.Geometry.prototype),THREE.ShapeGeometry.prototype.addShapeList=function(e,t){for(var i=0,r=e.length;r>i;i++)this.addShape(e[i],t);return this},THREE.ShapeGeometry.prototype.addShape=function(e,t){void 0===t&&(t={});var i=void 0!==t.curveSegments?t.curveSegments:12,r=t.material,n=void 0===t.UVGenerator?THREE.ExtrudeGeometry.WorldUVGenerator:t.UVGenerator;this.shapebb;var o,a,s,l=this.vertices.length,c=e.extractPoints(i),h=c.shape,u=c.holes,d=!THREE.Shape.Utils.isClockWise(h);if(d){for(h=h.reverse(),o=0,a=u.length;a>o;o++)s=u[o],THREE.Shape.Utils.isClockWise(s)&&(u[o]=s.reverse());d=!1}var p=THREE.Shape.Utils.triangulateShape(h,u),f=h;for(o=0,a=u.length;a>o;o++)s=u[o],h=h.concat(s);var m,v,g=h.length,E=p.length;for(f.length,o=0;g>o;o++)m=h[o],this.vertices.push(new THREE.Vector3(m.x,m.y,0));for(o=0;E>o;o++){v=p[o];var y=v[0]+l,T=v[1]+l,x=v[2]+l;this.faces.push(new THREE.Face3(y,T,x,null,null,r)),this.faceVertexUvs[0].push(n.generateBottomUV(this,e,t,y,T,x))}};
+/**
+ * @author jonobr1 / http://jonobr1.com
+ *
+ * Creates a one-sided polygonal geometry from a path shape. Similar to
+ * ExtrudeGeometry.
+ *
+ * parameters = {
+ *
+ *	curveSegments: <int>, // number of points on the curves. NOT USED AT THE MOMENT.
+ *
+ *	material: <int> // material index for front and back faces
+ *	uvGenerator: <Object> // object that provides UV generator functions
+ *
+ * }
+ **/
+
+THREE.ShapeGeometry = function ( shapes, options ) {
+
+	THREE.Geometry.call( this );
+
+	if ( shapes instanceof Array === false ) shapes = [ shapes ];
+
+	this.shapebb = shapes[ shapes.length - 1 ].getBoundingBox();
+
+	this.addShapeList( shapes, options );
+
+	this.computeCentroids();
+	this.computeFaceNormals();
+
+};
+
+THREE.ShapeGeometry.prototype = Object.create( THREE.Geometry.prototype );
+
+/**
+ * Add an array of shapes to THREE.ShapeGeometry.
+ */
+THREE.ShapeGeometry.prototype.addShapeList = function ( shapes, options ) {
+
+	for ( var i = 0, l = shapes.length; i < l; i++ ) {
+
+		this.addShape( shapes[ i ], options );
+
+	}
+
+	return this;
+
+};
+
+/**
+ * Adds a shape to THREE.ShapeGeometry, based on THREE.ExtrudeGeometry.
+ */
+THREE.ShapeGeometry.prototype.addShape = function ( shape, options ) {
+
+	if ( options === undefined ) options = {};
+	var curveSegments = options.curveSegments !== undefined ? options.curveSegments : 12;
+
+	var material = options.material;
+	var uvgen = options.UVGenerator === undefined ? THREE.ExtrudeGeometry.WorldUVGenerator : options.UVGenerator;
+
+	var shapebb = this.shapebb;
+
+	//
+
+	var i, l, hole, s;
+
+	var shapesOffset = this.vertices.length;
+	var shapePoints = shape.extractPoints( curveSegments );
+
+	var vertices = shapePoints.shape;
+	var holes = shapePoints.holes;
+
+	var reverse = !THREE.Shape.Utils.isClockWise( vertices );
+
+	if ( reverse ) {
+
+		vertices = vertices.reverse();
+
+		// Maybe we should also check if holes are in the opposite direction, just to be safe...
+
+		for ( i = 0, l = holes.length; i < l; i++ ) {
+
+			hole = holes[ i ];
+
+			if ( THREE.Shape.Utils.isClockWise( hole ) ) {
+
+				holes[ i ] = hole.reverse();
+
+			}
+
+		}
+
+		reverse = false;
+
+	}
+
+	var faces = THREE.Shape.Utils.triangulateShape( vertices, holes );
+
+	// Vertices
+
+	var contour = vertices;
+
+	for ( i = 0, l = holes.length; i < l; i++ ) {
+
+		hole = holes[ i ];
+		vertices = vertices.concat( hole );
+
+	}
+
+	//
+
+	var vert, vlen = vertices.length;
+	var face, flen = faces.length;
+	var cont, clen = contour.length;
+
+	for ( i = 0; i < vlen; i++ ) {
+
+		vert = vertices[ i ];
+
+		this.vertices.push( new THREE.Vector3( vert.x, vert.y, 0 ) );
+
+	}
+
+	for ( i = 0; i < flen; i++ ) {
+
+		face = faces[ i ];
+
+		var a = face[ 0 ] + shapesOffset;
+		var b = face[ 1 ] + shapesOffset;
+		var c = face[ 2 ] + shapesOffset;
+
+		this.faces.push( new THREE.Face3( a, b, c, null, null, material ) );
+		this.faceVertexUvs[ 0 ].push( uvgen.generateBottomUV( this, shape, options, a, b, c ) );
+
+	}
+
+};

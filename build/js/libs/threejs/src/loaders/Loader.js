@@ -1,1 +1,441 @@
-THREE.Loader=function(e){this.showStatus=e,this.statusDomElement=e?THREE.Loader.prototype.addStatusElement():null,this.onLoadStart=function(){},this.onLoadProgress=function(){},this.onLoadComplete=function(){}},THREE.Loader.prototype={constructor:THREE.Loader,crossOrigin:"anonymous",addStatusElement:function(){var e=document.createElement("div");return e.style.position="absolute",e.style.right="0px",e.style.top="0px",e.style.fontSize="0.8em",e.style.textAlign="left",e.style.background="rgba(0,0,0,0.25)",e.style.color="#fff",e.style.width="120px",e.style.padding="0.5em 0.5em 0.5em 0.5em",e.style.zIndex=1e3,e.innerHTML="Loading ...",e},updateProgress:function(e){var t="Loaded ";t+=e.total?(100*e.loaded/e.total).toFixed(0)+"%":(e.loaded/1e3).toFixed(2)+" KB",this.statusDomElement.innerHTML=t},extractUrlBase:function(e){var t=e.split("/");return t.pop(),(t.length<1?".":t.join("/"))+"/"},initMaterials:function(e,t){for(var i=[],r=0;r<e.length;++r)i[r]=THREE.Loader.prototype.createMaterial(e[r],t);return i},needsTangents:function(e){for(var t=0,i=e.length;i>t;t++){var r=e[t];if(r instanceof THREE.ShaderMaterial)return!0}return!1},createMaterial:function(e,t){function i(e){var t=Math.log(e)/Math.LN2;return Math.floor(t)==t}function r(e){var t=Math.log(e)/Math.LN2;return Math.pow(2,Math.round(t))}function o(e,t){var o=new Image;o.onload=function(){if(i(this.width)&&i(this.height))e.image=this;else{var t=r(this.width),o=r(this.height);e.image.width=t,e.image.height=o,e.image.getContext("2d").drawImage(this,0,0,t,o)}e.needsUpdate=!0},o.crossOrigin=s.crossOrigin,o.src=t}function n(e,i,r,n,a,s,l){var c=/\.dds$/i.test(r),h=t+"/"+r;if(c){var u=THREE.ImageUtils.loadCompressedTexture(h);e[i]=u}else{var u=document.createElement("canvas");e[i]=new THREE.Texture(u)}if(e[i].sourceFile=r,n&&(e[i].repeat.set(n[0],n[1]),1!==n[0]&&(e[i].wrapS=THREE.RepeatWrapping),1!==n[1]&&(e[i].wrapT=THREE.RepeatWrapping)),a&&e[i].offset.set(a[0],a[1]),s){var d={repeat:THREE.RepeatWrapping,mirror:THREE.MirroredRepeatWrapping};void 0!==d[s[0]]&&(e[i].wrapS=d[s[0]]),void 0!==d[s[1]]&&(e[i].wrapT=d[s[1]])}l&&(e[i].anisotropy=l),c||o(e[i],h)}function a(e){return(255*e[0]<<16)+(255*e[1]<<8)+255*e[2]}var s=this,l="MeshLambertMaterial",c={color:15658734,opacity:1,map:null,lightMap:null,normalMap:null,bumpMap:null,wireframe:!1};if(e.shading){var h=e.shading.toLowerCase();"phong"===h?l="MeshPhongMaterial":"basic"===h&&(l="MeshBasicMaterial")}if(void 0!==e.blending&&void 0!==THREE[e.blending]&&(c.blending=THREE[e.blending]),(void 0!==e.transparent||e.opacity<1)&&(c.transparent=e.transparent),void 0!==e.depthTest&&(c.depthTest=e.depthTest),void 0!==e.depthWrite&&(c.depthWrite=e.depthWrite),void 0!==e.visible&&(c.visible=e.visible),void 0!==e.flipSided&&(c.side=THREE.BackSide),void 0!==e.doubleSided&&(c.side=THREE.DoubleSide),void 0!==e.wireframe&&(c.wireframe=e.wireframe),void 0!==e.vertexColors&&("face"===e.vertexColors?c.vertexColors=THREE.FaceColors:e.vertexColors&&(c.vertexColors=THREE.VertexColors)),e.colorDiffuse?c.color=a(e.colorDiffuse):e.DbgColor&&(c.color=e.DbgColor),e.colorSpecular&&(c.specular=a(e.colorSpecular)),e.colorAmbient&&(c.ambient=a(e.colorAmbient)),e.transparency&&(c.opacity=e.transparency),e.specularCoef&&(c.shininess=e.specularCoef),e.mapDiffuse&&t&&n(c,"map",e.mapDiffuse,e.mapDiffuseRepeat,e.mapDiffuseOffset,e.mapDiffuseWrap,e.mapDiffuseAnisotropy),e.mapLight&&t&&n(c,"lightMap",e.mapLight,e.mapLightRepeat,e.mapLightOffset,e.mapLightWrap,e.mapLightAnisotropy),e.mapBump&&t&&n(c,"bumpMap",e.mapBump,e.mapBumpRepeat,e.mapBumpOffset,e.mapBumpWrap,e.mapBumpAnisotropy),e.mapNormal&&t&&n(c,"normalMap",e.mapNormal,e.mapNormalRepeat,e.mapNormalOffset,e.mapNormalWrap,e.mapNormalAnisotropy),e.mapSpecular&&t&&n(c,"specularMap",e.mapSpecular,e.mapSpecularRepeat,e.mapSpecularOffset,e.mapSpecularWrap,e.mapSpecularAnisotropy),e.mapBumpScale&&(c.bumpScale=e.mapBumpScale),e.mapNormal){var u=THREE.ShaderLib.normalmap,d=THREE.UniformsUtils.clone(u.uniforms);d.tNormal.value=c.normalMap,e.mapNormalFactor&&d.uNormalScale.value.set(e.mapNormalFactor,e.mapNormalFactor),c.map&&(d.tDiffuse.value=c.map,d.enableDiffuse.value=!0),c.specularMap&&(d.tSpecular.value=c.specularMap,d.enableSpecular.value=!0),c.lightMap&&(d.tAO.value=c.lightMap,d.enableAO.value=!0),d.uDiffuseColor.value.setHex(c.color),d.uSpecularColor.value.setHex(c.specular),d.uAmbientColor.value.setHex(c.ambient),d.uShininess.value=c.shininess,void 0!==c.opacity&&(d.uOpacity.value=c.opacity);var p={fragmentShader:u.fragmentShader,vertexShader:u.vertexShader,uniforms:d,lights:!0,fog:!0},f=new THREE.ShaderMaterial(p);c.transparent&&(f.transparent=!0)}else var f=new THREE[l](c);return void 0!==e.DbgName&&(f.name=e.DbgName),f}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.Loader = function ( showStatus ) {
+
+	this.showStatus = showStatus;
+	this.statusDomElement = showStatus ? THREE.Loader.prototype.addStatusElement() : null;
+
+	this.onLoadStart = function () {};
+	this.onLoadProgress = function () {};
+	this.onLoadComplete = function () {};
+
+};
+
+THREE.Loader.prototype = {
+
+	constructor: THREE.Loader,
+
+	crossOrigin: 'anonymous',
+
+	addStatusElement: function () {
+
+		var e = document.createElement( "div" );
+
+		e.style.position = "absolute";
+		e.style.right = "0px";
+		e.style.top = "0px";
+		e.style.fontSize = "0.8em";
+		e.style.textAlign = "left";
+		e.style.background = "rgba(0,0,0,0.25)";
+		e.style.color = "#fff";
+		e.style.width = "120px";
+		e.style.padding = "0.5em 0.5em 0.5em 0.5em";
+		e.style.zIndex = 1000;
+
+		e.innerHTML = "Loading ...";
+
+		return e;
+
+	},
+
+	updateProgress: function ( progress ) {
+
+		var message = "Loaded ";
+
+		if ( progress.total ) {
+
+			message += ( 100 * progress.loaded / progress.total ).toFixed(0) + "%";
+
+
+		} else {
+
+			message += ( progress.loaded / 1000 ).toFixed(2) + " KB";
+
+		}
+
+		this.statusDomElement.innerHTML = message;
+
+	},
+
+	extractUrlBase: function ( url ) {
+
+		var parts = url.split( '/' );
+		parts.pop();
+		return ( parts.length < 1 ? '.' : parts.join( '/' ) ) + '/';
+
+	},
+
+	initMaterials: function ( materials, texturePath ) {
+
+		var array = [];
+
+		for ( var i = 0; i < materials.length; ++ i ) {
+
+			array[ i ] = THREE.Loader.prototype.createMaterial( materials[ i ], texturePath );
+
+		}
+
+		return array;
+
+	},
+
+	needsTangents: function ( materials ) {
+
+		for( var i = 0, il = materials.length; i < il; i ++ ) {
+
+			var m = materials[ i ];
+
+			if ( m instanceof THREE.ShaderMaterial ) return true;
+
+		}
+
+		return false;
+
+	},
+
+	createMaterial: function ( m, texturePath ) {
+
+		var _this = this;
+
+		function is_pow2( n ) {
+
+			var l = Math.log( n ) / Math.LN2;
+			return Math.floor( l ) == l;
+
+		}
+
+		function nearest_pow2( n ) {
+
+			var l = Math.log( n ) / Math.LN2;
+			return Math.pow( 2, Math.round(  l ) );
+
+		}
+
+		function load_image( where, url ) {
+
+			var image = new Image();
+
+			image.onload = function () {
+
+				if ( !is_pow2( this.width ) || !is_pow2( this.height ) ) {
+
+					var width = nearest_pow2( this.width );
+					var height = nearest_pow2( this.height );
+
+					where.image.width = width;
+					where.image.height = height;
+					where.image.getContext( '2d' ).drawImage( this, 0, 0, width, height );
+
+				} else {
+
+					where.image = this;
+
+				}
+
+				where.needsUpdate = true;
+
+			};
+
+			image.crossOrigin = _this.crossOrigin;
+			image.src = url;
+
+		}
+
+		function create_texture( where, name, sourceFile, repeat, offset, wrap, anisotropy ) {
+
+			var isCompressed = /\.dds$/i.test( sourceFile );
+			var fullPath = texturePath + "/" + sourceFile;
+
+			if ( isCompressed ) {
+
+				var texture = THREE.ImageUtils.loadCompressedTexture( fullPath );
+
+				where[ name ] = texture;
+
+			} else {
+
+				var texture = document.createElement( 'canvas' );
+
+				where[ name ] = new THREE.Texture( texture );
+
+			}
+
+			where[ name ].sourceFile = sourceFile;
+
+			if( repeat ) {
+
+				where[ name ].repeat.set( repeat[ 0 ], repeat[ 1 ] );
+
+				if ( repeat[ 0 ] !== 1 ) where[ name ].wrapS = THREE.RepeatWrapping;
+				if ( repeat[ 1 ] !== 1 ) where[ name ].wrapT = THREE.RepeatWrapping;
+
+			}
+
+			if ( offset ) {
+
+				where[ name ].offset.set( offset[ 0 ], offset[ 1 ] );
+
+			}
+
+			if ( wrap ) {
+
+				var wrapMap = {
+					"repeat": THREE.RepeatWrapping,
+					"mirror": THREE.MirroredRepeatWrapping
+				}
+
+				if ( wrapMap[ wrap[ 0 ] ] !== undefined ) where[ name ].wrapS = wrapMap[ wrap[ 0 ] ];
+				if ( wrapMap[ wrap[ 1 ] ] !== undefined ) where[ name ].wrapT = wrapMap[ wrap[ 1 ] ];
+
+			}
+
+			if ( anisotropy ) {
+
+				where[ name ].anisotropy = anisotropy;
+
+			}
+
+			if ( ! isCompressed ) {
+
+				load_image( where[ name ], fullPath );
+
+			}
+
+		}
+
+		function rgb2hex( rgb ) {
+
+			return ( rgb[ 0 ] * 255 << 16 ) + ( rgb[ 1 ] * 255 << 8 ) + rgb[ 2 ] * 255;
+
+		}
+
+		// defaults
+
+		var mtype = "MeshLambertMaterial";
+		var mpars = { color: 0xeeeeee, opacity: 1.0, map: null, lightMap: null, normalMap: null, bumpMap: null, wireframe: false };
+
+		// parameters from model file
+
+		if ( m.shading ) {
+
+			var shading = m.shading.toLowerCase();
+
+			if ( shading === "phong" ) mtype = "MeshPhongMaterial";
+			else if ( shading === "basic" ) mtype = "MeshBasicMaterial";
+
+		}
+
+		if ( m.blending !== undefined && THREE[ m.blending ] !== undefined ) {
+
+			mpars.blending = THREE[ m.blending ];
+
+		}
+
+		if ( m.transparent !== undefined || m.opacity < 1.0 ) {
+
+			mpars.transparent = m.transparent;
+
+		}
+
+		if ( m.depthTest !== undefined ) {
+
+			mpars.depthTest = m.depthTest;
+
+		}
+
+		if ( m.depthWrite !== undefined ) {
+
+			mpars.depthWrite = m.depthWrite;
+
+		}
+
+		if ( m.visible !== undefined ) {
+
+			mpars.visible = m.visible;
+
+		}
+
+		if ( m.flipSided !== undefined ) {
+
+			mpars.side = THREE.BackSide;
+
+		}
+
+		if ( m.doubleSided !== undefined ) {
+
+			mpars.side = THREE.DoubleSide;
+
+		}
+
+		if ( m.wireframe !== undefined ) {
+
+			mpars.wireframe = m.wireframe;
+
+		}
+
+		if ( m.vertexColors !== undefined ) {
+
+			if ( m.vertexColors === "face" ) {
+
+				mpars.vertexColors = THREE.FaceColors;
+
+			} else if ( m.vertexColors ) {
+
+				mpars.vertexColors = THREE.VertexColors;
+
+			}
+
+		}
+
+		// colors
+
+		if ( m.colorDiffuse ) {
+
+			mpars.color = rgb2hex( m.colorDiffuse );
+
+		} else if ( m.DbgColor ) {
+
+			mpars.color = m.DbgColor;
+
+		}
+
+		if ( m.colorSpecular ) {
+
+			mpars.specular = rgb2hex( m.colorSpecular );
+
+		}
+
+		if ( m.colorAmbient ) {
+
+			mpars.ambient = rgb2hex( m.colorAmbient );
+
+		}
+
+		// modifiers
+
+		if ( m.transparency ) {
+
+			mpars.opacity = m.transparency;
+
+		}
+
+		if ( m.specularCoef ) {
+
+			mpars.shininess = m.specularCoef;
+
+		}
+
+		// textures
+
+		if ( m.mapDiffuse && texturePath ) {
+
+			create_texture( mpars, "map", m.mapDiffuse, m.mapDiffuseRepeat, m.mapDiffuseOffset, m.mapDiffuseWrap, m.mapDiffuseAnisotropy );
+
+		}
+
+		if ( m.mapLight && texturePath ) {
+
+			create_texture( mpars, "lightMap", m.mapLight, m.mapLightRepeat, m.mapLightOffset, m.mapLightWrap, m.mapLightAnisotropy );
+
+		}
+
+		if ( m.mapBump && texturePath ) {
+
+			create_texture( mpars, "bumpMap", m.mapBump, m.mapBumpRepeat, m.mapBumpOffset, m.mapBumpWrap, m.mapBumpAnisotropy );
+
+		}
+
+		if ( m.mapNormal && texturePath ) {
+
+			create_texture( mpars, "normalMap", m.mapNormal, m.mapNormalRepeat, m.mapNormalOffset, m.mapNormalWrap, m.mapNormalAnisotropy );
+
+		}
+
+		if ( m.mapSpecular && texturePath ) {
+
+			create_texture( mpars, "specularMap", m.mapSpecular, m.mapSpecularRepeat, m.mapSpecularOffset, m.mapSpecularWrap, m.mapSpecularAnisotropy );
+
+		}
+
+		//
+
+		if ( m.mapBumpScale ) {
+
+			mpars.bumpScale = m.mapBumpScale;
+
+		}
+
+		// special case for normal mapped material
+
+		if ( m.mapNormal ) {
+
+			var shader = THREE.ShaderLib[ "normalmap" ];
+			var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+			uniforms[ "tNormal" ].value = mpars.normalMap;
+
+			if ( m.mapNormalFactor ) {
+
+				uniforms[ "uNormalScale" ].value.set( m.mapNormalFactor, m.mapNormalFactor );
+
+			}
+
+			if ( mpars.map ) {
+
+				uniforms[ "tDiffuse" ].value = mpars.map;
+				uniforms[ "enableDiffuse" ].value = true;
+
+			}
+
+			if ( mpars.specularMap ) {
+
+				uniforms[ "tSpecular" ].value = mpars.specularMap;
+				uniforms[ "enableSpecular" ].value = true;
+
+			}
+
+			if ( mpars.lightMap ) {
+
+				uniforms[ "tAO" ].value = mpars.lightMap;
+				uniforms[ "enableAO" ].value = true;
+
+			}
+
+			// for the moment don't handle displacement texture
+
+			uniforms[ "uDiffuseColor" ].value.setHex( mpars.color );
+			uniforms[ "uSpecularColor" ].value.setHex( mpars.specular );
+			uniforms[ "uAmbientColor" ].value.setHex( mpars.ambient );
+
+			uniforms[ "uShininess" ].value = mpars.shininess;
+
+			if ( mpars.opacity !== undefined ) {
+
+				uniforms[ "uOpacity" ].value = mpars.opacity;
+
+			}
+
+			var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
+			var material = new THREE.ShaderMaterial( parameters );
+
+			if ( mpars.transparent ) {
+
+				material.transparent = true;
+
+			}
+
+		} else {
+
+			var material = new THREE[ mtype ]( mpars );
+
+		}
+
+		if ( m.DbgName !== undefined ) material.name = m.DbgName;
+
+		return material;
+
+	}
+
+};

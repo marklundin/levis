@@ -1,1 +1,54 @@
-THREE.CircleGeometry=function(e,t,i,r){THREE.Geometry.call(this),e=e||50,i=void 0!==i?i:0,r=void 0!==r?r:2*Math.PI,t=void 0!==t?Math.max(3,t):8;var n,o=[],a=new THREE.Vector3,s=new THREE.Vector2(.5,.5);for(this.vertices.push(a),o.push(s),n=0;t>=n;n++){var l=new THREE.Vector3,c=i+n/t*r;l.x=e*Math.cos(c),l.y=e*Math.sin(c),this.vertices.push(l),o.push(new THREE.Vector2((l.x/e+1)/2,(l.y/e+1)/2))}var h=new THREE.Vector3(0,0,1);for(n=1;t>=n;n++){var u=n,d=n+1,p=0;this.faces.push(new THREE.Face3(u,d,p,[h,h,h])),this.faceVertexUvs[0].push([o[n],o[n+1],s])}this.computeCentroids(),this.computeFaceNormals(),this.boundingSphere=new THREE.Sphere(new THREE.Vector3,e)},THREE.CircleGeometry.prototype=Object.create(THREE.Geometry.prototype);
+/**
+ * @author hughes
+ */
+
+THREE.CircleGeometry = function ( radius, segments, thetaStart, thetaLength ) {
+
+	THREE.Geometry.call( this );
+
+	radius = radius || 50;
+
+	thetaStart = thetaStart !== undefined ? thetaStart : 0;
+	thetaLength = thetaLength !== undefined ? thetaLength : Math.PI * 2;
+	segments = segments !== undefined ? Math.max( 3, segments ) : 8;
+
+	var i, uvs = [],
+	center = new THREE.Vector3(), centerUV = new THREE.Vector2( 0.5, 0.5 );
+
+	this.vertices.push(center);
+	uvs.push( centerUV );
+
+	for ( i = 0; i <= segments; i ++ ) {
+
+		var vertex = new THREE.Vector3();
+		var segment = thetaStart + i / segments * thetaLength;
+
+		vertex.x = radius * Math.cos( segment );
+		vertex.y = radius * Math.sin( segment );
+
+		this.vertices.push( vertex );
+		uvs.push( new THREE.Vector2( ( vertex.x / radius + 1 ) / 2, ( vertex.y / radius + 1 ) / 2 ) );
+
+	}
+
+	var n = new THREE.Vector3( 0, 0, 1 );
+
+	for ( i = 1; i <= segments; i ++ ) {
+
+		var v1 = i;
+		var v2 = i + 1 ;
+		var v3 = 0;
+
+		this.faces.push( new THREE.Face3( v1, v2, v3, [ n, n, n ] ) );
+		this.faceVertexUvs[ 0 ].push( [ uvs[ i ], uvs[ i + 1 ], centerUV ] );
+
+	}
+
+	this.computeCentroids();
+	this.computeFaceNormals();
+
+	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );
+
+};
+
+THREE.CircleGeometry.prototype = Object.create( THREE.Geometry.prototype );

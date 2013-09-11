@@ -1,1 +1,55 @@
-THREE.SavePass=function(e){void 0===THREE.CopyShader&&console.error("THREE.SavePass relies on THREE.CopyShader");var t=THREE.CopyShader;this.textureID="tDiffuse",this.uniforms=THREE.UniformsUtils.clone(t.uniforms),this.material=new THREE.ShaderMaterial({uniforms:this.uniforms,vertexShader:t.vertexShader,fragmentShader:t.fragmentShader}),this.renderTarget=e,void 0===this.renderTarget&&(this.renderTargetParameters={minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBFormat,stencilBuffer:!1},this.renderTarget=new THREE.WebGLRenderTarget(window.innerWidth,window.innerHeight,this.renderTargetParameters)),this.enabled=!0,this.needsSwap=!1,this.clear=!1},THREE.SavePass.prototype={render:function(e,t,i){this.uniforms[this.textureID]&&(this.uniforms[this.textureID].value=i),THREE.EffectComposer.quad.material=this.material,e.render(THREE.EffectComposer.scene,THREE.EffectComposer.camera,this.renderTarget,this.clear)}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.SavePass = function ( renderTarget ) {
+
+	if ( THREE.CopyShader === undefined )
+		console.error( "THREE.SavePass relies on THREE.CopyShader" );
+
+	var shader = THREE.CopyShader;
+
+	this.textureID = "tDiffuse";
+
+	this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+	this.material = new THREE.ShaderMaterial( {
+
+		uniforms: this.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader
+
+	} );
+
+	this.renderTarget = renderTarget;
+
+	if ( this.renderTarget === undefined ) {
+
+		this.renderTargetParameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
+		this.renderTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, this.renderTargetParameters );
+
+	}
+
+	this.enabled = true;
+	this.needsSwap = false;
+	this.clear = false;
+
+};
+
+THREE.SavePass.prototype = {
+
+	render: function ( renderer, writeBuffer, readBuffer, delta ) {
+
+		if ( this.uniforms[ this.textureID ] ) {
+
+			this.uniforms[ this.textureID ].value = readBuffer;
+
+		}
+
+		THREE.EffectComposer.quad.material = this.material;
+
+		renderer.render( THREE.EffectComposer.scene, THREE.EffectComposer.camera, this.renderTarget, this.clear );
+
+	}
+
+};

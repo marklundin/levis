@@ -1,1 +1,159 @@
-THREE.PointerLockControls=function(e){var t=this,i=new THREE.Object3D;i.add(e);var r=new THREE.Object3D;r.position.y=10,r.add(i);var n=!1,o=!1,a=!1,s=!1,l=!1,h=!1,c=new THREE.Vector3,u=Math.PI/2,d=function(e){if(t.enabled!==!1){var n=e.movementX||e.mozMovementX||e.webkitMovementX||0,o=e.movementY||e.mozMovementY||e.webkitMovementY||0;r.rotation.y-=.002*n,i.rotation.x-=.002*o,i.rotation.x=Math.max(-u,Math.min(u,i.rotation.x))}},p=function(e){switch(e.keyCode){case 38:case 87:n=!0;break;case 37:case 65:a=!0;break;case 40:case 83:o=!0;break;case 39:case 68:s=!0;break;case 32:h===!0&&(c.y+=10),h=!1}},f=function(e){switch(e.keyCode){case 38:case 87:n=!1;break;case 37:case 65:a=!1;break;case 40:case 83:o=!1;break;case 39:case 68:s=!1}};document.addEventListener("mousemove",d,!1),document.addEventListener("keydown",p,!1),document.addEventListener("keyup",f,!1),this.enabled=!1,this.getObject=function(){return r},this.isOnObject=function(e){l=e,h=e},this.update=function(e){t.enabled!==!1&&(e*=.1,c.x+=.08*-c.x*e,c.z+=.08*-c.z*e,c.y-=.25*e,n&&(c.z-=.12*e),o&&(c.z+=.12*e),a&&(c.x-=.12*e),s&&(c.x+=.12*e),l===!0&&(c.y=Math.max(0,c.y)),r.translateX(c.x),r.translateY(c.y),r.translateZ(c.z),r.position.y<10&&(c.y=0,r.position.y=10,h=!0))}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.PointerLockControls = function ( camera ) {
+
+	var scope = this;
+
+	var pitchObject = new THREE.Object3D();
+	pitchObject.add( camera );
+
+	var yawObject = new THREE.Object3D();
+	yawObject.position.y = 10;
+	yawObject.add( pitchObject );
+
+	var moveForward = false;
+	var moveBackward = false;
+	var moveLeft = false;
+	var moveRight = false;
+
+	var isOnObject = false;
+	var canJump = false;
+
+	var velocity = new THREE.Vector3();
+
+	var PI_2 = Math.PI / 2;
+
+	var onMouseMove = function ( event ) {
+
+		if ( scope.enabled === false ) return;
+
+		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+		yawObject.rotation.y -= movementX * 0.002;
+		pitchObject.rotation.x -= movementY * 0.002;
+
+		pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
+
+	};
+
+	var onKeyDown = function ( event ) {
+
+		switch ( event.keyCode ) {
+
+			case 38: // up
+			case 87: // w
+				moveForward = true;
+				break;
+
+			case 37: // left
+			case 65: // a
+				moveLeft = true; break;
+
+			case 40: // down
+			case 83: // s
+				moveBackward = true;
+				break;
+
+			case 39: // right
+			case 68: // d
+				moveRight = true;
+				break;
+
+			case 32: // space
+				if ( canJump === true ) velocity.y += 10;
+				canJump = false;
+				break;
+
+		}
+
+	};
+
+	var onKeyUp = function ( event ) {
+
+		switch( event.keyCode ) {
+
+			case 38: // up
+			case 87: // w
+				moveForward = false;
+				break;
+
+			case 37: // left
+			case 65: // a
+				moveLeft = false;
+				break;
+
+			case 40: // down
+			case 83: // a
+				moveBackward = false;
+				break;
+
+			case 39: // right
+			case 68: // d
+				moveRight = false;
+				break;
+
+		}
+
+	};
+
+	document.addEventListener( 'mousemove', onMouseMove, false );
+	document.addEventListener( 'keydown', onKeyDown, false );
+	document.addEventListener( 'keyup', onKeyUp, false );
+
+	this.enabled = false;
+
+	this.getObject = function () {
+
+		return yawObject;
+
+	};
+
+	this.isOnObject = function ( boolean ) {
+
+		isOnObject = boolean;
+		canJump = boolean;
+
+	};
+
+	this.update = function ( delta ) {
+
+		if ( scope.enabled === false ) return;
+
+		delta *= 0.1;
+
+		velocity.x += ( - velocity.x ) * 0.08 * delta;
+		velocity.z += ( - velocity.z ) * 0.08 * delta;
+
+		velocity.y -= 0.25 * delta;
+
+		if ( moveForward ) velocity.z -= 0.12 * delta;
+		if ( moveBackward ) velocity.z += 0.12 * delta;
+
+		if ( moveLeft ) velocity.x -= 0.12 * delta;
+		if ( moveRight ) velocity.x += 0.12 * delta;
+
+		if ( isOnObject === true ) {
+
+			velocity.y = Math.max( 0, velocity.y );
+
+		}
+
+		yawObject.translateX( velocity.x );
+		yawObject.translateY( velocity.y ); 
+		yawObject.translateZ( velocity.z );
+
+		if ( yawObject.position.y < 10 ) {
+
+			velocity.y = 0;
+			yawObject.position.y = 10;
+
+			canJump = true;
+
+		}
+
+	};
+
+};

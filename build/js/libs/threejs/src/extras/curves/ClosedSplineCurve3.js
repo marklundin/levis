@@ -1,1 +1,39 @@
-THREE.ClosedSplineCurve3=THREE.Curve.create(function(e){this.points=void 0==e?[]:e},function(e){var t,i,r,n=new THREE.Vector3,o=[],a=this.points;return t=(a.length-0)*e,i=Math.floor(t),r=t-i,i+=i>0?0:(Math.floor(Math.abs(i)/a.length)+1)*a.length,o[0]=(i-1)%a.length,o[1]=i%a.length,o[2]=(i+1)%a.length,o[3]=(i+2)%a.length,n.x=THREE.Curve.Utils.interpolate(a[o[0]].x,a[o[1]].x,a[o[2]].x,a[o[3]].x,r),n.y=THREE.Curve.Utils.interpolate(a[o[0]].y,a[o[1]].y,a[o[2]].y,a[o[3]].y,r),n.z=THREE.Curve.Utils.interpolate(a[o[0]].z,a[o[1]].z,a[o[2]].z,a[o[3]].z,r),n});
+/**************************************************************
+ *	Closed Spline 3D curve
+ **************************************************************/
+
+
+THREE.ClosedSplineCurve3 = THREE.Curve.create(
+
+	function ( points /* array of Vector3 */) {
+
+		this.points = (points == undefined) ? [] : points;
+
+	},
+
+    function ( t ) {
+
+        var v = new THREE.Vector3();
+        var c = [];
+        var points = this.points, point, intPoint, weight;
+        point = ( points.length - 0 ) * t;
+            // This needs to be from 0-length +1
+
+        intPoint = Math.floor( point );
+        weight = point - intPoint;
+
+        intPoint += intPoint > 0 ? 0 : ( Math.floor( Math.abs( intPoint ) / points.length ) + 1 ) * points.length;
+        c[ 0 ] = ( intPoint - 1 ) % points.length;
+        c[ 1 ] = ( intPoint ) % points.length;
+        c[ 2 ] = ( intPoint + 1 ) % points.length;
+        c[ 3 ] = ( intPoint + 2 ) % points.length;
+
+        v.x = THREE.Curve.Utils.interpolate( points[ c[ 0 ] ].x, points[ c[ 1 ] ].x, points[ c[ 2 ] ].x, points[ c[ 3 ] ].x, weight );
+        v.y = THREE.Curve.Utils.interpolate( points[ c[ 0 ] ].y, points[ c[ 1 ] ].y, points[ c[ 2 ] ].y, points[ c[ 3 ] ].y, weight );
+        v.z = THREE.Curve.Utils.interpolate( points[ c[ 0 ] ].z, points[ c[ 1 ] ].z, points[ c[ 2 ] ].z, points[ c[ 3 ] ].z, weight );
+
+        return v;
+
+    }
+
+);

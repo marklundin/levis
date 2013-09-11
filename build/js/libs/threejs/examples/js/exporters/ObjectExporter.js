@@ -1,1 +1,260 @@
-THREE.ObjectExporter=function(){},THREE.ObjectExporter.prototype={constructor:THREE.ObjectExporter,parse:function(e){var t={metadata:{version:4.3,type:"object",generator:"ObjectExporter"}},i={},r=new THREE.GeometryExporter,n=function(e){if(void 0===t.geometries&&(t.geometries=[]),void 0===i[e.uuid]){var n={};n.uuid=e.uuid,""!==e.name&&(n.name=e.name),e instanceof THREE.PlaneGeometry?(n.type="PlaneGeometry",n.width=e.width,n.height=e.height,n.widthSegments=e.widthSegments,n.heightSegments=e.heightSegments):e instanceof THREE.CubeGeometry?(n.type="CubeGeometry",n.width=e.width,n.height=e.height,n.depth=e.depth,n.widthSegments=e.widthSegments,n.heightSegments=e.heightSegments,n.depthSegments=e.depthSegments):e instanceof THREE.CylinderGeometry?(n.type="CylinderGeometry",n.radiusTop=e.radiusTop,n.radiusBottom=e.radiusBottom,n.height=e.height,n.radiusSegments=e.radiusSegments,n.heightSegments=e.heightSegments,n.openEnded=n.openEnded):e instanceof THREE.SphereGeometry?(n.type="SphereGeometry",n.radius=e.radius,n.widthSegments=e.widthSegments,n.heightSegments=e.heightSegments,n.phiStart=e.phiStart,n.phiLength=e.phiLength,n.thetaStart=e.thetaStart,n.thetaLength=e.thetaLength):e instanceof THREE.IcosahedronGeometry?(n.type="IcosahedronGeometry",n.radius=e.radius,n.detail=e.detail):e instanceof THREE.TorusGeometry?(n.type="TorusGeometry",n.radius=e.radius,n.tube=e.tube,n.radialSegments=e.radialSegments,n.tubularSegments=e.tubularSegments,n.arc=e.arc):e instanceof THREE.TorusKnotGeometry?(n.type="TorusKnotGeometry",n.radius=e.radius,n.tube=e.tube,n.radialSegments=e.radialSegments,n.tubularSegments=e.tubularSegments,n.p=e.p,n.q=e.q,n.heightScale=e.heightScale):e instanceof THREE.Geometry&&(n.type="Geometry",n.data=r.parse(e),delete n.data.metadata),i[e.uuid]=n,t.geometries.push(n)}return e.uuid},o={},a=new THREE.MaterialExporter,s=function(e){if(void 0===t.materials&&(t.materials=[]),void 0===o[e.uuid]){var i=a.parse(e);delete i.metadata,o[e.uuid]=i,t.materials.push(i)}return e.uuid},l=function(e){var t={};if(t.uuid=e.uuid,""!==e.name&&(t.name=e.name),"{}"!==JSON.stringify(e.userData)&&(t.userData=e.userData),e.visible!==!0&&(t.visible=e.visible),e instanceof THREE.Scene?t.type="Scene":e instanceof THREE.PerspectiveCamera?(t.type="PerspectiveCamera",t.fov=e.fov,t.aspect=e.aspect,t.near=e.near,t.far=e.far):e instanceof THREE.OrthographicCamera?(t.type="OrthographicCamera",t.left=e.left,t.right=e.right,t.top=e.top,t.bottom=e.bottom,t.near=e.near,t.far=e.far):e instanceof THREE.AmbientLight?(t.type="AmbientLight",t.color=e.color.getHex()):e instanceof THREE.DirectionalLight?(t.type="DirectionalLight",t.color=e.color.getHex(),t.intensity=e.intensity):e instanceof THREE.PointLight?(t.type="PointLight",t.color=e.color.getHex(),t.intensity=e.intensity,t.distance=e.distance):e instanceof THREE.SpotLight?(t.type="SpotLight",t.color=e.color.getHex(),t.intensity=e.intensity,t.distance=e.distance,t.angle=e.angle,t.exponent=e.exponent):e instanceof THREE.HemisphereLight?(t.type="HemisphereLight",t.color=e.color.getHex(),t.groundColor=e.groundColor.getHex()):e instanceof THREE.Mesh?(t.type="Mesh",t.geometry=n(e.geometry),t.material=s(e.material)):t.type="Object3D",t.matrix=e.matrix.toArray(),e.children.length>0){t.children=[];for(var i=0;i<e.children.length;i++)t.children.push(l(e.children[i]))}return t};return t.object=l(e),t}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.ObjectExporter = function () {};
+
+THREE.ObjectExporter.prototype = {
+
+	constructor: THREE.ObjectExporter,
+
+	parse: function ( object ) {
+
+		// console.log( object );
+
+		var output = {
+			metadata: {
+				version: 4.3,
+				type: 'object',
+				generator: 'ObjectExporter'
+			}
+		};
+
+		//
+
+		var geometries = {};
+		var geometryExporter = new THREE.GeometryExporter();
+
+		var parseGeometry = function ( geometry ) {
+
+			if ( output.geometries === undefined ) {
+
+				output.geometries = [];
+
+			}
+
+			if ( geometries[ geometry.uuid ] === undefined ) {
+
+				var data = {};
+
+				data.uuid = geometry.uuid;
+
+				if ( geometry.name !== "" ) data.name = geometry.name;
+
+				if ( geometry instanceof THREE.PlaneGeometry ) {
+
+					data.type = 'PlaneGeometry';
+					data.width = geometry.width;
+					data.height = geometry.height;
+					data.widthSegments = geometry.widthSegments;
+					data.heightSegments = geometry.heightSegments;
+
+				} else if ( geometry instanceof THREE.CubeGeometry ) {
+
+					data.type = 'CubeGeometry';
+					data.width = geometry.width;
+					data.height = geometry.height;
+					data.depth = geometry.depth;
+					data.widthSegments = geometry.widthSegments;
+					data.heightSegments = geometry.heightSegments;
+					data.depthSegments = geometry.depthSegments;
+
+				} else if ( geometry instanceof THREE.CylinderGeometry ) {
+
+					data.type = 'CylinderGeometry';
+					data.radiusTop = geometry.radiusTop;
+					data.radiusBottom = geometry.radiusBottom;
+					data.height = geometry.height;
+					data.radiusSegments = geometry.radiusSegments;
+					data.heightSegments = geometry.heightSegments;
+					data.openEnded = data.openEnded;
+
+				} else if ( geometry instanceof THREE.SphereGeometry ) {
+
+					data.type = 'SphereGeometry';
+					data.radius = geometry.radius;
+					data.widthSegments = geometry.widthSegments;
+					data.heightSegments = geometry.heightSegments;
+					data.phiStart = geometry.phiStart;
+					data.phiLength = geometry.phiLength;
+					data.thetaStart = geometry.thetaStart;
+					data.thetaLength = geometry.thetaLength;
+
+				} else if ( geometry instanceof THREE.IcosahedronGeometry ) {
+
+					data.type = 'IcosahedronGeometry';
+					data.radius = geometry.radius;
+					data.detail = geometry.detail;
+
+				} else if ( geometry instanceof THREE.TorusGeometry ) {
+
+					data.type = 'TorusGeometry';
+					data.radius = geometry.radius;
+					data.tube = geometry.tube;
+					data.radialSegments = geometry.radialSegments;
+					data.tubularSegments = geometry.tubularSegments;
+					data.arc = geometry.arc;
+
+				} else if ( geometry instanceof THREE.TorusKnotGeometry ) {
+
+					data.type = 'TorusKnotGeometry';
+					data.radius = geometry.radius;
+					data.tube = geometry.tube;
+					data.radialSegments = geometry.radialSegments;
+					data.tubularSegments = geometry.tubularSegments;
+					data.p = geometry.p;
+					data.q = geometry.q;
+					data.heightScale = geometry.heightScale;
+
+				} else if ( geometry instanceof THREE.Geometry ) {
+
+					data.type = 'Geometry';
+					data.data = geometryExporter.parse( geometry );
+
+					delete data.data.metadata;
+
+				}
+
+				geometries[ geometry.uuid ] = data;
+
+				output.geometries.push( data );
+
+			}
+
+			return geometry.uuid;
+
+		};
+
+		//
+
+		var materials = {};
+		var materialExporter = new THREE.MaterialExporter();
+
+		var parseMaterial = function ( material ) {
+
+			if ( output.materials === undefined ) {
+
+				output.materials = [];
+
+			}
+
+			if ( materials[ material.uuid ] === undefined ) {
+
+				var data = materialExporter.parse( material );
+
+				delete data.metadata;
+
+				materials[ material.uuid ] = data;
+
+				output.materials.push( data );
+
+			}
+
+			return material.uuid;
+
+		};
+
+		//
+
+		var parseObject = function ( object ) {
+
+			var data = {};
+
+			data.uuid = object.uuid;
+
+			if ( object.name !== '' ) data.name = object.name;
+			if ( JSON.stringify( object.userData ) !== '{}' ) data.userData = object.userData;
+			if ( object.visible !== true ) data.visible = object.visible;
+
+			if ( object instanceof THREE.Scene ) {
+
+				data.type = 'Scene';
+
+			} else if ( object instanceof THREE.PerspectiveCamera ) {
+
+				data.type = 'PerspectiveCamera';
+				data.fov = object.fov;
+				data.aspect = object.aspect;
+				data.near = object.near;
+				data.far = object.far;
+
+			} else if ( object instanceof THREE.OrthographicCamera ) {
+
+				data.type = 'OrthographicCamera';
+				data.left = object.left;
+				data.right = object.right;
+				data.top = object.top;
+				data.bottom = object.bottom;
+				data.near = object.near;
+				data.far = object.far;
+
+			} else if ( object instanceof THREE.AmbientLight ) {
+
+				data.type = 'AmbientLight';
+				data.color = object.color.getHex();
+
+			} else if ( object instanceof THREE.DirectionalLight ) {
+
+				data.type = 'DirectionalLight';
+				data.color = object.color.getHex();
+				data.intensity = object.intensity;
+
+			} else if ( object instanceof THREE.PointLight ) {
+
+				data.type = 'PointLight';
+				data.color = object.color.getHex();
+				data.intensity = object.intensity;
+				data.distance = object.distance;
+
+			} else if ( object instanceof THREE.SpotLight ) {
+
+				data.type = 'SpotLight';
+				data.color = object.color.getHex();
+				data.intensity = object.intensity;
+				data.distance = object.distance;
+				data.angle = object.angle;
+				data.exponent = object.exponent;
+
+			} else if ( object instanceof THREE.HemisphereLight ) {
+
+				data.type = 'HemisphereLight';
+				data.color = object.color.getHex();
+				data.groundColor = object.groundColor.getHex();
+
+			} else if ( object instanceof THREE.Mesh ) {
+
+				data.type = 'Mesh';
+				data.geometry = parseGeometry( object.geometry );
+				data.material = parseMaterial( object.material );
+
+			} else {
+
+				data.type = 'Object3D';
+
+			}
+
+			data.matrix = object.matrix.toArray();
+
+			if ( object.children.length > 0 ) {
+
+				data.children = [];
+
+				for ( var i = 0; i < object.children.length; i ++ ) {
+
+					data.children.push( parseObject( object.children[ i ] ) );
+
+				}
+
+			}
+
+			return data;
+
+		}
+
+		output.object = parseObject( object );
+
+		return output;
+
+	}
+
+}

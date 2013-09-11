@@ -1,1 +1,62 @@
-THREE.ParticleBasicMaterial=function(e){THREE.Material.call(this),this.color=new THREE.Color(16777215),this.map=null,this.size=1,this.sizeAttenuation=!0,this.vertexColors=!1,this.fog=!0,this.setValues(e)},THREE.ParticleBasicMaterial.prototype=Object.create(THREE.Material.prototype),THREE.ParticleBasicMaterial.prototype.clone=function(){var e=new THREE.ParticleBasicMaterial;return THREE.Material.prototype.clone.call(this,e),e.color.copy(this.color),e.map=this.map,e.size=this.size,e.sizeAttenuation=this.sizeAttenuation,e.vertexColors=this.vertexColors,e.fog=this.fog,e};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  opacity: <float>,
+ *  map: new THREE.Texture( <Image> ),
+ *
+ *  size: <float>,
+ *
+ *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ *  depthWrite: <bool>,
+ *
+ *  vertexColors: <bool>,
+ *
+ *  fog: <bool>
+ * }
+ */
+
+THREE.ParticleBasicMaterial = function ( parameters ) {
+
+	THREE.Material.call( this );
+
+	this.color = new THREE.Color( 0xffffff );
+
+	this.map = null;
+
+	this.size = 1;
+	this.sizeAttenuation = true;
+
+	this.vertexColors = false;
+
+	this.fog = true;
+
+	this.setValues( parameters );
+
+};
+
+THREE.ParticleBasicMaterial.prototype = Object.create( THREE.Material.prototype );
+
+THREE.ParticleBasicMaterial.prototype.clone = function () {
+
+	var material = new THREE.ParticleBasicMaterial();
+
+	THREE.Material.prototype.clone.call( this, material );
+
+	material.color.copy( this.color );
+
+	material.map = this.map;
+
+	material.size = this.size;
+	material.sizeAttenuation = this.sizeAttenuation;
+
+	material.vertexColors = this.vertexColors;
+
+	material.fog = this.fog;
+
+	return material;
+
+};

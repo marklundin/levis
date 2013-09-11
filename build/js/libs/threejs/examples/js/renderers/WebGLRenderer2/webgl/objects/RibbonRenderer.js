@@ -1,1 +1,209 @@
-THREE.WebGLRenderer.RibbonRenderer=function(e,t){THREE.WebGLRenderer.Object3DRenderer.call(this,e,t)},THREE.WebGLRenderer.RibbonRenderer.prototype=Object.create(THREE.WebGLRenderer.Object3DRenderer.prototype),THREE.extend(THREE.WebGLRenderer.RibbonRenderer.prototype,{createBuffers:function(e){var t=this.renderer;e.__webglVertexBuffer=t.createBuffer(),e.__webglColorBuffer=t.createBuffer(),e.__webglNormalBuffer=t.createBuffer(),this.info.memory.geometries++},initBuffers:function(e,t){var i=e.vertices.length;e.__vertexArray=new Float32Array(3*i),e.__colorArray=new Float32Array(3*i),e.__normalArray=new Float32Array(3*i),e.__webglVertexCount=i,this.initCustomAttributes(e,t)},setBuffers:function(e){var t,i,r,n,o,a,s,l,c,h,u,d,p,f=this.renderer,m=e.vertices,g=e.colors,v=e.normals,E=m.length,y=g.length,T=v.length,_=e.__vertexArray,b=e.__colorArray,x=e.__normalArray,R=e.verticesNeedUpdate,w=e.colorsNeedUpdate,H=e.normalsNeedUpdate,S=e.__webglCustomAttributesList;if(R){for(t=0;E>t;t++)n=m[t],o=3*t,_[o]=n.x,_[o+1]=n.y,_[o+2]=n.z;f.setDynamicArrayBuffer(e.__webglVertexBuffer,_)}if(w){for(i=0;y>i;i++)a=g[i],o=3*i,b[o]=a.r,b[o+1]=a.g,b[o+2]=a.b;f.setDynamicArrayBuffer(e.__webglColorBuffer,b)}if(H){for(r=0;T>r;r++)s=v[r],o=3*r,x[o]=s.x,x[o+1]=s.y,x[o+2]=s.z;f.setDynamicArrayBuffer(e.__webglNormalBuffer,x)}if(S)for(l=0,c=S.length;c>l;l++)if(d=S[l],d.needsUpdate&&(void 0===d.boundTo||"vertices"===d.boundTo)){if(o=0,u=d.value.length,1===d.size)for(h=0;u>h;h++)d.array[h]=d.value[h];else if(2===d.size)for(h=0;u>h;h++)p=d.value[h],d.array[o]=p.x,d.array[o+1]=p.y,o+=2;else if(3===d.size)if("c"===d.type)for(h=0;u>h;h++)p=d.value[h],d.array[o]=p.r,d.array[o+1]=p.g,d.array[o+2]=p.b,o+=3;else for(h=0;u>h;h++)p=d.value[h],d.array[o]=p.x,d.array[o+1]=p.y,d.array[o+2]=p.z,o+=3;else if(4===d.size)for(h=0;u>h;h++)p=d.value[h],d.array[o]=p.x,d.array[o+1]=p.y,d.array[o+2]=p.z,d.array[o+3]=p.w,o+=4;f.setDynamicArrayBuffer(d.buffer,d.array)}}});
+
+THREE.WebGLRenderer.RibbonRenderer = function ( lowlevelrenderer, info ) {
+
+	THREE.WebGLRenderer.Object3DRenderer.call( this, lowlevelrenderer, info );
+
+};
+
+THREE.WebGLRenderer.RibbonRenderer.prototype = Object.create( THREE.WebGLRenderer.Object3DRenderer.prototype );
+
+THREE.extend( THREE.WebGLRenderer.RibbonRenderer.prototype, {
+
+	createBuffers: function ( geometry ) {
+
+		var renderer = this.renderer;
+		geometry.__webglVertexBuffer = renderer.createBuffer();
+		geometry.__webglColorBuffer = renderer.createBuffer();
+		geometry.__webglNormalBuffer = renderer.createBuffer();
+
+		this.info.memory.geometries ++;
+	},
+
+	initBuffers: function ( geometry, object ) {
+
+		var nvertices = geometry.vertices.length;
+
+		geometry.__vertexArray = new Float32Array( nvertices * 3 );
+		geometry.__colorArray = new Float32Array( nvertices * 3 );
+		geometry.__normalArray = new Float32Array( nvertices * 3 );
+
+		geometry.__webglVertexCount = nvertices;
+
+		this.initCustomAttributes ( geometry, object );
+
+	},
+
+	setBuffers: function ( geometry, object , projectionScreenMatrix ) {
+
+		var renderer = this.renderer;
+		var v, c, n, vertex, offset, color, normal,
+
+		i, il, ca, cal, customAttribute, value,
+
+		vertices = geometry.vertices,
+		colors = geometry.colors,
+		normals = geometry.normals,
+
+		vl = vertices.length,
+		cl = colors.length,
+		nl = normals.length,
+
+		vertexArray = geometry.__vertexArray,
+		colorArray = geometry.__colorArray,
+		normalArray = geometry.__normalArray,
+
+		dirtyVertices = geometry.verticesNeedUpdate,
+		dirtyColors = geometry.colorsNeedUpdate,
+		dirtyNormals = geometry.normalsNeedUpdate,
+
+		customAttributes = geometry.__webglCustomAttributesList;
+
+		if ( dirtyVertices ) {
+
+			for ( v = 0; v < vl; v ++ ) {
+
+				vertex = vertices[ v ];
+
+				offset = v * 3;
+
+				vertexArray[ offset ]     = vertex.x;
+				vertexArray[ offset + 1 ] = vertex.y;
+				vertexArray[ offset + 2 ] = vertex.z;
+
+			}
+
+			renderer.setDynamicArrayBuffer( geometry.__webglVertexBuffer,vertexArray);
+
+		}
+
+		if ( dirtyColors ) {
+
+			for ( c = 0; c < cl; c ++ ) {
+
+				color = colors[ c ];
+
+				offset = c * 3;
+
+				colorArray[ offset ]     = color.r;
+				colorArray[ offset + 1 ] = color.g;
+				colorArray[ offset + 2 ] = color.b;
+
+			}
+
+			renderer.setDynamicArrayBuffer( geometry.__webglColorBuffer, colorArray);
+
+		}
+
+		if ( dirtyNormals ) {
+
+			for ( n = 0; n < nl; n ++ ) {
+
+				normal = normals[ n ];
+
+				offset = n * 3;
+
+				normalArray[ offset ]     = normal.x;
+				normalArray[ offset + 1 ] = normal.y;
+				normalArray[ offset + 2 ] = normal.z;
+
+			}
+
+			renderer.setDynamicArrayBuffer( geometry.__webglNormalBuffer, normalArray);
+
+		}
+
+		if ( customAttributes ) {
+
+			for ( i = 0, il = customAttributes.length; i < il; i ++ ) {
+
+				customAttribute = customAttributes[ i ];
+
+				if ( customAttribute.needsUpdate &&
+					 ( customAttribute.boundTo === undefined ||
+					   customAttribute.boundTo === "vertices" ) ) {
+
+					offset = 0;
+
+					cal = customAttribute.value.length;
+
+					if ( customAttribute.size === 1 ) {
+
+						for ( ca = 0; ca < cal; ca ++ ) {
+
+							customAttribute.array[ ca ] = customAttribute.value[ ca ];
+
+						}
+
+					} else if ( customAttribute.size === 2 ) {
+
+						for ( ca = 0; ca < cal; ca ++ ) {
+
+							value = customAttribute.value[ ca ];
+
+							customAttribute.array[ offset ] 	= value.x;
+							customAttribute.array[ offset + 1 ] = value.y;
+
+							offset += 2;
+
+						}
+
+					} else if ( customAttribute.size === 3 ) {
+
+						if ( customAttribute.type === "c" ) {
+
+							for ( ca = 0; ca < cal; ca ++ ) {
+
+								value = customAttribute.value[ ca ];
+
+								customAttribute.array[ offset ] 	= value.r;
+								customAttribute.array[ offset + 1 ] = value.g;
+								customAttribute.array[ offset + 2 ] = value.b;
+
+								offset += 3;
+
+							}
+
+						} else {
+
+							for ( ca = 0; ca < cal; ca ++ ) {
+
+								value = customAttribute.value[ ca ];
+
+								customAttribute.array[ offset ] 	= value.x;
+								customAttribute.array[ offset + 1 ] = value.y;
+								customAttribute.array[ offset + 2 ] = value.z;
+
+								offset += 3;
+
+							}
+
+						}
+
+					} else if ( customAttribute.size === 4 ) {
+
+						for ( ca = 0; ca < cal; ca ++ ) {
+
+							value = customAttribute.value[ ca ];
+
+							customAttribute.array[ offset ] 	 = value.x;
+							customAttribute.array[ offset + 1  ] = value.y;
+							customAttribute.array[ offset + 2  ] = value.z;
+							customAttribute.array[ offset + 3  ] = value.w;
+
+							offset += 4;
+
+						}
+
+					}
+
+					renderer.setDynamicArrayBuffer( customAttribute.buffer, customAttribute.array);
+
+				}
+
+			}
+
+		}
+
+	}
+
+} );

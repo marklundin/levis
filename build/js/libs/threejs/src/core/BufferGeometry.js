@@ -1,1 +1,550 @@
-THREE.BufferGeometry=function(){this.id=THREE.GeometryIdCount++,this.uuid=THREE.Math.generateUUID(),this.attributes={},this.dynamic=!1,this.offsets=[],this.boundingBox=null,this.boundingSphere=null,this.hasTangents=!1,this.morphTargets=[]},THREE.BufferGeometry.prototype={constructor:THREE.BufferGeometry,applyMatrix:function(e){var t,i;if(this.attributes.position&&(t=this.attributes.position.array),this.attributes.normal&&(i=this.attributes.normal.array),void 0!==t&&(e.multiplyVector3Array(t),this.verticesNeedUpdate=!0),void 0!==i){var r=(new THREE.Matrix3).getNormalMatrix(e);r.multiplyVector3Array(i),this.normalizeNormals(),this.normalsNeedUpdate=!0}},computeBoundingBox:function(){null===this.boundingBox&&(this.boundingBox=new THREE.Box3);var e=this.attributes.position.array;if(e){var t,i,r,n=this.boundingBox;e.length>=3&&(n.min.x=n.max.x=e[0],n.min.y=n.max.y=e[1],n.min.z=n.max.z=e[2]);for(var o=3,a=e.length;a>o;o+=3)t=e[o],i=e[o+1],r=e[o+2],t<n.min.x?n.min.x=t:t>n.max.x&&(n.max.x=t),i<n.min.y?n.min.y=i:i>n.max.y&&(n.max.y=i),r<n.min.z?n.min.z=r:r>n.max.z&&(n.max.z=r)}(void 0===e||0===e.length)&&(this.boundingBox.min.set(0,0,0),this.boundingBox.max.set(0,0,0))},computeBoundingSphere:function(){null===this.boundingSphere&&(this.boundingSphere=new THREE.Sphere);var e=this.attributes.position.array;if(e){for(var t,i,r,n,o=0,a=0,s=e.length;s>a;a+=3)i=e[a],r=e[a+1],n=e[a+2],t=i*i+r*r+n*n,t>o&&(o=t);this.boundingSphere.radius=Math.sqrt(o)}},computeVertexNormals:function(){if(this.attributes.position){var e,t,i,r,n=this.attributes.position.array.length;if(void 0===this.attributes.normal)this.attributes.normal={itemSize:3,array:new Float32Array(n)};else for(e=0,t=this.attributes.normal.array.length;t>e;e++)this.attributes.normal.array[e]=0;var o,a,s,l,c,h,u=this.attributes.position.array,d=this.attributes.normal.array,p=new THREE.Vector3,f=new THREE.Vector3,m=new THREE.Vector3,g=new THREE.Vector3,v=new THREE.Vector3;if(this.attributes.index){var E=this.attributes.index.array,y=this.offsets;for(i=0,r=y.length;r>i;++i){var T=y[i].start,_=y[i].count,b=y[i].index;for(e=T,t=T+_;t>e;e+=3)o=b+E[e],a=b+E[e+1],s=b+E[e+2],l=u[3*o],c=u[3*o+1],h=u[3*o+2],p.set(l,c,h),l=u[3*a],c=u[3*a+1],h=u[3*a+2],f.set(l,c,h),l=u[3*s],c=u[3*s+1],h=u[3*s+2],m.set(l,c,h),g.subVectors(m,f),v.subVectors(p,f),g.cross(v),d[3*o]+=g.x,d[3*o+1]+=g.y,d[3*o+2]+=g.z,d[3*a]+=g.x,d[3*a+1]+=g.y,d[3*a+2]+=g.z,d[3*s]+=g.x,d[3*s+1]+=g.y,d[3*s+2]+=g.z}}else for(e=0,t=u.length;t>e;e+=9)l=u[e],c=u[e+1],h=u[e+2],p.set(l,c,h),l=u[e+3],c=u[e+4],h=u[e+5],f.set(l,c,h),l=u[e+6],c=u[e+7],h=u[e+8],m.set(l,c,h),g.subVectors(m,f),v.subVectors(p,f),g.cross(v),d[e]=g.x,d[e+1]=g.y,d[e+2]=g.z,d[e+3]=g.x,d[e+4]=g.y,d[e+5]=g.z,d[e+6]=g.x,d[e+7]=g.y,d[e+8]=g.z;this.normalizeNormals(),this.normalsNeedUpdate=!0}},normalizeNormals:function(){for(var e,t,i,r,n=this.attributes.normal.array,o=0,a=n.length;a>o;o+=3)e=n[o],t=n[o+1],i=n[o+2],r=1/Math.sqrt(e*e+t*t+i*i),n[o]*=r,n[o+1]*=r,n[o+2]*=r},computeTangents:function(){function e(e,t,i){d=r[3*e],p=r[3*e+1],f=r[3*e+2],m=r[3*t],g=r[3*t+1],v=r[3*t+2],E=r[3*i],y=r[3*i+1],T=r[3*i+2],_=o[2*e],b=o[2*e+1],x=o[2*t],R=o[2*t+1],w=o[2*i],H=o[2*i+1],S=m-d,M=E-d,C=g-p,A=y-p,D=v-f,P=T-f,L=x-_,N=w-_,I=R-b,k=H-b,F=1/(L*k-N*I),G.set((k*S-I*M)*F,(k*C-I*A)*F,(k*D-I*P)*F),X.set((L*M-N*S)*F,(L*A-N*C)*F,(L*P-N*D)*F),c[e].add(G),c[t].add(G),c[i].add(G),h[e].add(X),h[t].add(X),h[i].add(X)}function t(e){it.x=n[3*e],it.y=n[3*e+1],it.z=n[3*e+2],rt.copy(it),$=c[e],et.copy($),et.sub(it.multiplyScalar(it.dot($))).normalize(),tt.crossVectors(rt,$),J=tt.dot(h[e]),Q=0>J?-1:1,l[4*e]=et.x,l[4*e+1]=et.y,l[4*e+2]=et.z,l[4*e+3]=Q}if(void 0===this.attributes.index||void 0===this.attributes.position||void 0===this.attributes.normal||void 0===this.attributes.uv)return console.warn("Missing required attributes (index, position, normal or uv) in BufferGeometry.computeTangents()"),void 0;var i=this.attributes.index.array,r=this.attributes.position.array,n=this.attributes.normal.array,o=this.attributes.uv.array,a=r.length/3;if(void 0===this.attributes.tangent){var s=4*a;this.attributes.tangent={itemSize:4,array:new Float32Array(s)}}for(var l=this.attributes.tangent.array,c=[],h=[],u=0;a>u;u++)c[u]=new THREE.Vector3,h[u]=new THREE.Vector3;var d,p,f,m,g,v,E,y,T,_,b,x,R,w,H,S,M,C,A,D,P,L,N,I,k,F,O,U,z,B,V,j,W,G=new THREE.Vector3,X=new THREE.Vector3,Y=this.offsets;for(z=0,B=Y.length;B>z;++z){var q=Y[z].start,K=Y[z].count,Z=Y[z].index;for(O=q,U=q+K;U>O;O+=3)V=Z+i[O],j=Z+i[O+1],W=Z+i[O+2],e(V,j,W)}var Q,$,J,et=new THREE.Vector3,tt=new THREE.Vector3,it=new THREE.Vector3,rt=new THREE.Vector3;for(z=0,B=Y.length;B>z;++z){var q=Y[z].start,K=Y[z].count,Z=Y[z].index;for(O=q,U=q+K;U>O;O+=3)V=Z+i[O],j=Z+i[O+1],W=Z+i[O+2],t(V),t(j),t(W)}this.hasTangents=!0,this.tangentsNeedUpdate=!0},dispose:function(){this.dispatchEvent({type:"dispose"})}},THREE.EventDispatcher.prototype.apply(THREE.BufferGeometry.prototype);
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.BufferGeometry = function () {
+
+	this.id = THREE.GeometryIdCount ++;
+	this.uuid = THREE.Math.generateUUID();
+
+	// attributes
+
+	this.attributes = {};
+
+	// attributes typed arrays are kept only if dynamic flag is set
+
+	this.dynamic = false;
+
+	// offsets for chunks when using indexed elements
+
+	this.offsets = [];
+
+	// boundings
+
+	this.boundingBox = null;
+	this.boundingSphere = null;
+
+	this.hasTangents = false;
+
+	// for compatibility
+
+	this.morphTargets = [];
+
+};
+
+THREE.BufferGeometry.prototype = {
+
+	constructor: THREE.BufferGeometry,
+
+	applyMatrix: function ( matrix ) {
+
+		var positionArray;
+		var normalArray;
+
+		if ( this.attributes[ "position" ] ) positionArray = this.attributes[ "position" ].array;
+		if ( this.attributes[ "normal" ] ) normalArray = this.attributes[ "normal" ].array;
+
+		if ( positionArray !== undefined ) {
+
+			matrix.multiplyVector3Array( positionArray );
+			this.verticesNeedUpdate = true;
+
+		}
+
+		if ( normalArray !== undefined ) {
+
+			var normalMatrix = new THREE.Matrix3().getNormalMatrix( matrix );
+
+			normalMatrix.multiplyVector3Array( normalArray );
+
+			this.normalizeNormals();
+
+			this.normalsNeedUpdate = true;
+
+		}
+
+	},
+
+	computeBoundingBox: function () {
+
+		if ( this.boundingBox === null ) {
+
+			this.boundingBox = new THREE.Box3();
+
+		}
+
+		var positions = this.attributes[ "position" ].array;
+
+		if ( positions ) {
+
+			var bb = this.boundingBox;
+			var x, y, z;
+
+			if( positions.length >= 3 ) {
+				bb.min.x = bb.max.x = positions[ 0 ];
+				bb.min.y = bb.max.y = positions[ 1 ];
+				bb.min.z = bb.max.z = positions[ 2 ];
+			}
+
+			for ( var i = 3, il = positions.length; i < il; i += 3 ) {
+
+				x = positions[ i ];
+				y = positions[ i + 1 ];
+				z = positions[ i + 2 ];
+
+				// bounding box
+
+				if ( x < bb.min.x ) {
+
+					bb.min.x = x;
+
+				} else if ( x > bb.max.x ) {
+
+					bb.max.x = x;
+
+				}
+
+				if ( y < bb.min.y ) {
+
+					bb.min.y = y;
+
+				} else if ( y > bb.max.y ) {
+
+					bb.max.y = y;
+
+				}
+
+				if ( z < bb.min.z ) {
+
+					bb.min.z = z;
+
+				} else if ( z > bb.max.z ) {
+
+					bb.max.z = z;
+
+				}
+
+			}
+
+		}
+
+		if ( positions === undefined || positions.length === 0 ) {
+
+			this.boundingBox.min.set( 0, 0, 0 );
+			this.boundingBox.max.set( 0, 0, 0 );
+
+		}
+
+	},
+
+	computeBoundingSphere: function () {
+
+		if ( this.boundingSphere === null ) {
+
+			this.boundingSphere = new THREE.Sphere();
+
+		}
+
+		var positions = this.attributes[ "position" ].array;
+
+		if ( positions ) {
+
+			var radiusSq, maxRadiusSq = 0;
+			var x, y, z;
+
+			for ( var i = 0, il = positions.length; i < il; i += 3 ) {
+
+				x = positions[ i ];
+				y = positions[ i + 1 ];
+				z = positions[ i + 2 ];
+
+				radiusSq =  x * x + y * y + z * z;
+				if ( radiusSq > maxRadiusSq ) maxRadiusSq = radiusSq;
+
+			}
+
+			this.boundingSphere.radius = Math.sqrt( maxRadiusSq );
+
+		}
+
+	},
+
+	computeVertexNormals: function () {
+
+		if ( this.attributes[ "position" ] ) {
+
+			var i, il;
+			var j, jl;
+
+			var nVertexElements = this.attributes[ "position" ].array.length;
+
+			if ( this.attributes[ "normal" ] === undefined ) {
+
+				this.attributes[ "normal" ] = {
+
+					itemSize: 3,
+					array: new Float32Array( nVertexElements )
+
+				};
+
+			} else {
+
+				// reset existing normals to zero
+
+				for ( i = 0, il = this.attributes[ "normal" ].array.length; i < il; i ++ ) {
+
+					this.attributes[ "normal" ].array[ i ] = 0;
+
+				}
+
+			}
+
+			var positions = this.attributes[ "position" ].array;
+			var normals = this.attributes[ "normal" ].array;
+
+			var vA, vB, vC, x, y, z,
+
+			pA = new THREE.Vector3(),
+			pB = new THREE.Vector3(),
+			pC = new THREE.Vector3(),
+
+			cb = new THREE.Vector3(),
+			ab = new THREE.Vector3();
+
+			// indexed elements
+
+			if ( this.attributes[ "index" ] ) {
+
+				var indices = this.attributes[ "index" ].array;
+
+				var offsets = this.offsets;
+
+				for ( j = 0, jl = offsets.length; j < jl; ++ j ) {
+
+					var start = offsets[ j ].start;
+					var count = offsets[ j ].count;
+					var index = offsets[ j ].index;
+
+					for ( i = start, il = start + count; i < il; i += 3 ) {
+
+						vA = index + indices[ i ];
+						vB = index + indices[ i + 1 ];
+						vC = index + indices[ i + 2 ];
+
+						x = positions[ vA * 3 ];
+						y = positions[ vA * 3 + 1 ];
+						z = positions[ vA * 3 + 2 ];
+						pA.set( x, y, z );
+
+						x = positions[ vB * 3 ];
+						y = positions[ vB * 3 + 1 ];
+						z = positions[ vB * 3 + 2 ];
+						pB.set( x, y, z );
+
+						x = positions[ vC * 3 ];
+						y = positions[ vC * 3 + 1 ];
+						z = positions[ vC * 3 + 2 ];
+						pC.set( x, y, z );
+
+						cb.subVectors( pC, pB );
+						ab.subVectors( pA, pB );
+						cb.cross( ab );
+
+						normals[ vA * 3 ]     += cb.x;
+						normals[ vA * 3 + 1 ] += cb.y;
+						normals[ vA * 3 + 2 ] += cb.z;
+
+						normals[ vB * 3 ]     += cb.x;
+						normals[ vB * 3 + 1 ] += cb.y;
+						normals[ vB * 3 + 2 ] += cb.z;
+
+						normals[ vC * 3 ]     += cb.x;
+						normals[ vC * 3 + 1 ] += cb.y;
+						normals[ vC * 3 + 2 ] += cb.z;
+
+					}
+
+				}
+
+			// non-indexed elements (unconnected triangle soup)
+
+			} else {
+
+				for ( i = 0, il = positions.length; i < il; i += 9 ) {
+
+					x = positions[ i ];
+					y = positions[ i + 1 ];
+					z = positions[ i + 2 ];
+					pA.set( x, y, z );
+
+					x = positions[ i + 3 ];
+					y = positions[ i + 4 ];
+					z = positions[ i + 5 ];
+					pB.set( x, y, z );
+
+					x = positions[ i + 6 ];
+					y = positions[ i + 7 ];
+					z = positions[ i + 8 ];
+					pC.set( x, y, z );
+
+					cb.subVectors( pC, pB );
+					ab.subVectors( pA, pB );
+					cb.cross( ab );
+
+					normals[ i ] 	 = cb.x;
+					normals[ i + 1 ] = cb.y;
+					normals[ i + 2 ] = cb.z;
+
+					normals[ i + 3 ] = cb.x;
+					normals[ i + 4 ] = cb.y;
+					normals[ i + 5 ] = cb.z;
+
+					normals[ i + 6 ] = cb.x;
+					normals[ i + 7 ] = cb.y;
+					normals[ i + 8 ] = cb.z;
+
+				}
+
+			}
+
+			this.normalizeNormals();
+
+			this.normalsNeedUpdate = true;
+
+		}
+
+	},
+
+	normalizeNormals: function () {
+
+		var normals = this.attributes[ "normal" ].array;
+
+		var x, y, z, n;
+
+		for ( var i = 0, il = normals.length; i < il; i += 3 ) {
+
+			x = normals[ i ];
+			y = normals[ i + 1 ];
+			z = normals[ i + 2 ];
+
+			n = 1.0 / Math.sqrt( x * x + y * y + z * z );
+
+			normals[ i ] 	 *= n;
+			normals[ i + 1 ] *= n;
+			normals[ i + 2 ] *= n;
+
+		}
+
+	},
+
+	computeTangents: function () {
+
+		// based on http://www.terathon.com/code/tangent.html
+		// (per vertex tangents)
+
+		if ( this.attributes[ "index" ] === undefined ||
+			 this.attributes[ "position" ] === undefined ||
+			 this.attributes[ "normal" ] === undefined ||
+			 this.attributes[ "uv" ] === undefined ) {
+
+			console.warn( "Missing required attributes (index, position, normal or uv) in BufferGeometry.computeTangents()" );
+			return;
+
+		}
+
+		var indices = this.attributes[ "index" ].array;
+		var positions = this.attributes[ "position" ].array;
+		var normals = this.attributes[ "normal" ].array;
+		var uvs = this.attributes[ "uv" ].array;
+
+		var nVertices = positions.length / 3;
+
+		if ( this.attributes[ "tangent" ] === undefined ) {
+
+			var nTangentElements = 4 * nVertices;
+
+			this.attributes[ "tangent" ] = {
+
+				itemSize: 4,
+				array: new Float32Array( nTangentElements )
+
+			};
+
+		}
+
+		var tangents = this.attributes[ "tangent" ].array;
+
+		var tan1 = [], tan2 = [];
+
+		for ( var k = 0; k < nVertices; k ++ ) {
+
+			tan1[ k ] = new THREE.Vector3();
+			tan2[ k ] = new THREE.Vector3();
+
+		}
+
+		var xA, yA, zA,
+			xB, yB, zB,
+			xC, yC, zC,
+
+			uA, vA,
+			uB, vB,
+			uC, vC,
+
+			x1, x2, y1, y2, z1, z2,
+			s1, s2, t1, t2, r;
+
+		var sdir = new THREE.Vector3(), tdir = new THREE.Vector3();
+
+		function handleTriangle( a, b, c ) {
+
+			xA = positions[ a * 3 ];
+			yA = positions[ a * 3 + 1 ];
+			zA = positions[ a * 3 + 2 ];
+
+			xB = positions[ b * 3 ];
+			yB = positions[ b * 3 + 1 ];
+			zB = positions[ b * 3 + 2 ];
+
+			xC = positions[ c * 3 ];
+			yC = positions[ c * 3 + 1 ];
+			zC = positions[ c * 3 + 2 ];
+
+			uA = uvs[ a * 2 ];
+			vA = uvs[ a * 2 + 1 ];
+
+			uB = uvs[ b * 2 ];
+			vB = uvs[ b * 2 + 1 ];
+
+			uC = uvs[ c * 2 ];
+			vC = uvs[ c * 2 + 1 ];
+
+			x1 = xB - xA;
+			x2 = xC - xA;
+
+			y1 = yB - yA;
+			y2 = yC - yA;
+
+			z1 = zB - zA;
+			z2 = zC - zA;
+
+			s1 = uB - uA;
+			s2 = uC - uA;
+
+			t1 = vB - vA;
+			t2 = vC - vA;
+
+			r = 1.0 / ( s1 * t2 - s2 * t1 );
+
+			sdir.set(
+				( t2 * x1 - t1 * x2 ) * r,
+				( t2 * y1 - t1 * y2 ) * r,
+				( t2 * z1 - t1 * z2 ) * r
+			);
+
+			tdir.set(
+				( s1 * x2 - s2 * x1 ) * r,
+				( s1 * y2 - s2 * y1 ) * r,
+				( s1 * z2 - s2 * z1 ) * r
+			);
+
+			tan1[ a ].add( sdir );
+			tan1[ b ].add( sdir );
+			tan1[ c ].add( sdir );
+
+			tan2[ a ].add( tdir );
+			tan2[ b ].add( tdir );
+			tan2[ c ].add( tdir );
+
+		}
+
+		var i, il;
+		var j, jl;
+		var iA, iB, iC;
+
+		var offsets = this.offsets;
+
+		for ( j = 0, jl = offsets.length; j < jl; ++ j ) {
+
+			var start = offsets[ j ].start;
+			var count = offsets[ j ].count;
+			var index = offsets[ j ].index;
+
+			for ( i = start, il = start + count; i < il; i += 3 ) {
+
+				iA = index + indices[ i ];
+				iB = index + indices[ i + 1 ];
+				iC = index + indices[ i + 2 ];
+
+				handleTriangle( iA, iB, iC );
+
+			}
+
+		}
+
+		var tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3();
+		var n = new THREE.Vector3(), n2 = new THREE.Vector3();
+		var w, t, test;
+
+		function handleVertex( v ) {
+
+			n.x = normals[ v * 3 ];
+			n.y = normals[ v * 3 + 1 ];
+			n.z = normals[ v * 3 + 2 ];
+
+			n2.copy( n );
+
+			t = tan1[ v ];
+
+			// Gram-Schmidt orthogonalize
+
+			tmp.copy( t );
+			tmp.sub( n.multiplyScalar( n.dot( t ) ) ).normalize();
+
+			// Calculate handedness
+
+			tmp2.crossVectors( n2, t );
+			test = tmp2.dot( tan2[ v ] );
+			w = ( test < 0.0 ) ? -1.0 : 1.0;
+
+			tangents[ v * 4 ]     = tmp.x;
+			tangents[ v * 4 + 1 ] = tmp.y;
+			tangents[ v * 4 + 2 ] = tmp.z;
+			tangents[ v * 4 + 3 ] = w;
+
+		}
+
+		for ( j = 0, jl = offsets.length; j < jl; ++ j ) {
+
+			var start = offsets[ j ].start;
+			var count = offsets[ j ].count;
+			var index = offsets[ j ].index;
+
+			for ( i = start, il = start + count; i < il; i += 3 ) {
+
+				iA = index + indices[ i ];
+				iB = index + indices[ i + 1 ];
+				iC = index + indices[ i + 2 ];
+
+				handleVertex( iA );
+				handleVertex( iB );
+				handleVertex( iC );
+
+			}
+
+		}
+
+		this.hasTangents = true;
+		this.tangentsNeedUpdate = true;
+
+	},
+
+	dispose: function () {
+
+		this.dispatchEvent( { type: 'dispose' } );
+
+	}
+
+};
+
+THREE.EventDispatcher.prototype.apply( THREE.BufferGeometry.prototype );

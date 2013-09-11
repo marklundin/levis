@@ -1,1 +1,92 @@
-THREE.EventDispatcher=function(){},THREE.EventDispatcher.prototype={constructor:THREE.EventDispatcher,apply:function(e){e.addEventListener=THREE.EventDispatcher.prototype.addEventListener,e.hasEventListener=THREE.EventDispatcher.prototype.hasEventListener,e.removeEventListener=THREE.EventDispatcher.prototype.removeEventListener,e.dispatchEvent=THREE.EventDispatcher.prototype.dispatchEvent},addEventListener:function(e,t){void 0===this._listeners&&(this._listeners={});var i=this._listeners;void 0===i[e]&&(i[e]=[]),-1===i[e].indexOf(t)&&i[e].push(t)},hasEventListener:function(e,t){if(void 0===this._listeners)return!1;var i=this._listeners;return void 0!==i[e]&&-1!==i[e].indexOf(t)?!0:!1},removeEventListener:function(e,t){if(void 0!==this._listeners){var i=this._listeners,r=i[e].indexOf(t);-1!==r&&i[e].splice(r,1)}},dispatchEvent:function(e){if(void 0!==this._listeners){var t=this._listeners,i=t[e.type];if(void 0!==i){e.target=this;for(var r=0,n=i.length;n>r;r++)i[r].call(this,e)}}}};
+/**
+ * https://github.com/mrdoob/eventdispatcher.js/
+ */
+
+THREE.EventDispatcher = function () {}
+
+THREE.EventDispatcher.prototype = {
+
+	constructor: THREE.EventDispatcher,
+
+	apply: function ( object ) {
+
+		object.addEventListener = THREE.EventDispatcher.prototype.addEventListener;
+		object.hasEventListener = THREE.EventDispatcher.prototype.hasEventListener;
+		object.removeEventListener = THREE.EventDispatcher.prototype.removeEventListener;
+		object.dispatchEvent = THREE.EventDispatcher.prototype.dispatchEvent;
+
+	},
+
+	addEventListener: function ( type, listener ) {
+
+		if ( this._listeners === undefined ) this._listeners = {};
+
+		var listeners = this._listeners;
+
+		if ( listeners[ type ] === undefined ) {
+
+			listeners[ type ] = [];
+
+		}
+
+		if ( listeners[ type ].indexOf( listener ) === - 1 ) {
+
+			listeners[ type ].push( listener );
+
+		}
+
+	},
+
+	hasEventListener: function ( type, listener ) {
+
+		if ( this._listeners === undefined ) return false;
+
+		var listeners = this._listeners;
+
+		if ( listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1 ) {
+
+			return true;
+
+		}
+
+		return false;
+
+	},
+
+	removeEventListener: function ( type, listener ) {
+
+		if ( this._listeners === undefined ) return;
+
+		var listeners = this._listeners;
+		var index = listeners[ type ].indexOf( listener );
+
+		if ( index !== - 1 ) {
+
+			listeners[ type ].splice( index, 1 );
+
+		}
+
+	},
+
+	dispatchEvent: function ( event ) {
+
+		if ( this._listeners === undefined ) return;
+
+		var listeners = this._listeners;
+		var listenerArray = listeners[ event.type ];
+
+		if ( listenerArray !== undefined ) {
+
+			event.target = this;
+
+			for ( var i = 0, l = listenerArray.length; i < l; i ++ ) {
+
+				listenerArray[ i ].call( this, event );
+
+			}
+
+		}
+
+	}
+
+};

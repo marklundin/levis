@@ -1,1 +1,373 @@
-THREE.Box3=function(e,t){this.min=void 0!==e?e:new THREE.Vector3(1/0,1/0,1/0),this.max=void 0!==t?t:new THREE.Vector3(-1/0,-1/0,-1/0)},THREE.Box3.prototype={constructor:THREE.Box3,set:function(e,t){return this.min.copy(e),this.max.copy(t),this},setFromPoints:function(e){if(e.length>0){var t=e[0];this.min.copy(t),this.max.copy(t);for(var i=1,r=e.length;r>i;i++)t=e[i],t.x<this.min.x?this.min.x=t.x:t.x>this.max.x&&(this.max.x=t.x),t.y<this.min.y?this.min.y=t.y:t.y>this.max.y&&(this.max.y=t.y),t.z<this.min.z?this.min.z=t.z:t.z>this.max.z&&(this.max.z=t.z)}else this.makeEmpty();return this},setFromCenterAndSize:function(){var e=new THREE.Vector3;return function(t,i){var r=e.copy(i).multiplyScalar(.5);return this.min.copy(t).sub(r),this.max.copy(t).add(r),this}}(),setFromObject:function(){var e=new THREE.Vector3;return function(t){var i=this;return t.updateMatrixWorld(!0),this.makeEmpty(),t.traverse(function(t){if(void 0!==t.geometry&&void 0!==t.geometry.vertices)for(var r=t.geometry.vertices,o=0,n=r.length;n>o;o++)e.copy(r[o]),e.applyMatrix4(t.matrixWorld),i.expandByPoint(e)}),this}}(),copy:function(e){return this.min.copy(e.min),this.max.copy(e.max),this},makeEmpty:function(){return this.min.x=this.min.y=this.min.z=1/0,this.max.x=this.max.y=this.max.z=-1/0,this},empty:function(){return this.max.x<this.min.x||this.max.y<this.min.y||this.max.z<this.min.z},center:function(e){var t=e||new THREE.Vector3;return t.addVectors(this.min,this.max).multiplyScalar(.5)},size:function(e){var t=e||new THREE.Vector3;return t.subVectors(this.max,this.min)},expandByPoint:function(e){return this.min.min(e),this.max.max(e),this},expandByVector:function(e){return this.min.sub(e),this.max.add(e),this},expandByScalar:function(e){return this.min.addScalar(-e),this.max.addScalar(e),this},containsPoint:function(e){return e.x<this.min.x||e.x>this.max.x||e.y<this.min.y||e.y>this.max.y||e.z<this.min.z||e.z>this.max.z?!1:!0},containsBox:function(e){return this.min.x<=e.min.x&&e.max.x<=this.max.x&&this.min.y<=e.min.y&&e.max.y<=this.max.y&&this.min.z<=e.min.z&&e.max.z<=this.max.z?!0:!1},getParameter:function(e){return new THREE.Vector3((e.x-this.min.x)/(this.max.x-this.min.x),(e.y-this.min.y)/(this.max.y-this.min.y),(e.z-this.min.z)/(this.max.z-this.min.z))},isIntersectionBox:function(e){return e.max.x<this.min.x||e.min.x>this.max.x||e.max.y<this.min.y||e.min.y>this.max.y||e.max.z<this.min.z||e.min.z>this.max.z?!1:!0},clampPoint:function(e,t){var i=t||new THREE.Vector3;return i.copy(e).clamp(this.min,this.max)},distanceToPoint:function(){var e=new THREE.Vector3;return function(t){var i=e.copy(t).clamp(this.min,this.max);return i.sub(t).length()}}(),getBoundingSphere:function(){var e=new THREE.Vector3;return function(t){var i=t||new THREE.Sphere;return i.center=this.center(),i.radius=.5*this.size(e).length(),i}}(),intersect:function(e){return this.min.max(e.min),this.max.min(e.max),this},union:function(e){return this.min.min(e.min),this.max.max(e.max),this},applyMatrix4:function(){var e=[new THREE.Vector3,new THREE.Vector3,new THREE.Vector3,new THREE.Vector3,new THREE.Vector3,new THREE.Vector3,new THREE.Vector3,new THREE.Vector3];return function(t){return e[0].set(this.min.x,this.min.y,this.min.z).applyMatrix4(t),e[1].set(this.min.x,this.min.y,this.max.z).applyMatrix4(t),e[2].set(this.min.x,this.max.y,this.min.z).applyMatrix4(t),e[3].set(this.min.x,this.max.y,this.max.z).applyMatrix4(t),e[4].set(this.max.x,this.min.y,this.min.z).applyMatrix4(t),e[5].set(this.max.x,this.min.y,this.max.z).applyMatrix4(t),e[6].set(this.max.x,this.max.y,this.min.z).applyMatrix4(t),e[7].set(this.max.x,this.max.y,this.max.z).applyMatrix4(t),this.makeEmpty(),this.setFromPoints(e),this}}(),translate:function(e){return this.min.add(e),this.max.add(e),this},equals:function(e){return e.min.equals(this.min)&&e.max.equals(this.max)},clone:function(){return(new THREE.Box3).copy(this)}};
+/**
+ * @author bhouston / http://exocortex.com
+ * @author WestLangley / http://github.com/WestLangley
+ */
+
+THREE.Box3 = function ( min, max ) {
+
+	this.min = ( min !== undefined ) ? min : new THREE.Vector3( Infinity, Infinity, Infinity );
+	this.max = ( max !== undefined ) ? max : new THREE.Vector3( -Infinity, -Infinity, -Infinity );
+
+};
+
+THREE.Box3.prototype = {
+
+	constructor: THREE.Box3,
+
+	set: function ( min, max ) {
+
+		this.min.copy( min );
+		this.max.copy( max );
+
+		return this;
+
+	},
+
+	setFromPoints: function ( points ) {
+
+		if ( points.length > 0 ) {
+
+			var point = points[ 0 ];
+
+			this.min.copy( point );
+			this.max.copy( point );
+
+			for ( var i = 1, il = points.length; i < il; i ++ ) {
+
+				point = points[ i ];
+
+				if ( point.x < this.min.x ) {
+
+					this.min.x = point.x;
+
+				} else if ( point.x > this.max.x ) {
+
+					this.max.x = point.x;
+
+				}
+
+				if ( point.y < this.min.y ) {
+
+					this.min.y = point.y;
+
+				} else if ( point.y > this.max.y ) {
+
+					this.max.y = point.y;
+
+				}
+
+				if ( point.z < this.min.z ) {
+
+					this.min.z = point.z;
+
+				} else if ( point.z > this.max.z ) {
+
+					this.max.z = point.z;
+
+				}
+
+			}
+
+		} else {
+
+			this.makeEmpty();
+
+		}
+
+		return this;
+
+	},
+
+	setFromCenterAndSize: function() {
+
+		var v1 = new THREE.Vector3();
+
+		return function ( center, size ) {
+
+			var halfSize = v1.copy( size ).multiplyScalar( 0.5 );
+
+			this.min.copy( center ).sub( halfSize );
+			this.max.copy( center ).add( halfSize );
+
+			return this;
+
+		};
+
+	}(),
+
+	setFromObject: function() {
+
+		// Computes the world-axis-aligned bounding box of an object (including its children),
+		// accounting for both the object's, and childrens', world transforms
+
+		var v1 = new THREE.Vector3();
+
+		return function( object ) {
+
+			var scope = this;
+
+			object.updateMatrixWorld( true );
+
+			this.makeEmpty();
+
+			object.traverse( function ( node ) {
+
+				if ( node.geometry !== undefined && node.geometry.vertices !== undefined ) {
+
+					var vertices = node.geometry.vertices;
+
+					for ( var i = 0, il = vertices.length; i < il; i++ ) {
+
+						v1.copy( vertices[ i ] );
+
+						v1.applyMatrix4( node.matrixWorld );
+
+						scope.expandByPoint( v1 );
+
+					}
+
+				}
+
+			} );
+
+			return this;
+
+		};
+
+	}(),
+
+	copy: function ( box ) {
+
+		this.min.copy( box.min );
+		this.max.copy( box.max );
+
+		return this;
+
+	},
+
+	makeEmpty: function () {
+
+		this.min.x = this.min.y = this.min.z = Infinity;
+		this.max.x = this.max.y = this.max.z = -Infinity;
+
+		return this;
+
+	},
+
+	empty: function () {
+
+		// this is a more robust check for empty than ( volume <= 0 ) because volume can get positive with two negative axes
+
+		return ( this.max.x < this.min.x ) || ( this.max.y < this.min.y ) || ( this.max.z < this.min.z );
+
+	},
+
+	center: function ( optionalTarget ) {
+
+		var result = optionalTarget || new THREE.Vector3();
+		return result.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
+
+	},
+
+	size: function ( optionalTarget ) {
+
+		var result = optionalTarget || new THREE.Vector3();
+		return result.subVectors( this.max, this.min );
+
+	},
+
+	expandByPoint: function ( point ) {
+
+		this.min.min( point );
+		this.max.max( point );
+
+		return this;
+
+	},
+
+	expandByVector: function ( vector ) {
+
+		this.min.sub( vector );
+		this.max.add( vector );
+
+		return this;
+
+	},
+
+	expandByScalar: function ( scalar ) {
+
+		this.min.addScalar( -scalar );
+		this.max.addScalar( scalar );
+
+		return this;
+
+	},
+
+	containsPoint: function ( point ) {
+
+		if ( point.x < this.min.x || point.x > this.max.x ||
+		     point.y < this.min.y || point.y > this.max.y ||
+		     point.z < this.min.z || point.z > this.max.z ) {
+
+			return false;
+
+		}
+
+		return true;
+
+	},
+
+	containsBox: function ( box ) {
+
+		if ( ( this.min.x <= box.min.x ) && ( box.max.x <= this.max.x ) &&
+			 ( this.min.y <= box.min.y ) && ( box.max.y <= this.max.y ) &&
+			 ( this.min.z <= box.min.z ) && ( box.max.z <= this.max.z ) ) {
+
+			return true;
+
+		}
+
+		return false;
+
+	},
+
+	getParameter: function ( point ) {
+
+		// This can potentially have a divide by zero if the box
+		// has a size dimension of 0.
+
+		return new THREE.Vector3(
+			( point.x - this.min.x ) / ( this.max.x - this.min.x ),
+			( point.y - this.min.y ) / ( this.max.y - this.min.y ),
+			( point.z - this.min.z ) / ( this.max.z - this.min.z )
+		);
+
+	},
+
+	isIntersectionBox: function ( box ) {
+
+		// using 6 splitting planes to rule out intersections.
+
+		if ( box.max.x < this.min.x || box.min.x > this.max.x ||
+		     box.max.y < this.min.y || box.min.y > this.max.y ||
+		     box.max.z < this.min.z || box.min.z > this.max.z ) {
+
+			return false;
+
+		}
+
+		return true;
+
+	},
+
+	clampPoint: function ( point, optionalTarget ) {
+
+		var result = optionalTarget || new THREE.Vector3();
+		return result.copy( point ).clamp( this.min, this.max );
+
+	},
+
+	distanceToPoint: function() {
+
+		var v1 = new THREE.Vector3();
+
+		return function ( point ) {
+
+			var clampedPoint = v1.copy( point ).clamp( this.min, this.max );
+			return clampedPoint.sub( point ).length();
+
+		};
+
+	}(),
+
+	getBoundingSphere: function() {
+
+		var v1 = new THREE.Vector3();
+
+		return function ( optionalTarget ) {
+
+			var result = optionalTarget || new THREE.Sphere();
+
+			result.center = this.center();
+			result.radius = this.size( v1 ).length() * 0.5;
+
+			return result;
+
+		};
+
+	}(),
+
+	intersect: function ( box ) {
+
+		this.min.max( box.min );
+		this.max.min( box.max );
+
+		return this;
+
+	},
+
+	union: function ( box ) {
+
+		this.min.min( box.min );
+		this.max.max( box.max );
+
+		return this;
+
+	},
+
+	applyMatrix4: function() {
+
+		var points = [
+			new THREE.Vector3(),
+			new THREE.Vector3(),
+			new THREE.Vector3(),
+			new THREE.Vector3(),
+			new THREE.Vector3(),
+			new THREE.Vector3(),
+			new THREE.Vector3(),
+			new THREE.Vector3()
+		];
+
+		return function ( matrix ) {
+
+			// NOTE: I am using a binary pattern to specify all 2^3 combinations below
+			points[0].set( this.min.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 000
+			points[1].set( this.min.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 001
+			points[2].set( this.min.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 010
+			points[3].set( this.min.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 011
+			points[4].set( this.max.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 100
+			points[5].set( this.max.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 101
+			points[6].set( this.max.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 110
+			points[7].set( this.max.x, this.max.y, this.max.z ).applyMatrix4( matrix );  // 111
+
+			this.makeEmpty();
+			this.setFromPoints( points );
+
+			return this;
+
+		};
+
+	}(),
+
+	translate: function ( offset ) {
+
+		this.min.add( offset );
+		this.max.add( offset );
+
+		return this;
+
+	},
+
+	equals: function ( box ) {
+
+		return box.min.equals( this.min ) && box.max.equals( this.max );
+
+	},
+
+	clone: function () {
+
+		return new THREE.Box3().copy( this );
+
+	}
+
+};

@@ -1,1 +1,96 @@
-THREE.STLExporter=function(){this.stlContent=""},THREE.STLExporter.prototype={constructor:THREE.STLExporter,exportScene:function(e){var t=[];return e.traverse(function(e){e instanceof THREE.Mesh&&t.push(e)}),this.exportMeshes(t)},exportMesh:function(e){return this.exportMeshes([e])},exportMeshes:function(e){this.addLineToContent("solid exported");var t,i,r,n,o,a,s,l,h,c,u;for(t=0;t<e.length;t++)for(r=e[t],n=r.geometry,a=r.matrix,s=r.position,i=0;i<n.faces.length;i++)o=n.faces[i],l=o.normal,o instanceof THREE.Face3?(h=this.getTransformedPosition(n.vertices[o.a],a,s),c=this.getTransformedPosition(n.vertices[o.b],a,s),u=this.getTransformedPosition(n.vertices[o.c],a,s),this.addTriangleToContent(l,h,c,u)):o instanceof THREE.Face4&&(h=this.getTransformedPosition(n.vertices[o.a],a,s),c=this.getTransformedPosition(n.vertices[o.b],a,s),u=this.getTransformedPosition(n.vertices[o.c],a,s),this.addTriangleToContent(l,h,c,u),h=this.getTransformedPosition(n.vertices[o.a],a,s),c=this.getTransformedPosition(n.vertices[o.c],a,s),u=this.getTransformedPosition(n.vertices[o.d],a,s),this.addTriangleToContent(l,h,c,u));return this.addLineToContent("endsolid exported"),this.stlContent},clearContent:function(){this.stlContent=""},addLineToContent:function(e){this.stlContent+=e+"\n"},addTriangleToContent:function(e,t,i,r){this.addLineToContent("	facet normal "+e.x+" "+e.y+" "+e.z),this.addLineToContent("		outer loop"),this.addLineToContent("			vertex "+t.x+" "+t.y+" "+t.z),this.addLineToContent("			vertex "+i.x+" "+i.y+" "+i.z),this.addLineToContent("			vertex "+r.x+" "+r.y+" "+r.z),this.addLineToContent("		endloop"),this.addLineToContent("	endfacet")},getTransformedPosition:function(e,t,i){var r=e.clone();return void 0!==t&&r.applyMatrix4(t),void 0!==i&&r.add(i),r}};
+/**
+ * @author kovacsv / http://kovacsv.hu/
+ */
+ 
+THREE.STLExporter = function () {
+	this.stlContent = '';
+};
+
+THREE.STLExporter.prototype = {
+	constructor: THREE.STLExporter,
+	
+	exportScene : function (scene) {
+		var meshes = [];
+		
+		var current;
+		scene.traverse (function (current) {
+			if (current instanceof THREE.Mesh) {
+				meshes.push (current);
+			}
+		});
+		
+		return this.exportMeshes (meshes);
+	},
+	
+	exportMesh : function (mesh) {
+		return this.exportMeshes ([mesh]);
+	},
+	
+	exportMeshes : function (meshes) {
+		this.addLineToContent ('solid exported');
+		
+		var i, j, mesh, geometry, face, matrix, position;
+		var normal, vertex1, vertex2, vertex3;
+		for (i = 0; i < meshes.length; i++) {
+			mesh = meshes[i];
+			
+			geometry = mesh.geometry;
+			matrix = mesh.matrix;
+			position = mesh.position;
+			
+			for (j = 0; j < geometry.faces.length; j++) {
+				face = geometry.faces[j];
+				normal = face.normal;
+				if (face instanceof THREE.Face3) {
+					vertex1 = this.getTransformedPosition (geometry.vertices[face.a], matrix, position);
+					vertex2 = this.getTransformedPosition (geometry.vertices[face.b], matrix, position);
+					vertex3 = this.getTransformedPosition (geometry.vertices[face.c], matrix, position);
+					this.addTriangleToContent (normal, vertex1, vertex2, vertex3);
+				} else if (face instanceof THREE.Face4) {
+					vertex1 = this.getTransformedPosition (geometry.vertices[face.a], matrix, position);
+					vertex2 = this.getTransformedPosition (geometry.vertices[face.b], matrix, position);
+					vertex3 = this.getTransformedPosition (geometry.vertices[face.c], matrix, position);
+					this.addTriangleToContent (normal, vertex1, vertex2, vertex3);
+
+					vertex1 = this.getTransformedPosition (geometry.vertices[face.a], matrix, position);
+					vertex2 = this.getTransformedPosition (geometry.vertices[face.c], matrix, position);
+					vertex3 = this.getTransformedPosition (geometry.vertices[face.d], matrix, position);
+					this.addTriangleToContent (normal, vertex1, vertex2, vertex3);
+				}
+			}
+		};
+		
+		this.addLineToContent ('endsolid exported');
+		return this.stlContent;
+	},
+	
+	clearContent : function ()
+	{
+		this.stlContent = '';
+	},
+	
+	addLineToContent : function (line) {
+		this.stlContent += line + '\n';
+	},
+	
+	addTriangleToContent : function (normal, vertex1, vertex2, vertex3) {
+		this.addLineToContent ('\tfacet normal ' + normal.x + ' ' + normal.y + ' ' + normal.z);
+		this.addLineToContent ('\t\touter loop');
+		this.addLineToContent ('\t\t\tvertex ' + vertex1.x + ' ' + vertex1.y + ' ' + vertex1.z);
+		this.addLineToContent ('\t\t\tvertex ' + vertex2.x + ' ' + vertex2.y + ' ' + vertex2.z);
+		this.addLineToContent ('\t\t\tvertex ' + vertex3.x + ' ' + vertex3.y + ' ' + vertex3.z);
+		this.addLineToContent ('\t\tendloop');
+		this.addLineToContent ('\tendfacet');
+	},
+	
+	getTransformedPosition : function (vertex, matrix, position) {
+		var result = vertex.clone ();
+		if (matrix !== undefined) {
+			result.applyMatrix4 (matrix);
+		}
+		if (position !== undefined) {
+			result.add (position);
+		}
+		return result;
+	}
+};

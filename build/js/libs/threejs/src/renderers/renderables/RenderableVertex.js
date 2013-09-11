@@ -1,1 +1,19 @@
-THREE.RenderableVertex=function(){this.positionWorld=new THREE.Vector3,this.positionScreen=new THREE.Vector4,this.visible=!0},THREE.RenderableVertex.prototype.copy=function(e){this.positionWorld.copy(e.positionWorld),this.positionScreen.copy(e.positionScreen)};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.RenderableVertex = function () {
+
+	this.positionWorld = new THREE.Vector3();
+	this.positionScreen = new THREE.Vector4();
+
+	this.visible = true;
+
+};
+
+THREE.RenderableVertex.prototype.copy = function ( vertex ) {
+
+	this.positionWorld.copy( vertex.positionWorld );
+	this.positionScreen.copy( vertex.positionScreen );
+
+};

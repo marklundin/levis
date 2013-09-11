@@ -1,1 +1,77 @@
-THREE.WebGLRenderTarget=function(e,t,i){this.width=e,this.height=t,i=i||{},this.wrapS=void 0!==i.wrapS?i.wrapS:THREE.ClampToEdgeWrapping,this.wrapT=void 0!==i.wrapT?i.wrapT:THREE.ClampToEdgeWrapping,this.magFilter=void 0!==i.magFilter?i.magFilter:THREE.LinearFilter,this.minFilter=void 0!==i.minFilter?i.minFilter:THREE.LinearMipMapLinearFilter,this.anisotropy=void 0!==i.anisotropy?i.anisotropy:1,this.offset=new THREE.Vector2(0,0),this.repeat=new THREE.Vector2(1,1),this.format=void 0!==i.format?i.format:THREE.RGBAFormat,this.type=void 0!==i.type?i.type:THREE.UnsignedByteType,this.depthBuffer=void 0!==i.depthBuffer?i.depthBuffer:!0,this.stencilBuffer=void 0!==i.stencilBuffer?i.stencilBuffer:!0,this.generateMipmaps=!0,this.shareDepthFrom=null},THREE.WebGLRenderTarget.prototype={constructor:THREE.WebGLRenderTarget,clone:function(){var e=new THREE.WebGLRenderTarget(this.width,this.height);return e.wrapS=this.wrapS,e.wrapT=this.wrapT,e.magFilter=this.magFilter,e.minFilter=this.minFilter,e.anisotropy=this.anisotropy,e.offset.copy(this.offset),e.repeat.copy(this.repeat),e.format=this.format,e.type=this.type,e.depthBuffer=this.depthBuffer,e.stencilBuffer=this.stencilBuffer,e.generateMipmaps=this.generateMipmaps,e.shareDepthFrom=this.shareDepthFrom,e},dispose:function(){this.dispatchEvent({type:"dispose"})}},THREE.EventDispatcher.prototype.apply(THREE.WebGLRenderTarget.prototype);
+/**
+ * @author szimek / https://github.com/szimek/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.WebGLRenderTarget = function ( width, height, options ) {
+
+	this.width = width;
+	this.height = height;
+
+	options = options || {};
+
+	this.wrapS = options.wrapS !== undefined ? options.wrapS : THREE.ClampToEdgeWrapping;
+	this.wrapT = options.wrapT !== undefined ? options.wrapT : THREE.ClampToEdgeWrapping;
+
+	this.magFilter = options.magFilter !== undefined ? options.magFilter : THREE.LinearFilter;
+	this.minFilter = options.minFilter !== undefined ? options.minFilter : THREE.LinearMipMapLinearFilter;
+
+	this.anisotropy = options.anisotropy !== undefined ? options.anisotropy : 1;
+
+	this.offset = new THREE.Vector2( 0, 0 );
+	this.repeat = new THREE.Vector2( 1, 1 );
+
+	this.format = options.format !== undefined ? options.format : THREE.RGBAFormat;
+	this.type = options.type !== undefined ? options.type : THREE.UnsignedByteType;
+
+	this.depthBuffer = options.depthBuffer !== undefined ? options.depthBuffer : true;
+	this.stencilBuffer = options.stencilBuffer !== undefined ? options.stencilBuffer : true;
+
+	this.generateMipmaps = true;
+
+	this.shareDepthFrom = null;
+
+};
+
+THREE.WebGLRenderTarget.prototype = {
+
+	constructor: THREE.WebGLRenderTarget,
+
+	clone: function () {
+
+		var tmp = new THREE.WebGLRenderTarget( this.width, this.height );
+
+		tmp.wrapS = this.wrapS;
+		tmp.wrapT = this.wrapT;
+
+		tmp.magFilter = this.magFilter;
+		tmp.minFilter = this.minFilter;
+
+		tmp.anisotropy = this.anisotropy;
+
+		tmp.offset.copy( this.offset );
+		tmp.repeat.copy( this.repeat );
+
+		tmp.format = this.format;
+		tmp.type = this.type;
+
+		tmp.depthBuffer = this.depthBuffer;
+		tmp.stencilBuffer = this.stencilBuffer;
+
+		tmp.generateMipmaps = this.generateMipmaps;
+
+		tmp.shareDepthFrom = this.shareDepthFrom;
+
+		return tmp;
+
+	},
+
+	dispose: function () {
+
+		this.dispatchEvent( { type: 'dispose' } );
+
+	}
+
+};
+
+THREE.EventDispatcher.prototype.apply( THREE.WebGLRenderTarget.prototype );

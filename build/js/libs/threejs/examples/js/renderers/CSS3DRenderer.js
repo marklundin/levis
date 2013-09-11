@@ -1,1 +1,234 @@
-THREE.CSS3DObject=function(e){THREE.Object3D.call(this),this.element=e,this.element.style.position="absolute",this.element.style.WebkitTransformStyle="preserve-3d",this.element.style.MozTransformStyle="preserve-3d",this.element.style.oTransformStyle="preserve-3d",this.element.style.transformStyle="preserve-3d",this.addEventListener("removed",function(e){if(null!==this.element.parentNode){this.element.parentNode.removeChild(this.element);for(var t=0,i=this.children.length;i>t;t++)this.children[t].dispatchEvent(e)}})},THREE.CSS3DObject.prototype=Object.create(THREE.Object3D.prototype),THREE.CSS3DSprite=function(e){THREE.CSS3DObject.call(this,e)},THREE.CSS3DSprite.prototype=Object.create(THREE.CSS3DObject.prototype),THREE.CSS3DRenderer=function(){console.log("THREE.CSS3DRenderer",THREE.REVISION);var e,t,i,r,n=new THREE.Matrix4,o=document.createElement("div");o.style.overflow="hidden",o.style.WebkitTransformStyle="preserve-3d",o.style.WebkitPerspectiveOrigin="50% 50%",o.style.MozTransformStyle="preserve-3d",o.style.MozPerspectiveOrigin="50% 50%",o.style.oTransformStyle="preserve-3d",o.style.oPerspectiveOrigin="50% 50%",o.style.transformStyle="preserve-3d",o.style.perspectiveOrigin="50% 50%",this.domElement=o;var a=document.createElement("div");a.style.WebkitTransformStyle="preserve-3d",a.style.MozTransformStyle="preserve-3d",a.style.oTransformStyle="preserve-3d",a.style.transformStyle="preserve-3d",o.appendChild(a),this.cameraElement=a,this.setSize=function(n,s){e=n,t=s,i=e/2,r=t/2,o.style.width=n+"px",o.style.height=s+"px",a.style.width=n+"px",a.style.height=s+"px"};var s=function(e){return Math.abs(e)<1e-6?0:e},l=function(e){var t=e.elements;return"matrix3d("+s(t[0])+","+s(-t[1])+","+s(t[2])+","+s(t[3])+","+s(t[4])+","+s(-t[5])+","+s(t[6])+","+s(t[7])+","+s(t[8])+","+s(-t[9])+","+s(t[10])+","+s(t[11])+","+s(t[12])+","+s(-t[13])+","+s(t[14])+","+s(t[15])+")"},h=function(e){var t=e.elements;return"translate3d(-50%,-50%,0) matrix3d("+s(t[0])+","+s(t[1])+","+s(t[2])+","+s(t[3])+","+s(-t[4])+","+s(-t[5])+","+s(-t[6])+","+s(-t[7])+","+s(t[8])+","+s(t[9])+","+s(t[10])+","+s(t[11])+","+s(t[12])+","+s(t[13])+","+s(t[14])+","+s(t[15])+")"},c=function(e,t){if(e instanceof THREE.CSS3DObject){var i;e instanceof THREE.CSS3DSprite?(n.copy(t.matrixWorldInverse),n.transpose(),n.copyPosition(e.matrixWorld),n.scale(e.scale),n.elements[3]=0,n.elements[7]=0,n.elements[11]=0,n.elements[15]=1,i=h(n)):i=h(e.matrixWorld);var r=e.element;r.style.WebkitTransform=i,r.style.MozTransform=i,r.style.oTransform=i,r.style.transform=i,r.parentNode!==a&&a.appendChild(r)}for(var o=0,s=e.children.length;s>o;o++)c(e.children[o],t)};this.render=function(e,n){var s=.5/Math.tan(THREE.Math.degToRad(.5*n.fov))*t;o.style.WebkitPerspective=s+"px",o.style.MozPerspective=s+"px",o.style.oPerspective=s+"px",o.style.perspective=s+"px",e.updateMatrixWorld(),void 0===n.parent&&n.updateMatrixWorld(),n.matrixWorldInverse.getInverse(n.matrixWorld);var h="translate3d(0,0,"+s+"px)"+l(n.matrixWorldInverse)+" translate3d("+i+"px,"+r+"px, 0)";a.style.WebkitTransform=h,a.style.MozTransform=h,a.style.oTransform=h,a.style.transform=h,c(e,n)}};
+/**
+ * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.CSS3DObject = function ( element ) {
+
+	THREE.Object3D.call( this );
+
+	this.element = element;
+	this.element.style.position = 'absolute';
+	this.element.style.WebkitTransformStyle = 'preserve-3d';
+	this.element.style.MozTransformStyle = 'preserve-3d';
+	this.element.style.oTransformStyle = 'preserve-3d';
+	this.element.style.transformStyle = 'preserve-3d';
+
+	this.addEventListener( 'removed', function ( event ) {
+
+		if ( this.element.parentNode !== null ) {
+
+			this.element.parentNode.removeChild( this.element );
+
+			for ( var i = 0, l = this.children.length; i < l; i ++ ) {
+
+				this.children[ i ].dispatchEvent( event );
+
+			}
+
+		}
+
+	} );
+
+};
+
+THREE.CSS3DObject.prototype = Object.create( THREE.Object3D.prototype );
+
+THREE.CSS3DSprite = function ( element ) {
+
+	THREE.CSS3DObject.call( this, element );
+
+};
+
+THREE.CSS3DSprite.prototype = Object.create( THREE.CSS3DObject.prototype );
+
+//
+
+THREE.CSS3DRenderer = function () {
+
+	console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
+
+	var _width, _height;
+	var _widthHalf, _heightHalf;
+
+	var matrix = new THREE.Matrix4();
+
+	var domElement = document.createElement( 'div' );
+	domElement.style.overflow = 'hidden';
+
+	domElement.style.WebkitTransformStyle = 'preserve-3d';
+	domElement.style.WebkitPerspectiveOrigin = '50% 50%';
+
+	domElement.style.MozTransformStyle = 'preserve-3d';
+	domElement.style.MozPerspectiveOrigin = '50% 50%';
+
+	domElement.style.oTransformStyle = 'preserve-3d';
+	domElement.style.oPerspectiveOrigin = '50% 50%';
+
+	domElement.style.transformStyle = 'preserve-3d';
+	domElement.style.perspectiveOrigin = '50% 50%';
+
+	this.domElement = domElement;
+
+	var cameraElement = document.createElement( 'div' );
+
+	cameraElement.style.WebkitTransformStyle = 'preserve-3d';
+	cameraElement.style.MozTransformStyle = 'preserve-3d';
+	cameraElement.style.oTransformStyle = 'preserve-3d';
+	cameraElement.style.transformStyle = 'preserve-3d';
+
+	domElement.appendChild( cameraElement );
+
+	this.cameraElement = cameraElement;
+
+	this.setSize = function ( width, height ) {
+
+		_width = width;
+		_height = height;
+
+		_widthHalf = _width / 2;
+		_heightHalf = _height / 2;
+
+		domElement.style.width = width + 'px';
+		domElement.style.height = height + 'px';
+
+		cameraElement.style.width = width + 'px';
+		cameraElement.style.height = height + 'px';
+
+	};
+
+	var epsilon = function ( value ) {
+
+		return Math.abs( value ) < 0.000001 ? 0 : value;
+
+	};
+
+	var getCameraCSSMatrix = function ( matrix ) {
+
+		var elements = matrix.elements;
+
+		return 'matrix3d(' +
+			epsilon( elements[ 0 ] ) + ',' +
+			epsilon( - elements[ 1 ] ) + ',' +
+			epsilon( elements[ 2 ] ) + ',' +
+			epsilon( elements[ 3 ] ) + ',' +
+			epsilon( elements[ 4 ] ) + ',' +
+			epsilon( - elements[ 5 ] ) + ',' +
+			epsilon( elements[ 6 ] ) + ',' +
+			epsilon( elements[ 7 ] ) + ',' +
+			epsilon( elements[ 8 ] ) + ',' +
+			epsilon( - elements[ 9 ] ) + ',' +
+			epsilon( elements[ 10 ] ) + ',' +
+			epsilon( elements[ 11 ] ) + ',' +
+			epsilon( elements[ 12 ] ) + ',' +
+			epsilon( - elements[ 13 ] ) + ',' +
+			epsilon( elements[ 14 ] ) + ',' +
+			epsilon( elements[ 15 ] ) +
+		')';
+
+	};
+
+	var getObjectCSSMatrix = function ( matrix ) {
+
+		var elements = matrix.elements;
+
+		return 'translate3d(-50%,-50%,0) matrix3d(' +
+			epsilon( elements[ 0 ] ) + ',' +
+			epsilon( elements[ 1 ] ) + ',' +
+			epsilon( elements[ 2 ] ) + ',' +
+			epsilon( elements[ 3 ] ) + ',' +
+			epsilon( - elements[ 4 ] ) + ',' +
+			epsilon( - elements[ 5 ] ) + ',' +
+			epsilon( - elements[ 6 ] ) + ',' +
+			epsilon( - elements[ 7 ] ) + ',' +
+			epsilon( elements[ 8 ] ) + ',' +
+			epsilon( elements[ 9 ] ) + ',' +
+			epsilon( elements[ 10 ] ) + ',' +
+			epsilon( elements[ 11 ] ) + ',' +
+			epsilon( elements[ 12 ] ) + ',' +
+			epsilon( elements[ 13 ] ) + ',' +
+			epsilon( elements[ 14 ] ) + ',' +
+			epsilon( elements[ 15 ] ) +
+		')';
+
+	};
+
+	var renderObject = function ( object, camera ) {
+
+		if ( object instanceof THREE.CSS3DObject ) {
+
+			var style;
+
+			if ( object instanceof THREE.CSS3DSprite ) {
+
+				// http://swiftcoder.wordpress.com/2008/11/25/constructing-a-billboard-matrix/
+
+				matrix.copy( camera.matrixWorldInverse );
+				matrix.transpose();
+				matrix.copyPosition( object.matrixWorld );
+				matrix.scale( object.scale );
+
+				matrix.elements[ 3 ] = 0;
+				matrix.elements[ 7 ] = 0;
+				matrix.elements[ 11 ] = 0;
+				matrix.elements[ 15 ] = 1;
+
+				style = getObjectCSSMatrix( matrix );
+
+			} else {
+
+				style = getObjectCSSMatrix( object.matrixWorld );
+
+			}
+
+			var element = object.element;
+
+			element.style.WebkitTransform = style;
+			element.style.MozTransform = style;
+			element.style.oTransform = style;
+			element.style.transform = style;
+
+			if ( element.parentNode !== cameraElement ) {
+
+				cameraElement.appendChild( element );
+
+			}
+
+		}
+
+		for ( var i = 0, l = object.children.length; i < l; i ++ ) {
+
+			renderObject( object.children[ i ], camera );
+
+		}
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		var fov = 0.5 / Math.tan( THREE.Math.degToRad( camera.fov * 0.5 ) ) * _height;
+
+		domElement.style.WebkitPerspective = fov + "px";
+		domElement.style.MozPerspective = fov + "px";
+		domElement.style.oPerspective = fov + "px";
+		domElement.style.perspective = fov + "px";
+
+		scene.updateMatrixWorld();
+
+		if ( camera.parent === undefined ) camera.updateMatrixWorld();
+
+		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+
+		var style = "translate3d(0,0," + fov + "px)" + getCameraCSSMatrix( camera.matrixWorldInverse ) +
+			" translate3d(" + _widthHalf + "px," + _heightHalf + "px, 0)";
+
+		cameraElement.style.WebkitTransform = style;
+		cameraElement.style.MozTransform = style;
+		cameraElement.style.oTransform = style;
+		cameraElement.style.transform = style;
+
+		renderObject( scene, camera );
+
+	};
+
+};

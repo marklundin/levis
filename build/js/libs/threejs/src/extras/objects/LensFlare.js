@@ -1,1 +1,89 @@
-THREE.LensFlare=function(e,t,i,r,o){THREE.Object3D.call(this),this.lensFlares=[],this.positionScreen=new THREE.Vector3,this.customUpdateCallback=void 0,void 0!==e&&this.add(e,t,i,r,o)},THREE.LensFlare.prototype=Object.create(THREE.Object3D.prototype),THREE.LensFlare.prototype.add=function(e,t,i,r,o,n){void 0===t&&(t=-1),void 0===i&&(i=0),void 0===n&&(n=1),void 0===o&&(o=new THREE.Color(16777215)),void 0===r&&(r=THREE.NormalBlending),i=Math.min(i,Math.max(0,i)),this.lensFlares.push({texture:e,size:t,distance:i,x:0,y:0,z:0,scale:1,rotation:1,opacity:n,color:o,blending:r})},THREE.LensFlare.prototype.updateLensFlares=function(){var e,t,i=this.lensFlares.length,r=2*-this.positionScreen.x,o=2*-this.positionScreen.y;for(e=0;i>e;e++)t=this.lensFlares[e],t.x=this.positionScreen.x+r*t.distance,t.y=this.positionScreen.y+o*t.distance,t.wantedRotation=.25*t.x*Math.PI,t.rotation+=.25*(t.wantedRotation-t.rotation)};
+/**
+ * @author mikael emtinger / http://gomo.se/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.LensFlare = function ( texture, size, distance, blending, color ) {
+
+	THREE.Object3D.call( this );
+
+	this.lensFlares = [];
+
+	this.positionScreen = new THREE.Vector3();
+	this.customUpdateCallback = undefined;
+
+	if( texture !== undefined ) {
+
+		this.add( texture, size, distance, blending, color );
+
+	}
+
+};
+
+THREE.LensFlare.prototype = Object.create( THREE.Object3D.prototype );
+
+
+/*
+ * Add: adds another flare
+ */
+
+THREE.LensFlare.prototype.add = function ( texture, size, distance, blending, color, opacity ) {
+
+	if( size === undefined ) size = -1;
+	if( distance === undefined ) distance = 0;
+	if( opacity === undefined ) opacity = 1;
+	if( color === undefined ) color = new THREE.Color( 0xffffff );
+	if( blending === undefined ) blending = THREE.NormalBlending;
+
+	distance = Math.min( distance, Math.max( 0, distance ) );
+
+	this.lensFlares.push( { texture: texture, 			// THREE.Texture
+		                    size: size, 				// size in pixels (-1 = use texture.width)
+		                    distance: distance, 		// distance (0-1) from light source (0=at light source)
+		                    x: 0, y: 0, z: 0,			// screen position (-1 => 1) z = 0 is ontop z = 1 is back
+		                    scale: 1, 					// scale
+		                    rotation: 1, 				// rotation
+		                    opacity: opacity,			// opacity
+							color: color,				// color
+		                    blending: blending } );		// blending
+
+};
+
+
+/*
+ * Update lens flares update positions on all flares based on the screen position
+ * Set myLensFlare.customUpdateCallback to alter the flares in your project specific way.
+ */
+
+THREE.LensFlare.prototype.updateLensFlares = function () {
+
+	var f, fl = this.lensFlares.length;
+	var flare;
+	var vecX = -this.positionScreen.x * 2;
+	var vecY = -this.positionScreen.y * 2;
+
+	for( f = 0; f < fl; f ++ ) {
+
+		flare = this.lensFlares[ f ];
+
+		flare.x = this.positionScreen.x + vecX * flare.distance;
+		flare.y = this.positionScreen.y + vecY * flare.distance;
+
+		flare.wantedRotation = flare.x * Math.PI * 0.25;
+		flare.rotation += ( flare.wantedRotation - flare.rotation ) * 0.25;
+
+	}
+
+};
+
+
+
+
+
+
+
+
+
+
+
+

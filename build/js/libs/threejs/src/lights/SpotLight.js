@@ -1,1 +1,63 @@
-THREE.SpotLight=function(e,t,i,r,o){THREE.Light.call(this,e),this.position.set(0,1,0),this.target=new THREE.Object3D,this.intensity=void 0!==t?t:1,this.distance=void 0!==i?i:0,this.angle=void 0!==r?r:Math.PI/3,this.exponent=void 0!==o?o:10,this.castShadow=!1,this.onlyShadow=!1,this.shadowCameraNear=50,this.shadowCameraFar=5e3,this.shadowCameraFov=50,this.shadowCameraVisible=!1,this.shadowBias=0,this.shadowDarkness=.5,this.shadowMapWidth=512,this.shadowMapHeight=512,this.shadowMap=null,this.shadowMapSize=null,this.shadowCamera=null,this.shadowMatrix=null},THREE.SpotLight.prototype=Object.create(THREE.Light.prototype),THREE.SpotLight.prototype.clone=function(){var e=new THREE.SpotLight;return THREE.Light.prototype.clone.call(this,e),e.target=this.target.clone(),e.intensity=this.intensity,e.distance=this.distance,e.angle=this.angle,e.exponent=this.exponent,e.castShadow=this.castShadow,e.onlyShadow=this.onlyShadow,e};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.SpotLight = function ( hex, intensity, distance, angle, exponent ) {
+
+	THREE.Light.call( this, hex );
+
+	this.position.set( 0, 1, 0 );
+	this.target = new THREE.Object3D();
+
+	this.intensity = ( intensity !== undefined ) ? intensity : 1;
+	this.distance = ( distance !== undefined ) ? distance : 0;
+	this.angle = ( angle !== undefined ) ? angle : Math.PI / 3;
+	this.exponent = ( exponent !== undefined ) ? exponent : 10;
+
+	this.castShadow = false;
+	this.onlyShadow = false;
+
+	//
+
+	this.shadowCameraNear = 50;
+	this.shadowCameraFar = 5000;
+	this.shadowCameraFov = 50;
+
+	this.shadowCameraVisible = false;
+
+	this.shadowBias = 0;
+	this.shadowDarkness = 0.5;
+
+	this.shadowMapWidth = 512;
+	this.shadowMapHeight = 512;
+
+	//
+
+	this.shadowMap = null;
+	this.shadowMapSize = null;
+	this.shadowCamera = null;
+	this.shadowMatrix = null;
+
+};
+
+THREE.SpotLight.prototype = Object.create( THREE.Light.prototype );
+
+THREE.SpotLight.prototype.clone = function () {
+
+	var light = new THREE.SpotLight();
+
+	THREE.Light.prototype.clone.call( this, light );
+
+	light.target = this.target.clone();
+
+	light.intensity = this.intensity;
+	light.distance = this.distance;
+	light.angle = this.angle;
+	light.exponent = this.exponent;
+
+	light.castShadow = this.castShadow;
+	light.onlyShadow = this.onlyShadow;
+
+	return light;
+
+};

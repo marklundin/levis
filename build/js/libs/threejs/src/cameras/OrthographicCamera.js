@@ -1,1 +1,27 @@
-THREE.OrthographicCamera=function(e,t,i,r,n,o){THREE.Camera.call(this),this.left=e,this.right=t,this.top=i,this.bottom=r,this.near=void 0!==n?n:.1,this.far=void 0!==o?o:2e3,this.updateProjectionMatrix()},THREE.OrthographicCamera.prototype=Object.create(THREE.Camera.prototype),THREE.OrthographicCamera.prototype.updateProjectionMatrix=function(){this.projectionMatrix.makeOrthographic(this.left,this.right,this.top,this.bottom,this.near,this.far)};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.OrthographicCamera = function ( left, right, top, bottom, near, far ) {
+
+	THREE.Camera.call( this );
+
+	this.left = left;
+	this.right = right;
+	this.top = top;
+	this.bottom = bottom;
+
+	this.near = ( near !== undefined ) ? near : 0.1;
+	this.far = ( far !== undefined ) ? far : 2000;
+
+	this.updateProjectionMatrix();
+
+};
+
+THREE.OrthographicCamera.prototype = Object.create( THREE.Camera.prototype );
+
+THREE.OrthographicCamera.prototype.updateProjectionMatrix = function () {
+
+	this.projectionMatrix.makeOrthographic( this.left, this.right, this.top, this.bottom, this.near, this.far );
+
+};

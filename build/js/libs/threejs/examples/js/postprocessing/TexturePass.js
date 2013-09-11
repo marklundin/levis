@@ -1,1 +1,40 @@
-THREE.TexturePass=function(e,t){void 0===THREE.CopyShader&&console.error("THREE.TexturePass relies on THREE.CopyShader");var i=THREE.CopyShader;this.uniforms=THREE.UniformsUtils.clone(i.uniforms),this.uniforms.opacity.value=void 0!==t?t:1,this.uniforms.tDiffuse.value=e,this.material=new THREE.ShaderMaterial({uniforms:this.uniforms,vertexShader:i.vertexShader,fragmentShader:i.fragmentShader}),this.enabled=!0,this.needsSwap=!1},THREE.TexturePass.prototype={render:function(e,t,i){THREE.EffectComposer.quad.material=this.material,e.render(THREE.EffectComposer.scene,THREE.EffectComposer.camera,i)}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.TexturePass = function ( texture, opacity ) {
+
+	if ( THREE.CopyShader === undefined )
+		console.error( "THREE.TexturePass relies on THREE.CopyShader" );
+
+	var shader = THREE.CopyShader;
+
+	this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+	this.uniforms[ "opacity" ].value = ( opacity !== undefined ) ? opacity : 1.0;
+	this.uniforms[ "tDiffuse" ].value = texture;
+
+	this.material = new THREE.ShaderMaterial( {
+
+		uniforms: this.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader
+
+	} );
+
+	this.enabled = true;
+	this.needsSwap = false;
+
+};
+
+THREE.TexturePass.prototype = {
+
+	render: function ( renderer, writeBuffer, readBuffer, delta ) {
+
+		THREE.EffectComposer.quad.material = this.material;
+
+		renderer.render( THREE.EffectComposer.scene, THREE.EffectComposer.camera, readBuffer );
+
+	}
+
+};

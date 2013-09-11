@@ -1,1 +1,88 @@
-THREE.ParametricGeometry=function(e,t,i,r){THREE.Geometry.call(this);var n=this.vertices,o=this.faces,a=this.faceVertexUvs[0];r=void 0===r?!1:r;var s,l,c,h,u,d=t+1;for(s=0;i>=s;s++)for(u=s/i,l=0;t>=l;l++)h=l/t,c=e(h,u),n.push(c);var p,f,m,v,g,E,y,T;for(s=0;i>s;s++)for(l=0;t>l;l++)p=s*d+l,f=s*d+l+1,m=(s+1)*d+l,v=(s+1)*d+l+1,g=new THREE.Vector2(l/t,s/i),E=new THREE.Vector2((l+1)/t,s/i),y=new THREE.Vector2(l/t,(s+1)/i),T=new THREE.Vector2((l+1)/t,(s+1)/i),r?(o.push(new THREE.Face3(p,f,m)),o.push(new THREE.Face3(f,v,m)),a.push([g,E,y]),a.push([E,T,y])):(o.push(new THREE.Face4(p,f,v,m)),a.push([g,E,T,y]));this.computeCentroids(),this.computeFaceNormals(),this.computeVertexNormals()},THREE.ParametricGeometry.prototype=Object.create(THREE.Geometry.prototype);
+/**
+ * @author zz85 / https://github.com/zz85
+ * Parametric Surfaces Geometry
+ * based on the brilliant article by @prideout http://prideout.net/blog/?p=44
+ *
+ * new THREE.ParametricGeometry( parametricFunction, uSegments, ySegements, useTris );
+ *
+ */
+
+THREE.ParametricGeometry = function ( func, slices, stacks, useTris ) {
+
+	THREE.Geometry.call( this );
+
+	var verts = this.vertices;
+	var faces = this.faces;
+	var uvs = this.faceVertexUvs[ 0 ];
+
+	useTris = (useTris === undefined) ? false : useTris;
+
+	var i, il, j, p;
+	var u, v;
+
+	var stackCount = stacks + 1;
+	var sliceCount = slices + 1;
+
+	for ( i = 0; i <= stacks; i ++ ) {
+
+		v = i / stacks;
+
+		for ( j = 0; j <= slices; j ++ ) {
+
+			u = j / slices;
+
+			p = func( u, v );
+			verts.push( p );
+
+		}
+	}
+
+	var a, b, c, d;
+	var uva, uvb, uvc, uvd;
+
+	for ( i = 0; i < stacks; i ++ ) {
+
+		for ( j = 0; j < slices; j ++ ) {
+
+			a = i * sliceCount + j;
+			b = i * sliceCount + j + 1;
+			c = (i + 1) * sliceCount + j;
+			d = (i + 1) * sliceCount + j + 1;
+
+			uva = new THREE.Vector2( j / slices, i / stacks );
+			uvb = new THREE.Vector2( ( j + 1 ) / slices, i / stacks );
+			uvc = new THREE.Vector2( j / slices, ( i + 1 ) / stacks );
+			uvd = new THREE.Vector2( ( j + 1 ) / slices, ( i + 1 ) / stacks );
+
+			if ( useTris ) {
+
+				faces.push( new THREE.Face3( a, b, c ) );
+				faces.push( new THREE.Face3( b, d, c ) );
+
+				uvs.push( [ uva, uvb, uvc ] );
+				uvs.push( [ uvb, uvd, uvc ] );
+
+			} else {
+
+				faces.push( new THREE.Face4( a, b, d, c ) );
+				uvs.push( [ uva, uvb, uvd, uvc ] );
+
+			}
+
+		}
+
+	}
+
+	// console.log(this);
+
+	// magic bullet
+	// var diff = this.mergeVertices();
+	// console.log('removed ', diff, ' vertices by merging');
+
+	this.computeCentroids();
+	this.computeFaceNormals();
+	this.computeVertexNormals();
+
+};
+
+THREE.ParametricGeometry.prototype = Object.create( THREE.Geometry.prototype );

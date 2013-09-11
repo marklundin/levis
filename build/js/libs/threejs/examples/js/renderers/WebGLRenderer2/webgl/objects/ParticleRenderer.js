@@ -1,1 +1,360 @@
-THREE.WebGLRenderer.ParticleRenderer=function(e,t){THREE.WebGLRenderer.Object3DRenderer.call(this,e,t)},THREE.WebGLRenderer.ParticleRenderer.prototype=Object.create(THREE.WebGLRenderer.Object3DRenderer.prototype),THREE.extend(THREE.WebGLRenderer.ParticleRenderer.prototype,{createBuffers:function(e){var t=this.renderer;e.__webglVertexBuffer=t.createBuffer(),e.__webglColorBuffer=t.createBuffer(),this.info.memory.geometries++},initBuffers:function(e,t){var i=e.vertices.length;e.__vertexArray=new Float32Array(3*i),e.__colorArray=new Float32Array(3*i),e.__sortArray=[],e.__webglParticleCount=i,this.initCustomAttributes(e,t)},setBuffers:function(e,t,i){var r,n,o,a,s,l,c,h,u,d,p,f,m=this.renderer,g=e.vertices,v=g.length,E=e.colors,y=E.length,T=e.__vertexArray,_=e.__colorArray,b=e.__sortArray,x=e.verticesNeedUpdate,R=(e.elementsNeedUpdate,e.colorsNeedUpdate),w=e.__webglCustomAttributesList,H=THREE.WebGLRenderer.ParticleRenderer._m1,S=THREE.WebGLRenderer.ParticleRenderer._v1;if(t.sortParticles){for(H.multiplyMatrices(i,t.matrixWorld),r=0;v>r;r++)o=g[r],S.copy(o),S.applyProjection(H),b[r]=[S.z,r];for(b.sort(this.numericalSort),r=0;v>r;r++)o=g[b[r][1]],a=3*r,T[a]=o.x,T[a+1]=o.y,T[a+2]=o.z;for(n=0;y>n;n++)a=3*n,l=E[b[n][1]],_[a]=l.r,_[a+1]=l.g,_[a+2]=l.b;if(w)for(c=0,h=w.length;h>c;c++)if(f=w[c],void 0===f.boundTo||"vertices"===f.boundTo)if(a=0,d=f.value.length,1===f.size)for(u=0;d>u;u++)s=b[u][1],f.array[u]=f.value[s];else if(2===f.size)for(u=0;d>u;u++)s=b[u][1],p=f.value[s],f.array[a]=p.x,f.array[a+1]=p.y,a+=2;else if(3===f.size)if("c"===f.type)for(u=0;d>u;u++)s=b[u][1],p=f.value[s],f.array[a]=p.r,f.array[a+1]=p.g,f.array[a+2]=p.b,a+=3;else for(u=0;d>u;u++)s=b[u][1],p=f.value[s],f.array[a]=p.x,f.array[a+1]=p.y,f.array[a+2]=p.z,a+=3;else if(4===f.size)for(u=0;d>u;u++)s=b[u][1],p=f.value[s],f.array[a]=p.x,f.array[a+1]=p.y,f.array[a+2]=p.z,f.array[a+3]=p.w,a+=4}else{if(x)for(r=0;v>r;r++)o=g[r],a=3*r,T[a]=o.x,T[a+1]=o.y,T[a+2]=o.z;if(R)for(n=0;y>n;n++)l=E[n],a=3*n,_[a]=l.r,_[a+1]=l.g,_[a+2]=l.b;if(w)for(c=0,h=w.length;h>c;c++)if(f=w[c],f.needsUpdate&&(void 0===f.boundTo||"vertices"===f.boundTo))if(d=f.value.length,a=0,1===f.size)for(u=0;d>u;u++)f.array[u]=f.value[u];else if(2===f.size)for(u=0;d>u;u++)p=f.value[u],f.array[a]=p.x,f.array[a+1]=p.y,a+=2;else if(3===f.size)if("c"===f.type)for(u=0;d>u;u++)p=f.value[u],f.array[a]=p.r,f.array[a+1]=p.g,f.array[a+2]=p.b,a+=3;else for(u=0;d>u;u++)p=f.value[u],f.array[a]=p.x,f.array[a+1]=p.y,f.array[a+2]=p.z,a+=3;else if(4===f.size)for(u=0;d>u;u++)p=f.value[u],f.array[a]=p.x,f.array[a+1]=p.y,f.array[a+2]=p.z,f.array[a+3]=p.w,a+=4}if((x||t.sortParticles)&&m.setDynamicArrayBuffer(e.__webglVertexBuffer,T),(R||t.sortParticles)&&m.setDynamicArrayBuffer(e.__webglColorBuffer,_),w)for(c=0,h=w.length;h>c;c++)f=w[c],(f.needsUpdate||t.sortParticles)&&m.setDynamicArrayBuffer(f.buffer,f.array)}}),THREE.WebGLRenderer.ParticleRenderer._m1=new THREE.Matrix4,THREE.WebGLRenderer.ParticleRenderer._v1=new THREE.Vector3;
+
+THREE.WebGLRenderer.ParticleRenderer = function ( lowlevelrenderer, info ) {
+
+	THREE.WebGLRenderer.Object3DRenderer.call( this, lowlevelrenderer, info );
+
+};
+
+THREE.WebGLRenderer.ParticleRenderer.prototype = Object.create( THREE.WebGLRenderer.Object3DRenderer.prototype );
+
+THREE.extend( THREE.WebGLRenderer.ParticleRenderer.prototype, {
+
+	createBuffers: function ( geometry ) {
+
+		var renderer = this.renderer;
+		geometry.__webglVertexBuffer = renderer.createBuffer();
+		geometry.__webglColorBuffer = renderer.createBuffer();
+
+		this.info.memory.geometries ++;
+	},
+
+	initBuffers: function ( geometry, object ) {
+
+		var nvertices = geometry.vertices.length;
+
+		geometry.__vertexArray = new Float32Array( nvertices * 3 );
+		geometry.__colorArray = new Float32Array( nvertices * 3 );
+
+		geometry.__sortArray = [];
+
+		geometry.__webglParticleCount = nvertices;
+
+		this.initCustomAttributes ( geometry, object );
+
+	},
+
+	setBuffers: function ( geometry, object , projectionScreenMatrix ) {
+
+		var renderer = this.renderer;
+		var v, c, vertex, offset, index, color,
+
+		vertices = geometry.vertices,
+		vl = vertices.length,
+
+		colors = geometry.colors,
+		cl = colors.length,
+
+		vertexArray = geometry.__vertexArray,
+		colorArray = geometry.__colorArray,
+
+		sortArray = geometry.__sortArray,
+
+		dirtyVertices = geometry.verticesNeedUpdate,
+		dirtyElements = geometry.elementsNeedUpdate,
+		dirtyColors = geometry.colorsNeedUpdate,
+
+		customAttributes = geometry.__webglCustomAttributesList,
+		i, il,
+		a, ca, cal, value,
+		customAttribute;
+
+		var _projScreenMatrixPS = THREE.WebGLRenderer.ParticleRenderer._m1,
+			_vector3 = THREE.WebGLRenderer.ParticleRenderer._v1;
+
+		if ( object.sortParticles ) {
+
+			_projScreenMatrixPS.multiplyMatrices( projectionScreenMatrix, object.matrixWorld );
+
+			for ( v = 0; v < vl; v ++ ) {
+
+				vertex = vertices[ v ];
+
+				_vector3.copy( vertex );
+				_vector3.applyProjection(_projScreenMatrixPS);
+
+				sortArray[ v ] = [ _vector3.z, v ];
+
+			}
+
+			sortArray.sort( this.numericalSort );
+
+			for ( v = 0; v < vl; v ++ ) {
+
+				vertex = vertices[ sortArray[v][1] ];
+
+				offset = v * 3;
+
+				vertexArray[ offset ]     = vertex.x;
+				vertexArray[ offset + 1 ] = vertex.y;
+				vertexArray[ offset + 2 ] = vertex.z;
+
+			}
+
+			for ( c = 0; c < cl; c ++ ) {
+
+				offset = c * 3;
+
+				color = colors[ sortArray[c][1] ];
+
+				colorArray[ offset ]     = color.r;
+				colorArray[ offset + 1 ] = color.g;
+				colorArray[ offset + 2 ] = color.b;
+
+			}
+
+			if ( customAttributes ) {
+
+				for ( i = 0, il = customAttributes.length; i < il; i ++ ) {
+
+					customAttribute = customAttributes[ i ];
+
+					if ( ! ( customAttribute.boundTo === undefined || customAttribute.boundTo === "vertices" ) ) continue;
+
+					offset = 0;
+
+					cal = customAttribute.value.length;
+
+					if ( customAttribute.size === 1 ) {
+
+						for ( ca = 0; ca < cal; ca ++ ) {
+
+							index = sortArray[ ca ][ 1 ];
+
+							customAttribute.array[ ca ] = customAttribute.value[ index ];
+
+						}
+
+					} else if ( customAttribute.size === 2 ) {
+
+						for ( ca = 0; ca < cal; ca ++ ) {
+
+							index = sortArray[ ca ][ 1 ];
+
+							value = customAttribute.value[ index ];
+
+							customAttribute.array[ offset ] 	= value.x;
+							customAttribute.array[ offset + 1 ] = value.y;
+
+							offset += 2;
+
+						}
+
+					} else if ( customAttribute.size === 3 ) {
+
+						if ( customAttribute.type === "c" ) {
+
+							for ( ca = 0; ca < cal; ca ++ ) {
+
+								index = sortArray[ ca ][ 1 ];
+
+								value = customAttribute.value[ index ];
+
+								customAttribute.array[ offset ]     = value.r;
+								customAttribute.array[ offset + 1 ] = value.g;
+								customAttribute.array[ offset + 2 ] = value.b;
+
+								offset += 3;
+
+							}
+
+						} else {
+
+							for ( ca = 0; ca < cal; ca ++ ) {
+
+								index = sortArray[ ca ][ 1 ];
+
+								value = customAttribute.value[ index ];
+
+								customAttribute.array[ offset ] 	= value.x;
+								customAttribute.array[ offset + 1 ] = value.y;
+								customAttribute.array[ offset + 2 ] = value.z;
+
+								offset += 3;
+
+							}
+
+						}
+
+					} else if ( customAttribute.size === 4 ) {
+
+						for ( ca = 0; ca < cal; ca ++ ) {
+
+							index = sortArray[ ca ][ 1 ];
+
+							value = customAttribute.value[ index ];
+
+							customAttribute.array[ offset ]      = value.x;
+							customAttribute.array[ offset + 1  ] = value.y;
+							customAttribute.array[ offset + 2  ] = value.z;
+							customAttribute.array[ offset + 3  ] = value.w;
+
+							offset += 4;
+
+						}
+
+					}
+
+				}
+
+			}
+
+		} else {
+
+			if ( dirtyVertices ) {
+
+				for ( v = 0; v < vl; v ++ ) {
+
+					vertex = vertices[ v ];
+
+					offset = v * 3;
+
+					vertexArray[ offset ]     = vertex.x;
+					vertexArray[ offset + 1 ] = vertex.y;
+					vertexArray[ offset + 2 ] = vertex.z;
+
+				}
+
+			}
+
+			if ( dirtyColors ) {
+
+				for ( c = 0; c < cl; c ++ ) {
+
+					color = colors[ c ];
+
+					offset = c * 3;
+
+					colorArray[ offset ]     = color.r;
+					colorArray[ offset + 1 ] = color.g;
+					colorArray[ offset + 2 ] = color.b;
+
+				}
+
+			}
+
+			if ( customAttributes ) {
+
+				for ( i = 0, il = customAttributes.length; i < il; i ++ ) {
+
+					customAttribute = customAttributes[ i ];
+
+					if ( customAttribute.needsUpdate &&
+						 ( customAttribute.boundTo === undefined ||
+						   customAttribute.boundTo === "vertices") ) {
+
+						cal = customAttribute.value.length;
+
+						offset = 0;
+
+						if ( customAttribute.size === 1 ) {
+
+							for ( ca = 0; ca < cal; ca ++ ) {
+
+								customAttribute.array[ ca ] = customAttribute.value[ ca ];
+
+							}
+
+						} else if ( customAttribute.size === 2 ) {
+
+							for ( ca = 0; ca < cal; ca ++ ) {
+
+								value = customAttribute.value[ ca ];
+
+								customAttribute.array[ offset ] 	= value.x;
+								customAttribute.array[ offset + 1 ] = value.y;
+
+								offset += 2;
+
+							}
+
+						} else if ( customAttribute.size === 3 ) {
+
+							if ( customAttribute.type === "c" ) {
+
+								for ( ca = 0; ca < cal; ca ++ ) {
+
+									value = customAttribute.value[ ca ];
+
+									customAttribute.array[ offset ] 	= value.r;
+									customAttribute.array[ offset + 1 ] = value.g;
+									customAttribute.array[ offset + 2 ] = value.b;
+
+									offset += 3;
+
+								}
+
+							} else {
+
+								for ( ca = 0; ca < cal; ca ++ ) {
+
+									value = customAttribute.value[ ca ];
+
+									customAttribute.array[ offset ] 	= value.x;
+									customAttribute.array[ offset + 1 ] = value.y;
+									customAttribute.array[ offset + 2 ] = value.z;
+
+									offset += 3;
+
+								}
+
+							}
+
+						} else if ( customAttribute.size === 4 ) {
+
+							for ( ca = 0; ca < cal; ca ++ ) {
+
+								value = customAttribute.value[ ca ];
+
+								customAttribute.array[ offset ]      = value.x;
+								customAttribute.array[ offset + 1  ] = value.y;
+								customAttribute.array[ offset + 2  ] = value.z;
+								customAttribute.array[ offset + 3  ] = value.w;
+
+								offset += 4;
+
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		if ( dirtyVertices || object.sortParticles ) {
+
+			renderer.setDynamicArrayBuffer(geometry.__webglVertexBuffer,vertexArray);
+
+		}
+
+		if ( dirtyColors || object.sortParticles ) {
+
+			renderer.setDynamicArrayBuffer(geometry.__webglColorBuffer,colorArray);
+
+		}
+
+		if ( customAttributes ) {
+
+			for ( i = 0, il = customAttributes.length; i < il; i ++ ) {
+
+				customAttribute = customAttributes[ i ];
+
+				if ( customAttribute.needsUpdate || object.sortParticles ) {
+
+					renderer.setDynamicArrayBuffer(customAttribute.buffer,customAttribute.array);
+
+				}
+
+			}
+
+		}
+
+	}
+
+} );
+
+THREE.WebGLRenderer.ParticleRenderer._m1 = new THREE.Matrix4();
+THREE.WebGLRenderer.ParticleRenderer._v1 = new THREE.Vector3();

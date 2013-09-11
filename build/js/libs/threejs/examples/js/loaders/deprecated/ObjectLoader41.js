@@ -1,1 +1,297 @@
-THREE.ObjectLoader41=function(){},THREE.ObjectLoader41.prototype={constructor:THREE.ObjectLoader,load:function(e){var t=this,i=new XMLHttpRequest;i.addEventListener("load",function(e){var i=t.parse(JSON.parse(e.target.responseText));t.dispatchEvent({type:"load",content:i})},!1),i.addEventListener("progress",function(e){t.dispatchEvent({type:"progress",loaded:e.loaded,total:e.total})},!1),i.addEventListener("error",function(){t.dispatchEvent({type:"error",message:"Couldn't load URL ["+e+"]"})},!1),i.open("GET",e,!0),i.send(null)},parse:function(e){var t=this.parseGeometries(e.geometries),i=this.parseMaterials(e.materials),r=this.parseObject(e.object,t,i);return r},parseGeometries:function(e){var t={};if(void 0!==e){var i=new THREE.JSONLoader;for(var r in e){var n,o=e[r];switch(o.type){case"PlaneGeometry":n=new THREE.PlaneGeometry(o.width,o.height,o.widthSegments,o.heightSegments);break;case"CubeGeometry":n=new THREE.CubeGeometry(o.width,o.height,o.depth,o.widthSegments,o.heightSegments,o.depthSegments);break;case"CylinderGeometry":n=new THREE.CylinderGeometry(o.radiusTop,o.radiusBottom,o.height,o.radiusSegments,o.heightSegments,o.openEnded);break;case"SphereGeometry":n=new THREE.SphereGeometry(o.radius,o.widthSegments,o.heightSegments,o.phiStart,o.phiLength,o.thetaStart,o.thetaLength);break;case"IcosahedronGeometry":n=new THREE.IcosahedronGeometry(o.radius,o.detail);break;case"TorusGeometry":n=new THREE.TorusGeometry(o.radius,o.tube,o.radialSegments,o.tubularSegments,o.arc);break;case"TorusKnotGeometry":n=new THREE.TorusKnotGeometry(o.radius,o.tube,o.radialSegments,o.tubularSegments,o.p,o.q,o.heightScale);break;case"Geometry":n=i.parse(o.data).geometry}void 0!==o.name&&(n.name=o.name),t[r]=n}}return t},parseMaterials:function(e){var t={};if(void 0!==e){var i=new THREE.MaterialLoader;for(var r in e){var n=e[r],o=i.parse(n);void 0!==n.name&&(o.name=n.name),t[r]=o}}return t},parseObject:function(e,t,i){var r;switch(e.type){case"Scene":r=new THREE.Scene;break;case"PerspectiveCamera":r=new THREE.PerspectiveCamera(e.fov,e.aspect,e.near,e.far),r.position.fromArray(e.position),r.rotation.fromArray(e.rotation);break;case"OrthographicCamera":r=new THREE.OrthographicCamera(e.left,e.right,e.top,e.bottom,e.near,e.far),r.position.fromArray(e.position),r.rotation.fromArray(e.rotation);break;case"AmbientLight":r=new THREE.AmbientLight(e.color);break;case"DirectionalLight":r=new THREE.DirectionalLight(e.color,e.intensity),r.position.fromArray(e.position);break;case"PointLight":r=new THREE.PointLight(e.color,e.intensity,e.distance),r.position.fromArray(e.position);break;case"SpotLight":r=new THREE.SpotLight(e.color,e.intensity,e.distance,e.angle,e.exponent),r.position.fromArray(e.position);break;case"HemisphereLight":r=new THREE.HemisphereLight(e.color,e.groundColor,e.intensity),r.position.fromArray(e.position);break;case"Mesh":r=new THREE.Mesh(t[e.geometry],i[e.material]),r.position.fromArray(e.position),r.rotation.fromArray(e.rotation),r.scale.fromArray(e.scale);break;default:r=new THREE.Object3D,r.position.fromArray(e.position),r.rotation.fromArray(e.rotation),r.scale.fromArray(e.scale)}if(void 0!==e.name&&(r.name=e.name),void 0!==e.visible&&(r.visible=e.visible),void 0!==e.userData&&(r.userData=e.userData),void 0!==e.children)for(var n in e.children)r.add(this.parseObject(e.children[n],t,i));return r}},THREE.EventDispatcher.prototype.apply(THREE.ObjectLoader41.prototype);
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.ObjectLoader41 = function () {};
+
+THREE.ObjectLoader41.prototype = {
+
+	constructor: THREE.ObjectLoader,
+
+	load: function ( url ) {
+
+		var scope = this;
+		var request = new XMLHttpRequest();
+
+		request.addEventListener( 'load', function ( event ) {
+
+			var response = scope.parse( JSON.parse( event.target.responseText ) );
+
+			scope.dispatchEvent( { type: 'load', content: response } );
+
+		}, false );
+
+		request.addEventListener( 'progress', function ( event ) {
+
+			scope.dispatchEvent( { type: 'progress', loaded: event.loaded, total: event.total } );
+
+		}, false );
+
+		request.addEventListener( 'error', function () {
+
+			scope.dispatchEvent( { type: 'error', message: 'Couldn\'t load URL [' + url + ']' } );
+
+		}, false );
+
+		request.open( 'GET', url, true );
+		request.send( null );
+
+	},
+
+	parse: function ( json ) {
+
+		var geometries = this.parseGeometries( json.geometries );
+		var materials = this.parseMaterials( json.materials );
+		var object = this.parseObject( json.object, geometries, materials );
+
+		return object;
+
+	},
+
+	parseGeometries: function ( json ) {
+
+		var geometries = {};
+
+		if ( json !== undefined ) {
+
+			var loader = new THREE.JSONLoader();
+
+			for ( var id in json ) {
+
+				var geometry;
+				var data = json[ id ];
+
+				switch ( data.type ) {
+
+					case 'PlaneGeometry':
+
+						geometry = new THREE.PlaneGeometry(
+							data.width,
+							data.height,
+							data.widthSegments,
+							data.heightSegments
+						);
+
+						break;
+
+					case 'CubeGeometry':
+
+						geometry = new THREE.CubeGeometry(
+							data.width,
+							data.height,
+							data.depth,
+							data.widthSegments,
+							data.heightSegments,
+							data.depthSegments
+						);
+
+						break;
+
+					case 'CylinderGeometry':
+
+						geometry = new THREE.CylinderGeometry(
+							data.radiusTop,
+							data.radiusBottom,
+							data.height,
+							data.radiusSegments,
+							data.heightSegments,
+							data.openEnded
+						);
+
+						break;
+
+					case 'SphereGeometry':
+
+						geometry = new THREE.SphereGeometry(
+							data.radius,
+							data.widthSegments,
+							data.heightSegments,
+							data.phiStart,
+							data.phiLength,
+							data.thetaStart,
+							data.thetaLength
+						);
+
+						break;
+
+					case 'IcosahedronGeometry':
+
+						geometry = new THREE.IcosahedronGeometry(
+							data.radius,
+							data.detail
+						);
+
+						break;
+
+					case 'TorusGeometry':
+
+						geometry = new THREE.TorusGeometry(
+							data.radius,
+							data.tube,
+							data.radialSegments,
+							data.tubularSegments,
+							data.arc
+						);
+
+						break;
+
+					case 'TorusKnotGeometry':
+
+						geometry = new THREE.TorusKnotGeometry(
+							data.radius,
+							data.tube,
+							data.radialSegments,
+							data.tubularSegments,
+							data.p,
+							data.q,
+							data.heightScale
+						);
+
+						break;
+
+					case 'Geometry':
+
+						geometry = loader.parse( data.data ).geometry;
+
+						break;
+
+				}
+
+				if ( data.name !== undefined ) geometry.name = data.name;
+
+				geometries[ id ] = geometry;
+
+			}
+
+		}
+
+		return geometries;
+
+	},
+
+	parseMaterials: function ( json ) {
+
+		var materials = {};
+
+		if ( json !== undefined ) {
+
+			var loader = new THREE.MaterialLoader();
+
+			for ( var id in json ) {
+
+				var data = json[ id ];
+				var material = loader.parse( data );
+
+				if ( data.name !== undefined ) material.name = data.name;
+
+				materials[ id ] = material;
+
+			}
+
+		}
+
+		return materials;
+
+	},
+
+	parseObject: function ( data, geometries, materials ) {
+
+		var object;
+
+		switch ( data.type ) {
+
+			case 'Scene':
+
+				object = new THREE.Scene();
+
+				break;
+
+			case 'PerspectiveCamera':
+
+				object = new THREE.PerspectiveCamera( data.fov, data.aspect, data.near, data.far );
+				object.position.fromArray( data.position );
+				object.rotation.fromArray( data.rotation );
+
+				break;
+
+			case 'OrthographicCamera':
+
+				object = new THREE.OrthographicCamera( data.left, data.right, data.top, data.bottom, data.near, data.far );
+				object.position.fromArray( data.position );
+				object.rotation.fromArray( data.rotation );
+
+				break;
+
+			case 'AmbientLight':
+
+				object = new THREE.AmbientLight( data.color );
+
+				break;
+
+			case 'DirectionalLight':
+
+				object = new THREE.DirectionalLight( data.color, data.intensity );
+				object.position.fromArray( data.position );
+
+				break;
+
+			case 'PointLight':
+
+				object = new THREE.PointLight( data.color, data.intensity, data.distance );
+				object.position.fromArray( data.position );
+
+				break;
+
+			case 'SpotLight':
+
+				object = new THREE.SpotLight( data.color, data.intensity, data.distance, data.angle, data.exponent );
+				object.position.fromArray( data.position );
+
+				break;
+
+			case 'HemisphereLight':
+
+				object = new THREE.HemisphereLight( data.color, data.groundColor, data.intensity );
+				object.position.fromArray( data.position );
+
+				break;
+
+			case 'Mesh':
+
+				object = new THREE.Mesh( geometries[ data.geometry ], materials[ data.material ] );
+				object.position.fromArray( data.position );
+				object.rotation.fromArray( data.rotation );
+				object.scale.fromArray( data.scale );
+
+				break;
+
+			default:
+
+				object = new THREE.Object3D();
+				object.position.fromArray( data.position );
+				object.rotation.fromArray( data.rotation );
+				object.scale.fromArray( data.scale );
+
+		}
+
+		if ( data.name !== undefined ) object.name = data.name;
+		if ( data.visible !== undefined ) object.visible = data.visible;
+		if ( data.userData !== undefined ) object.userData = data.userData;
+
+		if ( data.children !== undefined ) {
+
+			for ( var child in data.children ) {
+
+				object.add( this.parseObject( data.children[ child ], geometries, materials ) );
+
+			}
+
+		}
+
+		return object;
+
+	}
+
+};
+
+THREE.EventDispatcher.prototype.apply( THREE.ObjectLoader41.prototype );

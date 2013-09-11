@@ -1,1 +1,224 @@
-THREE.PolyhedronGeometry=function(e,t,i,r){function n(e){var t=e.normalize().clone();t.index=h.vertices.push(t)-1;var i=s(e)/2/Math.PI+.5,r=l(e)/Math.PI+.5;return t.uv=new THREE.Vector2(i,1-r),t}function o(e,t,i){var r=new THREE.Face3(e.index,t.index,i.index,[e.clone(),t.clone(),i.clone()]);r.centroid.add(e).add(t).add(i).divideScalar(3),h.faces.push(r);var n=s(r.centroid);h.faceVertexUvs[0].push([c(e.uv,e,n),c(t.uv,t,n),c(i.uv,i,n)])}function a(e,t){var i=Math.pow(2,t);Math.pow(4,t);for(var r=n(h.vertices[e.a]),a=n(h.vertices[e.b]),s=n(h.vertices[e.c]),l=[],c=0;i>=c;c++){l[c]=[];for(var u=n(r.clone().lerp(s,c/i)),d=n(a.clone().lerp(s,c/i)),p=i-c,f=0;p>=f;f++)l[c][f]=0==f&&c==i?u:n(u.clone().lerp(d,f/p))}for(var c=0;i>c;c++)for(var f=0;2*(i-c)-1>f;f++){var m=Math.floor(f/2);0==f%2?o(l[c][m+1],l[c+1][m],l[c][m]):o(l[c][m+1],l[c+1][m+1],l[c+1][m])}}function s(e){return Math.atan2(e.z,-e.x)}function l(e){return Math.atan2(-e.y,Math.sqrt(e.x*e.x+e.z*e.z))}function c(e,t,i){return 0>i&&1===e.x&&(e=new THREE.Vector2(e.x-1,e.y)),0===t.x&&0===t.z&&(e=new THREE.Vector2(i/2/Math.PI+.5,e.y)),e.clone()}THREE.Geometry.call(this),i=i||1,r=r||0;for(var h=this,u=0,d=e.length;d>u;u++)n(new THREE.Vector3(e[u][0],e[u][1],e[u][2]));for(var p=this.vertices,f=[],u=0,d=t.length;d>u;u++){var m=p[t[u][0]],v=p[t[u][1]],g=p[t[u][2]];f[u]=new THREE.Face3(m.index,v.index,g.index,[m.clone(),v.clone(),g.clone()])}for(var u=0,d=f.length;d>u;u++)a(f[u],r);for(var u=0,d=this.faceVertexUvs[0].length;d>u;u++){var E=this.faceVertexUvs[0][u],y=E[0].x,T=E[1].x,x=E[2].x,_=Math.max(y,Math.max(T,x)),b=Math.min(y,Math.min(T,x));_>.9&&.1>b&&(.2>y&&(E[0].x+=1),.2>T&&(E[1].x+=1),.2>x&&(E[2].x+=1))}for(var u=0,d=this.vertices.length;d>u;u++)this.vertices[u].multiplyScalar(i);this.mergeVertices(),this.computeCentroids(),this.computeFaceNormals(),this.boundingSphere=new THREE.Sphere(new THREE.Vector3,i)},THREE.PolyhedronGeometry.prototype=Object.create(THREE.Geometry.prototype);
+/**
+ * @author clockworkgeek / https://github.com/clockworkgeek
+ * @author timothypratley / https://github.com/timothypratley
+ * @author WestLangley / http://github.com/WestLangley
+*/
+
+THREE.PolyhedronGeometry = function ( vertices, faces, radius, detail ) {
+
+	THREE.Geometry.call( this );
+
+	radius = radius || 1;
+	detail = detail || 0;
+
+	var that = this;
+
+	for ( var i = 0, l = vertices.length; i < l; i ++ ) {
+
+		prepare( new THREE.Vector3( vertices[ i ][ 0 ], vertices[ i ][ 1 ], vertices[ i ][ 2 ] ) );
+
+	}
+
+	var midpoints = [], p = this.vertices;
+
+	var f = [];
+	for ( var i = 0, l = faces.length; i < l; i ++ ) {
+
+		var v1 = p[ faces[ i ][ 0 ] ];
+		var v2 = p[ faces[ i ][ 1 ] ];
+		var v3 = p[ faces[ i ][ 2 ] ];
+
+		f[ i ] = new THREE.Face3( v1.index, v2.index, v3.index, [ v1.clone(), v2.clone(), v3.clone() ] );
+
+	}
+
+	for ( var i = 0, l = f.length; i < l; i ++ ) {
+
+		subdivide(f[ i ], detail);
+
+	}
+
+
+	// Handle case when face straddles the seam
+
+	for ( var i = 0, l = this.faceVertexUvs[ 0 ].length; i < l; i ++ ) {
+
+		var uvs = this.faceVertexUvs[ 0 ][ i ];
+
+		var x0 = uvs[ 0 ].x;
+		var x1 = uvs[ 1 ].x;
+		var x2 = uvs[ 2 ].x;
+
+		var max = Math.max( x0, Math.max( x1, x2 ) );
+		var min = Math.min( x0, Math.min( x1, x2 ) );
+
+		if ( max > 0.9 && min < 0.1 ) { // 0.9 is somewhat arbitrary
+
+			if ( x0 < 0.2 ) uvs[ 0 ].x += 1;
+			if ( x1 < 0.2 ) uvs[ 1 ].x += 1;
+			if ( x2 < 0.2 ) uvs[ 2 ].x += 1;
+
+		}
+
+	}
+
+
+	// Apply radius
+
+	for ( var i = 0, l = this.vertices.length; i < l; i ++ ) {
+
+		this.vertices[ i ].multiplyScalar( radius );
+
+	}
+
+
+	// Merge vertices
+
+	this.mergeVertices();
+
+	this.computeCentroids();
+
+	this.computeFaceNormals();
+
+	this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), radius );
+
+
+	// Project vector onto sphere's surface
+
+	function prepare( vector ) {
+
+		var vertex = vector.normalize().clone();
+		vertex.index = that.vertices.push( vertex ) - 1;
+
+		// Texture coords are equivalent to map coords, calculate angle and convert to fraction of a circle.
+
+		var u = azimuth( vector ) / 2 / Math.PI + 0.5;
+		var v = inclination( vector ) / Math.PI + 0.5;
+		vertex.uv = new THREE.Vector2( u, 1 - v );
+
+		return vertex;
+
+	}
+
+
+	// Approximate a curved face with recursively sub-divided triangles.
+
+	function make( v1, v2, v3 ) {
+
+		var face = new THREE.Face3( v1.index, v2.index, v3.index, [ v1.clone(), v2.clone(), v3.clone() ] );
+		face.centroid.add( v1 ).add( v2 ).add( v3 ).divideScalar( 3 );
+		that.faces.push( face );
+
+		var azi = azimuth( face.centroid );
+
+		that.faceVertexUvs[ 0 ].push( [
+			correctUV( v1.uv, v1, azi ),
+			correctUV( v2.uv, v2, azi ),
+			correctUV( v3.uv, v3, azi )
+		] );
+
+	}
+
+
+	// Analytically subdivide a face to the required detail level.
+
+	function subdivide(face, detail ) {
+
+		var cols = Math.pow(2, detail);
+		var cells = Math.pow(4, detail);
+		var a = prepare( that.vertices[ face.a ] );
+		var b = prepare( that.vertices[ face.b ] );
+		var c = prepare( that.vertices[ face.c ] );
+		var v = [];
+
+		// Construct all of the vertices for this subdivision.
+
+		for ( var i = 0 ; i <= cols; i ++ ) {
+
+			v[ i ] = [];
+
+			var aj = prepare( a.clone().lerp( c, i / cols ) );
+			var bj = prepare( b.clone().lerp( c, i / cols ) );
+			var rows = cols - i;
+
+			for ( var j = 0; j <= rows; j ++) {
+
+				if ( j == 0 && i == cols ) {
+
+					v[ i ][ j ] = aj;
+
+				} else {
+
+					v[ i ][ j ] = prepare( aj.clone().lerp( bj, j / rows ) );
+
+				}
+
+			}
+
+		}
+
+		// Construct all of the faces.
+
+		for ( var i = 0; i < cols ; i ++ ) {
+
+			for ( var j = 0; j < 2 * (cols - i) - 1; j ++ ) {
+
+				var k = Math.floor( j / 2 );
+
+				if ( j % 2 == 0 ) {
+
+					make(
+						v[ i ][ k + 1],
+						v[ i + 1 ][ k ],
+						v[ i ][ k ]
+					);
+
+				} else {
+
+					make(
+						v[ i ][ k + 1 ],
+						v[ i + 1][ k + 1],
+						v[ i + 1 ][ k ]
+					);
+
+				}
+
+			}
+
+		}
+
+	}
+
+
+	// Angle around the Y axis, counter-clockwise when looking from above.
+
+	function azimuth( vector ) {
+
+		return Math.atan2( vector.z, -vector.x );
+
+	}
+
+
+	// Angle above the XZ plane.
+
+	function inclination( vector ) {
+
+		return Math.atan2( -vector.y, Math.sqrt( ( vector.x * vector.x ) + ( vector.z * vector.z ) ) );
+
+	}
+
+
+	// Texture fixing helper. Spheres have some odd behaviours.
+
+	function correctUV( uv, vector, azimuth ) {
+
+		if ( ( azimuth < 0 ) && ( uv.x === 1 ) ) uv = new THREE.Vector2( uv.x - 1, uv.y );
+		if ( ( vector.x === 0 ) && ( vector.z === 0 ) ) uv = new THREE.Vector2( azimuth / 2 / Math.PI + 0.5, uv.y );
+		return uv.clone();
+
+	}
+
+
+};
+
+THREE.PolyhedronGeometry.prototype = Object.create( THREE.Geometry.prototype );

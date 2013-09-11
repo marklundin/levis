@@ -1,1 +1,307 @@
-THREE.MorphBlendMesh=function(e,t){THREE.Mesh.call(this,e,t),this.animationsMap={},this.animationsList=[];var i=this.geometry.morphTargets.length,r="__default",o=0,n=i-1,a=i/1;this.createAnimation(r,o,n,a),this.setAnimationWeight(r,1)},THREE.MorphBlendMesh.prototype=Object.create(THREE.Mesh.prototype),THREE.MorphBlendMesh.prototype.createAnimation=function(e,t,i,r){var o={startFrame:t,endFrame:i,length:i-t+1,fps:r,duration:(i-t)/r,lastFrame:0,currentFrame:0,active:!1,time:0,direction:1,weight:1,directionBackwards:!1,mirroredLoop:!1};this.animationsMap[e]=o,this.animationsList.push(o)},THREE.MorphBlendMesh.prototype.autoCreateAnimations=function(e){for(var t,i=/([a-z]+)(\d+)/,r={},o=this.geometry,n=0,a=o.morphTargets.length;a>n;n++){var s=o.morphTargets[n],l=s.name.match(i);if(l&&l.length>1){var c=l[1];l[2],r[c]||(r[c]={start:1/0,end:-1/0});var h=r[c];n<h.start&&(h.start=n),n>h.end&&(h.end=n),t||(t=c)}}for(var c in r){var h=r[c];this.createAnimation(c,h.start,h.end,e)}this.firstAnimation=t},THREE.MorphBlendMesh.prototype.setAnimationDirectionForward=function(e){var t=this.animationsMap[e];t&&(t.direction=1,t.directionBackwards=!1)},THREE.MorphBlendMesh.prototype.setAnimationDirectionBackward=function(e){var t=this.animationsMap[e];t&&(t.direction=-1,t.directionBackwards=!0)},THREE.MorphBlendMesh.prototype.setAnimationFPS=function(e,t){var i=this.animationsMap[e];i&&(i.fps=t,i.duration=(i.end-i.start)/i.fps)},THREE.MorphBlendMesh.prototype.setAnimationDuration=function(e,t){var i=this.animationsMap[e];i&&(i.duration=t,i.fps=(i.end-i.start)/i.duration)},THREE.MorphBlendMesh.prototype.setAnimationWeight=function(e,t){var i=this.animationsMap[e];i&&(i.weight=t)},THREE.MorphBlendMesh.prototype.setAnimationTime=function(e,t){var i=this.animationsMap[e];i&&(i.time=t)},THREE.MorphBlendMesh.prototype.getAnimationTime=function(e){var t=0,i=this.animationsMap[e];return i&&(t=i.time),t},THREE.MorphBlendMesh.prototype.getAnimationDuration=function(e){var t=-1,i=this.animationsMap[e];return i&&(t=i.duration),t},THREE.MorphBlendMesh.prototype.playAnimation=function(e){var t=this.animationsMap[e];t?(t.time=0,t.active=!0):console.warn("animation["+e+"] undefined")},THREE.MorphBlendMesh.prototype.stopAnimation=function(e){var t=this.animationsMap[e];t&&(t.active=!1)},THREE.MorphBlendMesh.prototype.update=function(e){for(var t=0,i=this.animationsList.length;i>t;t++){var r=this.animationsList[t];if(r.active){var o=r.duration/r.length;r.time+=r.direction*e,r.mirroredLoop?(r.time>r.duration||r.time<0)&&(r.direction*=-1,r.time>r.duration&&(r.time=r.duration,r.directionBackwards=!0),r.time<0&&(r.time=0,r.directionBackwards=!1)):(r.time=r.time%r.duration,r.time<0&&(r.time+=r.duration));var n=r.startFrame+THREE.Math.clamp(Math.floor(r.time/o),0,r.length-1),a=r.weight;n!==r.currentFrame&&(this.morphTargetInfluences[r.lastFrame]=0,this.morphTargetInfluences[r.currentFrame]=1*a,this.morphTargetInfluences[n]=0,r.lastFrame=r.currentFrame,r.currentFrame=n);var s=r.time%o/o;r.directionBackwards&&(s=1-s),this.morphTargetInfluences[r.currentFrame]=s*a,this.morphTargetInfluences[r.lastFrame]=(1-s)*a}}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.MorphBlendMesh = function( geometry, material ) {
+
+	THREE.Mesh.call( this, geometry, material );
+
+	this.animationsMap = {};
+	this.animationsList = [];
+
+	// prepare default animation
+	// (all frames played together in 1 second)
+
+	var numFrames = this.geometry.morphTargets.length;
+
+	var name = "__default";
+
+	var startFrame = 0;
+	var endFrame = numFrames - 1;
+
+	var fps = numFrames / 1;
+
+	this.createAnimation( name, startFrame, endFrame, fps );
+	this.setAnimationWeight( name, 1 );
+
+};
+
+THREE.MorphBlendMesh.prototype = Object.create( THREE.Mesh.prototype );
+
+THREE.MorphBlendMesh.prototype.createAnimation = function ( name, start, end, fps ) {
+
+	var animation = {
+
+		startFrame: start,
+		endFrame: end,
+
+		length: end - start + 1,
+
+		fps: fps,
+		duration: ( end - start ) / fps,
+
+		lastFrame: 0,
+		currentFrame: 0,
+
+		active: false,
+
+		time: 0,
+		direction: 1,
+		weight: 1,
+
+		directionBackwards: false,
+		mirroredLoop: false
+
+	};
+
+	this.animationsMap[ name ] = animation;
+	this.animationsList.push( animation );
+
+};
+
+THREE.MorphBlendMesh.prototype.autoCreateAnimations = function ( fps ) {
+
+	var pattern = /([a-z]+)(\d+)/;
+
+	var firstAnimation, frameRanges = {};
+
+	var geometry = this.geometry;
+
+	for ( var i = 0, il = geometry.morphTargets.length; i < il; i ++ ) {
+
+		var morph = geometry.morphTargets[ i ];
+		var chunks = morph.name.match( pattern );
+
+		if ( chunks && chunks.length > 1 ) {
+
+			var name = chunks[ 1 ];
+			var num = chunks[ 2 ];
+
+			if ( ! frameRanges[ name ] ) frameRanges[ name ] = { start: Infinity, end: -Infinity };
+
+			var range = frameRanges[ name ];
+
+			if ( i < range.start ) range.start = i;
+			if ( i > range.end ) range.end = i;
+
+			if ( ! firstAnimation ) firstAnimation = name;
+
+		}
+
+	}
+
+	for ( var name in frameRanges ) {
+
+		var range = frameRanges[ name ];
+		this.createAnimation( name, range.start, range.end, fps );
+
+	}
+
+	this.firstAnimation = firstAnimation;
+
+};
+
+THREE.MorphBlendMesh.prototype.setAnimationDirectionForward = function ( name ) {
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		animation.direction = 1;
+		animation.directionBackwards = false;
+
+	}
+
+};
+
+THREE.MorphBlendMesh.prototype.setAnimationDirectionBackward = function ( name ) {
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		animation.direction = -1;
+		animation.directionBackwards = true;
+
+	}
+
+};
+
+THREE.MorphBlendMesh.prototype.setAnimationFPS = function ( name, fps ) {
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		animation.fps = fps;
+		animation.duration = ( animation.end - animation.start ) / animation.fps;
+
+	}
+
+};
+
+THREE.MorphBlendMesh.prototype.setAnimationDuration = function ( name, duration ) {
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		animation.duration = duration;
+		animation.fps = ( animation.end - animation.start ) / animation.duration;
+
+	}
+
+};
+
+THREE.MorphBlendMesh.prototype.setAnimationWeight = function ( name, weight ) {
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		animation.weight = weight;
+
+	}
+
+};
+
+THREE.MorphBlendMesh.prototype.setAnimationTime = function ( name, time ) {
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		animation.time = time;
+
+	}
+
+};
+
+THREE.MorphBlendMesh.prototype.getAnimationTime = function ( name ) {
+
+	var time = 0;
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		time = animation.time;
+
+	}
+
+	return time;
+
+};
+
+THREE.MorphBlendMesh.prototype.getAnimationDuration = function ( name ) {
+
+	var duration = -1;
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		duration = animation.duration;
+
+	}
+
+	return duration;
+
+};
+
+THREE.MorphBlendMesh.prototype.playAnimation = function ( name ) {
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		animation.time = 0;
+		animation.active = true;
+
+	} else {
+
+		console.warn( "animation[" + name + "] undefined" );
+
+	}
+
+};
+
+THREE.MorphBlendMesh.prototype.stopAnimation = function ( name ) {
+
+	var animation = this.animationsMap[ name ];
+
+	if ( animation ) {
+
+		animation.active = false;
+
+	}
+
+};
+
+THREE.MorphBlendMesh.prototype.update = function ( delta ) {
+
+	for ( var i = 0, il = this.animationsList.length; i < il; i ++ ) {
+
+		var animation = this.animationsList[ i ];
+
+		if ( ! animation.active ) continue;
+
+		var frameTime = animation.duration / animation.length;
+
+		animation.time += animation.direction * delta;
+
+		if ( animation.mirroredLoop ) {
+
+			if ( animation.time > animation.duration || animation.time < 0 ) {
+
+				animation.direction *= -1;
+
+				if ( animation.time > animation.duration ) {
+
+					animation.time = animation.duration;
+					animation.directionBackwards = true;
+
+				}
+
+				if ( animation.time < 0 ) {
+
+					animation.time = 0;
+					animation.directionBackwards = false;
+
+				}
+
+			}
+
+		} else {
+
+			animation.time = animation.time % animation.duration;
+
+			if ( animation.time < 0 ) animation.time += animation.duration;
+
+		}
+
+		var keyframe = animation.startFrame + THREE.Math.clamp( Math.floor( animation.time / frameTime ), 0, animation.length - 1 );
+		var weight = animation.weight;
+
+		if ( keyframe !== animation.currentFrame ) {
+
+			this.morphTargetInfluences[ animation.lastFrame ] = 0;
+			this.morphTargetInfluences[ animation.currentFrame ] = 1 * weight;
+
+			this.morphTargetInfluences[ keyframe ] = 0;
+
+			animation.lastFrame = animation.currentFrame;
+			animation.currentFrame = keyframe;
+
+		}
+
+		var mix = ( animation.time % frameTime ) / frameTime;
+
+		if ( animation.directionBackwards ) mix = 1 - mix;
+
+		this.morphTargetInfluences[ animation.currentFrame ] = mix * weight;
+		this.morphTargetInfluences[ animation.lastFrame ] = ( 1 - mix ) * weight;
+
+	}
+
+};

@@ -1,1 +1,460 @@
-THREE.FontUtils={faces:{},face:"helvetiker",weight:"normal",style:"normal",size:150,divisions:10,getFace:function(){return this.faces[this.face][this.weight][this.style]},loadFace:function(e){var t=e.familyName.toLowerCase(),i=this;return i.faces[t]=i.faces[t]||{},i.faces[t][e.cssFontWeight]=i.faces[t][e.cssFontWeight]||{},i.faces[t][e.cssFontWeight][e.cssFontStyle]=e,i.faces[t][e.cssFontWeight][e.cssFontStyle]=e,e},drawText:function(e){var t,i=this.getFace(),r=this.size/i.resolution,n=0,o=String(e).split(""),a=o.length,s=[];for(t=0;a>t;t++){var l=new THREE.Path,c=this.extractGlyphPoints(o[t],i,r,n,l);n+=c.offset,s.push(c.path)}var h=n/2;return{paths:s,offset:h}},extractGlyphPoints:function(e,t,i,r,n){var o,a,s,l,c,h,u,d,p,f,m,v,g,E,y,T,_,b,x,R=[],w=t.glyphs[e]||t.glyphs["?"];if(w){if(w.o)for(l=w._cachedOutline||(w._cachedOutline=w.o.split(" ")),h=l.length,u=i,d=i,o=0;h>o;)switch(c=l[o++]){case"m":p=l[o++]*u+r,f=l[o++]*d,n.moveTo(p,f);break;case"l":p=l[o++]*u+r,f=l[o++]*d,n.lineTo(p,f);break;case"q":if(m=l[o++]*u+r,v=l[o++]*d,y=l[o++]*u+r,T=l[o++]*d,n.quadraticCurveTo(y,T,m,v),x=R[R.length-1])for(g=x.x,E=x.y,a=1,s=this.divisions;s>=a;a++){var H=a/s;THREE.Shape.Utils.b2(H,g,y,m),THREE.Shape.Utils.b2(H,E,T,v)}break;case"b":if(m=l[o++]*u+r,v=l[o++]*d,y=l[o++]*u+r,T=l[o++]*-d,_=l[o++]*u+r,b=l[o++]*-d,n.bezierCurveTo(m,v,y,T,_,b),x=R[R.length-1])for(g=x.x,E=x.y,a=1,s=this.divisions;s>=a;a++){var H=a/s;THREE.Shape.Utils.b3(H,g,y,_,m),THREE.Shape.Utils.b3(H,E,T,b,v)}}return{offset:w.ha*i,path:n}}}},THREE.FontUtils.generateShapes=function(e,t){t=t||{};var i=void 0!==t.size?t.size:100,r=void 0!==t.curveSegments?t.curveSegments:4,n=void 0!==t.font?t.font:"helvetiker",o=void 0!==t.weight?t.weight:"normal",a=void 0!==t.style?t.style:"normal";THREE.FontUtils.size=i,THREE.FontUtils.divisions=r,THREE.FontUtils.face=n,THREE.FontUtils.weight=o,THREE.FontUtils.style=a;for(var s=THREE.FontUtils.drawText(e),l=s.paths,c=[],h=0,u=l.length;u>h;h++)Array.prototype.push.apply(c,l[h].toShapes());return c},function(e){var t=1e-10,i=function(e,t){var i=e.length;if(3>i)return null;var o,a,s,l=[],c=[],h=[];if(r(e)>0)for(a=0;i>a;a++)c[a]=a;else for(a=0;i>a;a++)c[a]=i-1-a;var u=i,d=2*u;for(a=u-1;u>2;){if(d--<=0)return console.log("Warning, unable to triangulate polygon!"),t?h:l;if(o=a,o>=u&&(o=0),a=o+1,a>=u&&(a=0),s=a+1,s>=u&&(s=0),n(e,o,a,s,u,c)){var p,f,m,v,g;for(p=c[o],f=c[a],m=c[s],l.push([e[p],e[f],e[m]]),h.push([c[o],c[a],c[s]]),v=a,g=a+1;u>g;v++,g++)c[v]=c[g];u--,d=2*u}}return t?h:l},r=function(e){for(var t=e.length,i=0,r=t-1,n=0;t>n;r=n++)i+=e[r].x*e[n].y-e[n].x*e[r].y;return.5*i},n=function(e,i,r,n,o,a){var s,l,c,h,u,d,p,f,m;if(l=e[a[i]].x,c=e[a[i]].y,h=e[a[r]].x,u=e[a[r]].y,d=e[a[n]].x,p=e[a[n]].y,t>(h-l)*(p-c)-(u-c)*(d-l))return!1;var v,g,E,y,T,_,b,x,R,w,H,S,M,C,A;for(v=d-h,g=p-u,E=l-d,y=c-p,T=h-l,_=u-c,s=0;o>s;s++)if(s!==i&&s!==r&&s!==n&&(f=e[a[s]].x,m=e[a[s]].y,b=f-l,x=m-c,R=f-h,w=m-u,H=f-d,S=m-p,A=v*w-g*R,M=T*x-_*b,C=E*S-y*H,A>=0&&C>=0&&M>=0))return!1;return!0};return e.Triangulate=i,e.Triangulate.area=r,e}(THREE.FontUtils),self._typeface_js={faces:THREE.FontUtils.faces,loadFace:THREE.FontUtils.loadFace},THREE.typeface_js=self._typeface_js;
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * For Text operations in three.js (See TextGeometry)
+ *
+ * It uses techniques used in:
+ *
+ * 	typeface.js and canvastext
+ * 		For converting fonts and rendering with javascript
+ *		http://typeface.neocracy.org
+ *
+ *	Triangulation ported from AS3
+ *		Simple Polygon Triangulation
+ *		http://actionsnippet.com/?p=1462
+ *
+ * 	A Method to triangulate shapes with holes
+ *		http://www.sakri.net/blog/2009/06/12/an-approach-to-triangulating-polygons-with-holes/
+ *
+ */
+
+THREE.FontUtils = {
+
+	faces : {},
+
+	// Just for now. face[weight][style]
+
+	face : "helvetiker",
+	weight: "normal",
+	style : "normal",
+	size : 150,
+	divisions : 10,
+
+	getFace : function() {
+
+		return this.faces[ this.face ][ this.weight ][ this.style ];
+
+	},
+
+	loadFace : function( data ) {
+
+		var family = data.familyName.toLowerCase();
+
+		var ThreeFont = this;
+
+		ThreeFont.faces[ family ] = ThreeFont.faces[ family ] || {};
+
+		ThreeFont.faces[ family ][ data.cssFontWeight ] = ThreeFont.faces[ family ][ data.cssFontWeight ] || {};
+		ThreeFont.faces[ family ][ data.cssFontWeight ][ data.cssFontStyle ] = data;
+
+		var face = ThreeFont.faces[ family ][ data.cssFontWeight ][ data.cssFontStyle ] = data;
+
+		return data;
+
+	},
+
+	drawText : function( text ) {
+
+		var characterPts = [], allPts = [];
+
+		// RenderText
+
+		var i, p,
+			face = this.getFace(),
+			scale = this.size / face.resolution,
+			offset = 0,
+			chars = String( text ).split( '' ),
+			length = chars.length;
+
+		var fontPaths = [];
+
+		for ( i = 0; i < length; i ++ ) {
+
+			var path = new THREE.Path();
+
+			var ret = this.extractGlyphPoints( chars[ i ], face, scale, offset, path );
+			offset += ret.offset;
+
+			fontPaths.push( ret.path );
+
+		}
+
+		// get the width
+
+		var width = offset / 2;
+		//
+		// for ( p = 0; p < allPts.length; p++ ) {
+		//
+		// 	allPts[ p ].x -= width;
+		//
+		// }
+
+		//var extract = this.extractPoints( allPts, characterPts );
+		//extract.contour = allPts;
+
+		//extract.paths = fontPaths;
+		//extract.offset = width;
+
+		return { paths : fontPaths, offset : width };
+
+	},
+
+
+
+
+	extractGlyphPoints : function( c, face, scale, offset, path ) {
+
+		var pts = [];
+
+		var i, i2, divisions,
+			outline, action, length,
+			scaleX, scaleY,
+			x, y, cpx, cpy, cpx0, cpy0, cpx1, cpy1, cpx2, cpy2,
+			laste,
+			glyph = face.glyphs[ c ] || face.glyphs[ '?' ];
+
+		if ( !glyph ) return;
+
+		if ( glyph.o ) {
+
+			outline = glyph._cachedOutline || ( glyph._cachedOutline = glyph.o.split( ' ' ) );
+			length = outline.length;
+
+			scaleX = scale;
+			scaleY = scale;
+
+			for ( i = 0; i < length; ) {
+
+				action = outline[ i ++ ];
+
+				//console.log( action );
+
+				switch( action ) {
+
+				case 'm':
+
+					// Move To
+
+					x = outline[ i++ ] * scaleX + offset;
+					y = outline[ i++ ] * scaleY;
+
+					path.moveTo( x, y );
+					break;
+
+				case 'l':
+
+					// Line To
+
+					x = outline[ i++ ] * scaleX + offset;
+					y = outline[ i++ ] * scaleY;
+					path.lineTo(x,y);
+					break;
+
+				case 'q':
+
+					// QuadraticCurveTo
+
+					cpx  = outline[ i++ ] * scaleX + offset;
+					cpy  = outline[ i++ ] * scaleY;
+					cpx1 = outline[ i++ ] * scaleX + offset;
+					cpy1 = outline[ i++ ] * scaleY;
+
+					path.quadraticCurveTo(cpx1, cpy1, cpx, cpy);
+
+					laste = pts[ pts.length - 1 ];
+
+					if ( laste ) {
+
+						cpx0 = laste.x;
+						cpy0 = laste.y;
+
+						for ( i2 = 1, divisions = this.divisions; i2 <= divisions; i2 ++ ) {
+
+							var t = i2 / divisions;
+							var tx = THREE.Shape.Utils.b2( t, cpx0, cpx1, cpx );
+							var ty = THREE.Shape.Utils.b2( t, cpy0, cpy1, cpy );
+					  }
+
+				  }
+
+				  break;
+
+				case 'b':
+
+					// Cubic Bezier Curve
+
+					cpx  = outline[ i++ ] *  scaleX + offset;
+					cpy  = outline[ i++ ] *  scaleY;
+					cpx1 = outline[ i++ ] *  scaleX + offset;
+					cpy1 = outline[ i++ ] * -scaleY;
+					cpx2 = outline[ i++ ] *  scaleX + offset;
+					cpy2 = outline[ i++ ] * -scaleY;
+
+					path.bezierCurveTo( cpx, cpy, cpx1, cpy1, cpx2, cpy2 );
+
+					laste = pts[ pts.length - 1 ];
+
+					if ( laste ) {
+
+						cpx0 = laste.x;
+						cpy0 = laste.y;
+
+						for ( i2 = 1, divisions = this.divisions; i2 <= divisions; i2 ++ ) {
+
+							var t = i2 / divisions;
+							var tx = THREE.Shape.Utils.b3( t, cpx0, cpx1, cpx2, cpx );
+							var ty = THREE.Shape.Utils.b3( t, cpy0, cpy1, cpy2, cpy );
+
+						}
+
+					}
+
+					break;
+
+				}
+
+			}
+		}
+
+
+
+		return { offset: glyph.ha*scale, path:path};
+	}
+
+};
+
+
+THREE.FontUtils.generateShapes = function( text, parameters ) {
+
+	// Parameters 
+
+	parameters = parameters || {};
+
+	var size = parameters.size !== undefined ? parameters.size : 100;
+	var curveSegments = parameters.curveSegments !== undefined ? parameters.curveSegments: 4;
+
+	var font = parameters.font !== undefined ? parameters.font : "helvetiker";
+	var weight = parameters.weight !== undefined ? parameters.weight : "normal";
+	var style = parameters.style !== undefined ? parameters.style : "normal";
+
+	THREE.FontUtils.size = size;
+	THREE.FontUtils.divisions = curveSegments;
+
+	THREE.FontUtils.face = font;
+	THREE.FontUtils.weight = weight;
+	THREE.FontUtils.style = style;
+
+	// Get a Font data json object
+
+	var data = THREE.FontUtils.drawText( text );
+
+	var paths = data.paths;
+	var shapes = [];
+
+	for ( var p = 0, pl = paths.length; p < pl; p ++ ) {
+
+		Array.prototype.push.apply( shapes, paths[ p ].toShapes() );
+
+	}
+
+	return shapes;
+
+};
+
+
+/**
+ * This code is a quick port of code written in C++ which was submitted to
+ * flipcode.com by John W. Ratcliff  // July 22, 2000
+ * See original code and more information here:
+ * http://www.flipcode.com/archives/Efficient_Polygon_Triangulation.shtml
+ *
+ * ported to actionscript by Zevan Rosser
+ * www.actionsnippet.com
+ *
+ * ported to javascript by Joshua Koo
+ * http://www.lab4games.net/zz85/blog
+ *
+ */
+
+
+( function( namespace ) {
+
+	var EPSILON = 0.0000000001;
+
+	// takes in an contour array and returns
+
+	var process = function( contour, indices ) {
+
+		var n = contour.length;
+
+		if ( n < 3 ) return null;
+
+		var result = [],
+			verts = [],
+			vertIndices = [];
+
+		/* we want a counter-clockwise polygon in verts */
+
+		var u, v, w;
+
+		if ( area( contour ) > 0.0 ) {
+
+			for ( v = 0; v < n; v++ ) verts[ v ] = v;
+
+		} else {
+
+			for ( v = 0; v < n; v++ ) verts[ v ] = ( n - 1 ) - v;
+
+		}
+
+		var nv = n;
+
+		/*  remove nv - 2 vertices, creating 1 triangle every time */
+
+		var count = 2 * nv;   /* error detection */
+
+		for( v = nv - 1; nv > 2; ) {
+
+			/* if we loop, it is probably a non-simple polygon */
+
+			if ( ( count-- ) <= 0 ) {
+
+				//** Triangulate: ERROR - probable bad polygon!
+
+				//throw ( "Warning, unable to triangulate polygon!" );
+				//return null;
+				// Sometimes warning is fine, especially polygons are triangulated in reverse.
+				console.log( "Warning, unable to triangulate polygon!" );
+
+				if ( indices ) return vertIndices;
+				return result;
+
+			}
+
+			/* three consecutive vertices in current polygon, <u,v,w> */
+
+			u = v; 	 	if ( nv <= u ) u = 0;     /* previous */
+			v = u + 1;  if ( nv <= v ) v = 0;     /* new v    */
+			w = v + 1;  if ( nv <= w ) w = 0;     /* next     */
+
+			if ( snip( contour, u, v, w, nv, verts ) ) {
+
+				var a, b, c, s, t;
+
+				/* true names of the vertices */
+
+				a = verts[ u ];
+				b = verts[ v ];
+				c = verts[ w ];
+
+				/* output Triangle */
+
+				result.push( [ contour[ a ],
+					contour[ b ],
+					contour[ c ] ] );
+
+
+				vertIndices.push( [ verts[ u ], verts[ v ], verts[ w ] ] );
+
+				/* remove v from the remaining polygon */
+
+				for( s = v, t = v + 1; t < nv; s++, t++ ) {
+
+					verts[ s ] = verts[ t ];
+
+				}
+
+				nv--;
+
+				/* reset error detection counter */
+
+				count = 2 * nv;
+
+			}
+
+		}
+
+		if ( indices ) return vertIndices;
+		return result;
+
+	};
+
+	// calculate area of the contour polygon
+
+	var area = function ( contour ) {
+
+		var n = contour.length;
+		var a = 0.0;
+
+		for( var p = n - 1, q = 0; q < n; p = q++ ) {
+
+			a += contour[ p ].x * contour[ q ].y - contour[ q ].x * contour[ p ].y;
+
+		}
+
+		return a * 0.5;
+
+	};
+
+	var snip = function ( contour, u, v, w, n, verts ) {
+
+		var p;
+		var ax, ay, bx, by;
+		var cx, cy, px, py;
+
+		ax = contour[ verts[ u ] ].x;
+		ay = contour[ verts[ u ] ].y;
+
+		bx = contour[ verts[ v ] ].x;
+		by = contour[ verts[ v ] ].y;
+
+		cx = contour[ verts[ w ] ].x;
+		cy = contour[ verts[ w ] ].y;
+
+		if ( EPSILON > (((bx-ax)*(cy-ay)) - ((by-ay)*(cx-ax))) ) return false;
+
+		var aX, aY, bX, bY, cX, cY;
+		var apx, apy, bpx, bpy, cpx, cpy;
+		var cCROSSap, bCROSScp, aCROSSbp;
+
+		aX = cx - bx;  aY = cy - by;
+		bX = ax - cx;  bY = ay - cy;
+		cX = bx - ax;  cY = by - ay;
+
+		for ( p = 0; p < n; p++ ) {
+
+			if( (p === u) || (p === v) || (p === w) ) continue;
+
+			px = contour[ verts[ p ] ].x
+			py = contour[ verts[ p ] ].y
+
+			apx = px - ax;  apy = py - ay;
+			bpx = px - bx;  bpy = py - by;
+			cpx = px - cx;  cpy = py - cy;
+
+			// see if p is inside triangle abc
+
+			aCROSSbp = aX*bpy - aY*bpx;
+			cCROSSap = cX*apy - cY*apx;
+			bCROSScp = bX*cpy - bY*cpx;
+
+			if ( (aCROSSbp >= 0.0) && (bCROSScp >= 0.0) && (cCROSSap >= 0.0) ) return false;
+
+		}
+
+		return true;
+
+	};
+
+
+	namespace.Triangulate = process;
+	namespace.Triangulate.area = area;
+
+	return namespace;
+
+})(THREE.FontUtils);
+
+// To use the typeface.js face files, hook up the API
+self._typeface_js = { faces: THREE.FontUtils.faces, loadFace: THREE.FontUtils.loadFace };
+THREE.typeface_js = self._typeface_js;

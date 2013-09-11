@@ -1,1 +1,965 @@
-THREE.Matrix4=function(e,t,i,r,o,n,a,s,l,c,h,u,d,p,f,m){this.elements=new Float32Array(16);var g=this.elements;g[0]=void 0!==e?e:1,g[4]=t||0,g[8]=i||0,g[12]=r||0,g[1]=o||0,g[5]=void 0!==n?n:1,g[9]=a||0,g[13]=s||0,g[2]=l||0,g[6]=c||0,g[10]=void 0!==h?h:1,g[14]=u||0,g[3]=d||0,g[7]=p||0,g[11]=f||0,g[15]=void 0!==m?m:1},THREE.Matrix4.prototype={constructor:THREE.Matrix4,set:function(e,t,i,r,o,n,a,s,l,c,h,u,d,p,f,m){var g=this.elements;return g[0]=e,g[4]=t,g[8]=i,g[12]=r,g[1]=o,g[5]=n,g[9]=a,g[13]=s,g[2]=l,g[6]=c,g[10]=h,g[14]=u,g[3]=d,g[7]=p,g[11]=f,g[15]=m,this},identity:function(){return this.set(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),this},copy:function(e){return this.elements.set(e.elements),this},extractPosition:function(e){return console.warn("DEPRECATED: Matrix4's .extractPosition() has been renamed to .copyPosition()."),this.copyPosition(e)},copyPosition:function(e){var t=this.elements,i=e.elements;return t[12]=i[12],t[13]=i[13],t[14]=i[14],this},extractRotation:function(){var e=new THREE.Vector3;return function(t){var i=this.elements,r=t.elements,o=1/e.set(r[0],r[1],r[2]).length(),n=1/e.set(r[4],r[5],r[6]).length(),a=1/e.set(r[8],r[9],r[10]).length();return i[0]=r[0]*o,i[1]=r[1]*o,i[2]=r[2]*o,i[4]=r[4]*n,i[5]=r[5]*n,i[6]=r[6]*n,i[8]=r[8]*a,i[9]=r[9]*a,i[10]=r[10]*a,this}}(),makeRotationFromEuler:function(e){void 0===typeof e.order&&console.error("ERROR: Matrix's .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.  Please update your code.");var t=this.elements,i=e.x,r=e.y,o=e.z,n=Math.cos(i),a=Math.sin(i),s=Math.cos(r),l=Math.sin(r),c=Math.cos(o),h=Math.sin(o);if(void 0===e.order||"XYZ"===e.order){var u=n*c,d=n*h,p=a*c,f=a*h;t[0]=s*c,t[4]=-s*h,t[8]=l,t[1]=d+p*l,t[5]=u-f*l,t[9]=-a*s,t[2]=f-u*l,t[6]=p+d*l,t[10]=n*s}else if("YXZ"===e.order){var m=s*c,g=s*h,v=l*c,E=l*h;t[0]=m+E*a,t[4]=v*a-g,t[8]=n*l,t[1]=n*h,t[5]=n*c,t[9]=-a,t[2]=g*a-v,t[6]=E+m*a,t[10]=n*s}else if("ZXY"===e.order){var m=s*c,g=s*h,v=l*c,E=l*h;t[0]=m-E*a,t[4]=-n*h,t[8]=v+g*a,t[1]=g+v*a,t[5]=n*c,t[9]=E-m*a,t[2]=-n*l,t[6]=a,t[10]=n*s}else if("ZYX"===e.order){var u=n*c,d=n*h,p=a*c,f=a*h;t[0]=s*c,t[4]=p*l-d,t[8]=u*l+f,t[1]=s*h,t[5]=f*l+u,t[9]=d*l-p,t[2]=-l,t[6]=a*s,t[10]=n*s}else if("YZX"===e.order){var y=n*s,T=n*l,x=a*s,b=a*l;t[0]=s*c,t[4]=b-y*h,t[8]=x*h+T,t[1]=h,t[5]=n*c,t[9]=-a*c,t[2]=-l*c,t[6]=T*h+x,t[10]=y-b*h}else if("XZY"===e.order){var y=n*s,T=n*l,x=a*s,b=a*l;t[0]=s*c,t[4]=-h,t[8]=l*c,t[1]=y*h+b,t[5]=n*c,t[9]=T*h-x,t[2]=x*h-T,t[6]=a*c,t[10]=b*h+y}return t[3]=0,t[7]=0,t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,this},setRotationFromQuaternion:function(e){return console.warn("DEPRECATED: Matrix4's .setRotationFromQuaternion() has been deprecated in favor of makeRotationFromQuaternion.  Please update your code."),this.makeRotationFromQuaternion(e)},makeRotationFromQuaternion:function(e){var t=this.elements,i=e.x,r=e.y,o=e.z,n=e.w,a=i+i,s=r+r,l=o+o,c=i*a,h=i*s,u=i*l,d=r*s,p=r*l,f=o*l,m=n*a,g=n*s,v=n*l;return t[0]=1-(d+f),t[4]=h-v,t[8]=u+g,t[1]=h+v,t[5]=1-(c+f),t[9]=p-m,t[2]=u-g,t[6]=p+m,t[10]=1-(c+d),t[3]=0,t[7]=0,t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,this},lookAt:function(){var e=new THREE.Vector3,t=new THREE.Vector3,i=new THREE.Vector3;return function(r,o,n){var a=this.elements;return i.subVectors(r,o).normalize(),0===i.length()&&(i.z=1),e.crossVectors(n,i).normalize(),0===e.length()&&(i.x+=1e-4,e.crossVectors(n,i).normalize()),t.crossVectors(i,e),a[0]=e.x,a[4]=t.x,a[8]=i.x,a[1]=e.y,a[5]=t.y,a[9]=i.y,a[2]=e.z,a[6]=t.z,a[10]=i.z,this}}(),multiply:function(e,t){return void 0!==t?(console.warn("DEPRECATED: Matrix4's .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead."),this.multiplyMatrices(e,t)):this.multiplyMatrices(this,e)},multiplyMatrices:function(e,t){var i=e.elements,r=t.elements,o=this.elements,n=i[0],a=i[4],s=i[8],l=i[12],c=i[1],h=i[5],u=i[9],d=i[13],p=i[2],f=i[6],m=i[10],g=i[14],v=i[3],E=i[7],y=i[11],T=i[15],x=r[0],b=r[4],R=r[8],_=r[12],w=r[1],H=r[5],M=r[9],S=r[13],C=r[2],A=r[6],D=r[10],P=r[14],L=r[3],N=r[7],F=r[11],I=r[15];return o[0]=n*x+a*w+s*C+l*L,o[4]=n*b+a*H+s*A+l*N,o[8]=n*R+a*M+s*D+l*F,o[12]=n*_+a*S+s*P+l*I,o[1]=c*x+h*w+u*C+d*L,o[5]=c*b+h*H+u*A+d*N,o[9]=c*R+h*M+u*D+d*F,o[13]=c*_+h*S+u*P+d*I,o[2]=p*x+f*w+m*C+g*L,o[6]=p*b+f*H+m*A+g*N,o[10]=p*R+f*M+m*D+g*F,o[14]=p*_+f*S+m*P+g*I,o[3]=v*x+E*w+y*C+T*L,o[7]=v*b+E*H+y*A+T*N,o[11]=v*R+E*M+y*D+T*F,o[15]=v*_+E*S+y*P+T*I,this},multiplyToArray:function(e,t,i){var r=this.elements;return this.multiplyMatrices(e,t),i[0]=r[0],i[1]=r[1],i[2]=r[2],i[3]=r[3],i[4]=r[4],i[5]=r[5],i[6]=r[6],i[7]=r[7],i[8]=r[8],i[9]=r[9],i[10]=r[10],i[11]=r[11],i[12]=r[12],i[13]=r[13],i[14]=r[14],i[15]=r[15],this},multiplyScalar:function(e){var t=this.elements;return t[0]*=e,t[4]*=e,t[8]*=e,t[12]*=e,t[1]*=e,t[5]*=e,t[9]*=e,t[13]*=e,t[2]*=e,t[6]*=e,t[10]*=e,t[14]*=e,t[3]*=e,t[7]*=e,t[11]*=e,t[15]*=e,this},multiplyVector3:function(e){return console.warn("DEPRECATED: Matrix4's .multiplyVector3() has been removed. Use vector.applyMatrix4( matrix ) or vector.applyProjection( matrix ) instead."),e.applyProjection(this)},multiplyVector4:function(e){return console.warn("DEPRECATED: Matrix4's .multiplyVector4() has been removed. Use vector.applyMatrix4( matrix ) instead."),e.applyMatrix4(this)},multiplyVector3Array:function(){var e=new THREE.Vector3;return function(t){for(var i=0,r=t.length;r>i;i+=3)e.x=t[i],e.y=t[i+1],e.z=t[i+2],e.applyProjection(this),t[i]=e.x,t[i+1]=e.y,t[i+2]=e.z;return t}}(),rotateAxis:function(e){console.warn("DEPRECATED: Matrix4's .rotateAxis() has been removed. Use Vector3.transformDirection( matrix ) instead."),e.transformDirection(this)},crossVector:function(e){return console.warn("DEPRECATED: Matrix4's .crossVector() has been removed. Use vector.applyMatrix4( matrix ) instead."),e.applyMatrix4(this)},determinant:function(){var e=this.elements,t=e[0],i=e[4],r=e[8],o=e[12],n=e[1],a=e[5],s=e[9],l=e[13],c=e[2],h=e[6],u=e[10],d=e[14],p=e[3],f=e[7],m=e[11],g=e[15];return p*(+o*s*h-r*l*h-o*a*u+i*l*u+r*a*d-i*s*d)+f*(+t*s*d-t*l*u+o*n*u-r*n*d+r*l*c-o*s*c)+m*(+t*l*h-t*a*d-o*n*h+i*n*d+o*a*c-i*l*c)+g*(-r*a*c-t*s*h+t*a*u+r*n*h-i*n*u+i*s*c)},transpose:function(){var e,t=this.elements;return e=t[1],t[1]=t[4],t[4]=e,e=t[2],t[2]=t[8],t[8]=e,e=t[6],t[6]=t[9],t[9]=e,e=t[3],t[3]=t[12],t[12]=e,e=t[7],t[7]=t[13],t[13]=e,e=t[11],t[11]=t[14],t[14]=e,this},flattenToArray:function(e){var t=this.elements;return e[0]=t[0],e[1]=t[1],e[2]=t[2],e[3]=t[3],e[4]=t[4],e[5]=t[5],e[6]=t[6],e[7]=t[7],e[8]=t[8],e[9]=t[9],e[10]=t[10],e[11]=t[11],e[12]=t[12],e[13]=t[13],e[14]=t[14],e[15]=t[15],e},flattenToArrayOffset:function(e,t){var i=this.elements;return e[t]=i[0],e[t+1]=i[1],e[t+2]=i[2],e[t+3]=i[3],e[t+4]=i[4],e[t+5]=i[5],e[t+6]=i[6],e[t+7]=i[7],e[t+8]=i[8],e[t+9]=i[9],e[t+10]=i[10],e[t+11]=i[11],e[t+12]=i[12],e[t+13]=i[13],e[t+14]=i[14],e[t+15]=i[15],e},getPosition:function(){var e=new THREE.Vector3;return function(){console.warn("DEPRECATED: Matrix4's .getPosition() has been removed. Use Vector3.getPositionFromMatrix( matrix ) instead.");var t=this.elements;return e.set(t[12],t[13],t[14])}}(),setPosition:function(e){var t=this.elements;return t[12]=e.x,t[13]=e.y,t[14]=e.z,this},getInverse:function(e,t){var i=this.elements,r=e.elements,o=r[0],n=r[4],a=r[8],s=r[12],l=r[1],c=r[5],h=r[9],u=r[13],d=r[2],p=r[6],f=r[10],m=r[14],g=r[3],v=r[7],E=r[11],y=r[15];i[0]=h*m*v-u*f*v+u*p*E-c*m*E-h*p*y+c*f*y,i[4]=s*f*v-a*m*v-s*p*E+n*m*E+a*p*y-n*f*y,i[8]=a*u*v-s*h*v+s*c*E-n*u*E-a*c*y+n*h*y,i[12]=s*h*p-a*u*p-s*c*f+n*u*f+a*c*m-n*h*m,i[1]=u*f*g-h*m*g-u*d*E+l*m*E+h*d*y-l*f*y,i[5]=a*m*g-s*f*g+s*d*E-o*m*E-a*d*y+o*f*y,i[9]=s*h*g-a*u*g-s*l*E+o*u*E+a*l*y-o*h*y,i[13]=a*u*d-s*h*d+s*l*f-o*u*f-a*l*m+o*h*m,i[2]=c*m*g-u*p*g+u*d*v-l*m*v-c*d*y+l*p*y,i[6]=s*p*g-n*m*g-s*d*v+o*m*v+n*d*y-o*p*y,i[10]=n*u*g-s*c*g+s*l*v-o*u*v-n*l*y+o*c*y,i[14]=s*c*d-n*u*d-s*l*p+o*u*p+n*l*m-o*c*m,i[3]=h*p*g-c*f*g-h*d*v+l*f*v+c*d*E-l*p*E,i[7]=n*f*g-a*p*g+a*d*v-o*f*v-n*d*E+o*p*E,i[11]=a*c*g-n*h*g-a*l*v+o*h*v+n*l*E-o*c*E,i[15]=n*h*d-a*c*d+a*l*p-o*h*p-n*l*f+o*c*f;var T=o*i[0]+l*i[4]+d*i[8]+g*i[12];if(0==T){var x="Matrix4.getInverse(): can't invert matrix, determinant is 0";if(t)throw new Error(x);return console.warn(x),this.identity(),this}return this.multiplyScalar(1/T),this},translate:function(){console.warn("DEPRECATED: Matrix4's .translate() has been removed.")},rotateX:function(){console.warn("DEPRECATED: Matrix4's .rotateX() has been removed.")},rotateY:function(){console.warn("DEPRECATED: Matrix4's .rotateY() has been removed.")},rotateZ:function(){console.warn("DEPRECATED: Matrix4's .rotateZ() has been removed.")},rotateByAxis:function(){console.warn("DEPRECATED: Matrix4's .rotateByAxis() has been removed.")},scale:function(e){var t=this.elements,i=e.x,r=e.y,o=e.z;return t[0]*=i,t[4]*=r,t[8]*=o,t[1]*=i,t[5]*=r,t[9]*=o,t[2]*=i,t[6]*=r,t[10]*=o,t[3]*=i,t[7]*=r,t[11]*=o,this},getMaxScaleOnAxis:function(){var e=this.elements,t=e[0]*e[0]+e[1]*e[1]+e[2]*e[2],i=e[4]*e[4]+e[5]*e[5]+e[6]*e[6],r=e[8]*e[8]+e[9]*e[9]+e[10]*e[10];return Math.sqrt(Math.max(t,Math.max(i,r)))},makeTranslation:function(e,t,i){return this.set(1,0,0,e,0,1,0,t,0,0,1,i,0,0,0,1),this},makeRotationX:function(e){var t=Math.cos(e),i=Math.sin(e);return this.set(1,0,0,0,0,t,-i,0,0,i,t,0,0,0,0,1),this},makeRotationY:function(e){var t=Math.cos(e),i=Math.sin(e);return this.set(t,0,i,0,0,1,0,0,-i,0,t,0,0,0,0,1),this},makeRotationZ:function(e){var t=Math.cos(e),i=Math.sin(e);return this.set(t,-i,0,0,i,t,0,0,0,0,1,0,0,0,0,1),this},makeRotationAxis:function(e,t){var i=Math.cos(t),r=Math.sin(t),o=1-i,n=e.x,a=e.y,s=e.z,l=o*n,c=o*a;return this.set(l*n+i,l*a-r*s,l*s+r*a,0,l*a+r*s,c*a+i,c*s-r*n,0,l*s-r*a,c*s+r*n,o*s*s+i,0,0,0,0,1),this},makeScale:function(e,t,i){return this.set(e,0,0,0,0,t,0,0,0,0,i,0,0,0,0,1),this},compose:function(e,t,i){return this.makeRotationFromQuaternion(t),this.scale(i),this.setPosition(e),this},decompose:function(){var e=new THREE.Vector3,t=new THREE.Matrix4;return function(i,r,o){var n=this.elements,a=e.set(n[0],n[1],n[2]).length(),s=e.set(n[4],n[5],n[6]).length(),l=e.set(n[8],n[9],n[10]).length();i.x=n[12],i.y=n[13],i.z=n[14],t.elements.set(this.elements);var c=1/a,h=1/s,u=1/l;return t.elements[0]*=c,t.elements[1]*=c,t.elements[2]*=c,t.elements[4]*=h,t.elements[5]*=h,t.elements[6]*=h,t.elements[8]*=u,t.elements[9]*=u,t.elements[10]*=u,r.setFromRotationMatrix(t),o.x=a,o.y=s,o.z=l,this}}(),makeFrustum:function(e,t,i,r,o,n){var a=this.elements,s=2*o/(t-e),l=2*o/(r-i),c=(t+e)/(t-e),h=(r+i)/(r-i),u=-(n+o)/(n-o),d=-2*n*o/(n-o);return a[0]=s,a[4]=0,a[8]=c,a[12]=0,a[1]=0,a[5]=l,a[9]=h,a[13]=0,a[2]=0,a[6]=0,a[10]=u,a[14]=d,a[3]=0,a[7]=0,a[11]=-1,a[15]=0,this},makePerspective:function(e,t,i,r){var o=i*Math.tan(THREE.Math.degToRad(.5*e)),n=-o,a=n*t,s=o*t;return this.makeFrustum(a,s,n,o,i,r)},makeOrthographic:function(e,t,i,r,o,n){var a=this.elements,s=t-e,l=i-r,c=n-o,h=(t+e)/s,u=(i+r)/l,d=(n+o)/c;return a[0]=2/s,a[4]=0,a[8]=0,a[12]=-h,a[1]=0,a[5]=2/l,a[9]=0,a[13]=-u,a[2]=0,a[6]=0,a[10]=-2/c,a[14]=-d,a[3]=0,a[7]=0,a[11]=0,a[15]=1,this},fromArray:function(e){return this.elements.set(e),this},toArray:function(){var e=this.elements;return[e[0],e[1],e[2],e[3],e[4],e[5],e[6],e[7],e[8],e[9],e[10],e[11],e[12],e[13],e[14],e[15]]},clone:function(){var e=this.elements;return new THREE.Matrix4(e[0],e[4],e[8],e[12],e[1],e[5],e[9],e[13],e[2],e[6],e[10],e[14],e[3],e[7],e[11],e[15])}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author supereggbert / http://www.paulbrunt.co.uk/
+ * @author philogb / http://blog.thejit.org/
+ * @author jordi_ros / http://plattsoft.com
+ * @author D1plo1d / http://github.com/D1plo1d
+ * @author alteredq / http://alteredqualia.com/
+ * @author mikael emtinger / http://gomo.se/
+ * @author timknip / http://www.floorplanner.com/
+ * @author bhouston / http://exocortex.com
+ * @author WestLangley / http://github.com/WestLangley
+ */
+
+
+THREE.Matrix4 = function ( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
+
+	this.elements = new Float32Array( 16 );
+
+	// TODO: if n11 is undefined, then just set to identity, otherwise copy all other values into matrix
+	//   we should not support semi specification of Matrix4, it is just weird.
+
+	var te = this.elements;
+
+	te[0] = ( n11 !== undefined ) ? n11 : 1; te[4] = n12 || 0; te[8] = n13 || 0; te[12] = n14 || 0;
+	te[1] = n21 || 0; te[5] = ( n22 !== undefined ) ? n22 : 1; te[9] = n23 || 0; te[13] = n24 || 0;
+	te[2] = n31 || 0; te[6] = n32 || 0; te[10] = ( n33 !== undefined ) ? n33 : 1; te[14] = n34 || 0;
+	te[3] = n41 || 0; te[7] = n42 || 0; te[11] = n43 || 0; te[15] = ( n44 !== undefined ) ? n44 : 1;
+
+};
+
+THREE.Matrix4.prototype = {
+
+	constructor: THREE.Matrix4,
+
+	set: function ( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 ) {
+
+		var te = this.elements;
+
+		te[0] = n11; te[4] = n12; te[8] = n13; te[12] = n14;
+		te[1] = n21; te[5] = n22; te[9] = n23; te[13] = n24;
+		te[2] = n31; te[6] = n32; te[10] = n33; te[14] = n34;
+		te[3] = n41; te[7] = n42; te[11] = n43; te[15] = n44;
+
+		return this;
+
+	},
+
+	identity: function () {
+
+		this.set(
+
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1
+
+		);
+
+		return this;
+
+	},
+
+	copy: function ( m ) {
+
+		this.elements.set( m.elements );
+
+		return this;
+
+	},
+
+	extractPosition: function ( m ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .extractPosition() has been renamed to .copyPosition().' );
+		return this.copyPosition( m );
+
+	},
+
+	copyPosition: function ( m ) {
+
+		var te = this.elements;
+		var me = m.elements;
+
+		te[12] = me[12];
+		te[13] = me[13];
+		te[14] = me[14];
+
+		return this;
+
+	},
+
+	extractRotation: function () {
+
+		var v1 = new THREE.Vector3();
+
+		return function ( m ) {
+
+			var te = this.elements;
+			var me = m.elements;
+
+			var scaleX = 1 / v1.set( me[0], me[1], me[2] ).length();
+			var scaleY = 1 / v1.set( me[4], me[5], me[6] ).length();
+			var scaleZ = 1 / v1.set( me[8], me[9], me[10] ).length();
+
+			te[0] = me[0] * scaleX;
+			te[1] = me[1] * scaleX;
+			te[2] = me[2] * scaleX;
+
+			te[4] = me[4] * scaleY;
+			te[5] = me[5] * scaleY;
+			te[6] = me[6] * scaleY;
+
+			te[8] = me[8] * scaleZ;
+			te[9] = me[9] * scaleZ;
+			te[10] = me[10] * scaleZ;
+
+			return this;
+
+		};
+
+	}(),
+
+	makeRotationFromEuler: function ( euler ) {
+
+		if ( typeof euler['order'] === undefined ) {
+
+			console.error( 'ERROR: Matrix\'s .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.  Please update your code.' );
+
+		}
+
+		var te = this.elements;
+
+		var x = euler.x, y = euler.y, z = euler.z;
+		var a = Math.cos( x ), b = Math.sin( x );
+		var c = Math.cos( y ), d = Math.sin( y );
+		var e = Math.cos( z ), f = Math.sin( z );
+
+		if ( euler.order === undefined || euler.order === 'XYZ' ) {
+
+			var ae = a * e, af = a * f, be = b * e, bf = b * f;
+
+			te[0] = c * e;
+			te[4] = - c * f;
+			te[8] = d;
+
+			te[1] = af + be * d;
+			te[5] = ae - bf * d;
+			te[9] = - b * c;
+
+			te[2] = bf - ae * d;
+			te[6] = be + af * d;
+			te[10] = a * c;
+
+		} else if ( euler.order === 'YXZ' ) {
+
+			var ce = c * e, cf = c * f, de = d * e, df = d * f;
+
+			te[0] = ce + df * b;
+			te[4] = de * b - cf;
+			te[8] = a * d;
+
+			te[1] = a * f;
+			te[5] = a * e;
+			te[9] = - b;
+
+			te[2] = cf * b - de;
+			te[6] = df + ce * b;
+			te[10] = a * c;
+
+		} else if ( euler.order === 'ZXY' ) {
+
+			var ce = c * e, cf = c * f, de = d * e, df = d * f;
+
+			te[0] = ce - df * b;
+			te[4] = - a * f;
+			te[8] = de + cf * b;
+
+			te[1] = cf + de * b;
+			te[5] = a * e;
+			te[9] = df - ce * b;
+
+			te[2] = - a * d;
+			te[6] = b;
+			te[10] = a * c;
+
+		} else if ( euler.order === 'ZYX' ) {
+
+			var ae = a * e, af = a * f, be = b * e, bf = b * f;
+
+			te[0] = c * e;
+			te[4] = be * d - af;
+			te[8] = ae * d + bf;
+
+			te[1] = c * f;
+			te[5] = bf * d + ae;
+			te[9] = af * d - be;
+
+			te[2] = - d;
+			te[6] = b * c;
+			te[10] = a * c;
+
+		} else if ( euler.order === 'YZX' ) {
+
+			var ac = a * c, ad = a * d, bc = b * c, bd = b * d;
+
+			te[0] = c * e;
+			te[4] = bd - ac * f;
+			te[8] = bc * f + ad;
+
+			te[1] = f;
+			te[5] = a * e;
+			te[9] = - b * e;
+
+			te[2] = - d * e;
+			te[6] = ad * f + bc;
+			te[10] = ac - bd * f;
+
+		} else if ( euler.order === 'XZY' ) {
+
+			var ac = a * c, ad = a * d, bc = b * c, bd = b * d;
+
+			te[0] = c * e;
+			te[4] = - f;
+			te[8] = d * e;
+
+			te[1] = ac * f + bd;
+			te[5] = a * e;
+			te[9] = ad * f - bc;
+
+			te[2] = bc * f - ad;
+			te[6] = b * e;
+			te[10] = bd * f + ac;
+
+		}
+
+		// last column
+		te[3] = 0;
+		te[7] = 0;
+		te[11] = 0;
+
+		// bottom row
+		te[12] = 0;
+		te[13] = 0;
+		te[14] = 0;
+		te[15] = 1;
+
+		return this;
+
+	},
+
+	setRotationFromQuaternion: function ( q ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .setRotationFromQuaternion() has been deprecated in favor of makeRotationFromQuaternion.  Please update your code.' );
+
+		return this.makeRotationFromQuaternion( q );
+
+	},
+
+	makeRotationFromQuaternion: function ( q ) {
+
+		var te = this.elements;
+
+		var x = q.x, y = q.y, z = q.z, w = q.w;
+		var x2 = x + x, y2 = y + y, z2 = z + z;
+		var xx = x * x2, xy = x * y2, xz = x * z2;
+		var yy = y * y2, yz = y * z2, zz = z * z2;
+		var wx = w * x2, wy = w * y2, wz = w * z2;
+
+		te[0] = 1 - ( yy + zz );
+		te[4] = xy - wz;
+		te[8] = xz + wy;
+
+		te[1] = xy + wz;
+		te[5] = 1 - ( xx + zz );
+		te[9] = yz - wx;
+
+		te[2] = xz - wy;
+		te[6] = yz + wx;
+		te[10] = 1 - ( xx + yy );
+
+		// last column
+		te[3] = 0;
+		te[7] = 0;
+		te[11] = 0;
+
+		// bottom row
+		te[12] = 0;
+		te[13] = 0;
+		te[14] = 0;
+		te[15] = 1;
+
+		return this;
+
+	},
+
+	lookAt: function() {
+
+		var x = new THREE.Vector3();
+		var y = new THREE.Vector3();
+		var z = new THREE.Vector3();
+
+		return function ( eye, target, up ) {
+
+			var te = this.elements;
+
+			z.subVectors( eye, target ).normalize();
+
+			if ( z.length() === 0 ) {
+
+				z.z = 1;
+
+			}
+
+			x.crossVectors( up, z ).normalize();
+
+			if ( x.length() === 0 ) {
+
+				z.x += 0.0001;
+				x.crossVectors( up, z ).normalize();
+
+			}
+
+			y.crossVectors( z, x );
+
+
+			te[0] = x.x; te[4] = y.x; te[8] = z.x;
+			te[1] = x.y; te[5] = y.y; te[9] = z.y;
+			te[2] = x.z; te[6] = y.z; te[10] = z.z;
+
+			return this;
+
+		};
+
+	}(),
+
+	multiply: function ( m, n ) {
+
+		if ( n !== undefined ) {
+
+			console.warn( 'DEPRECATED: Matrix4\'s .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+			return this.multiplyMatrices( m, n );
+
+		}
+
+		return this.multiplyMatrices( this, m );
+
+	},
+
+	multiplyMatrices: function ( a, b ) {
+
+		var ae = a.elements;
+		var be = b.elements;
+		var te = this.elements;
+
+		var a11 = ae[0], a12 = ae[4], a13 = ae[8], a14 = ae[12];
+		var a21 = ae[1], a22 = ae[5], a23 = ae[9], a24 = ae[13];
+		var a31 = ae[2], a32 = ae[6], a33 = ae[10], a34 = ae[14];
+		var a41 = ae[3], a42 = ae[7], a43 = ae[11], a44 = ae[15];
+
+		var b11 = be[0], b12 = be[4], b13 = be[8], b14 = be[12];
+		var b21 = be[1], b22 = be[5], b23 = be[9], b24 = be[13];
+		var b31 = be[2], b32 = be[6], b33 = be[10], b34 = be[14];
+		var b41 = be[3], b42 = be[7], b43 = be[11], b44 = be[15];
+
+		te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+		te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+		te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+		te[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+
+		te[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+		te[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+		te[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+		te[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+
+		te[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+		te[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+		te[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+		te[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+
+		te[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+		te[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+		te[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+		te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+
+		return this;
+
+	},
+
+	multiplyToArray: function ( a, b, r ) {
+
+		var te = this.elements;
+
+		this.multiplyMatrices( a, b );
+
+		r[ 0 ] = te[0]; r[ 1 ] = te[1]; r[ 2 ] = te[2]; r[ 3 ] = te[3];
+		r[ 4 ] = te[4]; r[ 5 ] = te[5]; r[ 6 ] = te[6]; r[ 7 ] = te[7];
+		r[ 8 ]  = te[8]; r[ 9 ]  = te[9]; r[ 10 ] = te[10]; r[ 11 ] = te[11];
+		r[ 12 ] = te[12]; r[ 13 ] = te[13]; r[ 14 ] = te[14]; r[ 15 ] = te[15];
+
+		return this;
+
+	},
+
+	multiplyScalar: function ( s ) {
+
+		var te = this.elements;
+
+		te[0] *= s; te[4] *= s; te[8] *= s; te[12] *= s;
+		te[1] *= s; te[5] *= s; te[9] *= s; te[13] *= s;
+		te[2] *= s; te[6] *= s; te[10] *= s; te[14] *= s;
+		te[3] *= s; te[7] *= s; te[11] *= s; te[15] *= s;
+
+		return this;
+
+	},
+
+	multiplyVector3: function ( vector ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .multiplyVector3() has been removed. Use vector.applyMatrix4( matrix ) or vector.applyProjection( matrix ) instead.' );
+		return vector.applyProjection( this );
+
+	},
+
+	multiplyVector4: function ( vector ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .multiplyVector4() has been removed. Use vector.applyMatrix4( matrix ) instead.' );
+		return vector.applyMatrix4( this );
+
+	},
+
+	multiplyVector3Array: function() {
+
+		var v1 = new THREE.Vector3();
+
+		return function ( a ) {
+
+			for ( var i = 0, il = a.length; i < il; i += 3 ) {
+
+				v1.x = a[ i ];
+				v1.y = a[ i + 1 ];
+				v1.z = a[ i + 2 ];
+
+				v1.applyProjection( this );
+
+				a[ i ]     = v1.x;
+				a[ i + 1 ] = v1.y;
+				a[ i + 2 ] = v1.z;
+
+			}
+
+			return a;
+
+		};
+
+	}(),
+
+	rotateAxis: function ( v ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .rotateAxis() has been removed. Use Vector3.transformDirection( matrix ) instead.' );
+
+		v.transformDirection( this );
+
+	},
+
+	crossVector: function ( vector ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .crossVector() has been removed. Use vector.applyMatrix4( matrix ) instead.' );
+		return vector.applyMatrix4( this );
+
+	},
+
+	determinant: function () {
+
+		var te = this.elements;
+
+		var n11 = te[0], n12 = te[4], n13 = te[8], n14 = te[12];
+		var n21 = te[1], n22 = te[5], n23 = te[9], n24 = te[13];
+		var n31 = te[2], n32 = te[6], n33 = te[10], n34 = te[14];
+		var n41 = te[3], n42 = te[7], n43 = te[11], n44 = te[15];
+
+		//TODO: make this more efficient
+		//( based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm )
+
+		return (
+			n41 * (
+				+n14 * n23 * n32
+				-n13 * n24 * n32
+				-n14 * n22 * n33
+				+n12 * n24 * n33
+				+n13 * n22 * n34
+				-n12 * n23 * n34
+			) +
+			n42 * (
+				+n11 * n23 * n34
+				-n11 * n24 * n33
+				+n14 * n21 * n33
+				-n13 * n21 * n34
+				+n13 * n24 * n31
+				-n14 * n23 * n31
+			) +
+			n43 * (
+				+n11 * n24 * n32
+				-n11 * n22 * n34
+				-n14 * n21 * n32
+				+n12 * n21 * n34
+				+n14 * n22 * n31
+				-n12 * n24 * n31
+			) +
+			n44 * (
+				-n13 * n22 * n31
+				-n11 * n23 * n32
+				+n11 * n22 * n33
+				+n13 * n21 * n32
+				-n12 * n21 * n33
+				+n12 * n23 * n31
+			)
+
+		);
+
+	},
+
+	transpose: function () {
+
+		var te = this.elements;
+		var tmp;
+
+		tmp = te[1]; te[1] = te[4]; te[4] = tmp;
+		tmp = te[2]; te[2] = te[8]; te[8] = tmp;
+		tmp = te[6]; te[6] = te[9]; te[9] = tmp;
+
+		tmp = te[3]; te[3] = te[12]; te[12] = tmp;
+		tmp = te[7]; te[7] = te[13]; te[13] = tmp;
+		tmp = te[11]; te[11] = te[14]; te[14] = tmp;
+
+		return this;
+
+	},
+
+	flattenToArray: function ( flat ) {
+
+		var te = this.elements;
+		flat[ 0 ] = te[0]; flat[ 1 ] = te[1]; flat[ 2 ] = te[2]; flat[ 3 ] = te[3];
+		flat[ 4 ] = te[4]; flat[ 5 ] = te[5]; flat[ 6 ] = te[6]; flat[ 7 ] = te[7];
+		flat[ 8 ] = te[8]; flat[ 9 ] = te[9]; flat[ 10 ] = te[10]; flat[ 11 ] = te[11];
+		flat[ 12 ] = te[12]; flat[ 13 ] = te[13]; flat[ 14 ] = te[14]; flat[ 15 ] = te[15];
+
+		return flat;
+
+	},
+
+	flattenToArrayOffset: function( flat, offset ) {
+
+		var te = this.elements;
+		flat[ offset ] = te[0];
+		flat[ offset + 1 ] = te[1];
+		flat[ offset + 2 ] = te[2];
+		flat[ offset + 3 ] = te[3];
+
+		flat[ offset + 4 ] = te[4];
+		flat[ offset + 5 ] = te[5];
+		flat[ offset + 6 ] = te[6];
+		flat[ offset + 7 ] = te[7];
+
+		flat[ offset + 8 ]  = te[8];
+		flat[ offset + 9 ]  = te[9];
+		flat[ offset + 10 ] = te[10];
+		flat[ offset + 11 ] = te[11];
+
+		flat[ offset + 12 ] = te[12];
+		flat[ offset + 13 ] = te[13];
+		flat[ offset + 14 ] = te[14];
+		flat[ offset + 15 ] = te[15];
+
+		return flat;
+
+	},
+
+	getPosition: function() {
+
+		var v1 = new THREE.Vector3();
+
+		return function () {
+
+			console.warn( 'DEPRECATED: Matrix4\'s .getPosition() has been removed. Use Vector3.getPositionFromMatrix( matrix ) instead.' );
+
+			var te = this.elements;
+			return v1.set( te[12], te[13], te[14] );
+
+		};
+
+	}(),
+
+	setPosition: function ( v ) {
+
+		var te = this.elements;
+
+		te[12] = v.x;
+		te[13] = v.y;
+		te[14] = v.z;
+
+		return this;
+
+	},
+
+	getInverse: function ( m, throwOnInvertible ) {
+
+		// based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
+		var te = this.elements;
+		var me = m.elements;
+
+		var n11 = me[0], n12 = me[4], n13 = me[8], n14 = me[12];
+		var n21 = me[1], n22 = me[5], n23 = me[9], n24 = me[13];
+		var n31 = me[2], n32 = me[6], n33 = me[10], n34 = me[14];
+		var n41 = me[3], n42 = me[7], n43 = me[11], n44 = me[15];
+
+		te[0] = n23*n34*n42 - n24*n33*n42 + n24*n32*n43 - n22*n34*n43 - n23*n32*n44 + n22*n33*n44;
+		te[4] = n14*n33*n42 - n13*n34*n42 - n14*n32*n43 + n12*n34*n43 + n13*n32*n44 - n12*n33*n44;
+		te[8] = n13*n24*n42 - n14*n23*n42 + n14*n22*n43 - n12*n24*n43 - n13*n22*n44 + n12*n23*n44;
+		te[12] = n14*n23*n32 - n13*n24*n32 - n14*n22*n33 + n12*n24*n33 + n13*n22*n34 - n12*n23*n34;
+		te[1] = n24*n33*n41 - n23*n34*n41 - n24*n31*n43 + n21*n34*n43 + n23*n31*n44 - n21*n33*n44;
+		te[5] = n13*n34*n41 - n14*n33*n41 + n14*n31*n43 - n11*n34*n43 - n13*n31*n44 + n11*n33*n44;
+		te[9] = n14*n23*n41 - n13*n24*n41 - n14*n21*n43 + n11*n24*n43 + n13*n21*n44 - n11*n23*n44;
+		te[13] = n13*n24*n31 - n14*n23*n31 + n14*n21*n33 - n11*n24*n33 - n13*n21*n34 + n11*n23*n34;
+		te[2] = n22*n34*n41 - n24*n32*n41 + n24*n31*n42 - n21*n34*n42 - n22*n31*n44 + n21*n32*n44;
+		te[6] = n14*n32*n41 - n12*n34*n41 - n14*n31*n42 + n11*n34*n42 + n12*n31*n44 - n11*n32*n44;
+		te[10] = n12*n24*n41 - n14*n22*n41 + n14*n21*n42 - n11*n24*n42 - n12*n21*n44 + n11*n22*n44;
+		te[14] = n14*n22*n31 - n12*n24*n31 - n14*n21*n32 + n11*n24*n32 + n12*n21*n34 - n11*n22*n34;
+		te[3] = n23*n32*n41 - n22*n33*n41 - n23*n31*n42 + n21*n33*n42 + n22*n31*n43 - n21*n32*n43;
+		te[7] = n12*n33*n41 - n13*n32*n41 + n13*n31*n42 - n11*n33*n42 - n12*n31*n43 + n11*n32*n43;
+		te[11] = n13*n22*n41 - n12*n23*n41 - n13*n21*n42 + n11*n23*n42 + n12*n21*n43 - n11*n22*n43;
+		te[15] = n12*n23*n31 - n13*n22*n31 + n13*n21*n32 - n11*n23*n32 - n12*n21*n33 + n11*n22*n33;
+
+		var det = n11 * te[ 0 ] + n21 * te[ 4 ] + n31 * te[ 8 ] + n41 * te[ 12 ];
+
+		if ( det == 0 ) {
+
+			var msg = "Matrix4.getInverse(): can't invert matrix, determinant is 0";
+
+			if ( throwOnInvertible || false ) {
+
+				throw new Error( msg ); 
+
+			} else {
+
+				console.warn( msg );
+
+			}
+
+			this.identity();
+
+			return this;
+		}
+
+		this.multiplyScalar( 1 / det );
+
+		return this;
+
+	},
+
+	translate: function ( v ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .translate() has been removed.');
+
+	},
+
+	rotateX: function ( angle ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .rotateX() has been removed.');
+
+	},
+
+	rotateY: function ( angle ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .rotateY() has been removed.');
+
+	},
+
+	rotateZ: function ( angle ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .rotateZ() has been removed.');
+
+	},
+
+	rotateByAxis: function ( axis, angle ) {
+
+		console.warn( 'DEPRECATED: Matrix4\'s .rotateByAxis() has been removed.');
+
+	},
+
+	scale: function ( v ) {
+
+		var te = this.elements;
+		var x = v.x, y = v.y, z = v.z;
+
+		te[0] *= x; te[4] *= y; te[8] *= z;
+		te[1] *= x; te[5] *= y; te[9] *= z;
+		te[2] *= x; te[6] *= y; te[10] *= z;
+		te[3] *= x; te[7] *= y; te[11] *= z;
+
+		return this;
+
+	},
+
+	getMaxScaleOnAxis: function () {
+
+		var te = this.elements;
+
+		var scaleXSq = te[0] * te[0] + te[1] * te[1] + te[2] * te[2];
+		var scaleYSq = te[4] * te[4] + te[5] * te[5] + te[6] * te[6];
+		var scaleZSq = te[8] * te[8] + te[9] * te[9] + te[10] * te[10];
+
+		return Math.sqrt( Math.max( scaleXSq, Math.max( scaleYSq, scaleZSq ) ) );
+
+	},
+
+	makeTranslation: function ( x, y, z ) {
+
+		this.set(
+
+			1, 0, 0, x,
+			0, 1, 0, y,
+			0, 0, 1, z,
+			0, 0, 0, 1
+
+		);
+
+		return this;
+
+	},
+
+	makeRotationX: function ( theta ) {
+
+		var c = Math.cos( theta ), s = Math.sin( theta );
+
+		this.set(
+
+			1, 0,  0, 0,
+			0, c, -s, 0,
+			0, s,  c, 0,
+			0, 0,  0, 1
+
+		);
+
+		return this;
+
+	},
+
+	makeRotationY: function ( theta ) {
+
+		var c = Math.cos( theta ), s = Math.sin( theta );
+
+		this.set(
+
+			 c, 0, s, 0,
+			 0, 1, 0, 0,
+			-s, 0, c, 0,
+			 0, 0, 0, 1
+
+		);
+
+		return this;
+
+	},
+
+	makeRotationZ: function ( theta ) {
+
+		var c = Math.cos( theta ), s = Math.sin( theta );
+
+		this.set(
+
+			c, -s, 0, 0,
+			s,  c, 0, 0,
+			0,  0, 1, 0,
+			0,  0, 0, 1
+
+		);
+
+		return this;
+
+	},
+
+	makeRotationAxis: function ( axis, angle ) {
+
+		// Based on http://www.gamedev.net/reference/articles/article1199.asp
+
+		var c = Math.cos( angle );
+		var s = Math.sin( angle );
+		var t = 1 - c;
+		var x = axis.x, y = axis.y, z = axis.z;
+		var tx = t * x, ty = t * y;
+
+		this.set(
+
+			tx * x + c, tx * y - s * z, tx * z + s * y, 0,
+			tx * y + s * z, ty * y + c, ty * z - s * x, 0,
+			tx * z - s * y, ty * z + s * x, t * z * z + c, 0,
+			0, 0, 0, 1
+
+		);
+
+		 return this;
+
+	},
+
+	makeScale: function ( x, y, z ) {
+
+		this.set(
+
+			x, 0, 0, 0,
+			0, y, 0, 0,
+			0, 0, z, 0,
+			0, 0, 0, 1
+
+		);
+
+		return this;
+
+	},
+
+	compose: function ( position, quaternion, scale ) {
+
+		this.makeRotationFromQuaternion( quaternion );
+		this.scale( scale );
+		this.setPosition( position );
+
+		return this;
+
+	},
+
+	decompose: function () {
+
+		var vector = new THREE.Vector3();
+		var matrix = new THREE.Matrix4();
+
+		return function ( position, quaternion, scale ) {
+
+			var te = this.elements;
+
+			var sx = vector.set( te[0], te[1], te[2] ).length();
+			var sy = vector.set( te[4], te[5], te[6] ).length();
+			var sz = vector.set( te[8], te[9], te[10] ).length();
+
+			position.x = te[12];
+			position.y = te[13];
+			position.z = te[14];
+
+			// scale the rotation part
+
+			matrix.elements.set( this.elements ); // at this point matrix is incomplete so we can't use .copy()
+
+			var invSX = 1 / sx;
+			var invSY = 1 / sy;
+			var invSZ = 1 / sz;
+
+			matrix.elements[0] *= invSX;
+			matrix.elements[1] *= invSX;
+			matrix.elements[2] *= invSX;
+
+			matrix.elements[4] *= invSY;
+			matrix.elements[5] *= invSY;
+			matrix.elements[6] *= invSY;
+
+			matrix.elements[8] *= invSZ;
+			matrix.elements[9] *= invSZ;
+			matrix.elements[10] *= invSZ;
+
+			quaternion.setFromRotationMatrix( matrix );
+
+			scale.x = sx;
+			scale.y = sy;
+			scale.z = sz;
+
+			return this;
+
+		};
+
+	}(),
+
+	makeFrustum: function ( left, right, bottom, top, near, far ) {
+
+		var te = this.elements;
+		var x = 2 * near / ( right - left );
+		var y = 2 * near / ( top - bottom );
+
+		var a = ( right + left ) / ( right - left );
+		var b = ( top + bottom ) / ( top - bottom );
+		var c = - ( far + near ) / ( far - near );
+		var d = - 2 * far * near / ( far - near );
+
+		te[0] = x;	te[4] = 0;	te[8] = a;	te[12] = 0;
+		te[1] = 0;	te[5] = y;	te[9] = b;	te[13] = 0;
+		te[2] = 0;	te[6] = 0;	te[10] = c;	te[14] = d;
+		te[3] = 0;	te[7] = 0;	te[11] = - 1;	te[15] = 0;
+
+		return this;
+
+	},
+
+	makePerspective: function ( fov, aspect, near, far ) {
+
+		var ymax = near * Math.tan( THREE.Math.degToRad( fov * 0.5 ) );
+		var ymin = - ymax;
+		var xmin = ymin * aspect;
+		var xmax = ymax * aspect;
+
+		return this.makeFrustum( xmin, xmax, ymin, ymax, near, far );
+
+	},
+
+	makeOrthographic: function ( left, right, top, bottom, near, far ) {
+
+		var te = this.elements;
+		var w = right - left;
+		var h = top - bottom;
+		var p = far - near;
+
+		var x = ( right + left ) / w;
+		var y = ( top + bottom ) / h;
+		var z = ( far + near ) / p;
+
+		te[0] = 2 / w;	te[4] = 0;	te[8] = 0;	te[12] = -x;
+		te[1] = 0;	te[5] = 2 / h;	te[9] = 0;	te[13] = -y;
+		te[2] = 0;	te[6] = 0;	te[10] = -2/p;	te[14] = -z;
+		te[3] = 0;	te[7] = 0;	te[11] = 0;	te[15] = 1;
+
+		return this;
+
+	},
+
+	fromArray: function ( array ) {
+
+		this.elements.set( array );
+
+		return this;
+
+	},
+
+	toArray: function () {
+
+		var te = this.elements;
+
+		return [
+			te[ 0 ], te[ 1 ], te[ 2 ], te[ 3 ],
+			te[ 4 ], te[ 5 ], te[ 6 ], te[ 7 ],
+			te[ 8 ], te[ 9 ], te[ 10 ], te[ 11 ],
+			te[ 12 ], te[ 13 ], te[ 14 ], te[ 15 ]
+		];
+
+	},
+
+	clone: function () {
+
+		var te = this.elements;
+
+		return new THREE.Matrix4(
+
+			te[0], te[4], te[8], te[12],
+			te[1], te[5], te[9], te[13],
+			te[2], te[6], te[10], te[14],
+			te[3], te[7], te[11], te[15]
+
+		);
+
+	}
+
+};

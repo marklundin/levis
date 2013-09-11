@@ -1,1 +1,66 @@
-THREE.LineDashedMaterial=function(e){THREE.Material.call(this),this.color=new THREE.Color(16777215),this.linewidth=1,this.scale=1,this.dashSize=3,this.gapSize=1,this.vertexColors=!1,this.fog=!0,this.setValues(e)},THREE.LineDashedMaterial.prototype=Object.create(THREE.Material.prototype),THREE.LineDashedMaterial.prototype.clone=function(){var e=new THREE.LineDashedMaterial;return THREE.Material.prototype.clone.call(this,e),e.color.copy(this.color),e.linewidth=this.linewidth,e.scale=this.scale,e.dashSize=this.dashSize,e.gapSize=this.gapSize,e.vertexColors=this.vertexColors,e.fog=this.fog,e};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  opacity: <float>,
+ *
+ *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ *  depthWrite: <bool>,
+ *
+ *  linewidth: <float>,
+ *
+ *  scale: <float>,
+ *  dashSize: <float>,
+ *  gapSize: <float>,
+ *
+ *  vertexColors: <bool>
+ *
+ *  fog: <bool>
+ * }
+ */
+
+THREE.LineDashedMaterial = function ( parameters ) {
+
+	THREE.Material.call( this );
+
+	this.color = new THREE.Color( 0xffffff );
+
+	this.linewidth = 1;
+
+	this.scale = 1;
+	this.dashSize = 3;
+	this.gapSize = 1;
+
+	this.vertexColors = false;
+
+	this.fog = true;
+
+	this.setValues( parameters );
+
+};
+
+THREE.LineDashedMaterial.prototype = Object.create( THREE.Material.prototype );
+
+THREE.LineDashedMaterial.prototype.clone = function () {
+
+	var material = new THREE.LineDashedMaterial();
+
+	THREE.Material.prototype.clone.call( this, material );
+
+	material.color.copy( this.color );
+
+	material.linewidth = this.linewidth;
+
+	material.scale = this.scale;
+	material.dashSize = this.dashSize;
+	material.gapSize = this.gapSize;
+
+	material.vertexColors = this.vertexColors;
+
+	material.fog = this.fog;
+
+	return material;
+
+};

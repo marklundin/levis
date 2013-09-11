@@ -1,1 +1,41 @@
-THREE.MeshDepthMaterial=function(e){THREE.Material.call(this),this.wireframe=!1,this.wireframeLinewidth=1,this.setValues(e)},THREE.MeshDepthMaterial.prototype=Object.create(THREE.Material.prototype),THREE.MeshDepthMaterial.prototype.clone=function(){var e=new THREE.MeshDepthMaterial;return THREE.Material.prototype.clone.call(this,e),e.wireframe=this.wireframe,e.wireframeLinewidth=this.wireframeLinewidth,e};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  opacity: <float>,
+ *
+ *  blending: THREE.NormalBlending,
+ *  depthTest: <bool>,
+ *  depthWrite: <bool>,
+ *
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>
+ * }
+ */
+
+THREE.MeshDepthMaterial = function ( parameters ) {
+
+	THREE.Material.call( this );
+
+	this.wireframe = false;
+	this.wireframeLinewidth = 1;
+
+	this.setValues( parameters );
+
+};
+
+THREE.MeshDepthMaterial.prototype = Object.create( THREE.Material.prototype );
+
+THREE.MeshDepthMaterial.prototype.clone = function () {
+
+	var material = new THREE.MeshDepthMaterial();
+
+	THREE.Material.prototype.clone.call( this, material );
+
+	material.wireframe = this.wireframe;
+	material.wireframeLinewidth = this.wireframeLinewidth;
+
+	return material;
+
+};

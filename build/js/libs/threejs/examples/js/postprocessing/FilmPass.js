@@ -1,1 +1,54 @@
-THREE.FilmPass=function(e,t,i,r){void 0===THREE.FilmShader&&console.error("THREE.FilmPass relies on THREE.FilmShader");var n=THREE.FilmShader;this.uniforms=THREE.UniformsUtils.clone(n.uniforms),this.material=new THREE.ShaderMaterial({uniforms:this.uniforms,vertexShader:n.vertexShader,fragmentShader:n.fragmentShader}),void 0!==r&&(this.uniforms.grayscale.value=r),void 0!==e&&(this.uniforms.nIntensity.value=e),void 0!==t&&(this.uniforms.sIntensity.value=t),void 0!==i&&(this.uniforms.sCount.value=i),this.enabled=!0,this.renderToScreen=!1,this.needsSwap=!0},THREE.FilmPass.prototype={render:function(e,t,i,r){this.uniforms.tDiffuse.value=i,this.uniforms.time.value+=r,THREE.EffectComposer.quad.material=this.material,this.renderToScreen?e.render(THREE.EffectComposer.scene,THREE.EffectComposer.camera):e.render(THREE.EffectComposer.scene,THREE.EffectComposer.camera,t,!1)}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.FilmPass = function ( noiseIntensity, scanlinesIntensity, scanlinesCount, grayscale ) {
+
+	if ( THREE.FilmShader === undefined )
+		console.error( "THREE.FilmPass relies on THREE.FilmShader" );
+
+	var shader = THREE.FilmShader;
+
+	this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+	this.material = new THREE.ShaderMaterial( {
+
+		uniforms: this.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader
+
+	} );
+
+	if ( grayscale !== undefined )	this.uniforms.grayscale.value = grayscale;
+	if ( noiseIntensity !== undefined ) this.uniforms.nIntensity.value = noiseIntensity;
+	if ( scanlinesIntensity !== undefined ) this.uniforms.sIntensity.value = scanlinesIntensity;
+	if ( scanlinesCount !== undefined ) this.uniforms.sCount.value = scanlinesCount;
+
+	this.enabled = true;
+	this.renderToScreen = false;
+	this.needsSwap = true;
+
+};
+
+THREE.FilmPass.prototype = {
+
+	render: function ( renderer, writeBuffer, readBuffer, delta ) {
+
+		this.uniforms[ "tDiffuse" ].value = readBuffer;
+		this.uniforms[ "time" ].value += delta;
+
+		THREE.EffectComposer.quad.material = this.material;
+
+		if ( this.renderToScreen ) {
+
+			renderer.render( THREE.EffectComposer.scene, THREE.EffectComposer.camera );
+
+		} else {
+
+			renderer.render( THREE.EffectComposer.scene, THREE.EffectComposer.camera, writeBuffer, false );
+
+		}
+
+	}
+
+};

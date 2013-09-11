@@ -6,7 +6,7 @@
     "findNestedDependencies": true,
     "removeCombined": true,
     "dir": "../build",
-    "optimize": "uglify2",
+    "optimize": "none",
     "waitSeconds": 0,
     "paths": {
         "glsl": "loaders/glsl",
@@ -17,6 +17,8 @@
     "uglify2": {
         "compress": {
             "drop_debugger": true,
+            "dead_code": true,
+            "booleans": true,
             "global_defs": {
                 "DEBUG": false,
                 "VERSION": "UNKNOWN"

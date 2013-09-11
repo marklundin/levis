@@ -1,1 +1,127 @@
-THREE.WebGLRenderer.Object3DRenderer=function(e,t){this.renderer=e,this.info=t},THREE.extend(THREE.WebGLRenderer.Object3DRenderer.prototype,{getBufferMaterial:function(e,t){return e.material instanceof THREE.MeshFaceMaterial?e.material.materials[t.materialIndex]:e.material},bufferGuessUVType:function(e){return e.map||e.lightMap||e.bumpMap||e.normalMap||e.specularMap||e instanceof THREE.ShaderMaterial?!0:!1},bufferGuessNormalType:function(e){return e instanceof THREE.MeshBasicMaterial&&!e.envMap||e instanceof THREE.MeshDepthMaterial?!1:this.materialNeedsSmoothNormals(e)?THREE.SmoothShading:THREE.FlatShading},materialNeedsSmoothNormals:function(e){return e&&void 0!==e.shading&&e.shading===THREE.SmoothShading},bufferGuessVertexColorType:function(e){return e.vertexColors?e.vertexColors:!1},initCustomAttributes:function(e,t){var i=e.vertices.length,r=t.material;if(r.attributes){void 0===e.__webglCustomAttributesList&&(e.__webglCustomAttributesList=[]);for(var n in r.attributes){var o=r.attributes[n];if(!o.__webglInitialized||o.createUniqueBuffers){o.__webglInitialized=!0;var a=1;"v2"===o.type?a=2:"v3"===o.type?a=3:"v4"===o.type?a=4:"c"===o.type&&(a=3),o.size=a,o.array=new Float32Array(i*a),o.buffer=this.renderer.createBuffer(),o.buffer.belongsToAttribute=n,o.needsUpdate=!0}e.__webglCustomAttributesList.push(o)}}},numericalSort:function(e,t){return t[0]-e[0]}});
+
+THREE.WebGLRenderer.Object3DRenderer = function ( lowlevelrenderer, info ) {
+
+	this.renderer = lowlevelrenderer;
+	this.info = info;
+
+};
+
+THREE.extend( THREE.WebGLRenderer.Object3DRenderer.prototype, {
+
+	getBufferMaterial: function ( object, geometryGroup ) {
+
+		return object.material instanceof THREE.MeshFaceMaterial
+			? object.material.materials[ geometryGroup.materialIndex ]
+			: object.material;
+
+	},
+
+	bufferGuessUVType: function ( material ) {
+
+		// material must use some texture to require uvs
+
+		if ( material.map || material.lightMap || material.bumpMap || material.normalMap || material.specularMap || material instanceof THREE.ShaderMaterial ) {
+
+			return true;
+
+		}
+
+		return false;
+
+	},
+
+	bufferGuessNormalType: function ( material ) {
+
+		// only MeshBasicMaterial and MeshDepthMaterial don't need normals
+
+		if ( ( material instanceof THREE.MeshBasicMaterial && !material.envMap ) || material instanceof THREE.MeshDepthMaterial ) {
+
+			return false;
+
+		}
+
+		if ( this.materialNeedsSmoothNormals( material ) ) {
+
+			return THREE.SmoothShading;
+
+		} else {
+
+			return THREE.FlatShading;
+
+		}
+
+	},
+
+	materialNeedsSmoothNormals: function ( material ) {
+
+		return material && material.shading !== undefined && material.shading === THREE.SmoothShading;
+
+	},
+
+	bufferGuessVertexColorType: function ( material ) {
+
+		if ( material.vertexColors ) {
+
+			return material.vertexColors;
+
+		}
+
+		return false;
+
+	},
+
+	initCustomAttributes: function ( geometry, object ) {
+
+		var nvertices = geometry.vertices.length;
+
+		var material = object.material;
+
+		if ( material.attributes ) {
+
+			if ( geometry.__webglCustomAttributesList === undefined ) {
+
+				geometry.__webglCustomAttributesList = [];
+
+			}
+
+			for ( var a in material.attributes ) {
+
+				var attribute = material.attributes[ a ];
+
+				if ( !attribute.__webglInitialized || attribute.createUniqueBuffers ) {
+
+					attribute.__webglInitialized = true;
+
+					var size = 1;		// "f" and "i"
+
+					if ( attribute.type === "v2" ) size = 2;
+					else if ( attribute.type === "v3" ) size = 3;
+					else if ( attribute.type === "v4" ) size = 4;
+					else if ( attribute.type === "c"  ) size = 3;
+
+					attribute.size = size;
+
+					attribute.array = new Float32Array( nvertices * size );
+
+					attribute.buffer = this.renderer.createBuffer();
+					attribute.buffer.belongsToAttribute = a;
+
+					attribute.needsUpdate = true;
+
+				}
+
+				geometry.__webglCustomAttributesList.push( attribute );
+
+			}
+
+		}
+
+	},
+
+	numericalSort: function ( a, b ) {
+
+		return b[ 0 ] - a[ 0 ];
+
+	}
+
+} );

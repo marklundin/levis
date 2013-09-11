@@ -1,1 +1,100 @@
-THREE.VertexNormalsHelper=function(e,t,i,r){this.object=e,this.size=t||1;var o=i||16711680,n=r||1,a=new THREE.Geometry;e.geometry.vertices;for(var s=e.geometry.faces,l=0,c=s.length;c>l;l++)for(var h=s[l],u=0,d=h.vertexNormals.length;d>u;u++)a.vertices.push(new THREE.Vector3),a.vertices.push(new THREE.Vector3);THREE.Line.call(this,a,new THREE.LineBasicMaterial({color:o,linewidth:n}),THREE.LinePieces),this.matrixAutoUpdate=!1,this.normalMatrix=new THREE.Matrix3,this.update()},THREE.VertexNormalsHelper.prototype=Object.create(THREE.Line.prototype),THREE.VertexNormalsHelper.prototype.update=function(){var e=new THREE.Vector3;return function(){var t=["a","b","c","d"];this.object.updateMatrixWorld(!0),this.normalMatrix.getNormalMatrix(this.object.matrixWorld);for(var i=this.geometry.vertices,r=this.object.geometry.vertices,o=this.object.geometry.faces,n=this.object.matrixWorld,a=0,s=0,l=o.length;l>s;s++)for(var c=o[s],h=0,u=c.vertexNormals.length;u>h;h++){var d=c[t[h]],p=r[d],f=c.vertexNormals[h];i[a].copy(p).applyMatrix4(n),e.copy(f).applyMatrix3(this.normalMatrix).normalize().multiplyScalar(this.size),e.add(i[a]),a+=1,i[a].copy(e),a+=1}return this.geometry.verticesNeedUpdate=!0,this}}();
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author WestLangley / http://github.com/WestLangley
+*/
+
+THREE.VertexNormalsHelper = function ( object, size, hex, linewidth ) {
+
+	this.object = object;
+
+	this.size = size || 1;
+
+	var color = hex || 0xff0000;
+
+	var width = linewidth || 1;
+
+	var geometry = new THREE.Geometry();
+
+	var vertices = object.geometry.vertices;
+
+	var faces = object.geometry.faces;
+
+	for ( var i = 0, l = faces.length; i < l; i ++ ) {
+
+		var face = faces[ i ];
+
+		for ( var j = 0, jl = face.vertexNormals.length; j < jl; j ++ ) {
+
+			geometry.vertices.push( new THREE.Vector3() );
+			geometry.vertices.push( new THREE.Vector3() );
+
+		}
+
+	}
+
+	THREE.Line.call( this, geometry, new THREE.LineBasicMaterial( { color: color, linewidth: width } ), THREE.LinePieces );
+
+	this.matrixAutoUpdate = false;
+
+	this.normalMatrix = new THREE.Matrix3();
+
+	this.update();
+
+};
+
+THREE.VertexNormalsHelper.prototype = Object.create( THREE.Line.prototype );
+
+THREE.VertexNormalsHelper.prototype.update = ( function ( object ) {
+
+	var v1 = new THREE.Vector3();
+
+	return function( object ) {
+
+		var keys = [ 'a', 'b', 'c', 'd' ];
+
+		this.object.updateMatrixWorld( true );
+
+		this.normalMatrix.getNormalMatrix( this.object.matrixWorld );
+
+		var vertices = this.geometry.vertices;
+
+		var verts = this.object.geometry.vertices;
+
+		var faces = this.object.geometry.faces;
+
+		var worldMatrix = this.object.matrixWorld;
+
+		var idx = 0;
+
+		for ( var i = 0, l = faces.length; i < l; i ++ ) {
+
+			var face = faces[ i ];
+
+			for ( var j = 0, jl = face.vertexNormals.length; j < jl; j ++ ) {
+
+				var vertexId = face[ keys[ j ] ];
+				var vertex = verts[ vertexId ];
+
+				var normal = face.vertexNormals[ j ];
+
+				vertices[ idx ].copy( vertex ).applyMatrix4( worldMatrix );
+
+				v1.copy( normal ).applyMatrix3( this.normalMatrix ).normalize().multiplyScalar( this.size );
+
+				v1.add( vertices[ idx ] );
+				idx = idx + 1;
+
+				vertices[ idx ].copy( v1 );
+				idx = idx + 1;
+
+			}
+
+		}
+
+		this.geometry.verticesNeedUpdate = true;
+
+		return this;
+
+	}
+
+}());

@@ -1,1 +1,106 @@
-THREE.OBJExporter=function(){},THREE.OBJExporter.prototype={constructor:THREE.OBJExporter,parse:function(e){console.log(e);for(var t="",i=0,r=e.vertices.length;r>i;i++){var n=e.vertices[i];t+="v "+n.x+" "+n.y+" "+n.z+"\n"}for(var i=0,r=e.faceVertexUvs[0].length;r>i;i++)for(var o=e.faceVertexUvs[0][i],a=0;a<o.length;a++){var s=o[a];t+="vt "+s.x+" "+s.y+"\n"}for(var i=0,r=e.faces.length;r>i;i++)for(var l=e.faces[i].vertexNormals,a=0;a<l.length;a++){var h=l[a];t+="vn "+h.x+" "+h.y+" "+h.z+"\n"}for(var c=1,u=[c],i=0,r=e.faces.length;r>i;i++){var d=e.faces[i];d instanceof THREE.Face3?c+=3:d instanceof THREE.Face4&&(c+=4),u.push(c)}for(var i=0,r=e.faces.length;r>i;i++){var d=e.faces[i];t+="f ",d instanceof THREE.Face3?(t+=d.a+1+"/"+u[i]+"/"+u[i]+" ",t+=d.b+1+"/"+(u[i]+1)+"/"+(u[i]+1)+" ",t+=d.c+1+"/"+(u[i]+2)+"/"+(u[i]+2)+"\n"):d instanceof THREE.Face4&&(t+=d.a+1+"/"+u[i]+"/"+u[i]+" ",t+=d.b+1+"/"+(u[i]+1)+"/"+(u[i]+1)+" ",t+=d.c+1+"/"+(u[i]+2)+"/"+(u[i]+2)+" ",t+=d.d+1+"/"+(u[i]+3)+"/"+(u[i]+3)+"\n")}return t}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.OBJExporter = function () {};
+
+THREE.OBJExporter.prototype = {
+
+	constructor: THREE.OBJExporter,
+
+	parse: function ( geometry ) {
+
+		console.log( geometry );
+
+		var output = '';
+
+		for ( var i = 0, l = geometry.vertices.length; i < l; i ++ ) {
+
+			var vertex = geometry.vertices[ i ];
+			output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
+
+		}
+
+		// uvs
+
+		for ( var i = 0, l = geometry.faceVertexUvs[ 0 ].length; i < l; i ++ ) {
+
+			var vertexUvs = geometry.faceVertexUvs[ 0 ][ i ];
+
+			for ( var j = 0; j < vertexUvs.length; j ++ ) {
+
+				var uv = vertexUvs[ j ];
+				output += 'vt ' + uv.x + ' ' + uv.y + '\n';
+
+			}
+
+		}
+
+		// normals
+
+		for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
+
+			var normals = geometry.faces[ i ].vertexNormals;
+
+			for ( var j = 0; j < normals.length; j ++ ) {
+
+				var normal = normals[ j ];
+				output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
+
+			}
+
+		}
+
+		// map
+
+		var count = 1; // OBJ values start by 1
+		var map = [ count ];
+
+		for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
+
+			var face = geometry.faces[ i ];
+
+			if ( face instanceof THREE.Face3 ) {
+
+				count += 3;
+
+			} else if ( face instanceof THREE.Face4 ) {
+
+				count += 4;
+
+			}
+
+			map.push( count );
+
+		}
+
+		// faces
+
+		for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
+
+			var face = geometry.faces[ i ];
+
+			output += 'f ';
+
+			if ( face instanceof THREE.Face3 ) {
+
+				output += ( face.a + 1 ) + '/' + ( map[ i ] ) + '/' + ( map[ i ] ) + ' ';
+				output += ( face.b + 1 ) + '/' + ( map[ i ] + 1 ) + '/' + ( map[ i ] + 1 ) + ' ';
+				output += ( face.c + 1 ) + '/' + ( map[ i ] + 2 ) + '/' + ( map[ i ] + 2 ) + '\n';
+
+			} else if ( face instanceof THREE.Face4 ) {
+
+				output += ( face.a + 1 ) + '/' + ( map[ i ] ) + '/' + ( map[ i ] ) + ' ';
+				output += ( face.b + 1 ) + '/' + ( map[ i ] + 1 ) + '/' + ( map[ i ] + 1 ) + ' ';
+				output += ( face.c + 1 ) + '/' + ( map[ i ] + 2 ) + '/' + ( map[ i ] + 2 ) + ' ';
+				output += ( face.d + 1 ) + '/' + ( map[ i ] + 3 ) + '/' + ( map[ i ] + 3 ) + '\n';
+
+			}
+
+		}
+
+		return output;
+
+	}
+
+}

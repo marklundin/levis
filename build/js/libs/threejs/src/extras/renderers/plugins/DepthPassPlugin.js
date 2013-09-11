@@ -1,1 +1,200 @@
-THREE.DepthPassPlugin=function(){function e(e){return e.material instanceof THREE.MeshFaceMaterial?e.material.materials[0]:e.material}this.enabled=!1,this.renderTarget=null;var t,i,r,o,n,a,s=new THREE.Frustum,l=new THREE.Matrix4;this.init=function(e){t=e.context,i=e;var s=THREE.ShaderLib.depthRGBA,l=THREE.UniformsUtils.clone(s.uniforms);r=new THREE.ShaderMaterial({fragmentShader:s.fragmentShader,vertexShader:s.vertexShader,uniforms:l}),o=new THREE.ShaderMaterial({fragmentShader:s.fragmentShader,vertexShader:s.vertexShader,uniforms:l,morphTargets:!0}),n=new THREE.ShaderMaterial({fragmentShader:s.fragmentShader,vertexShader:s.vertexShader,uniforms:l,skinning:!0}),a=new THREE.ShaderMaterial({fragmentShader:s.fragmentShader,vertexShader:s.vertexShader,uniforms:l,morphTargets:!0,skinning:!0}),r._shadowPass=!0,o._shadowPass=!0,n._shadowPass=!0,a._shadowPass=!0},this.render=function(e,t){this.enabled&&this.update(e,t)},this.update=function(c,h){var u,d,p,f,m,v,g,E=null;for(t.clearColor(1,1,1,1),t.disable(t.BLEND),i.setDepthTest(!0),c.autoUpdate===!0&&c.updateMatrixWorld(),h.matrixWorldInverse.getInverse(h.matrixWorld),l.multiplyMatrices(h.projectionMatrix,h.matrixWorldInverse),s.setFromMatrix(l),i.setRenderTarget(this.renderTarget),i.clear(),g=c.__webglObjects,u=0,d=g.length;d>u;u++)m=g[u],v=m.object,m.render=!1,v.visible&&((v instanceof THREE.Mesh||v instanceof THREE.ParticleSystem)&&v.frustumCulled&&!s.intersectsObject(v)||(v._modelViewMatrix.multiplyMatrices(h.matrixWorldInverse,v.matrixWorld),m.render=!0));var y,T,x;for(u=0,d=g.length;d>u;u++)if(m=g[u],m.render){if(v=m.object,p=m.buffer,v instanceof THREE.ParticleSystem&&!v.customDepthMaterial)continue;y=e(v),y&&i.setMaterialFaces(v.material),T=v.geometry.morphTargets.length>0&&y.morphTargets,x=v instanceof THREE.SkinnedMesh&&y.skinning,f=v.customDepthMaterial?v.customDepthMaterial:x?T?a:n:T?o:r,p instanceof THREE.BufferGeometry?i.renderBufferDirect(h,c.__lights,E,f,p,v):i.renderBuffer(h,c.__lights,E,f,p,v)}for(g=c.__webglObjectsImmediate,u=0,d=g.length;d>u;u++)m=g[u],v=m.object,v.visible&&(v._modelViewMatrix.multiplyMatrices(h.matrixWorldInverse,v.matrixWorld),i.renderImmediateObject(h,c.__lights,E,r,v));var b=i.getClearColor(),_=i.getClearAlpha();t.clearColor(b.r,b.g,b.b,_),t.enable(t.BLEND)}};
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.DepthPassPlugin = function () {
+
+	this.enabled = false;
+	this.renderTarget = null;
+
+	var _gl,
+	_renderer,
+	_depthMaterial, _depthMaterialMorph, _depthMaterialSkin, _depthMaterialMorphSkin,
+
+	_frustum = new THREE.Frustum(),
+	_projScreenMatrix = new THREE.Matrix4();
+
+	this.init = function ( renderer ) {
+
+		_gl = renderer.context;
+		_renderer = renderer;
+
+		var depthShader = THREE.ShaderLib[ "depthRGBA" ];
+		var depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
+
+		_depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms } );
+		_depthMaterialMorph = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms, morphTargets: true } );
+		_depthMaterialSkin = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms, skinning: true } );
+		_depthMaterialMorphSkin = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms, morphTargets: true, skinning: true } );
+
+		_depthMaterial._shadowPass = true;
+		_depthMaterialMorph._shadowPass = true;
+		_depthMaterialSkin._shadowPass = true;
+		_depthMaterialMorphSkin._shadowPass = true;
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		if ( ! this.enabled ) return;
+
+		this.update( scene, camera );
+
+	};
+
+	this.update = function ( scene, camera ) {
+
+		var i, il, j, jl, n,
+
+		program, buffer, material,
+		webglObject, object, light,
+		renderList,
+
+		fog = null;
+
+		// set GL state for depth map
+
+		_gl.clearColor( 1, 1, 1, 1 );
+		_gl.disable( _gl.BLEND );
+
+		_renderer.setDepthTest( true );
+
+		// update scene
+
+		if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
+
+		// update camera matrices and frustum
+
+		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+
+		_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
+		_frustum.setFromMatrix( _projScreenMatrix );
+
+		// render depth map
+
+		_renderer.setRenderTarget( this.renderTarget );
+		_renderer.clear();
+
+		// set object matrices & frustum culling
+
+		renderList = scene.__webglObjects;
+
+		for ( j = 0, jl = renderList.length; j < jl; j ++ ) {
+
+			webglObject = renderList[ j ];
+			object = webglObject.object;
+
+			webglObject.render = false;
+
+			if ( object.visible ) {
+
+				if ( ! ( object instanceof THREE.Mesh || object instanceof THREE.ParticleSystem ) || ! ( object.frustumCulled ) || _frustum.intersectsObject( object ) ) {
+
+					object._modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );
+
+					webglObject.render = true;
+
+				}
+
+			}
+
+		}
+
+		// render regular objects
+
+		var objectMaterial, useMorphing, useSkinning;
+
+		for ( j = 0, jl = renderList.length; j < jl; j ++ ) {
+
+			webglObject = renderList[ j ];
+
+			if ( webglObject.render ) {
+
+				object = webglObject.object;
+				buffer = webglObject.buffer;
+
+				// todo: create proper depth material for particles
+
+				if ( object instanceof THREE.ParticleSystem && !object.customDepthMaterial ) continue;
+
+				objectMaterial = getObjectMaterial( object );
+
+				if ( objectMaterial ) _renderer.setMaterialFaces( object.material );
+
+				useMorphing = object.geometry.morphTargets.length > 0 && objectMaterial.morphTargets;
+				useSkinning = object instanceof THREE.SkinnedMesh && objectMaterial.skinning;
+
+				if ( object.customDepthMaterial ) {
+
+					material = object.customDepthMaterial;
+
+				} else if ( useSkinning ) {
+
+					material = useMorphing ? _depthMaterialMorphSkin : _depthMaterialSkin;
+
+				} else if ( useMorphing ) {
+
+					material = _depthMaterialMorph;
+
+				} else {
+
+					material = _depthMaterial;
+
+				}
+
+				if ( buffer instanceof THREE.BufferGeometry ) {
+
+					_renderer.renderBufferDirect( camera, scene.__lights, fog, material, buffer, object );
+
+				} else {
+
+					_renderer.renderBuffer( camera, scene.__lights, fog, material, buffer, object );
+
+				}
+
+			}
+
+		}
+
+		// set matrices and render immediate objects
+
+		renderList = scene.__webglObjectsImmediate;
+
+		for ( j = 0, jl = renderList.length; j < jl; j ++ ) {
+
+			webglObject = renderList[ j ];
+			object = webglObject.object;
+
+			if ( object.visible ) {
+
+				object._modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );
+
+				_renderer.renderImmediateObject( camera, scene.__lights, fog, _depthMaterial, object );
+
+			}
+
+		}
+
+		// restore GL state
+
+		var clearColor = _renderer.getClearColor(),
+		clearAlpha = _renderer.getClearAlpha();
+
+		_gl.clearColor( clearColor.r, clearColor.g, clearColor.b, clearAlpha );
+		_gl.enable( _gl.BLEND );
+
+	};
+
+	// For the moment just ignore objects that have multiple materials with different animation methods
+	// Only the first material will be taken into account for deciding which depth material to use
+
+	function getObjectMaterial( object ) {
+
+		return object.material instanceof THREE.MeshFaceMaterial
+			? object.material.materials[ 0 ]
+			: object.material;
+
+	};
+
+};
+

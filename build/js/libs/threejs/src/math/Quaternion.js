@@ -1,1 +1,453 @@
-THREE.Quaternion=function(e,t,i,r){this._x=e||0,this._y=t||0,this._z=i||0,this._w=void 0!==r?r:1},THREE.Quaternion.prototype={constructor:THREE.Quaternion,_x:0,_y:0,_z:0,_w:0,_euler:void 0,_updateEuler:function(){void 0!==this._euler&&this._euler.setFromQuaternion(this,void 0,!1)},get x(){return this._x},set x(e){this._x=e,this._updateEuler()},get y(){return this._y},set y(e){this._y=e,this._updateEuler()},get z(){return this._z},set z(e){this._z=e,this._updateEuler()},get w(){return this._w},set w(e){this._w=e,this._updateEuler()},set:function(e,t,i,r){return this._x=e,this._y=t,this._z=i,this._w=r,this._updateEuler(),this},copy:function(e){return this._x=e._x,this._y=e._y,this._z=e._z,this._w=e._w,this._updateEuler(),this},setFromEuler:function(e,t){void 0===typeof e.order&&console.error("ERROR: Quaternion's .setFromEuler() now expects a Euler rotation rather than a Vector3 and order.  Please update your code.");var i=Math.cos(e._x/2),r=Math.cos(e._y/2),o=Math.cos(e._z/2),n=Math.sin(e._x/2),a=Math.sin(e._y/2),s=Math.sin(e._z/2);return void 0===e.order||"XYZ"===e.order?(this._x=n*r*o+i*a*s,this._y=i*a*o-n*r*s,this._z=i*r*s+n*a*o,this._w=i*r*o-n*a*s):"YXZ"===e.order?(this._x=n*r*o+i*a*s,this._y=i*a*o-n*r*s,this._z=i*r*s-n*a*o,this._w=i*r*o+n*a*s):"ZXY"===e.order?(this._x=n*r*o-i*a*s,this._y=i*a*o+n*r*s,this._z=i*r*s+n*a*o,this._w=i*r*o-n*a*s):"ZYX"===e.order?(this._x=n*r*o-i*a*s,this._y=i*a*o+n*r*s,this._z=i*r*s-n*a*o,this._w=i*r*o+n*a*s):"YZX"===e.order?(this._x=n*r*o+i*a*s,this._y=i*a*o+n*r*s,this._z=i*r*s-n*a*o,this._w=i*r*o-n*a*s):"XZY"===e.order&&(this._x=n*r*o-i*a*s,this._y=i*a*o-n*r*s,this._z=i*r*s+n*a*o,this._w=i*r*o+n*a*s),t!==!1&&this._updateEuler(),this},setFromAxisAngle:function(e,t){var i=t/2,r=Math.sin(i);return this._x=e.x*r,this._y=e.y*r,this._z=e.z*r,this._w=Math.cos(i),this._updateEuler(),this},setFromRotationMatrix:function(e){var t,i=e.elements,r=i[0],o=i[4],n=i[8],a=i[1],s=i[5],l=i[9],c=i[2],h=i[6],u=i[10],d=r+s+u;return d>0?(t=.5/Math.sqrt(d+1),this._w=.25/t,this._x=(h-l)*t,this._y=(n-c)*t,this._z=(a-o)*t):r>s&&r>u?(t=2*Math.sqrt(1+r-s-u),this._w=(h-l)/t,this._x=.25*t,this._y=(o+a)/t,this._z=(n+c)/t):s>u?(t=2*Math.sqrt(1+s-r-u),this._w=(n-c)/t,this._x=(o+a)/t,this._y=.25*t,this._z=(l+h)/t):(t=2*Math.sqrt(1+u-r-s),this._w=(a-o)/t,this._x=(n+c)/t,this._y=(l+h)/t,this._z=.25*t),this._updateEuler(),this},inverse:function(){return this.conjugate().normalize(),this},conjugate:function(){return this._x*=-1,this._y*=-1,this._z*=-1,this._updateEuler(),this},lengthSq:function(){return this._x*this._x+this._y*this._y+this._z*this._z+this._w*this._w},length:function(){return Math.sqrt(this._x*this._x+this._y*this._y+this._z*this._z+this._w*this._w)},normalize:function(){var e=this.length();return 0===e?(this._x=0,this._y=0,this._z=0,this._w=1):(e=1/e,this._x=this._x*e,this._y=this._y*e,this._z=this._z*e,this._w=this._w*e),this},multiply:function(e,t){return void 0!==t?(console.warn("DEPRECATED: Quaternion's .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead."),this.multiplyQuaternions(e,t)):this.multiplyQuaternions(this,e)},multiplyQuaternions:function(e,t){var i=e._x,r=e._y,o=e._z,n=e._w,a=t._x,s=t._y,l=t._z,c=t._w;return this._x=i*c+n*a+r*l-o*s,this._y=r*c+n*s+o*a-i*l,this._z=o*c+n*l+i*s-r*a,this._w=n*c-i*a-r*s-o*l,this._updateEuler(),this},multiplyVector3:function(e){return console.warn("DEPRECATED: Quaternion's .multiplyVector3() has been removed. Use is now vector.applyQuaternion( quaternion ) instead."),e.applyQuaternion(this)},slerp:function(e,t){var i=this._x,r=this._y,o=this._z,n=this._w,a=n*e._w+i*e._x+r*e._y+o*e._z;if(0>a?(this._w=-e._w,this._x=-e._x,this._y=-e._y,this._z=-e._z,a=-a):this.copy(e),a>=1)return this._w=n,this._x=i,this._y=r,this._z=o,this;var s=Math.acos(a),l=Math.sqrt(1-a*a);if(Math.abs(l)<.001)return this._w=.5*(n+this._w),this._x=.5*(i+this._x),this._y=.5*(r+this._y),this._z=.5*(o+this._z),this;var c=Math.sin((1-t)*s)/l,h=Math.sin(t*s)/l;return this._w=n*c+this._w*h,this._x=i*c+this._x*h,this._y=r*c+this._y*h,this._z=o*c+this._z*h,this._updateEuler(),this},equals:function(e){return e._x===this._x&&e._y===this._y&&e._z===this._z&&e._w===this._w},fromArray:function(e){return this._x=e[0],this._y=e[1],this._z=e[2],this._w=e[3],this._updateEuler(),this},toArray:function(){return[this._x,this._y,this._z,this._w]},clone:function(){return new THREE.Quaternion(this._x,this._y,this._z,this._w)}},THREE.Quaternion.slerp=function(e,t,i,r){return i.copy(e).slerp(t,r)};
+/**
+ * @author mikael emtinger / http://gomo.se/
+ * @author alteredq / http://alteredqualia.com/
+ * @author WestLangley / http://github.com/WestLangley
+ * @author bhouston / http://exocortex.com
+ */
+
+THREE.Quaternion = function ( x, y, z, w ) {
+
+	this._x = x || 0;
+	this._y = y || 0;
+	this._z = z || 0;
+	this._w = ( w !== undefined ) ? w : 1;
+
+};
+
+THREE.Quaternion.prototype = {
+
+	constructor: THREE.Quaternion,
+
+	_x: 0,_y: 0, _z: 0, _w: 0,
+
+	_euler: undefined,
+
+	_updateEuler: function ( callback ) {
+
+		if ( this._euler !== undefined ) {
+
+			this._euler.setFromQuaternion( this, undefined, false );
+
+		}
+
+	},
+
+	get x () {
+
+		return this._x;
+
+	},
+
+	set x ( value ) {
+
+		this._x = value;
+		this._updateEuler();
+
+	},
+
+	get y () {
+
+		return this._y;
+
+	},
+
+	set y ( value ) {
+
+		this._y = value;
+		this._updateEuler();
+
+	},
+
+	get z () {
+
+		return this._z;
+
+	},
+
+	set z ( value ) {
+
+		this._z = value;
+		this._updateEuler();
+
+	},
+
+	get w () {
+
+		return this._w;
+
+	},
+
+	set w ( value ) {
+
+		this._w = value;
+		this._updateEuler();
+
+	},
+
+	set: function ( x, y, z, w ) {
+
+		this._x = x;
+		this._y = y;
+		this._z = z;
+		this._w = w;
+
+		this._updateEuler();
+
+		return this;
+
+	},
+
+	copy: function ( quaternion ) {
+
+		this._x = quaternion._x;
+		this._y = quaternion._y;
+		this._z = quaternion._z;
+		this._w = quaternion._w;
+
+		this._updateEuler();
+
+		return this;
+
+	},
+
+	setFromEuler: function ( euler, update ) {
+
+		if ( typeof euler['order'] === undefined ) {
+
+			console.error( 'ERROR: Quaternion\'s .setFromEuler() now expects a Euler rotation rather than a Vector3 and order.  Please update your code.' );
+		}
+
+		// http://www.mathworks.com/matlabcentral/fileexchange/
+		// 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
+		//	content/SpinCalc.m
+
+		var c1 = Math.cos( euler._x / 2 );
+		var c2 = Math.cos( euler._y / 2 );
+		var c3 = Math.cos( euler._z / 2 );
+		var s1 = Math.sin( euler._x / 2 );
+		var s2 = Math.sin( euler._y / 2 );
+		var s3 = Math.sin( euler._z / 2 );
+
+		if ( euler.order === undefined || euler.order === 'XYZ' ) {
+
+			this._x = s1 * c2 * c3 + c1 * s2 * s3;
+			this._y = c1 * s2 * c3 - s1 * c2 * s3;
+			this._z = c1 * c2 * s3 + s1 * s2 * c3;
+			this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+		} else if ( euler.order === 'YXZ' ) {
+
+			this._x = s1 * c2 * c3 + c1 * s2 * s3;
+			this._y = c1 * s2 * c3 - s1 * c2 * s3;
+			this._z = c1 * c2 * s3 - s1 * s2 * c3;
+			this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+		} else if ( euler.order === 'ZXY' ) {
+
+			this._x = s1 * c2 * c3 - c1 * s2 * s3;
+			this._y = c1 * s2 * c3 + s1 * c2 * s3;
+			this._z = c1 * c2 * s3 + s1 * s2 * c3;
+			this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+		} else if ( euler.order === 'ZYX' ) {
+
+			this._x = s1 * c2 * c3 - c1 * s2 * s3;
+			this._y = c1 * s2 * c3 + s1 * c2 * s3;
+			this._z = c1 * c2 * s3 - s1 * s2 * c3;
+			this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+		} else if ( euler.order === 'YZX' ) {
+
+			this._x = s1 * c2 * c3 + c1 * s2 * s3;
+			this._y = c1 * s2 * c3 + s1 * c2 * s3;
+			this._z = c1 * c2 * s3 - s1 * s2 * c3;
+			this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+		} else if ( euler.order === 'XZY' ) {
+
+			this._x = s1 * c2 * c3 - c1 * s2 * s3;
+			this._y = c1 * s2 * c3 - s1 * c2 * s3;
+			this._z = c1 * c2 * s3 + s1 * s2 * c3;
+			this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+		}
+
+		if ( update !== false ) this._updateEuler();
+
+		return this;
+
+	},
+
+	setFromAxisAngle: function ( axis, angle ) {
+
+		// from http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
+		// axis have to be normalized
+
+		var halfAngle = angle / 2, s = Math.sin( halfAngle );
+
+		this._x = axis.x * s;
+		this._y = axis.y * s;
+		this._z = axis.z * s;
+		this._w = Math.cos( halfAngle );
+
+		this._updateEuler();
+
+		return this;
+
+	},
+
+	setFromRotationMatrix: function ( m ) {
+
+		// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
+
+		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+
+		var te = m.elements,
+
+			m11 = te[0], m12 = te[4], m13 = te[8],
+			m21 = te[1], m22 = te[5], m23 = te[9],
+			m31 = te[2], m32 = te[6], m33 = te[10],
+
+			trace = m11 + m22 + m33,
+			s;
+
+		if ( trace > 0 ) {
+
+			s = 0.5 / Math.sqrt( trace + 1.0 );
+
+			this._w = 0.25 / s;
+			this._x = ( m32 - m23 ) * s;
+			this._y = ( m13 - m31 ) * s;
+			this._z = ( m21 - m12 ) * s;
+
+		} else if ( m11 > m22 && m11 > m33 ) {
+
+			s = 2.0 * Math.sqrt( 1.0 + m11 - m22 - m33 );
+
+			this._w = (m32 - m23 ) / s;
+			this._x = 0.25 * s;
+			this._y = (m12 + m21 ) / s;
+			this._z = (m13 + m31 ) / s;
+
+		} else if ( m22 > m33 ) {
+
+			s = 2.0 * Math.sqrt( 1.0 + m22 - m11 - m33 );
+
+			this._w = (m13 - m31 ) / s;
+			this._x = (m12 + m21 ) / s;
+			this._y = 0.25 * s;
+			this._z = (m23 + m32 ) / s;
+
+		} else {
+
+			s = 2.0 * Math.sqrt( 1.0 + m33 - m11 - m22 );
+
+			this._w = ( m21 - m12 ) / s;
+			this._x = ( m13 + m31 ) / s;
+			this._y = ( m23 + m32 ) / s;
+			this._z = 0.25 * s;
+
+		}
+
+		this._updateEuler();
+
+		return this;
+
+	},
+
+	inverse: function () {
+
+		this.conjugate().normalize();
+
+		return this;
+
+	},
+
+	conjugate: function () {
+
+		this._x *= -1;
+		this._y *= -1;
+		this._z *= -1;
+
+		this._updateEuler();
+
+		return this;
+
+	},
+
+	lengthSq: function () {
+
+		return this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w;
+
+	},
+
+	length: function () {
+
+		return Math.sqrt( this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w );
+
+	},
+
+	normalize: function () {
+
+		var l = this.length();
+
+		if ( l === 0 ) {
+
+			this._x = 0;
+			this._y = 0;
+			this._z = 0;
+			this._w = 1;
+
+		} else {
+
+			l = 1 / l;
+
+			this._x = this._x * l;
+			this._y = this._y * l;
+			this._z = this._z * l;
+			this._w = this._w * l;
+
+		}
+
+		return this;
+
+	},
+
+	multiply: function ( q, p ) {
+
+		if ( p !== undefined ) {
+
+			console.warn( 'DEPRECATED: Quaternion\'s .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+			return this.multiplyQuaternions( q, p );
+
+		}
+
+		return this.multiplyQuaternions( this, q );
+
+	},
+
+	multiplyQuaternions: function ( a, b ) {
+
+		// from http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
+
+		var qax = a._x, qay = a._y, qaz = a._z, qaw = a._w;
+		var qbx = b._x, qby = b._y, qbz = b._z, qbw = b._w;
+
+		this._x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+		this._y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+		this._z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+		this._w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+		this._updateEuler();
+
+		return this;
+
+	},
+
+	multiplyVector3: function ( vector ) {
+
+		console.warn( 'DEPRECATED: Quaternion\'s .multiplyVector3() has been removed. Use is now vector.applyQuaternion( quaternion ) instead.' );
+		return vector.applyQuaternion( this );
+
+	},
+
+	slerp: function ( qb, t ) {
+
+		var x = this._x, y = this._y, z = this._z, w = this._w;
+
+		// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
+
+		var cosHalfTheta = w * qb._w + x * qb._x + y * qb._y + z * qb._z;
+
+		if ( cosHalfTheta < 0 ) {
+
+			this._w = -qb._w;
+			this._x = -qb._x;
+			this._y = -qb._y;
+			this._z = -qb._z;
+
+			cosHalfTheta = -cosHalfTheta;
+
+		} else {
+
+			this.copy( qb );
+
+		}
+
+		if ( cosHalfTheta >= 1.0 ) {
+
+			this._w = w;
+			this._x = x;
+			this._y = y;
+			this._z = z;
+
+			return this;
+
+		}
+
+		var halfTheta = Math.acos( cosHalfTheta );
+		var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+
+		if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+
+			this._w = 0.5 * ( w + this._w );
+			this._x = 0.5 * ( x + this._x );
+			this._y = 0.5 * ( y + this._y );
+			this._z = 0.5 * ( z + this._z );
+
+			return this;
+
+		}
+
+		var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
+		ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
+
+		this._w = ( w * ratioA + this._w * ratioB );
+		this._x = ( x * ratioA + this._x * ratioB );
+		this._y = ( y * ratioA + this._y * ratioB );
+		this._z = ( z * ratioA + this._z * ratioB );
+
+		this._updateEuler();
+
+		return this;
+
+	},
+
+	equals: function ( quaternion ) {
+
+		return ( quaternion._x === this._x ) && ( quaternion._y === this._y ) && ( quaternion._z === this._z ) && ( quaternion._w === this._w );
+
+	},
+
+	fromArray: function ( array ) {
+
+		this._x = array[ 0 ];
+		this._y = array[ 1 ];
+		this._z = array[ 2 ];
+		this._w = array[ 3 ];
+
+		this._updateEuler();
+
+		return this;
+
+	},
+
+	toArray: function () {
+
+		return [ this._x, this._y, this._z, this._w ];
+
+	},
+
+	clone: function () {
+
+		return new THREE.Quaternion( this._x, this._y, this._z, this._w );
+
+	}
+
+};
+
+THREE.Quaternion.slerp = function ( qa, qb, qm, t ) {
+
+	return qm.copy( qa ).slerp( qb, t );
+
+}

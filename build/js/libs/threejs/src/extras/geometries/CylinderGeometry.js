@@ -1,1 +1,154 @@
-THREE.CylinderGeometry=function(e,t,i,r,n,o){THREE.Geometry.call(this),this.radiusTop=e=void 0!==e?e:20,this.radiusBottom=t=void 0!==t?t:20,this.height=i=void 0!==i?i:100,this.radialSegments=r=r||8,this.heightSegments=n=n||1,this.openEnded=o=void 0!==o?o:!1;var a,s,l=i/2,c=[],h=[];for(s=0;n>=s;s++){var u=[],d=[],p=s/n,f=p*(t-e)+e;for(a=0;r>=a;a++){var m=a/r,v=new THREE.Vector3;v.x=f*Math.sin(2*m*Math.PI),v.y=-p*i+l,v.z=f*Math.cos(2*m*Math.PI),this.vertices.push(v),u.push(this.vertices.length-1),d.push(new THREE.Vector2(m,1-p))}c.push(u),h.push(d)}var g,E,y=(t-e)/i;for(a=0;r>a;a++)for(0!==e?(g=this.vertices[c[0][a]].clone(),E=this.vertices[c[0][a+1]].clone()):(g=this.vertices[c[1][a]].clone(),E=this.vertices[c[1][a+1]].clone()),g.setY(Math.sqrt(g.x*g.x+g.z*g.z)*y).normalize(),E.setY(Math.sqrt(E.x*E.x+E.z*E.z)*y).normalize(),s=0;n>s;s++){var T=c[s][a],x=c[s+1][a],_=c[s+1][a+1],b=c[s][a+1],R=g.clone(),w=g.clone(),H=E.clone(),S=E.clone(),M=h[s][a].clone(),C=h[s+1][a].clone(),A=h[s+1][a+1].clone(),D=h[s][a+1].clone();this.faces.push(new THREE.Face4(T,x,_,b,[R,w,H,S])),this.faceVertexUvs[0].push([M,C,A,D])}if(o===!1&&e>0)for(this.vertices.push(new THREE.Vector3(0,l,0)),a=0;r>a;a++){var T=c[0][a],x=c[0][a+1],_=this.vertices.length-1,R=new THREE.Vector3(0,1,0),w=new THREE.Vector3(0,1,0),H=new THREE.Vector3(0,1,0),M=h[0][a].clone(),C=h[0][a+1].clone(),A=new THREE.Vector2(C.u,0);this.faces.push(new THREE.Face3(T,x,_,[R,w,H])),this.faceVertexUvs[0].push([M,C,A])}if(o===!1&&t>0)for(this.vertices.push(new THREE.Vector3(0,-l,0)),a=0;r>a;a++){var T=c[s][a+1],x=c[s][a],_=this.vertices.length-1,R=new THREE.Vector3(0,-1,0),w=new THREE.Vector3(0,-1,0),H=new THREE.Vector3(0,-1,0),M=h[s][a+1].clone(),C=h[s][a].clone(),A=new THREE.Vector2(C.u,1);this.faces.push(new THREE.Face3(T,x,_,[R,w,H])),this.faceVertexUvs[0].push([M,C,A])}this.computeCentroids(),this.computeFaceNormals()},THREE.CylinderGeometry.prototype=Object.create(THREE.Geometry.prototype);
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded ) {
+
+	THREE.Geometry.call( this );
+
+	this.radiusTop = radiusTop = radiusTop !== undefined ? radiusTop : 20;
+	this.radiusBottom = radiusBottom = radiusBottom !== undefined ? radiusBottom : 20;
+	this.height = height = height !== undefined ? height : 100;
+
+	this.radialSegments = radialSegments = radialSegments || 8;
+	this.heightSegments = heightSegments = heightSegments || 1;
+
+	this.openEnded = openEnded = openEnded !== undefined ? openEnded : false;
+
+	var heightHalf = height / 2;
+
+	var x, y, vertices = [], uvs = [];
+
+	for ( y = 0; y <= heightSegments; y ++ ) {
+
+		var verticesRow = [];
+		var uvsRow = [];
+
+		var v = y / heightSegments;
+		var radius = v * ( radiusBottom - radiusTop ) + radiusTop;
+
+		for ( x = 0; x <= radialSegments; x ++ ) {
+
+			var u = x / radialSegments;
+
+			var vertex = new THREE.Vector3();
+			vertex.x = radius * Math.sin( u * Math.PI * 2 );
+			vertex.y = - v * height + heightHalf;
+			vertex.z = radius * Math.cos( u * Math.PI * 2 );
+
+			this.vertices.push( vertex );
+
+			verticesRow.push( this.vertices.length - 1 );
+			uvsRow.push( new THREE.Vector2( u, 1 - v ) );
+
+		}
+
+		vertices.push( verticesRow );
+		uvs.push( uvsRow );
+
+	}
+
+	var tanTheta = ( radiusBottom - radiusTop ) / height;
+	var na, nb;
+
+	for ( x = 0; x < radialSegments; x ++ ) {
+
+		if ( radiusTop !== 0 ) {
+
+			na = this.vertices[ vertices[ 0 ][ x ] ].clone();
+			nb = this.vertices[ vertices[ 0 ][ x + 1 ] ].clone();
+
+		} else {
+
+			na = this.vertices[ vertices[ 1 ][ x ] ].clone();
+			nb = this.vertices[ vertices[ 1 ][ x + 1 ] ].clone();
+
+		}
+
+		na.setY( Math.sqrt( na.x * na.x + na.z * na.z ) * tanTheta ).normalize();
+		nb.setY( Math.sqrt( nb.x * nb.x + nb.z * nb.z ) * tanTheta ).normalize();
+
+		for ( y = 0; y < heightSegments; y ++ ) {
+
+			var v1 = vertices[ y ][ x ];
+			var v2 = vertices[ y + 1 ][ x ];
+			var v3 = vertices[ y + 1 ][ x + 1 ];
+			var v4 = vertices[ y ][ x + 1 ];
+
+			var n1 = na.clone();
+			var n2 = na.clone();
+			var n3 = nb.clone();
+			var n4 = nb.clone();
+
+			var uv1 = uvs[ y ][ x ].clone();
+			var uv2 = uvs[ y + 1 ][ x ].clone();
+			var uv3 = uvs[ y + 1 ][ x + 1 ].clone();
+			var uv4 = uvs[ y ][ x + 1 ].clone();
+
+			this.faces.push( new THREE.Face4( v1, v2, v3, v4, [ n1, n2, n3, n4 ] ) );
+			this.faceVertexUvs[ 0 ].push( [ uv1, uv2, uv3, uv4 ] );
+
+		}
+
+	}
+
+	// top cap
+
+	if ( openEnded === false && radiusTop > 0 ) {
+
+		this.vertices.push( new THREE.Vector3( 0, heightHalf, 0 ) );
+
+		for ( x = 0; x < radialSegments; x ++ ) {
+
+			var v1 = vertices[ 0 ][ x ];
+			var v2 = vertices[ 0 ][ x + 1 ];
+			var v3 = this.vertices.length - 1;
+
+			var n1 = new THREE.Vector3( 0, 1, 0 );
+			var n2 = new THREE.Vector3( 0, 1, 0 );
+			var n3 = new THREE.Vector3( 0, 1, 0 );
+
+			var uv1 = uvs[ 0 ][ x ].clone();
+			var uv2 = uvs[ 0 ][ x + 1 ].clone();
+			var uv3 = new THREE.Vector2( uv2.u, 0 );
+
+			this.faces.push( new THREE.Face3( v1, v2, v3, [ n1, n2, n3 ] ) );
+			this.faceVertexUvs[ 0 ].push( [ uv1, uv2, uv3 ] );
+
+		}
+
+	}
+
+	// bottom cap
+
+	if ( openEnded === false && radiusBottom > 0 ) {
+
+		this.vertices.push( new THREE.Vector3( 0, - heightHalf, 0 ) );
+
+		for ( x = 0; x < radialSegments; x ++ ) {
+
+			var v1 = vertices[ y ][ x + 1 ];
+			var v2 = vertices[ y ][ x ];
+			var v3 = this.vertices.length - 1;
+
+			var n1 = new THREE.Vector3( 0, - 1, 0 );
+			var n2 = new THREE.Vector3( 0, - 1, 0 );
+			var n3 = new THREE.Vector3( 0, - 1, 0 );
+
+			var uv1 = uvs[ y ][ x + 1 ].clone();
+			var uv2 = uvs[ y ][ x ].clone();
+			var uv3 = new THREE.Vector2( uv2.u, 1 );
+
+			this.faces.push( new THREE.Face3( v1, v2, v3, [ n1, n2, n3 ] ) );
+			this.faceVertexUvs[ 0 ].push( [ uv1, uv2, uv3 ] );
+
+		}
+
+	}
+
+	this.computeCentroids();
+	this.computeFaceNormals();
+
+}
+
+THREE.CylinderGeometry.prototype = Object.create( THREE.Geometry.prototype );

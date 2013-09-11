@@ -1,1 +1,49 @@
-THREE.Face3=function(e,t,i,r,n,o){this.a=e,this.b=t,this.c=i,this.normal=r instanceof THREE.Vector3?r:new THREE.Vector3,this.vertexNormals=r instanceof Array?r:[],this.color=n instanceof THREE.Color?n:new THREE.Color,this.vertexColors=n instanceof Array?n:[],this.vertexTangents=[],this.materialIndex=void 0!==o?o:0,this.centroid=new THREE.Vector3},THREE.Face3.prototype={constructor:THREE.Face3,clone:function(){var e=new THREE.Face3(this.a,this.b,this.c);e.normal.copy(this.normal),e.color.copy(this.color),e.centroid.copy(this.centroid),e.materialIndex=this.materialIndex;var t,i;for(t=0,i=this.vertexNormals.length;i>t;t++)e.vertexNormals[t]=this.vertexNormals[t].clone();for(t=0,i=this.vertexColors.length;i>t;t++)e.vertexColors[t]=this.vertexColors[t].clone();for(t=0,i=this.vertexTangents.length;i>t;t++)e.vertexTangents[t]=this.vertexTangents[t].clone();return e}};
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
+THREE.Face3 = function ( a, b, c, normal, color, materialIndex ) {
+
+	this.a = a;
+	this.b = b;
+	this.c = c;
+
+	this.normal = normal instanceof THREE.Vector3 ? normal : new THREE.Vector3();
+	this.vertexNormals = normal instanceof Array ? normal : [ ];
+
+	this.color = color instanceof THREE.Color ? color : new THREE.Color();
+	this.vertexColors = color instanceof Array ? color : [];
+
+	this.vertexTangents = [];
+
+	this.materialIndex = materialIndex !== undefined ? materialIndex : 0;
+
+	this.centroid = new THREE.Vector3();
+
+};
+
+THREE.Face3.prototype = {
+
+	constructor: THREE.Face3,
+
+	clone: function () {
+
+		var face = new THREE.Face3( this.a, this.b, this.c );
+
+		face.normal.copy( this.normal );
+		face.color.copy( this.color );
+		face.centroid.copy( this.centroid );
+
+		face.materialIndex = this.materialIndex;
+
+		var i, il;
+		for ( i = 0, il = this.vertexNormals.length; i < il; i ++ ) face.vertexNormals[ i ] = this.vertexNormals[ i ].clone();
+		for ( i = 0, il = this.vertexColors.length; i < il; i ++ ) face.vertexColors[ i ] = this.vertexColors[ i ].clone();
+		for ( i = 0, il = this.vertexTangents.length; i < il; i ++ ) face.vertexTangents[ i ] = this.vertexTangents[ i ].clone();
+
+		return face;
+
+	}
+
+};

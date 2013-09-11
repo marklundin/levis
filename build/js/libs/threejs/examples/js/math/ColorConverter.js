@@ -1,1 +1,58 @@
-THREE.ColorConverter={setHSV:function(e,t,i,r){return e.setHSL(t,i*r/((t=(2-i)*r)<1?t:2-t),.5*t)},getHSV:function(e){var t=e.getHSL();return t.s*=t.l<.5?t.l:1-t.l,{h:t.h,s:2*t.s/(t.l+t.s),v:t.l+t.s}},setCMYK:function(e,t,i,r,n){var o=(1-t)*(1-n),a=(1-i)*(1-n),s=(1-r)*(1-n);return e.setRGB(o,a,s)},getCMYK:function(e){var t=e.r,i=e.g,r=e.b,n=1-Math.max(t,i,r),o=(1-t-n)/(1-n),a=(1-i-n)/(1-n),s=(1-r-n)/(1-n);return{c:o,m:a,y:s,k:n}}};
+/**
+ * @author bhouston / http://exocortex.com/
+ * @author zz85 / http://github.com/zz85
+ */
+
+THREE.ColorConverter = {
+
+	setHSV: function ( color, h, s, v ) {
+
+		// https://gist.github.com/xpansive/1337890#file-index-js
+		return color.setHSL( h, ( s * v ) / ( ( h = ( 2 - s ) * v ) < 1 ? h : ( 2 - h ) ), h * 0.5 );
+
+	},
+
+	getHSV: function( color ) {
+
+		var hsl = color.getHSL();
+
+		// based on https://gist.github.com/xpansive/1337890#file-index-js
+		hsl.s *= ( hsl.l < 0.5 ) ? hsl.l : ( 1 - hsl.l );
+
+		return {
+			h: hsl.h,
+			s: 2 * hsl.s / ( hsl.l + hsl.s ),
+			v: hsl.l + hsl.s
+		};
+	},
+
+	// where c, m, y, k is between 0 and 1
+	
+	setCMYK: function ( color, c, m, y, k ) {
+
+		var r = ( 1 - c ) * ( 1 - k );
+		var g = ( 1 - m ) * ( 1 - k );
+		var b = ( 1 - y ) * ( 1 - k );
+
+		return color.setRGB( r, g, b );
+
+	},
+
+	getCMYK: function ( color ) {
+
+		var r = color.r;
+		var g = color.g;
+		var b = color.b;
+		var k = 1 - Math.max(r, g, b);
+		var c = ( 1 - r - k ) / ( 1 - k );
+		var m = ( 1 - g - k ) / ( 1 - k );
+		var y = ( 1 - b - k ) / ( 1 - k );
+
+		return {
+			c: c, m: m, y: y, k: k
+		};
+
+	}
+
+
+};
