@@ -236,6 +236,7 @@ define([
 			!( isBitSet( py, 8 ) || isBitSet( py, 1 ) || isBitSet( py, 7 )) && 
 			!( isBitSet( pz, 4 ) || isBitSet( pz, 3 ) || isBitSet( pz, 11 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
 
+		cube.geometry.mergeVertices();
 
 		return cube.geometry;
 
