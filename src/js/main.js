@@ -290,6 +290,7 @@ define('main',[
 			divFadeOut( infoOverlay, 400 );
 			if( infoOverlay.expanded ){
 				infoOverlay.expanded = false;
+				$( "#show-more" ).toggleClass( "button-expanded", infoOverlay.expanded );
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 }, 400 );
 			}
 			setDatObjectsOpacity( 0.9 );
@@ -400,15 +401,11 @@ define('main',[
 		function updateInfoOffset( n, a ){
 			infoOverlay.xOffset = easing.inOutQuad( infoOverlay.expanded ? a : 1.0 - a ) * 500;
 		}
-		
-		$( "#show-more" ).click(function( e ){
 
-			e.preventDefault();
-			e.stopImmediatePropagation();
-
+		function toggleInfoOverlay(){
 			infoOverlay.expanded = !infoOverlay.expanded;
 			
-			infoOverlay.vidElement.toggle( clicked.isInstagram, 0 );	
+			$('#show-more').toggleClass( 'button-expanded', infoOverlay.expanded );	
 			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, complete:function(){
 
 				// console.log( infoOverlay.expanded && clicked.isInstagram )	
@@ -451,6 +448,14 @@ define('main',[
 			} 
 
 			// } 
+		}
+		
+		$( "#show-more" ).click(function( e ){
+
+			e.preventDefault();
+			e.stopImmediatePropagation();
+
+			toggleInfoOverlay();
 
 		});
 
@@ -467,6 +472,7 @@ define('main',[
 
 			if( infoOverlay.expanded ){
 				infoOverlay.expanded = false;
+				$('#show-more').toggleClass( 'button-expanded', infoOverlay.expanded );	
 				if( lastClicked.isInstagram && infoOverlay.video ) infoOverlay.video.pause();
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
 				
@@ -512,6 +518,15 @@ define('main',[
 					infoOverlay.expanded = false;
 					updateInfoOffset( 1, 1 );
 				} } );
+
+
+				setTimeout( function( target ){
+
+					if( target === clicked ){
+						toggleInfoOverlay();
+					}
+
+				}.bind( this, clicked ), 5000 );
 
 				// divFadeIn( infoOverlay, 400, function(){
 				// 	console.log( 'here' );
@@ -610,6 +625,7 @@ define('main',[
 
 			if( infoOverlay.expanded ){
 				infoOverlay.expanded = false;
+				$('#show-more').toggleClass( 'button-expanded', infoOverlay.expanded );	
 				infoOverlay.children( "#body" ).toggle( {direction: 'right', progress:updateInfoOffset, duration:400 } );
 			}
 

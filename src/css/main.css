@@ -163,6 +163,10 @@ li.title{
   user-select: none;
 }
 
+.button-expanded{
+	background: url( ../img/arrow.svg ) white no-repeat !important;
+}
+
 .button-icon{
 	margin-left: 1px;
 	background: white;
