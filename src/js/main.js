@@ -143,11 +143,11 @@ define('main',[
 		infoOverlay.vidElement = $( '.videoWrapper' )
 		infoOverlay.vidElement.append( $('<video  id="infoVid" ></video>'));	
 		// infoOverlay.video = ;/
-		videojs("infoVid", {"techOrder": ["html5", "flash"], width:"100%", height:"auto"}).ready(function(){
+		// videojs("infoVid", {preload:'auto', "techOrder": ["html5", "flash"], width:"100%", height:"auto"}).ready(function(){
 
-	      infoOverlay.video = this;
+	 //      infoOverlay.video = this;
 
-	    });
+	 //    });
 			
 		scene.fog = new THREE.Fog( 0x000000, 1, 5000 );
 
@@ -403,16 +403,18 @@ define('main',[
 		}
 
 		function toggleInfoOverlay(){
+
 			infoOverlay.expanded = !infoOverlay.expanded;
-			
+
 			$('#show-more').toggleClass( 'button-expanded', infoOverlay.expanded );	
+			infoOverlay.vidElement.toggle( clicked.isInstagram );
+
 			infoOverlay.children( "#body" ).toggle({direction: 'right', easing: "easeInOutQuad", duration:400, progress:updateInfoOffset, complete:function(){
 
-				// console.log( infoOverlay.expanded && clicked.isInstagram )	
 				if( infoOverlay.expanded && clicked.isInstagram ){
-					// infoOverlay.vidElement.remove( 'infoVid' );
+					infoOverlay.vidElement.remove( 'infoVid' );
 					infoOverlay.vidElement.append( $('<video  id="infoVid" ></video>'));	
-					videojs( "infoVid", {"techOrder": ["html5", "flash"],width:"100%", height:"470px"}).ready(function(){
+					videojs( "infoVid", {preload:'auto', "techOrder": ["html5", "flash"],width:"100%", height:"470px"}).ready(function(){
 
 				      infoOverlay.video = this;
 				      var source = [];
@@ -424,13 +426,10 @@ define('main',[
 					      	
 					      // });
 
-						
-
 						setTimeout(function(){
 							infoOverlay.video.src( source );
 							infoOverlay.video.play();
 						},100)
-						
 						
 
 				    });
@@ -443,7 +442,7 @@ define('main',[
 			// 	// if( infoOverlay.expanded ) infoOverlay.video.currentTime( 0 );
 			// 	// infoOverlay.video.play();
 
-			if( !infoOverlay.expanded && clicked.isInstagram ){
+			if( !infoOverlay.expanded /*&& clicked.isInstagram*/ ){
 				infoOverlay.video.dispose();
 			} 
 
@@ -454,7 +453,7 @@ define('main',[
 
 			e.preventDefault();
 			e.stopImmediatePropagation();
-
+			infoOverlay.beenOpened = true;
 			toggleInfoOverlay();
 
 		});
@@ -464,6 +463,7 @@ define('main',[
 
 			e.preventDefault();
 			e.stopImmediatePropagation();
+			infoOverlay.beenOpened = false;
 
 			// if( !showingSearchResults ) resetCamera();
 			// infoOverlay.fadeOut( 400 );
@@ -522,7 +522,7 @@ define('main',[
 
 				setTimeout( function( target ){
 
-					if( target === clicked ){
+					if( target === clicked && !infoOverlay.beenOpened ){
 						toggleInfoOverlay();
 					}
 
@@ -574,6 +574,7 @@ define('main',[
 			}
 
 			
+			infoOverlay.beenOpened = false;
 
 			if( lastClicked ){
 				lastClicked.material.envMap = envMap;
@@ -590,6 +591,11 @@ define('main',[
 		}
 
 		function selectItem( item ){
+
+			if( infoOverlay.expanded && infoOverlay.video && clicked && clicked.isInstagram ){
+				console.log('disposing');
+				infoOverlay.video.dispose();
+			} 
 			
 			clicked = item;
 			clicked.isSelected = true;
@@ -601,9 +607,9 @@ define('main',[
 			controls.autoRotate = true;
 			var imageElem = infoOverlay.children('#body').children( '#image' );
 
-			if( infoOverlay.expanded && infoOverlay.video && infoOverlay.video.pause ){
-				infoOverlay.video.pause();
-			} 
+			infoOverlay.beenOpened = false;
+			// console.log( infoOverlay.video );
+			
 
 			divFadeOut( infoOverlay, 400, function( avatarUrl, thumbUrl, videoUrl ){
 
