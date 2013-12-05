@@ -280,8 +280,8 @@ define([
 
 
 		// cube.geometry.mergeVertices();
-		bufferGeometry.computeVertexNormals();
-		bufferGeometry.computeBoundingSphere();
+		// bufferGeometry.computeVertexNormals();
+		// bufferGeometry.computeBoundingSphere();
 
 		return bufferGeometry;//cube.geometry;
 

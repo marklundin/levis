@@ -149,7 +149,7 @@ define([
 			bufferGeom.attributes.normal.array 	 = new Float32Array( tmpFakeGeom.normal );
 			bufferGeom.attributes.color.array 	 = new Float32Array( tmpFakeGeom.color );
 			bufferGeom.attributes.uv.array 	 	 = new Float32Array( tmpFakeGeom.uv );
-			bufferGeom.computeBoundingSphere();
+			// bufferGeom.computeBoundingSphere();
 			// baseGeom.mergeVertices();
 
 			return {

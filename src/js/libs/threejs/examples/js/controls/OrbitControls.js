@@ -150,13 +150,13 @@ THREE.OrbitControls = function ( object, domElement ) {
 	};
 
 
-
+	var tmp = new THREE.Vector3();
 	this.update = function ( object ) {
 
 		if( object ) this.object = object;
 
 		var position = this.object.position;
-		var offset = position.clone().sub( this.center );
+		var offset = tmp.copy( position ).sub( this.center );
 
 		// angle from z-axis around y-axis
 
