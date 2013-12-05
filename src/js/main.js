@@ -886,7 +886,8 @@ define('main',[
 					ambient: 0x426d84,
 					specular: 0xFFFFFF,
 					shininess: 30,
-					metal:false
+					metal:false,
+					side:THREE.DoubleSide
 					// normalMap: normalmap,
 					// normalScale: new THREE.Vector2( 0.2, 0.2 )
 					// map: map
@@ -1410,7 +1411,7 @@ define('main',[
 
 					run();
 					var fade = new TWEEN.Tween( postMaterial.uniforms.visible ).to({value:1}, 5000 ).delay( 1000 ).start( time );
-					$('.loading-icon').fadeOut( 3000 );
+					$('.loading').fadeOut( 3000 );
 					$('#search').delay( 8000 ).fadeIn( 3000 );
 
 
@@ -1635,13 +1636,11 @@ define('main',[
 					structMesh.geometry.dispose();
 				}
 				
-				// console.time( 'GENERATE' );
+				console.time( 'GENERATE' );
 				strut = structure( api.frequency, api.complexity, api.seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
-				
-				// console.timeEnd( 'GENERATE' );
+				console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
-				console.log( structMesh.geometry.faces.length );
 				structMesh.matrixAutoUpdate = false;
 				scene.add( structMesh );
 				

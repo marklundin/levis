@@ -52,9 +52,11 @@ ol, ul {
 }
 
 
-.loading-icon{
+.loading{
+	color: rgb( 200, 200, 200 );
 	position: absolute;
-	background: url(../img/loading.svg ) no-repeat;
+	letter-spacing: 2px;
+	/*background: url(../img/loading.svg ) no-repeat;*/
 	width:100px;
 	height:30px;
 	left: calc( 50% - 30px);

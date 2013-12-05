@@ -1,8 +1,9 @@
 
 
 define([
+	"utils/BufferGeometryUtils",
 	'libs/threejs/build/three'
-	],function(){
+	],function( geomUtils ){
 
 	function isBitSet( value, bitindex ){
 	    return (value & (1 << bitindex)) != 0;
@@ -97,15 +98,31 @@ define([
 					var c = ( ix + 1 ) + gridX1 * ( iy + 1 );
 					var d = ( ix + 1 ) + gridX1 * iy;
 
-					var face = new THREE.Face4( a + offset, b + offset, c + offset, d + offset );
+					var face = new THREE.Face3( a + offset, b + offset, c + offset );
 					face.normal.copy( normal );
 					face.vertexNormals.push( normal.clone(), normal.clone(), normal.clone(), normal.clone() );
 					face.materialIndex = materialIndex;
 
 					scope.faces.push( face );
+
+					face = new THREE.Face3( a + offset, c + offset, d + offset );
+					face.normal.copy( normal );
+					face.vertexNormals.push( normal.clone(), normal.clone(), normal.clone(), normal.clone() );
+					face.materialIndex = materialIndex;
+
+					scope.faces.push( face );
+
+
 					scope.faceVertexUvs[ 0 ].push( [
 								new THREE.Vector2( ix / gridX * uScale, 1 - iy / gridY * vScale ),
 								new THREE.Vector2( ix / gridX * uScale, 1 - ( iy + 1 ) / gridY  * vScale),
+								new THREE.Vector2( ( ix + 1 ) / gridX * uScale, 1- ( iy + 1 ) / gridY * vScale),
+								// new THREE.Vector2( ( ix + 1 ) / gridX * uScale, 1 - iy / gridY * vScale)
+							] );
+
+					scope.faceVertexUvs[ 0 ].push( [
+								new THREE.Vector2( ix / gridX * uScale, 1 - iy / gridY * vScale ),
+								// new THREE.Vector2( ix / gridX * uScale, 1 - ( iy + 1 ) / gridY  * vScale),
 								new THREE.Vector2( ( ix + 1 ) / gridX * uScale, 1- ( iy + 1 ) / gridY * vScale),
 								new THREE.Vector2( ( ix + 1 ) / gridX * uScale, 1 - iy / gridY * vScale)
 							] );
@@ -132,113 +149,141 @@ define([
 				h: new THREE.Mesh( new CustomCubeGeometry( vThickness, 		h - thickness,	vThickness, ratio, 1, ratio )),
 				d: new THREE.Mesh( new CustomCubeGeometry( thickness, 		thickness, 		d - thickness, 1, 1, 1 	 )),	
 			}, 
-			cornerMesh 	= new THREE.Mesh( new THREE.CubeGeometry( thickness, thickness, thickness ));
+			cornerMesh 	= new THREE.Mesh( new CustomCubeGeometry( thickness, thickness, thickness ));
 			hw 			= w * 0.5,
 			hh 			= h * 0.5,
 			hd 			= d * 0.5,
 			cube 		= new THREE.Mesh( THREE.Geometry() );
 
-			// console.log( cornerMesh );
 
-		strut.d.geometry.faces = strut.d.geometry.faces.slice( 0, 4 );
-		strut.w.geometry.faces = strut.w.geometry.faces.slice( 2 );
-		strut.h.geometry.faces.splice( 2, 2 );
+		strut.d.geometry.faces = strut.d.geometry.faces.slice( 0, 8 );
+		strut.w.geometry.faces = strut.w.geometry.faces.slice( 4 );
+		strut.h.geometry.faces.splice( 4, 4 );
 
 
 		// cornerMesh.geometry.faces = cornerMesh.geometry.faces.splice( 2, 2 );
 
 		var wFlag = bitflag;
+		var bufferGeometry = new THREE.BufferGeometry();
+		bufferGeometry.attributes = {
+
+			position: {
+				itemSize: 3,
+				array: []//new Float32Array( faces.length * 3 * 3 )
+			},
+			normal: {
+				itemSize: 3,
+				array: []//new Float32Array( faces.length * 3 * 3 )
+			},
+			color: {
+				itemSize: 3,
+				array: []//new Float32Array( faces.length * 3 * 3 )
+			},
+			uv: {
+				itemSize: 2,
+				array: []//new Float32Array( faces.length * 3 * 2 )
+			}
+	    }
 
 		//width
-		strut.w.position.set( 0, -hh, -hd );
-		if( isBitSet( bitflag, 0 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		strut.w.matrix.makeTranslation( 0, -hh, -hd );
+		if( isBitSet( bitflag, 0 )) geomUtils.merge( bufferGeometry, strut.w );
 
-		strut.w.position.set( 0, -hh,  hd );
-		if( !isBitSet( pz, 0 ) && isBitSet( bitflag, 1 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		strut.w.matrix.makeTranslation( 0, -hh,  hd );
+		if( !isBitSet( pz, 0 ) && isBitSet( bitflag, 1 )) geomUtils.merge( bufferGeometry, strut.w );
 
-		strut.w.position.set( 0,  hh,  hd );
-		if( !isBitSet( py, 1 ) && !isBitSet( pz, 3 ) && isBitSet( bitflag, 2 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		strut.w.matrix.makeTranslation( 0,  hh,  hd );
+		if( !isBitSet( py, 1 ) && !isBitSet( pz, 3 ) && isBitSet( bitflag, 2 )) geomUtils.merge( bufferGeometry, strut.w );
 
-		strut.w.position.set( 0,  hh, -hd );
-		if( !isBitSet( py, 0 ) && isBitSet( bitflag, 3 )) THREE.GeometryUtils.merge( cube.geometry, strut.w );
+		strut.w.matrix.makeTranslation( 0,  hh, -hd );
+		if( !isBitSet( py, 0 ) && isBitSet( bitflag, 3 )) geomUtils.merge( bufferGeometry, strut.w );
 
 		// height
-		strut.h.position.set( -hw, 0, -hd  );
-		if( isBitSet( bitflag, 4 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );
+		strut.h.matrix.makeTranslation( -hw, 0, -hd  );
+		if( isBitSet( bitflag, 4 )) geomUtils.merge( bufferGeometry, strut.h );
 
-		strut.h.position.set(  hw, 0, -hd  );
-		if( !isBitSet( px, 4 ) && isBitSet( bitflag, 5 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
+		strut.h.matrix.makeTranslation(  hw, 0, -hd  );
+		if( !isBitSet( px, 4 ) && isBitSet( bitflag, 5 )) geomUtils.merge( bufferGeometry, strut.h );						
 
-		strut.h.position.set(  hw, 0,  hd  );
-		if( !isBitSet( pz, 5 ) && !isBitSet( px, 7 ) && isBitSet( bitflag, 6 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );						
+		strut.h.matrix.makeTranslation(  hw, 0,  hd  );
+		if( !isBitSet( pz, 5 ) && !isBitSet( px, 7 ) && isBitSet( bitflag, 6 )) geomUtils.merge( bufferGeometry, strut.h );						
 
-		strut.h.position.set( -hw, 0,  hd  );
-		if( !isBitSet( pz, 4 ) && isBitSet( bitflag, 7 )) THREE.GeometryUtils.merge( cube.geometry, strut.h );
+		strut.h.matrix.makeTranslation( -hw, 0,  hd  );
+		if( !isBitSet( pz, 4 ) && isBitSet( bitflag, 7 )) geomUtils.merge( bufferGeometry, strut.h );
 
 		//depth
-		strut.d.position.set( -hw, -hh, 0  );
-		if( isBitSet( bitflag, 8 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );
+		strut.d.matrix.makeTranslation( -hw, -hh, 0  );
+		if( isBitSet( bitflag, 8 )) geomUtils.merge( bufferGeometry, strut.d );
 
-		strut.d.position.set(  hw, -hh, 0  );
-		if( !isBitSet( px, 8 ) && isBitSet( bitflag, 9 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );						
+		strut.d.matrix.makeTranslation(  hw, -hh, 0  );
+		if( !isBitSet( px, 8 ) && isBitSet( bitflag, 9 )) geomUtils.merge( bufferGeometry, strut.d );						
 
-		strut.d.position.set(  hw,  hh, 0  );
-		if( !isBitSet( py, 9 ) && !isBitSet( px, 11 ) && isBitSet( bitflag, 10 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );								
+		strut.d.matrix.makeTranslation(  hw,  hh, 0  );
+		if( !isBitSet( py, 9 ) && !isBitSet( px, 11 ) && isBitSet( bitflag, 10 )) geomUtils.merge( bufferGeometry, strut.d );								
 
-		strut.d.position.set( -hw,  hh, 0  );
-		if( !isBitSet( py, 8 ) && isBitSet( bitflag, 11 )) THREE.GeometryUtils.merge( cube.geometry, strut.d );
+		strut.d.matrix.makeTranslation( -hw,  hh, 0  );
+		if( !isBitSet( py, 8 ) && isBitSet( bitflag, 11 )) geomUtils.merge( bufferGeometry, strut.d );
 
 		var ninetyDegs = Math.PI * 0.5;
 
 		// Corner Boxes
-		cornerMesh.position.set( -hw, -hh, -hd  );
-		if( isBitSet( bitflag, 0 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 4 ) ) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+		cornerMesh.matrix.makeTranslation( -hw, -hh, -hd  );
+		if( isBitSet( bitflag, 0 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 4 ) ) geomUtils.merge( bufferGeometry, cornerMesh );
 
-		cornerMesh.position.set(  hw, -hh, -hd  );
+		cornerMesh.matrix.makeTranslation(  hw, -hh, -hd  );
 		cornerMesh.rotation.y -= ninetyDegs;
+		// cornerMesh.matrix.makeRotationFromEuler( cornerMesh.rotation );
 		if( isBitSet( bitflag, 0 ) || isBitSet( bitflag, 9 ) || isBitSet( bitflag, 5 ) &&
-			!( isBitSet( px, 0 ) || isBitSet( px, 8 ) || isBitSet( px, 4 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+			!( isBitSet( px, 0 ) || isBitSet( px, 8 ) || isBitSet( px, 4 ))) geomUtils.merge( bufferGeometry, cornerMesh );
 
-		cornerMesh.position.set( hw, -hh,  hd  );
+		cornerMesh.matrix.makeTranslation( hw, -hh,  hd  );
 		cornerMesh.rotation.y -= ninetyDegs;
+		// cornerMesh.matrix.makeRotationFromEuler( cornerMesh.rotation );
 		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 9 ) || isBitSet( bitflag, 6 ) &&
 			!( isBitSet( px, 8 ) || isBitSet( px, 7 ) || isBitSet( px, 9 )) &&
-			!( isBitSet( pz, 0 ) || isBitSet( pz, 5 ) || isBitSet( pz, 9 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+			!( isBitSet( pz, 0 ) || isBitSet( pz, 5 ) || isBitSet( pz, 9 ))) geomUtils.merge( bufferGeometry, cornerMesh );
 
 
-		cornerMesh.position.set( -hw, -hh,  hd  );
+		cornerMesh.matrix.makeTranslation( -hw, -hh,  hd  );
 		cornerMesh.rotation.y -= ninetyDegs;
+		// cornerMesh.matrix.makeRotationFromEuler( cornerMesh.rotation );
 		if( isBitSet( bitflag, 1 ) || isBitSet( bitflag, 8 ) || isBitSet( bitflag, 7 ) &&
-			!( isBitSet( pz, 0 ) || isBitSet( pz, 4 ) || isBitSet( pz, 8 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+			!( isBitSet( pz, 0 ) || isBitSet( pz, 4 ) || isBitSet( pz, 8 ))) geomUtils.merge( bufferGeometry, cornerMesh );
 
 
 		// cornerMesh.rotation.x -= 2.0 * ninetyDegs;
-		cornerMesh.position.set( -hw, hh, -hd  );
+		cornerMesh.matrix.makeTranslation( -hw, hh, -hd  );
 		if( isBitSet( bitflag, 3 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 4 ) &&
-			!( isBitSet( py, 0 ) || isBitSet( py, 4 ) || isBitSet( py, 8 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+			!( isBitSet( py, 0 ) || isBitSet( py, 4 ) || isBitSet( py, 8 ))) geomUtils.merge( bufferGeometry, cornerMesh );
 
-		cornerMesh.position.set(  hw, hh, -hd  );
+		cornerMesh.matrix.makeTranslation(  hw, hh, -hd  );
 		cornerMesh.rotation.y += ninetyDegs;
+		// cornerMesh.matrix.makeRotationFromEuler( cornerMesh.rotation );
 		if( isBitSet( bitflag, 3 ) || isBitSet( bitflag, 10 ) || isBitSet( bitflag, 5 ) &&
 			!( isBitSet( px, 4 ) || isBitSet( px, 3 ) || isBitSet( px, 11 )) && 
-			!( isBitSet( py, 0 ) || isBitSet( py, 5 ) || isBitSet( py, 3 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+			!( isBitSet( py, 0 ) || isBitSet( py, 5 ) || isBitSet( py, 3 ))) geomUtils.merge( bufferGeometry, cornerMesh );
 
-		cornerMesh.position.set( hw, hh,  hd  );
+		cornerMesh.matrix.makeTranslation( hw, hh,  hd  );
 		cornerMesh.rotation.y += ninetyDegs;
+		// cornerMesh.matrix.makeRotationFromEuler( cornerMesh.rotation );
 		if( isBitSet( bitflag, 2 ) || isBitSet( bitflag, 10 ) || isBitSet( bitflag, 6 ) &&
 			!( isBitSet( px, 2 ) || isBitSet( px, 7 ) || isBitSet( px, 11 )) && 
 			!( isBitSet( py, 1 ) || isBitSet( py, 6 ) || isBitSet( py, 9 )) &&
-			!( isBitSet( pz, 10 ) || isBitSet( pz, 3 ) || isBitSet( pz, 5 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+			!( isBitSet( pz, 10 ) || isBitSet( pz, 3 ) || isBitSet( pz, 5 ))) geomUtils.merge( bufferGeometry, cornerMesh );
 
-		cornerMesh.position.set( -hw, hh,  hd  );
+		cornerMesh.matrix.makeTranslation( -hw, hh,  hd  );
 		cornerMesh.rotation.y += ninetyDegs;
+		// cornerMesh.matrix.makeRotationFromEuler( cornerMesh.rotation );
 		if( isBitSet( bitflag, 2 ) || isBitSet( bitflag, 11 ) || isBitSet( bitflag, 7 ) &&
 			!( isBitSet( py, 8 ) || isBitSet( py, 1 ) || isBitSet( py, 7 )) && 
-			!( isBitSet( pz, 4 ) || isBitSet( pz, 3 ) || isBitSet( pz, 11 ))) THREE.GeometryUtils.merge( cube.geometry, cornerMesh );
+			!( isBitSet( pz, 4 ) || isBitSet( pz, 3 ) || isBitSet( pz, 11 ))) geomUtils.merge( bufferGeometry, cornerMesh );
 
-		cube.geometry.mergeVertices();
 
-		return cube.geometry;
+		// cube.geometry.mergeVertices();
+		bufferGeometry.computeVertexNormals();
+		bufferGeometry.computeBoundingSphere();
+
+		return bufferGeometry;//cube.geometry;
 
 	}
 
