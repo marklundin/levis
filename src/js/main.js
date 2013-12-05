@@ -513,13 +513,13 @@ define('main',[
 				} } );
 
 
-				setTimeout( function( target ){
+				// setTimeout( function( target ){
 
-					if( target === clicked && !infoOverlay.beenOpened ){
-						toggleInfoOverlay();
-					}
+				// 	if( target === clicked && !infoOverlay.beenOpened ){
+				// 		toggleInfoOverlay();
+				// 	}
 
-				}.bind( this, clicked ), 5000 );
+				// }.bind( this, clicked ), 5000 );
 
 				// divFadeIn( infoOverlay, 400, function(){
 				// 	console.log( 'here' );
