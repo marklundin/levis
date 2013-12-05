@@ -249,6 +249,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		scope.domElement.addEventListener( 'mousemove', onMouseMove, false );
 		scope.domElement.addEventListener( 'mouseup', onMouseUp, false );
+		scope.domElement.addEventListener( 'mouseout', onMouseUp, false );
 
 	}
 	var notDragging = true;
@@ -314,6 +315,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 		if( pause ){
 		 	this.domElement.removeEventListener( 'mousemove', onMouseMove, false );
 			this.domElement.removeEventListener( 'mouseup', onMouseUp, false );
+			this.domElement.removeEventListener( 'mouseout', onMouseUp, false );
 			this.domElement.addEventListener( 'mousewheel', onMouseUp, false );
 		}else{
 			this.domElement.addEventListener( 'mousedown', onMouseDown, false );
@@ -335,6 +337,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		scope.domElement.removeEventListener( 'mousemove', onMouseMove, false );
 		scope.domElement.removeEventListener( 'mouseup', onMouseUp, false );
+		scope.domElement.removeEventListener( 'mouseout', onMouseUp, false );
 
 		state = STATE.NONE;
 

@@ -56,7 +56,7 @@ ol, ul {
 	color: rgb( 200, 200, 200 );
 	position: absolute;
 	letter-spacing: 2px;
-	/*background: url(../img/loading.svg ) no-repeat;*/
+	background: url(../img/loading.svg ) no-repeat;
 	width:100px;
 	height:30px;
 	left: calc( 50% - 30px);
