@@ -4,32 +4,260 @@
 		"selected_items":
 		[
 			[
-				"build",
-				"buildOptions"
+				"mer",
+				"mergeVertices"
+			],
+			[
+				"inf",
+				"infoOverlay"
+			],
+			[
+				"uglify",
+				"uglify2"
+			],
+			[
+				"tex",
+				"text-decoration"
+			],
+			[
+				"search-",
+				"search-button"
+			],
+			[
+				"clear",
+				"clearSearch"
+			],
+			[
+				"sear",
+				"search-button"
+			],
+			[
+				"p",
+				"px"
+			],
+			[
+				"enter",
+				"enterLight"
+			],
+			[
+				"att",
+				"attribution_url"
+			],
+			[
+				"insta",
+				"instagram"
+			],
+			[
+				"video",
+				"videojs"
+			],
+			[
+				"info",
+				"infoOverlay"
+			],
+			[
+				"mult",
+				"multiplyScalar"
+			],
+			[
+				"show",
+				"showingSearchResults"
+			],
+			[
+				"face",
+				"facesSaved"
+			],
+			[
+				"ADD",
+				"AdditiveBlending"
+			],
+			[
+				"ro",
+				"rollLight"
+			],
+			[
+				"mul",
+				"multiplyScalar"
+			],
+			[
+				"tar",
+				"targetPos"
+			],
+			[
+				"refl",
+				"reflectance"
+			],
+			[
+				"re",
+				"reflectivity"
+			],
+			[
+				"Sha",
+				"ShaderChunk"
+			],
+			[
+				"fres",
+				"fresnelShader"
+			],
+			[
+				"se",
+				"setBit"
+			],
+			[
+				"no",
+				"noEdgeCount"
+			],
+			[
+				"cell",
+				"cellIsEdge"
+			],
+			[
+				"dis",
+				"distanceCoeff"
+			],
+			[
+				"mutl",
+				"multiplyScalar"
+			],
+			[
+				"pos",
+				"position"
+			],
+			[
+				"inter",
+				"intersectObjects"
+			],
+			[
+				"distanc",
+				"distanceCoeff"
+			],
+			[
+				"cl",
+				"clicked"
+			],
+			[
+				"select",
+				"selectionLights"
+			],
+			[
+				"selec",
+				"selectionLights"
 			],
 			[
 				"in",
-				"infoOverlay"
+				"intensity"
+			],
+			[
+				"sele",
+				"selectionLight"
+			],
+			[
+				"remove",
+				"removeDuplicateFaces"
+			],
+			[
+				"tw",
+				"twitterMesh"
+			],
+			[
+				"inst",
+				"instagramMesh"
+			],
+			[
+				"Geome",
+				"GeometryUtils"
+			],
+			[
+				"ins",
+				"instagramMesh"
+			],
+			[
+				"image",
+				"imageContentMaterial"
+			],
+			[
+				"vide",
+				"videoContentMaterial"
+			],
+			[
+				"stru",
+				"structMesh"
+			],
+			[
+				"target",
+				"targetPosition"
+			],
+			[
+				"stop",
+				"stopImmediatePropagation"
+			],
+			[
+				"vign",
+				"vignette"
+			],
+			[
+				"VE",
+				"Vector3"
+			],
+			[
+				"cam",
+				"camUp"
+			],
+			[
+				"Ma",
+				"Matrix4"
+			],
+			[
+				"star",
+				"startCallback"
+			],
+			[
+				"Vec",
+				"Vector3"
+			],
+			[
+				"vignette",
+				"vignetteAmount"
+			],
+			[
+				"vigne",
+				"vignetteAmount"
+			],
+			[
+				"postM",
+				"postMaterial"
+			],
+			[
+				"un",
+				"uniforms"
+			],
+			[
+				"add",
+				"addFolder"
+			],
+			[
+				"m",
+				"mouseup"
+			],
+			[
+				"sea",
+				"search-field"
+			],
+			[
+				"search",
+				"search-field"
+			],
+			[
+				"build",
+				"buildOptions"
 			],
 			[
 				"set",
 				"setClearColor"
 			],
 			[
-				"tex",
-				"text-align"
-			],
-			[
-				"inst",
-				"Instagram"
-			],
-			[
 				"need",
 				"needsUpdate"
-			],
-			[
-				"vide",
-				"video_url"
 			],
 			[
 				"padding",
@@ -64,10 +292,6 @@
 				"getHexString"
 			],
 			[
-				"face",
-				"faceMaterial"
-			],
-			[
 				"ANI",
 				"INITIAL_NUM_ANIMATIONS"
 			],
@@ -90,10 +314,6 @@
 			[
 				"multipl",
 				"multiplyScalar"
-			],
-			[
-				"dis",
-				"distanceTarget"
 			],
 			[
 				"dur",
@@ -132,10 +352,6 @@
 				"padding-bottom"
 			],
 			[
-				"sea",
-				"search-overlay"
-			],
-			[
 				"sera",
 				"searchOverlay"
 			],
@@ -160,10 +376,6 @@
 				"emptyCallback"
 			],
 			[
-				"sear",
-				"searchResObj3d"
-			],
-			[
 				"posti",
 				"position"
 			],
@@ -174,10 +386,6 @@
 			[
 				"conten",
 				"contentObj3d"
-			],
-			[
-				"cam",
-				"camera"
 			],
 			[
 				"mu",
@@ -196,14 +404,6 @@
 				"noise3D"
 			],
 			[
-				"inf",
-				"infoDataObject"
-			],
-			[
-				"info",
-				"infoPosition"
-			],
-			[
 				"j",
 				"jquery"
 			],
@@ -214,10 +414,6 @@
 			[
 				"tp",
 				"tmpVeco"
-			],
-			[
-				"m",
-				"mousemove"
 			],
 			[
 				"rot",
@@ -318,228 +514,41 @@
 			[
 				"hull",
 				"hullVerts"
-			],
-			[
-				"visi",
-				"visiblePoints"
-			],
-			[
-				"of",
-				"originFace"
-			],
-			[
-				"convex",
-				"convexhull"
-			],
-			[
-				"NUM",
-				"NUM_POINTS"
-			],
-			[
-				"update",
-				"updateShader"
-			],
-			[
-				"upda",
-				"updateShader"
-			],
-			[
-				"index",
-				"indexOf"
-			],
-			[
-				"all",
-				"allPoints"
-			],
-			[
-				"possible",
-				"possibleFace"
-			],
-			[
-				"poss",
-				"possibleFace"
-			],
-			[
-				"curr",
-				"currentFace"
-			],
-			[
-				"nor",
-				"normalize"
-			],
-			[
-				"ass",
-				"assignPoints"
-			],
-			[
-				"cu",
-				"currentFace"
-			],
-			[
-				"hori",
-				"horizonEdges"
-			],
-			[
-				"visib",
-				"visibleFaces"
-			],
-			[
-				"vi",
-				"visibleFaces"
-			],
-			[
-				"this",
-				"thisFlipped"
-			],
-			[
-				"inde",
-				"indexPosition"
-			],
-			[
-				"po",
-				"points"
-			],
-			[
-				"hu",
-				"hullIndices"
-			],
-			[
-				"new",
-				"newIndices"
-			],
-			[
-				"add",
-				"addToSubHull"
-			],
-			[
-				"ex",
-				"extremes"
-			],
-			[
-				"point",
-				"pointset"
-			],
-			[
-				"Vec",
-				"Vec3"
-			],
-			[
-				"shader",
-				"shaderSource"
-			],
-			[
-				"ar",
-				"arr"
-			],
-			[
-				"arr",
-				"arrIndex"
-			],
-			[
-				"rinG",
-				"ringBias"
-			],
-			[
-				"uDO",
-				"uDofFull"
-			],
-			[
-				"London",
-				"LONDON"
-			],
-			[
-				"uTe",
-				"uTextureScale"
-			],
-			[
-				"loaded",
-				"loadedCity"
-			],
-			[
-				"fade",
-				"fadeInComplete"
-			],
-			[
-				"max",
-				"maxScale"
-			],
-			[
-				"scal",
-				"scaleVariation"
-			],
-			[
-				"god",
-				"godrayShader"
-			],
-			[
-				"uD",
-				"uDistortAmount"
-			],
-			[
-				"vec",
-				"velocity"
-			],
-			[
-				"sun",
-				"uSunDirection"
-			],
-			[
-				"vert",
-				"vertToSun"
-			],
-			[
-				"uS",
-				"uShininess"
-			],
-			[
-				"uGo",
-				"uGodRayExposure"
-			],
-			[
-				"uDe",
-				"uDensity"
-			],
-			[
-				"godr",
-				"godRayPreFBO"
-			],
-			[
-				"godray",
-				"godRayPreFBO"
-			],
-			[
-				"godra",
-				"godrays"
-			],
-			[
-				"depth",
-				"depthTexture"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "src/js/config.js",
+			"file": "/Users/marklundin/Downloads/mrdoob-three.js-8673cc8 2/build/three.js",
 			"settings":
 			{
-				"buffer_size": 2333,
+				"buffer_size": 813013,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/js/bootloader.js",
+			"file": "src/js/libs/threejs/src/renderers/WebGLShaders.js",
 			"settings":
 			{
-				"buffer_size": 2660,
+				"buffer_size": 78461,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "tools/Gruntfile.js",
+			"contents": "/**\n * @author mrdoob / http://mrdoob.com/\n * @author bhouston / http://exocortex.com/\n * @author stephomi / http://stephaneginier.com/\n */\n\n( function ( THREE ) {\n\n	THREE.Raycaster = function ( origin, direction, near, far ) {\n\n		this.ray = new THREE.Ray( origin, direction );\n		// direction is assumed to be normalized (for accurate distance calculations)\n\n		this.near = near || 0;\n		this.far = far || Infinity;\n\n	};\n\n	var sphere = new THREE.Sphere();\n	var localRay = new THREE.Ray();\n	var facePlane = new THREE.Plane();\n	var intersectPoint = new THREE.Vector3();\n	var matrixPosition = new THREE.Vector3();\n\n	var inverseMatrix = new THREE.Matrix4();\n\n	var descSort = function ( a, b ) {\n\n		return a.distance - b.distance;\n\n	};\n\n	var vA = new THREE.Vector3();\n	var vB = new THREE.Vector3();\n	var vC = new THREE.Vector3();\n\n	var intersectObject = function ( object, raycaster, intersects ) {\n\n		if ( object instanceof THREE.Particle ) {\n\n			matrixPosition.getPositionFromMatrix( object.matrixWorld );\n			var distance = raycaster.ray.distanceToPoint( matrixPosition );\n\n			if ( distance > object.scale.x ) {\n\n				return intersects;\n\n			}\n\n			intersects.push( {\n\n				distance: distance,\n				point: object.position,\n				face: null,\n				object: object\n\n			} );\n\n		} else if ( object instanceof THREE.LOD ) {\n\n			matrixPosition.getPositionFromMatrix( object.matrixWorld );\n			var distance = raycaster.ray.origin.distanceTo( matrixPosition );\n\n			intersectObject( object.getObjectForDistance( distance ), raycaster, intersects );\n\n		} else if ( object instanceof THREE.Mesh ) {\n\n			var geometry = object.geometry;\n\n			// Checking boundingSphere distance to ray\n\n			if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();\n\n			sphere.copy( geometry.boundingSphere );\n			sphere.applyMatrix4( object.matrixWorld );\n\n			if ( raycaster.ray.isIntersectionSphere( sphere ) === false ) {\n\n				return intersects;\n\n			}\n\n			// Check boundingBox before continuing\n			\n			inverseMatrix.getInverse( object.matrixWorld );  \n			localRay.copy( raycaster.ray ).applyMatrix4( inverseMatrix );\n\n			if ( geometry.boundingBox !== null ) {\n\n				if ( localRay.isIntersectionBox( geometry.boundingBox ) === false )  {\n\n					return intersects;\n\n				}\n\n			} \n\n			var vertices = geometry.vertices;\n\n			if ( geometry instanceof THREE.BufferGeometry ) {\n\n				var material = object.material;\n\n				if ( material === undefined ) return intersects;\n				if ( geometry.dynamic === false ) return intersects;\n\n				var a, b, c;\n				var precision = raycaster.precision;\n\n				if ( geometry.attributes.index !== undefined ) {\n\n					var offsets = geometry.offsets;\n					var indices = geometry.attributes.index.array;\n					var positions = geometry.attributes.position.array;\n					var offLength = geometry.offsets.length;\n\n					var fl = geometry.attributes.index.array.length / 3;\n\n					for ( var oi = 0; oi < offLength; ++oi ) {\n\n						var start = offsets[ oi ].start;\n						var count = offsets[ oi ].count;\n						var index = offsets[ oi ].index;\n\n						for ( var i = start, il = start + count; i < il; i += 3 ) {\n\n							a = index + indices[ i ];\n							b = index + indices[ i + 1 ]; \n							c = index + indices[ i + 2 ];\n\n							vA.set(\n								positions[ a * 3 ],\n								positions[ a * 3 + 1 ],\n								positions[ a * 3 + 2 ]\n							);\n							vB.set(\n								positions[ b * 3 ],\n								positions[ b * 3 + 1 ],\n								positions[ b * 3 + 2 ]\n							);\n							vC.set(\n								positions[ c * 3 ],\n								positions[ c * 3 + 1 ],\n								positions[ c * 3 + 2 ]\n							);\n\n							var intersectionPoint = localRay.intersectTriangle( vA, vB, vC, material.side !== THREE.DoubleSide );\n\n							if ( intersectionPoint === null ) continue;\n\n							intersectionPoint.applyMatrix4( object.matrixWorld );\n\n							var distance = raycaster.ray.origin.distanceTo( intersectionPoint );\n\n							if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;\n\n							intersects.push( {\n\n								distance: distance,\n								point: intersectionPoint,\n								face: null,\n								faceIndex: null,\n								object: object\n\n							} );\n\n						}\n\n					}\n\n				} else {\n\n					var offsets = geometry.offsets;\n					var positions = geometry.attributes.position.array;\n					var offLength = geometry.offsets.length;\n\n					var fl = geometry.attributes.position.array.length;\n\n					for ( var i = 0; i < fl; i += 3 ) {\n\n						a = i;\n						b = i + 1;\n						c = i + 2;\n\n						vA.set(\n							positions[ a * 3 ],\n							positions[ a * 3 + 1 ],\n							positions[ a * 3 + 2 ]\n						);\n						vB.set(\n							positions[ b * 3 ],\n							positions[ b * 3 + 1 ],\n							positions[ b * 3 + 2 ]\n						);\n						vC.set(\n							positions[ c * 3 ],\n							positions[ c * 3 + 1 ],\n							positions[ c * 3 + 2 ]\n						);\n\n						var intersectionPoint = localRay.intersectTriangle( vA, vB, vC, material.side !== THREE.DoubleSide );\n\n						if ( intersectionPoint === null ) continue;\n\n						intersectionPoint.applyMatrix4( object.matrixWorld );\n\n						var distance = raycaster.ray.origin.distanceTo( intersectionPoint );\n\n						if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;\n\n						intersects.push( {\n\n							distance: distance,\n							point: intersectionPoint,\n							face: null,\n							faceIndex: null,\n							object: object\n\n						} );\n\n					}\n\n				}\n\n			} else if ( geometry instanceof THREE.Geometry ) {\n\n				var isFaceMaterial = object.material instanceof THREE.MeshFaceMaterial;\n				var objectMaterials = isFaceMaterial === true ? object.material.materials : null;\n\n				var a, b, c, d;\n				var precision = raycaster.precision;\n\n				for ( var f = 0, fl = geometry.faces.length; f < fl; f ++ ) {\n\n					var face = geometry.faces[ f ];\n\n					var material = isFaceMaterial === true ? objectMaterials[ face.materialIndex ] : object.material;\n\n					if ( material === undefined ) continue;\n\n					a = vertices[ face.a ];\n					b = vertices[ face.b ];\n					c = vertices[ face.c ];\n					\n					var intersectionPoint = localRay.intersectTriangle( a, b, c, material.side !== THREE.DoubleSide );\n\n					if ( intersectionPoint === null ) continue;\n\n					intersectionPoint.applyMatrix4( object.matrixWorld );\n\n					var distance = raycaster.ray.origin.distanceTo( intersectionPoint );\n\n					if ( distance < precision || distance < raycaster.near || distance > raycaster.far ) continue;\n\n					intersects.push( {\n\n						distance: distance,\n						point: intersectionPoint,\n						face: face,\n						faceIndex: f,\n						object: object\n\n					} );\n\n				}\n\n			}\n\n		} else if ( object instanceof THREE.Line ) {\n\n			var precision = raycaster.linePrecision;\n			var precisionSq = precision * precision;\n\n			var geometry = object.geometry;\n\n			if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();\n\n			// Checking boundingSphere distance to ray\n\n			sphere.copy( geometry.boundingSphere );\n			sphere.applyMatrix4( object.matrixWorld );\n			\n			if ( raycaster.ray.isIntersectionSphere( sphere ) === false ) {\n\n				return intersects;\n\n			}\n			\n			inverseMatrix.getInverse( object.matrixWorld );\n			localRay.copy( raycaster.ray ).applyMatrix4( inverseMatrix );\n\n			var vertices = geometry.vertices;\n			var nbVertices = vertices.length;\n			var interSegment = new THREE.Vector3();\n			var interRay = new THREE.Vector3();\n			var step = object.type === THREE.LineStrip ? 1 : 2;\n\n			for ( var i = 0; i < nbVertices - 1; i = i + step ) {\n\n				var distSq = localRay.distanceSqToSegment( vertices[ i ], vertices[ i + 1 ], interRay, interSegment );\n\n				if ( distSq > precisionSq ) continue;\n\n				var distance = localRay.origin.distanceTo( interRay );\n\n				if ( distance < raycaster.near || distance > raycaster.far ) continue;\n\n				intersects.push( {\n\n					distance: distance,\n					// What do we want? intersection point on the ray or on the segment??\n					// point: raycaster.ray.at( distance ),\n					point: interSegment.clone().applyMatrix4( object.matrixWorld ),\n					face: null,\n					faceIndex: null,\n					object: object\n\n				} );\n\n			}\n\n		}\n\n	};\n\n	var intersectDescendants = function ( object, raycaster, intersects ) {\n\n		var descendants = object.getDescendants();\n\n		for ( var i = 0, l = descendants.length; i < l; i ++ ) {\n\n			intersectObject( descendants[ i ], raycaster, intersects );\n\n		}\n	};\n\n	//\n\n	THREE.Raycaster.prototype.precision = 0.0001;\n	THREE.Raycaster.prototype.linePrecision = 1;\n\n	THREE.Raycaster.prototype.set = function ( origin, direction ) {\n\n		this.ray.set( origin, direction );\n		// direction is assumed to be normalized (for accurate distance calculations)\n\n	};\n\n	THREE.Raycaster.prototype.intersectObject = function ( object, recursive ) {\n\n		var intersects = [];\n\n		if ( recursive === true ) {\n\n			intersectDescendants( object, this, intersects );\n\n		}\n\n		intersectObject( object, this, intersects );\n\n		intersects.sort( descSort );\n\n		return intersects;\n\n	};\n\n	THREE.Raycaster.prototype.intersectObjects = function ( objects, recursive ) {\n\n		var intersects = [];\n\n		for ( var i = 0, l = objects.length; i < l; i ++ ) {\n\n			intersectObject( objects[ i ], this, intersects );\n\n			if ( recursive === true ) {\n\n				intersectDescendants( objects[ i ], this, intersects );\n\n			}\n\n		}\n\n		intersects.sort( descSort );\n\n		return intersects;\n\n	};\n\n}( THREE ) );",
 			"settings":
 			{
-				"buffer_size": 3497,
+				"buffer_size": 9259,
+				"line_ending": "Unix",
+				"name": "/**"
+			}
+		},
+		{
+			"file": "src/css/main.css",
+			"settings":
+			{
+				"buffer_size": 6587,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,15 +556,15 @@
 			"file": "src/js/main.js",
 			"settings":
 			{
-				"buffer_size": 38446,
+				"buffer_size": 57268,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "tools/dev.build.js",
+			"file": "src/js/libs/threejs/build/three.js",
 			"settings":
 			{
-				"buffer_size": 722,
+				"buffer_size": 840027,
 				"line_ending": "Unix"
 			}
 		},
@@ -563,23 +572,47 @@
 			"file": "src/index.html",
 			"settings":
 			{
-				"buffer_size": 1177,
+				"buffer_size": 1874,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "versions/0193845/js/utils/domReady.js",
+			"file": "src/js/structure.js",
 			"settings":
 			{
-				"buffer_size": 4039,
+				"buffer_size": 2938,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/js/utils/domReady.js",
+			"file": "src/js/geometry/cubeframe.js",
 			"settings":
 			{
-				"buffer_size": 4039,
+				"buffer_size": 8982,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/js/libs/threejs/src/objects/Mesh.js",
+			"settings":
+			{
+				"buffer_size": 1530,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/js/libs/threejs/src/core/Geometry.js",
+			"settings":
+			{
+				"buffer_size": 17581,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/js/utils/easing.js",
+			"settings":
+			{
+				"buffer_size": 1298,
 				"line_ending": "Unix"
 			}
 		}
@@ -587,9 +620,13 @@
 	"build_system": "grunt",
 	"command_palette":
 	{
-		"height": 107.0,
+		"height": 167.0,
 		"selected_items":
 		[
+			[
+				"js",
+				"Set Syntax: JavaScript"
+			],
 			[
 				"glsl",
 				"Set Syntax: GLSL"
@@ -720,78 +757,114 @@
 	},
 	"file_history":
 	[
-		"/Users/marklundin/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
-		"/Users/marklundin/Projects/onformative/levis/build/index.html",
-		"/Users/marklundin/Projects/onformative/levis/src/index.html",
-		"/Users/marklundin/Projects/onformative/levis/tools/dev.build.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/main.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/scenes/Scene.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/Geometry.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/build/three.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/structure.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/geometry/cubeframe.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/clouds.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/data.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/bootloader.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/video.dev.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/Tween.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/textplane.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/transition.js",
+		"/Users/marklundin/Projects/onformative/levis/README.md",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/Raycaster.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/controls/OrbitControls.js",
+		"/Users/marklundin/Projects/onformative/levis/src/css/main.css",
+		"/Users/marklundin/Projects/onformative/levis/src/js/main.js",
+		"/Users/marklundin/Projects/onformative/levis/src/index.html",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Quaternion.js",
+		"/Users/marklundin/Projects/onformative/levis/tools/Gruntfile.js",
+		"/Users/marklundin/Projects/onformative/levis/tools/dev.build.js",
+		"/Users/marklundin/Projects/onformative/levis/build/js/bootloader.js",
+		"/Users/marklundin/Downloads/mrdoob-three.js-8673cc8 2/src/core/Raycaster.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/sounds.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/materials/MeshPhongMaterial.js",
+		"/Users/marklundin/Projects/onformative/levis/src/css/video-js.css",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/textures/Texture.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/webgl_materials_blending.html",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/materials/Material.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Color.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/lights/Light.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/Three.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/cameras/Camera.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/fresnel.glsl",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/renderers/WebGLShaders.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/shaders/FresnelShader.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/webgl_materials_blending_custom.html",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/materials/ShaderMaterial.js",
+		"/Users/marklundin/Projects/onformative/levis/tools/node_modules/grunt/node_modules/iconv-lite/test/performance.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/cameras/PerspectiveCamera.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/libs/utils.glsl",
+		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/libs/noise3d.glsl",
+		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/libs/vignette.glsl",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/Object3D.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/config.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/webgl_geometry_terrain_fog.html",
+		"/Users/marklundin/Projects/onformative/levis/vid.html",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/GeometryUtils.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/BufferGeometry.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/utils/noise.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/utils/shader.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/clouds.glsl",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/lights/PointLight.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/post.glsl",
+		"/Users/marklundin/Downloads/mrdoob-three.js-8673cc8 2/build/three.js",
+		"/Users/marklundin/Downloads/mrdoob-three.js-8673cc8 2/src/extras/geometries/CubeGeometry.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/utils/gui.js",
+		"/Users/marklundin/Projects/onformative/levis/build/index.html",
+		"/Users/marklundin/Projects/onformative/levis/tools/node_modules/grunt/node_modules/colors/colors.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/lighting.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/lights/AmbientLight.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/renderers/WebGLRenderTargetCube.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/renderers/WebGLRenderer.js",
+		"/Users/marklundin/Dropbox/AKQ_130624_Levis STS/Build/v01/build/index.html",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Matrix4.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/renderers/WebGLDeferredRenderer.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Euler.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Vector3.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/geometries/PlaneGeometry.js",
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/postprocessing/EffectComposer.js",
+		"/Users/marklundin/Projects/onformative/levis/levis.sublime-project",
+		"/Users/marklundin/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/marklundin/Projects/onformative/levis/src/js/utils/domReady.js",
+		"/Users/marklundin/Projects/onformative/levis/versions/0193845/js/utils/domReady.js",
+		"/Users/marklundin/Projects/onformative/levis/.gitignore",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/geometries/CubeGeometry.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/UVsUtils.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/geometry/cubeframe.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/GeometryUtils.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/loaders/ImageLoader.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/transition.js",
 		"/Users/marklundin/Projects/onformative/levis/cors_test.html",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/webgl_materials_cubemap_balls_refraction.html",
-		"/Users/marklundin/Projects/onformative/levis/src/js/bootloader.js",
-		"/Users/marklundin/Projects/onformative/levis/tools/Gruntfile.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/controls/TransformControls.js",
 		"/Users/marklundin/Projects/onformative/levis/versions/0193845/js/libs/threejs/examples/js/renderers/WebGLRenderer2/WebGLRenderer2.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/optimized.js",
-		"/Users/marklundin/Projects/onformative/levis/.gitignore",
 		"/Users/marklundin/Projects/onformative/levis/build/js/main.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/config.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/test.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/test2.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/lighting.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Vector3.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/utils/easing.js",
-		"/Users/marklundin/Projects/onformative/levis/src/css/main.css",
 		"/Users/marklundin/Projects/onformative/levis/tools/node_modules/grunt-gitinfo/tasks/gitinfo.js",
 		"/Users/marklundin/Projects/onformative/levis/src/img/close-button-icon.svg",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/textures/Texture.js",
 		"/Users/marklundin/Projects/onformative/levis/versions/0193845/js/main.js",
 		"/Users/marklundin/Projects/onformative/levis/versions/0193845/js/libs/threejs/examples/webgl_materials_texture_compressed.html",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/renderers/WebGLRenderer.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/cameras/CubeCamera.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/data.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/ImageUtils.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/materials/MeshPhongMaterial.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/Geometry.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/materials/Material.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/shaders/NormalMapShader.js",
 		"/Users/marklundin/Projects/onformative/levis/versions/0193845/js/libs/threejs/src/extras/ImageUtils.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/renderers/WebGLRenderTargetCube.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/build/three.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/lights/AmbientLight.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/lights/PointLight.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/lights/Light.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/renderers/WebGLShaders.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/utils/gui.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/jquery.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/utils/timer.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/helpers/PointLightHelper.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Color.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/utils/noise.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/geometry-task.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/structure.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/howler.js",
 		"/Users/marklundin/Projects/onformative/levis/versions/0193845/css/main.css",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/Object3D.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/clouds.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/require.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/BufferGeometry.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/Face4.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/UV.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/materials/MeshBasicMaterial.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/objects/Mesh.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Euler.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Math.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Quaternion.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/Three.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/structure-worker.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/libs/utils.glsl",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Line3.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Spline.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/curves/SplineCurve3.js",
@@ -800,54 +873,18 @@
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/controls/PathControls.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/controls/EditorControls.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/controls/FlyControls.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/controls/OrbitControls.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/core/Curve.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/simple.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/worker.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/worker-fake.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/jquery.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/math/Matrix4.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/misc_controls_fly.html",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/helpers/CameraHelper.js",
 		"/Users/marklundin/Projects/onformative/levis/versions/14c91f1/js/libs/threejs/src/math/Spline.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/curves/CubicBezierCurve.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/core/Shape.js",
 		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/webgl_lines_colors.html",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/PRNG.js",
-		"/Users/marklundin/Projects/onformative/levis/index.html",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/lights/AreaLight.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/clouds.glsl",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/postprocessing/EffectComposer.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/shaders/SSAOShader.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/reflection.glsl",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/loaders/TextureLoader.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/Raycaster.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/core/Projector.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/scenes/Fog.js",
-		"/Users/marklundin/Projects/onformative/levis/tools/node_modules/grunt/node_modules/colors/colors.js",
-		"/Users/marklundin/Projects/onformative/levis/versions/14c91f1/js/libs/threejs/examples/canvas_geometry_earth.html",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/extras/geometries/PlaneGeometry.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/loaders/text.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/test.json",
-		"/Users/marklundin/Projects/onformative/levis/src/js/loaders/json.js",
-		"/Users/marklundin/Projects/Anticipate/js/sketch.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/shaders/libs/noise2d.glsl",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/renderers/WebGLRenderer2/webgl/ShaderBuilder.js",
-		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/src/materials/ShaderMaterial.js",
-		"/Users/marklundin/Projects/onformative/levis/build/js/loaders/json.js",
-		"/Users/marklundin/Projects/onformative/levis/build/js/structure.js",
-		"/Users/marklundin/Projects/onformative/levis/build/js/lighting.js",
-		"/Users/marklundin/Projects/onformative/levis/tools/package.json",
-		"/Users/marklundin/Projects/onformative/levis/build/js/data.js",
-		"/Users/marklundin/Projects/onformative/ThisMomentAPI/ThisMoment-Sandbox/source/javascripts/all.js",
-		"/Users/marklundin/Projects/onformative/levis/versions/c05840f/index.html",
-		"/Users/marklundin/Projects/onformative/levis/build/js/utils/gui.js",
-		"/Users/marklundin/Projects/onformative/levis/build/js/config.js",
-		"/Users/marklundin/Projects/onformative/levis/versions.json",
-		"/Users/marklundin/Projects/onformative/levis/libs/datgui.js",
-		"/Users/marklundin/Projects/onformative/levis/libs/threejs/src/extras/helpers/HemisphereLightHelper.js",
-		"/Users/marklundin/Projects/onformative/levis/tools/.gitignore",
-		"/Users/marklundin/Projects/onformative/levis/js/lighting.js"
+		"/Users/marklundin/Projects/onformative/levis/src/js/libs/threejs/examples/js/PRNG.js"
 	],
 	"find":
 	{
@@ -855,7 +892,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"",
@@ -874,134 +911,134 @@
 		"case_sensitive": true,
 		"find_history":
 		[
-			"close",
-			"Animation Complete",
-			"dev",
-			"VERSION",
-			"DEBUG",
-			"DOM",
-			"image_proxy",
-			"config",
-			"require",
-			"pathcontrols",
-			"DEBUG",
-			"infoOverlay.video.get(0).pause();",
-			"divFadeOut",
-			"hide",
-			"divFadeOut( infoOverlay, 400 );",
-			"divFadeOut",
-			"updateInfo",
-			"updatePo",
-			"updatePO",
-			"hide",
+			"addObject",
+			"sortFacesByMaterial",
+			"structMes",
+			"cube",
+			"65535",
+			"geometryGroups",
+			"log",
+			"selectItem",
+			"infoVid",
+			"pause()",
+			"pause",
+			"toggleInfoOverlay",
+			"beenOpened",
+			"infoOverlay.beenOpened = true;",
+			"show-",
+			"selectIt",
+			"resetC",
+			"show-m",
+			"show-more",
+			"vidElement",
+			"videoWrapper",
+			"vidElement",
+			"videojs",
+			"toggleInfoOverlay",
+			"setTime",
+			"videojs",
 			"expanded",
-			"close",
-			"hide",
-			"close",
-			"generate",
-			"horizontal",
-			"renderer.se",
-			"xOff",
-			"xOffset",
-			".xOff",
-			"infoOverlay = ",
-			"xOFf",
-			"info-overlay",
-			"close",
-			"date",
-			"						\ndate",
-			"date",
-			"textplane",
-			"side",
-			"textTe",
-			"LinearMipMapLinearFilter",
-			"CubeReflection",
-			"textpla",
-			"textplane",
-			"textAlign",
-			"textpl",
-			"DoubleSi",
-			"update",
-			"append",
-			"attri",
-			"data.",
-			"data",
-			"media",
-			"updateEnvMapWithImage",
-			"setCubeTexture",
-			"image",
-			"instanceof",
-			"array",
-			"src",
-			"scr",
-			"change\"",
-			"change",
-			"if( clic",
-			"clicked.ma",
-			" = null",
+			"resetCamera",
+			"keypress",
+			"performSearch",
+			"SEARCH",
+			"selectItem",
+			"toggleIn",
+			"svg",
+			"toggleIn",
+			"toggleInfoOverlay",
+			"icon",
+			"svg",
+			"callback",
+			"pkg",
+			"replace",
+			"dist",
+			"copy",
+			"set ",
+			"set",
+			"++",
+			"moveCa",
+			"INTER",
+			".light =",
+			".light",
+			"selectItem",
+			"SEARCH",
+			"SEARC",
+			"moveCam",
+			"selectItem",
+			"set",
 			"clicked",
-			"clicked = nu",
-			"close",
-			"envMap =",
-			"needsUp",
-			"close",
-			"lastClick",
-			"close",
-			"Texture",
-			"confg",
-			"config",
-			"Texture",
-			"array",
-			"arr",
-			"CubeCa",
-			"MATERIA",
-			"isIns",
-			"search",
-			"CubeCam",
-			"cloudssh",
-			"clouds",
-			"map",
-			"CubeGeom",
-			"norma",
-			"bump",
-			"load",
+			"callback",
+			"moveCameraTo",
+			"resetCam",
+			"searchContentMaterial",
+			"wind",
+			"toScree",
+			"blueColor",
+			"showing",
+			"performSearch",
+			"button",
+			"click",
+			"clicked = null",
+			"INTERS",
+			"clearSear",
+			"searchHasFocus",
+			"clearSearch",
+			"li",
+			"clear",
+			"clearSearch",
+			"value = ",
+			"search-button",
+			"performSea",
+			"mouseFlag",
+			"mouse",
+			"divFadeOut",
+			"clearSea",
+			"searchOverlay.fad",
+			"divFadeOut(searchOverlay",
+			"divFadeOut( searchOverlay",
+			"clearSearch",
+			"clearSea",
+			"performSe",
+			"deviceP",
+			"performSearch",
+			"perform",
+			"toScreen",
+			"searchOverlay",
+			"fadeOut",
+			"search-field",
+			"performSea",
+			"perform",
+			"white",
+			".search-focus",
+			"background",
+			"overlay",
+			"search-overlay",
+			"normalize",
+			"normali",
+			"blueColo",
+			"showingSear",
+			"showingSearch",
+			"showingSear",
+			"light.color",
+			"multipl",
+			"color",
+			"rollLi",
+			"stop()",
+			"start()",
+			"start",
+			"start()",
+			".update",
+			"onUpdate",
+			"to(",
+			"distanceCoeff",
+			"TWEEN.Tween",
+			"Tween",
+			"'opacity'",
+			"\"opacity\"",
+			"fadeOutTween",
 			"envMap",
-			"thick",
-			"		var cube = new THREE.CubeCamera( camera.near, camera.far, 256 );\nCubeCamera",
-			"cube",
-			"CubeRefractionMapping",
-			"cube",
-			"MultiplyOp",
-			"MultiplyOperation",
-			"data ob",
-			"api",
-			"refreshUn",
-			"ambientLightColor",
-			"ambient",
-			"phong",
-			"faceMater",
-			"faceMa",
-			"fresnel",
-			"Mapping",
-			"cube",
-			"CubeRefractionMapping",
-			"THREE.MultiplyOperation",
-			"updateMaterial",
-			"api.updateM",
-			"cube",
-			"loadCube",
-			"addColor",
-			"picking",
-			"0.05",
-			"speed",
-			"transiti",
-			"position",
-			"lighting",
-			"FPS",
-			"run",
-			"offset",
-			"speed",
-			"api.speed"
+			"updateEnvMapWithImage"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1009,6 +1046,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"{",
 			"//divFadeOut( infoOverlay, 400 );",
 			"durationMs",
 			"timeStepMs",
@@ -1087,22 +1125,50 @@
 	"groups":
 	[
 		{
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/js/config.js",
+					"file": "/Users/marklundin/Downloads/mrdoob-three.js-8673cc8 2/build/three.js",
 					"settings":
 					{
-						"buffer_size": 2333,
+						"buffer_size": 813013,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								99,
-								99
+								126202,
+								135280
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 23.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/js/libs/threejs/src/renderers/WebGLShaders.js",
+					"settings":
+					{
+						"buffer_size": 78461,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								269,
+								269
 							]
 						],
 						"settings":
@@ -1117,65 +1183,71 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "src/js/bootloader.js",
-					"settings":
-					{
-						"buffer_size": 2660,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2511,
-								2511
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 66.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
 					"buffer": 2,
-					"file": "tools/Gruntfile.js",
 					"settings":
 					{
-						"buffer_size": 3497,
+						"buffer_size": 9259,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								182,
-								182
+								8282,
+								8282
 							]
 						],
 						"settings":
 						{
+							"auto_name": "/**",
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 4785.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
+					"file": "src/css/main.css",
+					"settings":
+					{
+						"buffer_size": 6587,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1131,
+								1113
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 761.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 8,
+			"sheets":
+			[
+				{
+					"buffer": 4,
 					"file": "src/js/main.js",
 					"settings":
 					{
-						"buffer_size": 38446,
+						"buffer_size": 57268,
 						"regions":
 						{
 						},
@@ -1192,58 +1264,111 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "tools/dev.build.js",
-					"settings":
-					{
-						"buffer_size": 722,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								653,
-								653
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 24210.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "src/index.html",
+					"file": "src/js/libs/threejs/build/three.js",
 					"settings":
 					{
-						"buffer_size": 1177,
+						"buffer_size": 840027,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1169,
-								1169
+								522622,
+								522622
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 360990.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/css/main.css",
+					"settings":
+					{
+						"buffer_size": 6587,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4481,
+								4481
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3675.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/index.html",
+					"settings":
+					{
+						"buffer_size": 1874,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1819,
+								1810
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 240.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/js/structure.js",
+					"settings":
+					{
+						"buffer_size": 2938,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								316,
+								157
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1253,11 +1378,38 @@
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "versions/0193845/js/utils/domReady.js",
+					"buffer": 8,
+					"file": "src/js/geometry/cubeframe.js",
 					"settings":
 					{
-						"buffer_size": 4039,
+						"buffer_size": 8982,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8982,
+								8982
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2910.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "src/js/libs/threejs/src/objects/Mesh.js",
+					"settings":
+					{
+						"buffer_size": 1530,
 						"regions":
 						{
 						},
@@ -1265,7 +1417,61 @@
 						[
 							[
 								0,
-								4039
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 1.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "src/js/libs/threejs/src/core/Geometry.js",
+					"settings":
+					{
+						"buffer_size": 17581,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 518.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "src/js/utils/easing.js",
+					"settings":
+					{
+						"buffer_size": 1298,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								1298
 							]
 						],
 						"settings":
@@ -1276,34 +1482,6 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "src/js/utils/domReady.js",
-					"settings":
-					{
-						"buffer_size": 4039,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4039,
-								4039
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 741.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1328,11 +1506,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.225176175782,
 			1.0
 		],
 		"rows":
@@ -1357,135 +1542,159 @@
 		"selected_items":
 		[
 			[
+				"eas",
+				"src/js/utils/easing.js"
+			],
+			[
+				"stru",
+				"src/js/structure.js"
+			],
+			[
+				"struc",
+				"src/js/structure.js"
+			],
+			[
+				"geom",
+				"src/js/libs/threejs/src/core/Geometry.js"
+			],
+			[
+				"mesh",
+				"src/js/libs/threejs/src/objects/Mesh.js"
+			],
+			[
+				"scen",
+				"src/js/libs/threejs/src/scenes/Scene.js"
+			],
+			[
 				"main",
 				"src/js/main.js"
 			],
 			[
-				"boo",
-				"src/js/bootloader.js"
-			],
-			[
-				"grunt",
-				"tools/Gruntfile.js"
-			],
-			[
-				"in",
-				"src/index.html"
-			],
-			[
-				"dom",
-				"versions/0193845/js/utils/domReady.js"
-			],
-			[
-				"dev",
-				"tools/dev.build.js"
-			],
-			[
-				"de",
-				"tools/dev.build.js"
-			],
-			[
-				"ma",
-				"src/js/main.js"
-			],
-			[
-				"con",
-				"src/js/config.js"
-			],
-			[
-				"ind",
-				"src/index.html"
-			],
-			[
-				"conf",
-				"src/js/config.js"
+				"cube",
+				"src/js/geometry/cubeframe.js"
 			],
 			[
 				"inde",
 				"src/index.html"
 			],
 			[
-				"g",
-				"tools/Gruntfile.js"
+				"clouds",
+				"src/js/clouds.js"
 			],
 			[
-				"bootl",
-				"src/js/bootloader.js"
-			],
-			[
-				"optim",
-				"src/js/optimized.js"
-			],
-			[
-				"boot",
-				"src/js/bootloader.js"
-			],
-			[
-				"",
-				"src/index.html"
-			],
-			[
-				"gr",
-				"tools/Gruntfile.js"
-			],
-			[
-				"confi",
-				"src/js/config.js"
-			],
-			[
-				"config",
-				"src/js/config.js"
+				"dev",
+				"tools/dev.build.js"
 			],
 			[
 				"grun",
 				"tools/Gruntfile.js"
 			],
 			[
-				"confg",
-				"src/js/config.js"
+				"quater",
+				"src/js/libs/threejs/src/math/Quaternion.js"
 			],
 			[
-				"test",
-				"src/js/test2.js"
+				"",
+				"src/js/main.js"
 			],
 			[
-				"optimi",
-				"src/js/optimized.js"
-			],
-			[
-				"opt",
-				"src/js/optimized.js"
-			],
-			[
-				"op",
-				"src/js/optimized.js"
-			],
-			[
-				"light",
-				"src/js/lighting.js"
-			],
-			[
-				"gru",
-				"tools/Gruntfile.js"
-			],
-			[
-				"vect",
-				"src/js/libs/threejs/src/math/Vector3.js"
-			],
-			[
-				"main.cs",
+				"main.",
 				"src/css/main.css"
 			],
 			[
-				"tex",
-				"src/js/libs/threejs/src/textures/Texture.js"
+				"orbit",
+				"src/js/libs/threejs/examples/js/controls/OrbitControls.js"
 			],
 			[
-				"texplane",
-				"src/js/textplane.js"
+				"in",
+				"src/index.html"
 			],
 			[
-				"textpla",
+				"ray",
+				"src/js/libs/threejs/src/core/Raycaster.js"
+			],
+			[
+				"rea",
+				"README.md"
+			],
+			[
+				"data",
+				"src/js/data.js"
+			],
+			[
+				"bootl",
+				"src/js/bootloader.js"
+			],
+			[
+				"main.js",
+				"src/js/main.js"
+			],
+			[
+				"sounds",
+				"src/js/sounds.js"
+			],
+			[
+				"mainc",
+				"src/css/main.css"
+			],
+			[
+				"ind",
+				"src/index.html"
+			],
+			[
+				"dat",
+				"src/js/data.js"
+			],
+			[
+				"boo",
+				"src/js/bootloader.js"
+			],
+			[
+				"boot",
+				"src/js/bootloader.js"
+			],
+			[
+				"bootle",
+				"src/js/bootloader.js"
+			],
+			[
+				"meshp",
+				"src/js/libs/threejs/src/materials/MeshPhongMaterial.js"
+			],
+			[
+				"struct",
+				"src/js/structure.js"
+			],
+			[
+				"cubefra",
+				"src/js/geometry/cubeframe.js"
+			],
+			[
+				"structure",
+				"src/js/structure.js"
+			],
+			[
+				"video",
+				"src/css/video-js.css"
+			],
+			[
+				"main.css",
+				"src/css/main.css"
+			],
+			[
+				"sound",
+				"src/js/sounds.js"
+			],
+			[
+				"or",
+				"src/js/libs/threejs/examples/js/controls/OrbitControls.js"
+			],
+			[
+				"ma",
+				"src/css/main.css"
+			],
+			[
+				"text",
 				"src/js/textplane.js"
 			],
 			[
@@ -1493,15 +1702,31 @@
 				"src/js/libs/threejs/src/textures/Texture.js"
 			],
 			[
-				"text",
-				"src/js/libs/threejs/src/textures/Texture.js"
-			],
-			[
-				"te",
+				"textplan",
 				"src/js/textplane.js"
 			],
 			[
-				"textpl",
+				"mater",
+				"src/js/libs/threejs/src/materials/Material.js"
+			],
+			[
+				"meshphon",
+				"src/js/libs/threejs/src/materials/MeshPhongMaterial.js"
+			],
+			[
+				"twee",
+				"src/js/libs/Tween.js"
+			],
+			[
+				"color",
+				"src/js/libs/threejs/src/math/Color.js"
+			],
+			[
+				"light",
+				"src/js/libs/threejs/src/lights/Light.js"
+			],
+			[
+				"tex",
 				"src/js/textplane.js"
 			],
 			[
@@ -1509,364 +1734,324 @@
 				"src/js/textplane.js"
 			],
 			[
-				"webgl",
-				"src/js/libs/threejs/src/renderers/WebGLRenderer.js"
-			],
-			[
-				"cubecam",
-				"src/js/libs/threejs/src/extras/cameras/CubeCamera.js"
-			],
-			[
-				"data",
-				"src/js/data.js"
-			],
-			[
-				"imageut",
-				"src/js/libs/threejs/src/extras/ImageUtils.js"
-			],
-			[
-				"imageu",
-				"src/js/libs/threejs/src/extras/ImageUtils.js"
-			],
-			[
-				"meshph",
-				"src/js/libs/threejs/src/materials/MeshPhongMaterial.js"
-			],
-			[
-				"cubeg",
-				"src/js/libs/threejs/src/extras/geometries/CubeGeometry.js"
-			],
-			[
-				"cubege",
-				"src/js/libs/threejs/src/extras/geometries/CubeGeometry.js"
-			],
-			[
-				"uvu",
-				"src/js/libs/threejs/examples/js/UVsUtils.js"
-			],
-			[
-				"cube",
-				"src/js/geometry/cubeframe.js"
-			],
-			[
-				"cubefra",
-				"src/js/geometry/cubeframe.js"
-			],
-			[
-				"geomet",
-				"src/js/libs/threejs/src/extras/GeometryUtils.js"
-			],
-			[
-				"geome",
-				"src/js/libs/threejs/src/core/Geometry.js"
-			],
-			[
-				"mater",
-				"src/js/libs/threejs/src/materials/Material.js"
-			],
-			[
-				"uv",
-				"src/js/libs/threejs/examples/js/UVsUtils.js"
-			],
-			[
-				"norma",
-				"src/js/libs/threejs/examples/js/shaders/NormalMapShader.js"
-			],
-			[
-				"image",
-				"versions/0193845/js/libs/threejs/src/extras/ImageUtils.js"
-			],
-			[
-				"meshphong",
-				"src/js/libs/threejs/src/materials/MeshPhongMaterial.js"
-			],
-			[
-				"textur",
-				"src/js/libs/threejs/src/textures/Texture.js"
-			],
-			[
-				"webglrendertargetcube",
-				"src/js/libs/threejs/src/renderers/WebGLRenderTargetCube.js"
-			],
-			[
-				"imageutl",
-				"src/js/libs/threejs/src/extras/ImageUtils.js"
-			],
-			[
-				"ambientl",
-				"src/js/libs/threejs/src/lights/AmbientLight.js"
-			],
-			[
-				"lightin",
-				"src/js/lighting.js"
-			],
-			[
-				"point",
-				"src/js/libs/threejs/src/lights/PointLight.js"
-			],
-			[
-				"light.js",
-				"src/js/libs/threejs/src/lights/Light.js"
-			],
-			[
-				"webglsh",
-				"src/js/libs/threejs/src/renderers/WebGLShaders.js"
-			],
-			[
-				"gui",
-				"src/js/utils/gui.js"
-			],
-			[
-				"meshp",
-				"src/js/libs/threejs/src/materials/MeshPhongMaterial.js"
+				"three.js",
+				"src/js/libs/threejs/src/Three.js"
 			],
 			[
 				"tra",
 				"src/js/transition.js"
 			],
 			[
-				"li",
-				"src/js/lighting.js"
-			],
-			[
-				"po",
-				"src/js/libs/threejs/src/lights/PointLight.js"
-			],
-			[
-				"m",
-				"src/js/main.js"
-			],
-			[
-				"jq",
-				"src/js/jquery.js"
-			],
-			[
-				"lig",
-				"src/js/lighting.js"
-			],
-			[
-				"trans",
-				"src/js/libs/threejs/examples/js/controls/TransformControls.js"
-			],
-			[
-				"tr",
-				"src/js/transition.js"
-			],
-			[
-				"time",
-				"src/js/utils/timer.js"
-			],
-			[
-				"pointlighth",
-				"src/js/libs/threejs/src/extras/helpers/PointLightHelper.js"
-			],
-			[
-				"ight",
-				"src/js/lighting.js"
-			],
-			[
-				"color",
-				"src/js/libs/threejs/src/math/Color.js"
-			],
-			[
-				"eas",
-				"src/js/utils/easing.js"
-			],
-			[
-				"howl",
-				"src/js/libs/howler.js"
-			],
-			[
-				"ligh",
-				"src/js/lighting.js"
-			],
-			[
-				"objec",
-				"src/js/libs/threejs/src/core/Object3D.js"
-			],
-			[
-				"main.",
-				"src/js/main.js"
-			],
-			[
-				"da",
-				"src/js/data.js"
-			],
-			[
-				"object",
-				"src/js/libs/threejs/src/core/Object3D.js"
-			],
-			[
-				"stru",
-				"src/js/structure.js"
-			],
-			[
-				"geom",
-				"src/js/geometry-task.js"
-			],
-			[
-				"vector",
-				"src/js/libs/threejs/src/math/Vector3.js"
-			],
-			[
-				"noise",
-				"src/js/utils/noise.js"
-			],
-			[
-				"bufferge",
-				"src/js/libs/threejs/src/core/BufferGeometry.js"
-			],
-			[
-				"geo",
-				"src/js/geometry-task.js"
-			],
-			[
-				"geometr",
-				"src/js/libs/threejs/src/extras/GeometryUtils.js"
-			],
-			[
-				"face",
-				"src/js/libs/threejs/src/core/Face4.js"
-			],
-			[
-				"cubefr",
-				"src/js/geometry/cubeframe.js"
-			],
-			[
-				"meshba",
-				"src/js/libs/threejs/src/materials/MeshBasicMaterial.js"
-			],
-			[
-				"mesh",
-				"src/js/libs/threejs/src/objects/Mesh.js"
-			],
-			[
-				"euler",
-				"src/js/libs/threejs/src/math/Euler.js"
-			],
-			[
-				"math",
-				"src/js/libs/threejs/src/math/Math.js"
-			],
-			[
-				"quater",
-				"src/js/libs/threejs/src/math/Quaternion.js"
-			],
-			[
-				"nois",
-				"src/js/utils/noise.js"
-			],
-			[
-				"st",
-				"src/js/structure.js"
+				"sou",
+				"src/js/sounds.js"
 			],
 			[
 				"str",
 				"src/js/structure.js"
 			],
 			[
-				"tru",
-				"src/js/structure.js"
+				"webglsh",
+				"src/js/libs/threejs/src/renderers/WebGLShaders.js"
 			],
 			[
-				"truc",
-				"src/js/structure.js"
+				"meshph",
+				"src/js/libs/threejs/src/materials/MeshPhongMaterial.js"
 			],
 			[
-				"simpl",
-				"src/js/simple.js"
+				"sond",
+				"src/js/sounds.js"
 			],
 			[
-				"struc",
-				"src/js/structure.js"
+				"fre",
+				"src/js/shaders/fresnel.glsl"
 			],
 			[
-				"cubefram",
+				"webgls",
+				"src/js/libs/threejs/src/renderers/WebGLShaders.js"
+			],
+			[
+				"shaderm",
+				"src/js/libs/threejs/src/materials/ShaderMaterial.js"
+			],
+			[
+				"shadema",
+				"src/js/libs/threejs/src/materials/ShaderMaterial.js"
+			],
+			[
+				"pers",
+				"src/js/libs/threejs/src/cameras/PerspectiveCamera.js"
+			],
+			[
+				"camer",
+				"src/js/libs/threejs/src/cameras/Camera.js"
+			],
+			[
+				"webgl",
+				"src/js/libs/threejs/src/renderers/WebGLShaders.js"
+			],
+			[
+				"utils",
+				"src/js/shaders/libs/utils.glsl"
+			],
+			[
+				"clou",
+				"src/js/shaders/clouds.glsl"
+			],
+			[
+				"po",
+				"src/js/libs/threejs/src/lights/PointLight.js"
+			],
+			[
+				"geome",
+				"src/js/libs/threejs/src/core/Geometry.js"
+			],
+			[
+				"geo",
+				"src/js/libs/threejs/src/core/Geometry.js"
+			],
+			[
+				"s",
+				"src/js/sounds.js"
+			],
+			[
+				"pos",
+				"src/js/shaders/post.glsl"
+			],
+			[
+				"three",
+				"src/js/libs/threejs/src/Three.js"
+			],
+			[
+				"cubefr",
 				"src/js/geometry/cubeframe.js"
 			],
 			[
-				"curve",
-				"src/js/libs/threejs/src/extras/core/Curve.js"
+				"gui",
+				"src/js/utils/gui.js"
 			],
 			[
-				"mainc",
+				"de",
+				"tools/dev.build.js"
+			],
+			[
+				"structu",
+				"src/js/structure.js"
+			],
+			[
+				"colo",
+				"src/js/libs/threejs/src/math/Color.js"
+			],
+			[
+				"poi",
+				"src/js/libs/threejs/src/lights/PointLight.js"
+			],
+			[
+				"am",
+				"src/js/libs/threejs/src/lights/AmbientLight.js"
+			],
+			[
+				"shader",
+				"src/js/utils/shader.js"
+			],
+			[
+				"noise",
+				"src/js/utils/noise.js"
+			],
+			[
+				"webglr",
+				"src/js/libs/threejs/src/renderers/WebGLRenderer.js"
+			],
+			[
+				"webglre",
+				"src/js/libs/threejs/src/renderers/WebGLRenderTargetCube.js"
+			],
+			[
+				"m",
+				"src/js/main.js"
+			],
+			[
+				"maincs",
 				"src/css/main.css"
 			],
 			[
-				"vec",
-				"src/js/libs/threejs/src/math/Vector3.js"
+				"main.c",
+				"src/css/main.css"
 			],
 			[
-				"index",
-				"src/index.html"
+				"buffer",
+				"src/js/libs/threejs/src/core/BufferGeometry.js"
 			],
 			[
-				"orbit",
-				"src/js/libs/threejs/examples/js/controls/OrbitControls.js"
+				"vid",
+				"vid.html"
 			],
 			[
-				"orbi",
-				"src/js/libs/threejs/examples/js/controls/OrbitControls.js"
+				"point",
+				"src/js/libs/threejs/src/lights/PointLight.js"
 			],
 			[
-				"orbitc",
-				"src/js/libs/threejs/examples/js/controls/OrbitControls.js"
+				"tran",
+				"src/js/transition.js"
 			],
 			[
-				"path",
-				"src/js/libs/threejs/examples/js/controls/PathControls.js"
+				"trans",
+				"src/js/transition.js"
 			],
 			[
-				"p",
-				"src/js/pathcontrols.js"
+				"transitio",
+				"src/js/transition.js"
 			],
 			[
-				"q",
-				"src/js/libs/threejs/src/math/Quaternion.js"
+				"poin",
+				"src/js/libs/threejs/src/lights/PointLight.js"
+			],
+			[
+				"geometr",
+				"src/js/libs/threejs/src/extras/GeometryUtils.js"
+			],
+			[
+				"cubef",
+				"src/js/geometry/cubeframe.js"
+			],
+			[
+				"geomety",
+				"src/js/libs/threejs/src/extras/GeometryUtils.js"
 			],
 			[
 				"matrix",
 				"src/js/libs/threejs/src/math/Matrix4.js"
 			],
 			[
-				"qua",
-				"src/js/libs/threejs/src/math/Quaternion.js"
+				"shaderma",
+				"src/js/libs/threejs/src/materials/ShaderMaterial.js"
 			],
 			[
-				"vector3",
-				"src/js/libs/threejs/src/math/Vector3.js"
+				"material",
+				"src/js/libs/threejs/src/materials/Material.js"
+			],
+			[
+				"webgld",
+				"src/js/libs/threejs/examples/js/renderers/WebGLDeferredRenderer.js"
+			],
+			[
+				"con",
+				"src/js/config.js"
+			],
+			[
+				"defderr",
+				"src/js/libs/threejs/examples/js/renderers/WebGLDeferredRenderer.js"
+			],
+			[
+				"confi",
+				"src/js/config.js"
+			],
+			[
+				"matr",
+				"src/js/libs/threejs/src/math/Matrix4.js"
+			],
+			[
+				"mat",
+				"src/js/libs/threejs/src/math/Matrix4.js"
+			],
+			[
+				"objet",
+				"src/js/libs/threejs/src/core/Object3D.js"
+			],
+			[
+				"webg",
+				"src/js/libs/threejs/src/renderers/WebGLRenderer.js"
+			],
+			[
+				"orbitco",
+				"src/js/libs/threejs/examples/js/controls/OrbitControls.js"
+			],
+			[
+				"vi",
+				"vid.html"
+			],
+			[
+				"orbi",
+				"src/js/libs/threejs/examples/js/controls/OrbitControls.js"
+			],
+			[
+				"euler",
+				"src/js/libs/threejs/src/math/Euler.js"
+			],
+			[
+				"object",
+				"src/js/libs/threejs/src/core/Object3D.js"
+			],
+			[
+				"objec",
+				"src/js/libs/threejs/src/core/Object3D.js"
 			],
 			[
 				"quat",
 				"src/js/libs/threejs/src/math/Quaternion.js"
 			],
 			[
-				"quaterion",
-				"src/js/libs/threejs/src/math/Quaternion.js"
-			],
-			[
-				"eul",
-				"src/js/libs/threejs/src/math/Euler.js"
-			],
-			[
 				"quar",
 				"src/js/libs/threejs/src/math/Quaternion.js"
 			],
 			[
-				"fl",
-				"src/js/libs/threejs/examples/js/controls/FlyControls.js"
+				"qua",
+				"src/js/libs/threejs/src/math/Quaternion.js"
 			],
 			[
-				"track",
-				"src/js/libs/threejs/examples/js/controls/TrackballControls.js"
+				"vec",
+				"src/js/libs/threejs/src/math/Vector3.js"
 			],
 			[
-				"pathcon",
-				"src/js/libs/threejs/examples/js/controls/PathControls.js"
+				"geomet",
+				"src/js/libs/threejs/src/core/Geometry.js"
 			],
 			[
-				"contols",
-				"src/js/libs/threejs/examples/js/controls/FlyControls.js"
+				"ve",
+				"src/js/libs/threejs/src/math/Vector3.js"
+			],
+			[
+				"obje",
+				"src/js/libs/threejs/src/core/Object3D.js"
+			],
+			[
+				"o",
+				"src/js/libs/threejs/examples/js/controls/OrbitControls.js"
+			],
+			[
+				"matrix4",
+				"src/js/libs/threejs/src/math/Matrix4.js"
+			],
+			[
+				"plan",
+				"src/js/libs/threejs/src/extras/geometries/PlaneGeometry.js"
+			],
+			[
+				"effec",
+				"src/js/libs/threejs/examples/js/postprocessing/EffectComposer.js"
+			],
+			[
+				"cloud",
+				"src/js/shaders/clouds.glsl"
+			],
+			[
+				"main.cs",
+				"src/css/main.css"
+			],
+			[
+				"git",
+				".gitignore"
+			],
+			[
+				"grunt",
+				"tools/Gruntfile.js"
+			],
+			[
+				"dom",
+				"versions/0193845/js/utils/domReady.js"
+			],
+			[
+				"conf",
+				"src/js/config.js"
 			]
 		],
 		"width": 0.0
@@ -1883,6 +2068,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 250.0,
+	"side_bar_width": 392.0,
 	"status_bar_visible": true
 }

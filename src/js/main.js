@@ -105,13 +105,6 @@ define('main',[
 			}	
 		})
 
-		// function clearSearch(){
-
-		// 	searchHasFocus = false;
-		
-
-		// }
-
 		
 		$('.vip, .search-button').mousedown(function( e ){
 			mouseFlag = false;

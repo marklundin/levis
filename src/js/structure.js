@@ -57,6 +57,13 @@ define([
 			var mutation, pXMut, pYMut, pZMut;
 			var mutations = [];
 
+			var manifest = {
+				x: new Uint8Array( GRID.DIMENSION * ( GRID.DIMENSION + 1 ) * ( GRID.DIMENSION + 1 )),
+				y: new Uint8Array( GRID.DIMENSION * ( GRID.DIMENSION + 1 ) * ( GRID.DIMENSION + 1 )),
+				z: new Uint8Array( GRID.DIMENSION * ( GRID.DIMENSION + 1 ) * ( GRID.DIMENSION + 1 ))
+			}
+			manifest
+
 			// Generate noise pattern
 			while( z-- > 0 ){
 				mutations[z] = [];
