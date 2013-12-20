@@ -1636,9 +1636,9 @@ define('main',[
 					structMesh.geometry.dispose();
 				}
 				
-				console.time( 'GENERATE' );
+				// console.time( 'GENERATE' );
 				strut = structure( api.frequency, api.complexity, api.seed, api.threshold, api.horizontal_thickness, api.vertical_thickness );
-				console.timeEnd( 'GENERATE' );
+				// console.timeEnd( 'GENERATE' );
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
 				structMesh.matrixAutoUpdate = false;

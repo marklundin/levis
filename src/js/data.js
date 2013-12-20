@@ -23,8 +23,10 @@ define(['module'], function (module) {
 
 
 		require([ 
-	    	module.config().instagram.search + term + "&callback=define&bust="+Date.now(),
-	    	module.config().twitter.search + term + "&callback=define&bust="+Date.now(),
+	    	// module.config().instagram.search + term + "&callback=define&bust="+Date.now(),
+	    	// module.config().twitter.search + term + "&callback=define&bust="+Date.now(),
+	    	'instagram-data',
+	    	'twitter-data'
 	    	], function( instagramData, twitterData ){
 
 	    		twitterData.loaded 		= twitterData.status === 'OK';
