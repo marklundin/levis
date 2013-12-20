@@ -1642,6 +1642,7 @@ define('main',[
 
 				structMesh = new THREE.Mesh( strut.geometry, faceMaterial );
 				structMesh.matrixAutoUpdate = false;
+				structMesh.frustumCulled = false;
 				scene.add( structMesh );
 				
 			}
