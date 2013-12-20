@@ -1308,6 +1308,8 @@ define('main',[
 						$('#info-overlay').css('opacity', op.interface? 1 : 0 );
 					});
 
+					gui.add( controls, 'autoRotateSpeed' ).listen()
+
 				}
 
 
