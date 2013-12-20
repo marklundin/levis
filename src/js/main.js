@@ -1303,6 +1303,11 @@ define('main',[
 					gui.add( camera, "fov", 0, 100 ).onChange( api.updateCamera );
 					gui.addColor( api, "background_color" ).onChange( api.updateBackgoundColor );
 
+					var op = {'interface':true};
+					gui.add( op, 'interface' ).onChange( function(){
+						$('#info-overlay').css('opacity', op.interface? 1 : 0 );
+					});
+
 				}
 
 
