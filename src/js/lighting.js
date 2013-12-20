@@ -13,6 +13,7 @@ define(
 				allLights 			= [],
 				controlsActive 		= false,
 				isHovering 			= false,
+				helpers 			= [],
 				l;
 
 
@@ -58,7 +59,29 @@ define(
 				remove: function (){}
 			}
 
+			var isVisible = true;
 			var api = {
+
+				set controls( enabled ){
+
+					isVisible = enabled;
+
+					var l = allLights.length;
+					while( l-- ){
+						allLights[l].controls.setVisibility( isVisible );
+						if( isVisible ) allLights[l].controls.setMode( allLights[l].controls.mode );
+					}
+
+					var l = helpers.length;
+					while( l-- ){
+						helpers[l].visible = isVisible;
+					}
+
+				},
+
+				get controls( ){
+					return isVisible;
+				},
 
 				onLightAdded: function( callback ){
 					onLightAddedCallback = callback;
@@ -100,7 +123,11 @@ define(
 					}
 
 					light.helper = new THREE.PointLightHelper( light, 100 );
-					if( gui ) scene.add( light.helper );
+					if( gui ) {
+						helpers.push( light.helper );
+						scene.add( light.helper );
+
+					}
 
 					light.api = {
 						color: "#"+light.color.getHexString()
@@ -147,7 +174,10 @@ define(
 					var light = new THREE.DirectionalLight( color );
 
 					light.helper = new THREE.DirectionalLightHelper( light, 100 );
-					if ( gui ) scene.add( light.helper );
+					if ( gui ) {
+						helpers.push( light.helper );
+						scene.add( light.helper );
+					}
 
 
 					light.api = {
@@ -192,7 +222,10 @@ define(
 					var light = new THREE.HemisphereLight( color );
 
 					light.helper = new THREE.HemisphereLightHelper( light, 100 );
-					if( gui ) scene.add( light.helper );
+					if ( gui ) {
+						helpers.push( light.helper );
+						scene.add( light.helper );
+					}
 
 
 					light.api = {
@@ -239,7 +272,10 @@ define(
 
 					var light = new THREE.SpotLight( color );
 					light.helper = new THREE.SpotLightHelper( light, 100 );
-					if( gui ) scene.add( light.helper );
+					if ( gui ) {
+						helpers.push( light.helper );
+						scene.add( light.helper );
+					}
 					
 					light.api = {
 						color: "#"+light.color.getHexString()
@@ -292,6 +328,7 @@ define(
 				gui.add( api, 'addDirectionalLight' );
 				gui.add( api, 'addHemispshereLight' );
 				gui.add( api, 'addSpotLight' );
+				gui.add( api, 'controls' );
 
 				var ambLightUI = gui.addFolder( "Ambient Lighting" );
 				var amLightApi ={

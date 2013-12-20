@@ -172,6 +172,8 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 		displayAxes['translate'].add( mesh );
 		displayAxes['scale'].add( mesh.clone() );
 
+		// console.log( 'test')
+
 		// Translate handles
 
 		mesh = new THREE.Mesh( new THREE.OctahedronGeometry( 0.1, 0 ), HandleMaterial( white, 0.25 ) );
@@ -462,6 +464,7 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 
 				displayAxes[i].children[j].visible = false;
 
+
 			}
 
 		}
@@ -471,6 +474,37 @@ THREE.TransformControls = function ( camera, domElement, doc ) {
 			for ( var j in pickerAxes[i].children ) {
 
 				pickerAxes[i].children[j].visible = false;
+
+			}
+
+		}
+
+	}
+
+	this.setVisibility = function ( value ) {
+
+		var l = this.gizmo.children.length;
+		while( l-- > 0 ){
+			this.gizmo.children[l].visible = value;
+			if( this.gizmo.children[l].material ) this.gizmo.children[l].material.visible = value;
+		}
+		
+
+		for ( var i in displayAxes ) {
+
+			for ( var j in displayAxes[i].children ) {
+
+				displayAxes[i].children[j].visible = value;
+
+			}
+
+		}
+
+		for ( var i in pickerAxes ) {
+
+			for ( var j in pickerAxes[i].children ) {
+
+				pickerAxes[i].children[j].visible = value;
 
 			}
 
