@@ -4,8 +4,10 @@ define(['module'], function (module) {
 	var api =  function( callback, errCallback ) {
 
 	    require([ 
-	    	module.config().instagram.feed + "&callback=define",
-	    	module.config().twitter.feed + "&callback=define",
+	    	// module.config().instagram.feed + "&callback=define",
+	    	// module.config().twitter.feed + "&callback=define",
+	    	'json!instagram-data.json',
+	    	'json!twitter-data.json'
 	    	], function( instagramData, twitterData ){
 
 	    		twitterData.loaded 		= twitterData.status === 'OK';
@@ -25,8 +27,8 @@ define(['module'], function (module) {
 		require([ 
 	    	// module.config().instagram.search + term + "&callback=define&bust="+Date.now(),
 	    	// module.config().twitter.search + term + "&callback=define&bust="+Date.now(),
-	    	'instagram-data',
-	    	'twitter-data'
+	    	'json!instagram-data.json',
+	    	'json!twitter-data.json'
 	    	], function( instagramData, twitterData ){
 
 	    		twitterData.loaded 		= twitterData.status === 'OK';

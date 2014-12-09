@@ -40,8 +40,10 @@ ol, ul {
 	margin-end: 0px;
 	padding-start: 0px;
 }
-.loading-icon{
+.loading{
+	color: rgb( 200, 200, 200 );
 	position: absolute;
+	letter-spacing: 2px;
 	background: url(../img/loading.svg ) no-repeat;
 	width:100px;
 	height:30px;

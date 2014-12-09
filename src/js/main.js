@@ -319,8 +319,8 @@ define('main',[
 
 
 		var envMap = THREE.ImageUtils.loadTextureCube(urls, new THREE.CubeRefractionMapping() ); // load textures
-		// var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 1024 );
-		// envMap = cubeCamera.renderTarget;
+		var cubeCamera = new THREE.CubeCamera( camera.near, camera.far, 1024 );
+		envMapCube = cubeCamera.renderTarget;
 
 		var dataTexture = new THREE.Texture( null, new THREE.CubeRefractionMapping() );
 		var textTexture = new THREE.Texture( null, 
@@ -877,7 +877,7 @@ define('main',[
 				
 				var faceMaterial = new THREE.MeshPhongMaterial({
 
-					// envMap: envMap,
+					envMap: envMapCube,
 					reflectivity: 0.5,
 					// bumpMap: bumpmap,
 					// bumpScale: 0.2,
@@ -1877,10 +1877,10 @@ define('main',[
 			forward.set( 0, 0, -1 ).applyQuaternion( camera.quaternion );
 			postMesh.position.add( forward );
 
-			// if( !cubeRendered ){
-			// 	cubeRendered = true;
-			// 	cubeCamera.updateCubeMap( renderer, scene );
-			// }
+			if( !cubeRendered ){
+				cubeRendered = true;
+				cubeCamera.updateCubeMap( renderer, scene );
+			}
 
 			renderer.render( scene, camera );
 			

@@ -23,6 +23,7 @@ glsl!shaders/structure.glsl
 js/utils/math.js
 js/utils/shader.js
 js/utils/noise.js
+js/utils/BufferGeometryUtils.js
 js/libs/threejs/build/three.js
 js/geometry/cubeframe.js
 js/structure.js
@@ -35,6 +36,9 @@ js/lighting.js
 js/libs/datgui.js
 js/purl.js
 js/utils/gui.js
+js/loaders/json.js
+json!instagram-data.json
+json!twitter-data.json
 js/data.js
 js/textplane.js
 js/transition.js
