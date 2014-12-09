@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<svg width="115" height="115" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>background</title>
+  <rect fill="rgba( 255, 255, 255, 0 )" id="canvas_background" height="117" width="117" y="-1" x="-1"/>
+  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+   <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <ellipse ry="51.5" rx="51.5" id="svg_1" cy="57.5" cx="57.5" stroke-width="12" stroke="#fff" fill="rgba( 255, 255, 255, 0 )"/>
+  <g transform="rotate(45 57.5 57.5)" id="svg_5">
+   <line stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_6" y2="85.82402" x2="57.499998" y1="29.175983" x1="57.499998" stroke-width="12" stroke="#fff" fill="#000"/>
+   <line transform="rotate(90 57.5 57.5)" stroke-linecap="undefined" stroke-linejoin="undefined" id="svg_7" y2="85.82402" x2="57.499998" y1="29.175983" x1="57.499998" stroke-width="12" stroke="#fff" fill="#000"/>
+  </g>
+ </g>
+</svg>
