@@ -877,7 +877,7 @@ define('main',[
 				
 				var faceMaterial = new THREE.MeshPhongMaterial({
 
-					envMap: envMapCube,
+					// envMap: envMapCube,
 					reflectivity: 0.5,
 					// bumpMap: bumpmap,
 					// bumpScale: 0.2,
@@ -1877,10 +1877,10 @@ define('main',[
 			forward.set( 0, 0, -1 ).applyQuaternion( camera.quaternion );
 			postMesh.position.add( forward );
 
-			if( !cubeRendered ){
-				cubeRendered = true;
-				cubeCamera.updateCubeMap( renderer, scene );
-			}
+			// if( !cubeRendered ){
+			// 	cubeRendered = true;
+			// 	cubeCamera.updateCubeMap( renderer, scene );
+			// }
 
 			renderer.render( scene, camera );
 			
