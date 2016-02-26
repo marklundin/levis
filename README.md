@@ -7,4 +7,3 @@ The films you take. The rhymes you make. A word. A scene. What makes you, you? T
 
 ![Mark Your Mark](./Screen_9456.png)
 
-An abstract data visualisation of social media activity
